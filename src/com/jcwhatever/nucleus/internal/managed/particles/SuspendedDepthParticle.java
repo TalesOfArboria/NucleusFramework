@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ISuspendedDepthParticle;
 /**
  * Implementation of {@link ISuspendedDepthParticle}.
  */
-class SuspendedDepthParticle extends AbstractDirectionalParticle
+class SuspendedDepthParticle extends AbstractAreaVectorParticle
         implements ISuspendedDepthParticle {
 
     /**

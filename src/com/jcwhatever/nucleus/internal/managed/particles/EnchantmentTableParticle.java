@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IEnchantmentTableParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IEnchantmentTableParticle}.
  */
 class EnchantmentTableParticle extends
-        AbstractDirectionalParticle implements IEnchantmentTableParticle {
+        AbstractAreaVectorParticle implements IEnchantmentTableParticle {
+
+    private float _speed = 0f;
 
     /**
      * Constructor.
      */
     EnchantmentTableParticle() {
         super(ParticleType.ENCHANTMENT_TABLE);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

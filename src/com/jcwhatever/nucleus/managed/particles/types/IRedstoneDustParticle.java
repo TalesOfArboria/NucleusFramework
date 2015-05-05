@@ -24,12 +24,13 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IColoredParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#RED_DUST}.
  */
-public interface IRedstoneDustParticle extends IParticleEffect, IColoredParticle {
+public interface IRedstoneDustParticle extends IParticleEffect, IRGBColorParticle, IAreaParticle {
 }

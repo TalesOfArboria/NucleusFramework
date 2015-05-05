@@ -33,7 +33,7 @@ import org.bukkit.material.MaterialData;
 /**
  * Implementation of {@link IBlockCrackParticle}.
  */
-class BlockCrackParticle extends AbstractDirectionalParticle implements IBlockCrackParticle {
+class BlockCrackParticle extends AbstractVectorParticle implements IBlockCrackParticle {
 
     private ParticleType<IBlockCrackParticle> _type;
     private MaterialData _data;

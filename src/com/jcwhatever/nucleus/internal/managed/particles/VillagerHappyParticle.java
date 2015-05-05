@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IVillagerHappyParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IVillagerHappyParticle}.
  */
-class VillagerHappyParticle extends AbstractDirectionalParticle
+class VillagerHappyParticle extends AbstractAreaVectorParticle
         implements IVillagerHappyParticle {
+
+    private float _size = 1.0f;
 
     /**
      * Constructor.
      */
     VillagerHappyParticle() {
         super(ParticleType.VILLAGER_HAPPY);
+    }
+
+    @Override
+    public float getSize() {
+        return _size;
+    }
+
+    @Override
+    public void setSize(float size) {
+        PreCon.positiveNumber(size);
+
+        _size = size;
     }
 }

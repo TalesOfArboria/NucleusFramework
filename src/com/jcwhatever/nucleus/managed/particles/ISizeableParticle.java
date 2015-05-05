@@ -22,16 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.particles.types;
-
-import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
-import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
-import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+package com.jcwhatever.nucleus.managed.particles;
 
 /**
- * Interface for particle effect
- * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#TOWN_AURA}.
+ * Mixin for a particle whose size can be modified.
  */
-public interface ITownAuraParticle extends
-        IParticleEffect, IVectorParticle, IAreaParticle {
+public interface ISizeableParticle {
+
+    /**
+     * Get the size of the particle.
+     */
+    float getSize();
+
+    /**
+     * Set the size of the particle.
+     *
+     * @param size  The particle size.
+     */
+    void setSize(float size);
 }

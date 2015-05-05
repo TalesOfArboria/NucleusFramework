@@ -24,94 +24,104 @@
 
 package com.jcwhatever.nucleus.internal.managed.particles;
 
+import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
-import com.jcwhatever.nucleus.managed.particles.types.INoteParticle;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
 
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 /**
- * Implementation of {@link INoteParticle}.
+ * Abstract implementation of a particle with color.
  */
-class NoteParticle extends AbstractParticle implements INoteParticle {
+abstract class AbstractRGBColorParticle extends AbstractParticle implements IRGBColorParticle {
 
-    private final AreaHelper _area = new AreaHelper();
-    private double _color;
+    private final ColorHelper _color = new ColorHelper();
 
     /**
      * Constructor.
+     *
+     * @param type  The particle type.
      */
-    NoteParticle() {
-        super(ParticleType.NOTE);
+    AbstractRGBColorParticle(ParticleType type) {
+        super(type);
     }
 
     @Override
-    public double getColor() {
-        return _color;
+    public Color getColor() {
+        return _color.getColor();
     }
 
     @Override
-    public void setColor(double color) {
-        PreCon.positiveNumber(color);
-
-        _color = color;
+    public void setColor(Color color) {
+        _color.setColor(color);
     }
 
     @Override
-    public double getXArea() {
-        return _area.getXArea();
+    public double getRed() {
+        return _color.getRed();
     }
 
     @Override
-    public double getYArea() {
-        return _area.getYArea();
+    public double getGreen() {
+        return _color.getGreen();
     }
 
     @Override
-    public double getZArea() {
-        return _area.getZArea();
+    public double getBlue() {
+        return _color.getBlue();
     }
 
-    @Override
-    public void setXArea(double areaSize) {
-        _area.setXArea(areaSize);
+    /**
+     * Get red component relative to the particles
+     * default color.
+     */
+    protected double getRelativeRed() {
+        return _color.getRed();
     }
 
-    @Override
-    public void setYArea(double areaSize) {
-        _area.setYArea(areaSize);
+    /**
+     * Get green component relative to the particles
+     * default color.
+     */
+    protected double getRelativeGreen() {
+        return _color.getGreen();
     }
 
-    @Override
-    public void setZArea(double areaSize) {
-        _area.setZArea(areaSize);
+    /**
+     * Get blue component relative to the particles
+     * default color.
+     */
+    protected double getRelativeBlue() {
+        return _color.getBlue();
     }
 
-    @Override
-    public void setArea(double areaSize) {
-        _area.setArea(areaSize);
-    }
-
-    @Override
-    protected void showParticleTo(INmsParticleEffectHandler handler,
+    protected void showColoredTo(INmsParticleEffectHandler handler,
                                  Player player, double x, double y, double z, int count) {
+        PreCon.greaterThanZero(count, "count");
 
-        if (count > 0) {
+        double red = getRelativeRed();
+        double green = getRelativeGreen();
+        double blue = getRelativeBlue();
+
+        boolean isDefaultColor = red == 0 && green == 0 && blue == 0;
+
+        if (isDefaultColor && count > 0) {
             handler.send(player, getType(), true, x, y, z,
-                    getXArea(), getYArea(), getZArea(), 1, count);
+                    getOffsetX(), getOffsetY(), getOffsetZ(), 1, count - 1);
         }
         else {
 
-            for (int i=0; i <= count; i++) {
+            for (int i=0; i < count; i++) {
 
-                double gx = x + Rand.getGaussian(0, getXArea());
-                double gy = y + Rand.getGaussian(0, getYArea());
-                double gz = z + Rand.getGaussian(0, getZArea());
+                double gx = x + Rand.getGaussian(0, getOffsetX());
+                double gy = y + Rand.getGaussian(0, getOffsetY());
+                double gz = z + Rand.getGaussian(0, getOffsetZ());
 
                 handler.send(player, getType(), true, gx, gy, gz,
-                        getColor(), 0, 0, 1, 0);
+                        red, green, blue, 1, 0);
             }
         }
     }

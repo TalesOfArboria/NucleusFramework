@@ -26,16 +26,31 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IExplosionLargeParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IExplosionLargeParticle}.
  */
-class ExplosionLargeParticle extends AbstractParticle implements IExplosionLargeParticle {
+class ExplosionLargeParticle extends AbstractAreaParticle implements IExplosionLargeParticle {
+
+    private float _size = 1.0f;
 
     /**
      * Constructor.
      */
     ExplosionLargeParticle() {
         super(ParticleType.EXPLOSION_LARGE);
+    }
+
+    @Override
+    public float getSize() {
+        return _size;
+    }
+
+    @Override
+    public void setSize(float size) {
+        PreCon.positiveNumber(size);
+
+        _size = size;
     }
 }

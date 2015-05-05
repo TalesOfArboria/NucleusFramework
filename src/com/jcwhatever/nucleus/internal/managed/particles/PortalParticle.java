@@ -26,16 +26,31 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IPortalParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IPortalParticle}.
  */
-class PortalParticle extends AbstractDirectionalParticle implements IPortalParticle {
+class PortalParticle extends AbstractAreaVectorParticle implements IPortalParticle {
+
+    private float _speed = 0f;
 
     /**
      * Constructor.
      */
     PortalParticle() {
         super(ParticleType.PORTAL);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

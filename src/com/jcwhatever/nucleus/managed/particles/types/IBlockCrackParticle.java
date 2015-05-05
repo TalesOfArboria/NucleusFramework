@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IMaterialParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
 
@@ -32,5 +32,5 @@ import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
  * Interface for particle effect for block crack.
  */
 public interface IBlockCrackParticle extends
-        IParticleEffect, IDirectionalParticle, IMaterialParticle {
+        IParticleEffect, IVectorParticle, IMaterialParticle {
 }

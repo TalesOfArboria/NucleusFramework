@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.IHeartParticle;
 /**
  * Implementation of {@link IHeartParticle}.
  */
-class HeartParticle extends AbstractParticle implements IHeartParticle {
+class HeartParticle extends AbstractAreaParticle implements IHeartParticle {
 
     /**
      * Constructor.

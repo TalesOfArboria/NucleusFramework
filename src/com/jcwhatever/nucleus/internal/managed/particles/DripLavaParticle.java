@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.IDripLavaParticle;
 /**
  * Implementation of {@link IDripLavaParticle}.
  */
-class DripLavaParticle extends AbstractParticle implements IDripLavaParticle {
+class DripLavaParticle extends AbstractAreaParticle implements IDripLavaParticle {
 
     /**
      * Constructor.

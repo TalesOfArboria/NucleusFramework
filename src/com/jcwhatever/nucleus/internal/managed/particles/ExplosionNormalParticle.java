@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IExplosionNormalParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IExplosionNormalParticle}.
  */
-class ExplosionNormalParticle extends AbstractDirectionalParticle
+class ExplosionNormalParticle extends AbstractAreaVectorParticle
         implements IExplosionNormalParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     ExplosionNormalParticle() {
         super(ParticleType.EXPLOSION_NORMAL);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

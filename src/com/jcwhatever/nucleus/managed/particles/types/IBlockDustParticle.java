@@ -24,12 +24,12 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IMaterialParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
 
 /**
  * Interface for particle effect block dust.
  */
-public interface IBlockDustParticle extends IParticleEffect, IDirectionalParticle, IMaterialParticle {
+public interface IBlockDustParticle extends IParticleEffect, IVectorParticle, IMaterialParticle {
 }

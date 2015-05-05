@@ -30,12 +30,49 @@ import com.jcwhatever.nucleus.managed.particles.types.ISpellMobParticle;
 /**
  * Implementation of {@link ISpellMobParticle}.
  */
-class SpellMobParticle extends AbstractColorParticle implements ISpellMobParticle {
+class SpellMobParticle extends AbstractRGBColorParticle implements ISpellMobParticle {
+
+    private final AreaHelper _area = new AreaHelper();
 
     /**
      * Constructor.
      */
     SpellMobParticle() {
         super(ParticleType.SPELL_MOB);
+    }
+
+    @Override
+    public double getXArea() {
+        return _area.getXArea();
+    }
+
+    @Override
+    public double getYArea() {
+        return _area.getYArea();
+    }
+
+    @Override
+    public double getZArea() {
+        return _area.getZArea();
+    }
+
+    @Override
+    public void setXArea(double areaSize) {
+        _area.setXArea(areaSize);
+    }
+
+    @Override
+    public void setYArea(double areaSize) {
+        _area.setYArea(areaSize);
+    }
+
+    @Override
+    public void setZArea(double areaSize) {
+        _area.setZArea(areaSize);
+    }
+
+    @Override
+    public void setArea(double areaSize) {
+        _area.setArea(areaSize);
     }
 }

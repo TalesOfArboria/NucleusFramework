@@ -26,16 +26,31 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.ICloudParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link ICloudParticle}.
  */
-class CloudParticle extends AbstractDirectionalParticle implements ICloudParticle {
+class CloudParticle extends AbstractAreaVectorParticle implements ICloudParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     CloudParticle() {
         super(ParticleType.CLOUD);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = 1.0f;
     }
 }

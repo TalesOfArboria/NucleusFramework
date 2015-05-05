@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ISpellInstantParticle;
 /**
  * Implementation of {@link ISpellInstantParticle}.
  */
-class SpellInstantParticle extends AbstractParticle implements ISpellInstantParticle {
+class SpellInstantParticle extends AbstractAreaParticle implements ISpellInstantParticle {
 
     /**
      * Constructor.

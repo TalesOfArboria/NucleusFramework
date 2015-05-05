@@ -24,32 +24,54 @@
 
 package com.jcwhatever.nucleus.managed.particles;
 
-import org.bukkit.util.Vector;
-
 /**
- * Mixin for a particle effect that is directional.
+ * Mixin for a particle than has a setting for the size of the area to
+ * spawn particles in when more than 1 particle count is spawned.
+ *
+ * <p>The area values are radius values.</p>
  */
-public interface IDirectionalParticle {
+public interface IAreaParticle {
 
     /**
-     * Get the particles directional vector.
+     * Get the area size on the X axis.
      */
-    Vector getVector();
+    double getXArea();
 
     /**
-     * Copy the values of the particles directional vector into the
-     * provided output vector.
-     *
-     * @param output  The output vector.
-     *
-     * @return  The output vector.
+     * Get the area size on the Y axis.
      */
-    Vector getVector(Vector output);
+    double getYArea();
 
     /**
-     * Set the particles directional vector.
-     *
-     * @param vector  The vector.
+     * Get the area size on the Z axis.
      */
-    void setVector(Vector vector);
+    double getZArea();
+
+    /**
+     * Set the area size on the X axis.
+     *
+     * @param areaSize  The area size.
+     */
+    void setXArea(double areaSize);
+
+    /**
+     * Set the area size on the Y axis.
+     *
+     * @param areaSize  The area size.
+     */
+    void setYArea(double areaSize);
+
+    /**
+     * Set the area size on the Z axis.
+     *
+     * @param areaSize  The area size.
+     */
+    void setZArea(double areaSize);
+
+    /**
+     * Set the area size of the X, Y and Z axis.
+     *
+     * @param areaSize  The area size.
+     */
+    void setArea(double areaSize);
 }

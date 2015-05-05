@@ -29,110 +29,92 @@ import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 
 /**
- * Interface for a particle effect.
+ * Mixin for a particle effect that can be spawned with a vector.
  */
-public interface IParticleEffect {
-
-    /**
-     * Get the particle effect type.
-     */
-    ParticleType getType();
-
-    /**
-     * Get the radius in blocks which viewers must be within for the
-     * particle to be shown.
-     */
-    double getRadius();
-
-    /**
-     * Set the radius in blocks which viewers must be within for the
-     * particle to be shown.
-     *
-     * @param radius  The block radius.
-     */
-    void setRadius(double radius);
+public interface IVectorParticle {
 
     /**
      * Show the effect to a player.
      *
      * @param player    The player.
      * @param location  The location to spawn the effect at.
-     * @param count     The particle count. Must be greater than 0.
+     * @param vector    The particle vector.
      *
      * @return  True if displayed, otherwise false.
      */
-    boolean showTo(Player player, Location location, int count);
+    boolean showTo(Player player, Location location, Vector vector);
 
     /**
      * Show the effect to a player.
      *
      * @param player  The player.
      * @param coords  The coordinates to spawn the effect at.
-     * @param count   The particle count. Must be greater than 0.
+     * @param vector  The particle vector.
      *
      * @return  True if displayed, otherwise false.
      */
-    boolean showTo(Player player, ICoords3D coords, int count);
+    boolean showTo(Player player, ICoords3D coords, Vector vector);
 
     /**
      * Show the effect to a player.
      *
      * @param player  The player.
      * @param coords  The coordinates to spawn the effect at.
-     * @param count   The particle count. Must be greater than 0.
+     * @param vector  The particle vector.
      *
      * @return  True if displayed, otherwise false.
      */
-    boolean showTo(Player player, ICoords3Di coords, int count);
+    boolean showTo(Player player, ICoords3Di coords, Vector vector);
 
     /**
      * Show the effect to a collection of players.
      *
      * @param players   The players.
      * @param location  The location to spawn the effect at.
-     * @param count     The particle count. Must be greater than 0.
+     * @param vector    The particle vector.
      *
      * @return  True if the effect was shown to at least one of the players,
      * otherwise false.
      */
-    boolean showTo(Collection<? extends Player> players, Location location, int count);
+    boolean showTo(Collection<? extends Player> players, Location location, Vector vector);
 
     /**
      * Show the effect to a collection of players.
      *
      * @param players  The players.
      * @param coords   The coordinates to spawn the effect at.
-     * @param count    The particle count. Must be greater than 0.
+     * @param vector   The particle vector.
      *
      * @return  True if the effect was shown to at least one of the players,
      * otherwise false.
      */
-    boolean showTo(Collection<? extends Player> players, ICoords3D coords, int count);
+    boolean showTo(Collection<? extends Player> players, ICoords3D coords, Vector vector);
 
     /**
      * Show the effect to a collection of players.
      *
      * @param players  The players.
      * @param coords   The coordinates to spawn the effect at.
-     * @param count    The particle count. Must be greater than 0.
+     * @param vector   The particle vector.
      *
      * @return  True if the effect was shown to at least one of the players,
      * otherwise false.
      */
-    boolean showTo(Collection<? extends Player> players, ICoords3Di coords, int count);
+    boolean showTo(Collection<? extends Player> players, ICoords3Di coords, Vector vector);
 
     /**
      * Show the effect to all player within the effects visible radius.
      *
      * @param location  The location to spawn the effect.
-     * @param count     The particle count. Must be greater than 0.
+     * @param vector    The particle vector.
      *
      * @return  True if the effect was shown to at least one of the players,
      * otherwise false.
      */
-    boolean showFrom(Location location, int count);
+    boolean showFrom(Location location, Vector vector);
 }

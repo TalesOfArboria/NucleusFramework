@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IWaterBubbleParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IWaterBubbleParticle}.
  */
-class WaterBubbleParticle extends AbstractDirectionalParticle
+class WaterBubbleParticle extends AbstractVectorParticle
         implements IWaterBubbleParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     WaterBubbleParticle() {
         super(ParticleType.WATER_BUBBLE);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

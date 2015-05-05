@@ -24,12 +24,15 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 
 /**
  * Interface for a particle of type
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#EXPLOSION_NORMAL}.
  */
-public interface IExplosionNormalParticle extends IParticleEffect, IDirectionalParticle {
+public interface IExplosionNormalParticle extends
+        IParticleEffect, IVectorParticle, ISpeedParticle, IAreaParticle {
 }

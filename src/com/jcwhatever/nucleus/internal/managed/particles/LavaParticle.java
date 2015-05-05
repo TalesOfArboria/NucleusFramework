@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ILavaParticle;
 /**
  * Implementation of {@link ILavaParticle}.
  */
-class LavaParticle extends AbstractParticle implements ILavaParticle {
+class LavaParticle extends AbstractAreaParticle implements ILavaParticle {
 
     /**
      * Constructor.

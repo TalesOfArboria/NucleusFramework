@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ITownAuraParticle;
 /**
  * Implementation of {@link ITownAuraParticle}.
  */
-class TownAuraParticle extends AbstractDirectionalParticle implements ITownAuraParticle {
+class TownAuraParticle extends AbstractAreaVectorParticle implements ITownAuraParticle {
 
     /**
      * Constructor.

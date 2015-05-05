@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#FLAME}.
  */
-public interface IFlameParticle extends IParticleEffect, IDirectionalParticle {
+public interface IFlameParticle extends
+        IParticleEffect, ISpeedParticle, IAreaParticle {
 }

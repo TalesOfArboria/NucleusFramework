@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.IExplosionHugeParticle;
 /**
  * Implementation of {@link IExplosionHugeParticle}.
  */
-class ExplosionHugeParticle extends AbstractParticle implements IExplosionHugeParticle {
+class ExplosionHugeParticle extends AbstractAreaParticle implements IExplosionHugeParticle {
 
     /**
      * Constructor.

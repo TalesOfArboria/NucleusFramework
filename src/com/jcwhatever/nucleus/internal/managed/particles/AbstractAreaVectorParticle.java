@@ -24,39 +24,59 @@
 
 package com.jcwhatever.nucleus.internal.managed.particles;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 
-import org.bukkit.util.Vector;
-
 /**
- * Abstract directional particle.
+ * Abstract area particle implementation for particles that are
+ * also directional.
  */
-abstract class AbstractDirectionalParticle extends AbstractParticle implements IDirectionalParticle {
+public abstract class AbstractAreaVectorParticle extends
+        AbstractVectorParticle implements IAreaParticle {
 
-    private final DirectionalHelper _direction = new DirectionalHelper();
+    private final AreaHelper _area = new AreaHelper();
 
     /**
      * Constructor.
      *
-     * @param type The particle type.
+     * @param type  The particle type.
      */
-    AbstractDirectionalParticle(ParticleType type) {
+    AbstractAreaVectorParticle(ParticleType type) {
         super(type);
     }
 
     @Override
-    public Vector getVector() {
-        return _direction.getVector();
+    public double getXArea() {
+        return _area.getXArea();
     }
 
     @Override
-    public Vector getVector(Vector output) {
-        return _direction.getVector(output);
+    public double getYArea() {
+        return _area.getYArea();
     }
 
     @Override
-    public void setVector(Vector vector) {
-        _direction.setVector(vector);
+    public double getZArea() {
+        return _area.getZArea();
+    }
+
+    @Override
+    public void setXArea(double areaSize) {
+        _area.setXArea(areaSize);
+    }
+
+    @Override
+    public void setYArea(double areaSize) {
+        _area.setYArea(areaSize);
+    }
+
+    @Override
+    public void setZArea(double areaSize) {
+        _area.setZArea(areaSize);
+    }
+
+    @Override
+    public void setArea(double areaSize) {
+        _area.setArea(areaSize);
     }
 }

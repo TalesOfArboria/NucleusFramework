@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#WATER_BUBBLE}.
  */
-public interface IWaterBubbleParticle extends IParticleEffect, IDirectionalParticle {
+public interface IWaterBubbleParticle extends
+        IParticleEffect, IVectorParticle, ISpeedParticle {
 }

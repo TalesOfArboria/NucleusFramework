@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IFireworksSparkParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IFireworksSparkParticle}.
  */
-class FireworksSparkParticle extends AbstractDirectionalParticle
+class FireworksSparkParticle extends AbstractAreaVectorParticle
         implements IFireworksSparkParticle {
+
+    private float _speed = 0f;
 
     /**
      * Constructor.
      */
     FireworksSparkParticle() {
         super(ParticleType.FIREWORKS_SPARK);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

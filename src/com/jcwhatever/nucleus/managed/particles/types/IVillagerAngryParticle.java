@@ -24,11 +24,12 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#VILLAGER_ANGRY}.
  */
-public interface IVillagerAngryParticle extends IParticleEffect {
+public interface IVillagerAngryParticle extends IParticleEffect, IAreaParticle {
 }

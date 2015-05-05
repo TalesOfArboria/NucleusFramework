@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.IBarrierParticle;
 /**
  * Implementation of {@link IBarrierParticle}.
  */
-class BarrierParticle extends AbstractParticle implements IBarrierParticle {
+class BarrierParticle extends AbstractAreaParticle implements IBarrierParticle {
 
     /**
      * Constructor.

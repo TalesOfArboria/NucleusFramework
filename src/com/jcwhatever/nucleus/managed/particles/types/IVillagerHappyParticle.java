@@ -24,12 +24,15 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISizeableParticle;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#VILLAGER_HAPPY}.
  */
-public interface IVillagerHappyParticle extends IParticleEffect, IDirectionalParticle {
+public interface IVillagerHappyParticle extends
+        IParticleEffect, IVectorParticle, IAreaParticle, ISizeableParticle {
 }

@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.ISmokeLargeParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link ISmokeLargeParticle}.
  */
-class SmokeLargeParticle extends AbstractDirectionalParticle
+class SmokeLargeParticle extends AbstractAreaVectorParticle
         implements ISmokeLargeParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     SmokeLargeParticle() {
         super(ParticleType.SMOKE_LARGE);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

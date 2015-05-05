@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ISnowballParticle;
 /**
  * Implementation of {@link ISnowballParticle}.
  */
-class SnowballParticle extends AbstractParticle implements ISnowballParticle {
+class SnowballParticle extends AbstractAreaParticle implements ISnowballParticle {
 
     /**
      * Constructor.

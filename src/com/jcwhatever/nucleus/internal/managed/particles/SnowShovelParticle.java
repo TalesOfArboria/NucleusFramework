@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.ISnowShovelParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link ISnowShovelParticle}.
  */
-class SnowShovelParticle extends AbstractDirectionalParticle
+class SnowShovelParticle extends AbstractAreaVectorParticle
         implements ISnowShovelParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     SnowShovelParticle() {
         super(ParticleType.SNOW_SHOVEL);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

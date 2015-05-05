@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.ISmokeNormalParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link ISmokeNormalParticle}.
  */
-class SmokeNormalParticle extends AbstractDirectionalParticle
+class SmokeNormalParticle extends AbstractAreaVectorParticle
         implements ISmokeNormalParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     SmokeNormalParticle() {
         super(ParticleType.SMOKE_NORMAL);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

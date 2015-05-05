@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IWaterSplashParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IWaterSplashParticle}.
  */
-class WaterSplashParticle extends AbstractDirectionalParticle
+class WaterSplashParticle extends AbstractAreaVectorParticle
         implements IWaterSplashParticle {
+
+    private float _speed = 0f;
 
     /**
      * Constructor.
      */
     WaterSplashParticle() {
         super(ParticleType.WATER_SPLASH);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

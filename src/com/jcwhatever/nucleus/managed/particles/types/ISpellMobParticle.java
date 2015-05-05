@@ -24,12 +24,13 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IColoredParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#SPELL_MOB}.
  */
-public interface ISpellMobParticle extends IParticleEffect, IColoredParticle {
+public interface ISpellMobParticle extends IParticleEffect, IRGBColorParticle, IAreaParticle {
 }

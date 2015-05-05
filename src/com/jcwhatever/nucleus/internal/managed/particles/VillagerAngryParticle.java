@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.IVillagerAngryParticle;
 /**
  * Implementation of {@link IVillagerAngryParticle}.
  */
-class VillagerAngryParticle extends AbstractParticle implements IVillagerAngryParticle {
+class VillagerAngryParticle extends AbstractAreaParticle implements IVillagerAngryParticle {
 
     /**
      * Constructor.

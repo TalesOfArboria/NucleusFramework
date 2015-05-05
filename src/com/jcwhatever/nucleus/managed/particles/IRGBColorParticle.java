@@ -22,51 +22,39 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.particles;
-
-import com.jcwhatever.nucleus.managed.particles.IColoredParticle;
-import com.jcwhatever.nucleus.managed.particles.ParticleType;
+package com.jcwhatever.nucleus.managed.particles;
 
 import org.bukkit.Color;
 
 /**
- * Abstract implementation of a particle with color.
+ * Mixin for a particle effect that has RGB color.
  */
-abstract class AbstractColorParticle extends AbstractParticle implements IColoredParticle {
-
-    private final ColorHelper _color = new ColorHelper();
+public interface IRGBColorParticle {
 
     /**
-     * Constructor.
-     *
-     * @param type The particle type.
+     * Get the particles color.
      */
-    AbstractColorParticle(ParticleType type) {
-        super(type);
-    }
+    Color getColor();
 
-    @Override
-    public Color getColor() {
-        return _color.getColor();
-    }
+    /**
+     * Set the particles color.
+     *
+     * @param color  The color.
+     */
+    void setColor(Color color);
 
-    @Override
-    public void setColor(Color color) {
-        _color.setColor(color);
-    }
+    /**
+     * Get the red component as a percentage value (0-1.0)
+     */
+    double getRed();
 
-    @Override
-    public double getRed() {
-        return _color.getRed();
-    }
+    /**
+     * Get the green component as a percentage value (0-1.0)
+     */
+    double getGreen();
 
-    @Override
-    public double getGreen() {
-        return _color.getGreen();
-    }
-
-    @Override
-    public double getBlue() {
-        return _color.getBlue();
-    }
+    /**
+     * Get the blue component as a percentage value (0-1.0)
+     */
+    double getBlue();
 }

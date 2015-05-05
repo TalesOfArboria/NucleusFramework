@@ -27,16 +27,66 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IRedstoneDustParticle;
 
+import org.bukkit.Color;
+
 /**
  * Implementation of {@link IRedstoneDustParticle}.
+ *
+ * <p>Because the client side randomizes the value of the red component,
+ * neutral colors such as white and gray will have a light reddish tint.</p>
  */
-class RedstoneDustParticle extends AbstractColorParticle
+class RedstoneDustParticle extends AbstractRGBColorParticle
         implements IRedstoneDustParticle {
+
+    private final AreaHelper _area = new AreaHelper();
 
     /**
      * Constructor.
      */
     RedstoneDustParticle() {
         super(ParticleType.RED_DUST);
+
+        setColor(Color.RED);
+    }
+
+    @Override
+    protected double getRelativeRed() {
+        // adjust for default color of red
+        return super.getRelativeRed() - 0.9D;
+    }
+
+    @Override
+    public double getXArea() {
+        return _area.getXArea();
+    }
+
+    @Override
+    public double getYArea() {
+        return _area.getYArea();
+    }
+
+    @Override
+    public double getZArea() {
+        return _area.getZArea();
+    }
+
+    @Override
+    public void setXArea(double areaSize) {
+        _area.setXArea(areaSize);
+    }
+
+    @Override
+    public void setYArea(double areaSize) {
+        _area.setYArea(areaSize);
+    }
+
+    @Override
+    public void setZArea(double areaSize) {
+        _area.setZArea(areaSize);
+    }
+
+    @Override
+    public void setArea(double areaSize) {
+        _area.setArea(areaSize);
     }
 }

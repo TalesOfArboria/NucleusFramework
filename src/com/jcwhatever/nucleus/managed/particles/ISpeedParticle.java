@@ -22,16 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.particles.types;
-
-import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
-import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
-import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+package com.jcwhatever.nucleus.managed.particles;
 
 /**
- * Interface for particle effect
- * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#TOWN_AURA}.
+ * Mixin for an particle that has a speed setting.
  */
-public interface ITownAuraParticle extends
-        IParticleEffect, IVectorParticle, IAreaParticle {
+public interface ISpeedParticle {
+
+    /**
+     * Get the speed of the particle.
+     */
+    float getSpeed();
+
+    /**
+     * Set the speed of the particle.
+     *
+     * @param speed  The speed value.
+     */
+    void setSpeed(float speed);
 }

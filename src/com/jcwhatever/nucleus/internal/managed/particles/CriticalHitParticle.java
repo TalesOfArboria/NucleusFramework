@@ -26,17 +26,32 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.ICriticalHitParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link ICriticalHitParticle}.
  */
-class CriticalHitParticle extends AbstractDirectionalParticle
+class CriticalHitParticle extends AbstractAreaVectorParticle
         implements ICriticalHitParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     CriticalHitParticle() {
         super(ParticleType.CRITICAL_HIT);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

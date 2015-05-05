@@ -24,37 +24,21 @@
 
 package com.jcwhatever.nucleus.managed.particles;
 
-import org.bukkit.Color;
-
 /**
- * Mixin for a particle effect that has color.
+ * Mixin for a particle that can have its color set using
+ * a linear scale from 0 to 1.0.
  */
-public interface IColoredParticle {
+public interface ILinearColorParticle {
 
     /**
-     * Get the particles color.
+     * Get the color as a value between 0 and 1.0.
      */
-    Color getColor();
+    double getColor();
 
     /**
-     * Set the particles color.
+     * Set the color as a value between 0 and 1.0.
      *
-     * @param color  The color.
+     * @param color  The color value.
      */
-    void setColor(Color color);
-
-    /**
-     * Get the red component as a percentage value (0-1.0)
-     */
-    double getRed();
-
-    /**
-     * Get the green component as a percentage value (0-1.0)
-     */
-    double getGreen();
-
-    /**
-     * Get the blue component as a percentage value (0-1.0)
-     */
-    double getBlue();
+    void setColor(double color);
 }

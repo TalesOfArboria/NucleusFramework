@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ISlimeParticle;
 /**
  * Implementation of {@link ISlimeParticle}.
  */
-class SlimeParticle extends AbstractParticle implements ISlimeParticle {
+class SlimeParticle extends AbstractAreaParticle implements ISlimeParticle {
 
     /**
      * Constructor.

@@ -24,12 +24,15 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#CRITICAL_HIT}.
  */
-public interface ICriticalHitParticle extends IParticleEffect, IDirectionalParticle {
+public interface ICriticalHitParticle extends
+        IParticleEffect, IVectorParticle, ISpeedParticle, IAreaParticle {
 }

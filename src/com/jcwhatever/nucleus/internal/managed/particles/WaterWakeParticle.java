@@ -26,16 +26,31 @@ package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.managed.particles.types.IWaterWakeParticle;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * Implementation of {@link IWaterWakeParticle}.
  */
-class WaterWakeParticle extends AbstractDirectionalParticle implements IWaterWakeParticle {
+class WaterWakeParticle extends AbstractVectorParticle implements IWaterWakeParticle {
+
+    private float _speed = 1.0f;
 
     /**
      * Constructor.
      */
     WaterWakeParticle() {
         super(ParticleType.WATER_WAKE);
+    }
+
+    @Override
+    public float getSpeed() {
+        return _speed;
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        PreCon.positiveNumber(speed);
+
+        _speed = speed;
     }
 }

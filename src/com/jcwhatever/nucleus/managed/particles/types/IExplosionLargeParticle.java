@@ -24,11 +24,14 @@
 
 package com.jcwhatever.nucleus.managed.particles.types;
 
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISizeableParticle;
 
 /**
  * Interface for particle effect
  * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#EXPLOSION_LARGE}.
  */
-public interface IExplosionLargeParticle extends IParticleEffect {
+public interface IExplosionLargeParticle extends
+        IParticleEffect, IAreaParticle, ISizeableParticle {
 }

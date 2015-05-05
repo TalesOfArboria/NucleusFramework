@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.particles.types.ISpellWitchParticle;
 /**
  * Implementation of {@link ISpellWitchParticle}.
  */
-class SpellWitchParticle extends AbstractParticle implements ISpellWitchParticle {
+class SpellWitchParticle extends AbstractAreaParticle implements ISpellWitchParticle {
 
     /**
      * Constructor.

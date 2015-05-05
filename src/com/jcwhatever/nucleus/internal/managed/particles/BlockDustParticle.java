@@ -33,7 +33,7 @@ import org.bukkit.material.MaterialData;
 /**
  * Implementation of {@link IBlockDustParticle}.
  */
-class BlockDustParticle extends AbstractDirectionalParticle implements IBlockDustParticle {
+class BlockDustParticle extends AbstractVectorParticle implements IBlockDustParticle {
 
     private ParticleType<IBlockDustParticle> _type;
     private MaterialData _data;

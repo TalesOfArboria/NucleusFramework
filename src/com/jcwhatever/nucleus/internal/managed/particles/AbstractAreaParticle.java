@@ -22,16 +22,59 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.particles.types;
+package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
-import com.jcwhatever.nucleus.managed.particles.IVectorParticle;
-import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ParticleType;
 
 /**
- * Interface for particle effect
- * {@link com.jcwhatever.nucleus.managed.particles.ParticleType#TOWN_AURA}.
+ * Abstract implementation of an area particle.
  */
-public interface ITownAuraParticle extends
-        IParticleEffect, IVectorParticle, IAreaParticle {
+public class AbstractAreaParticle extends AbstractParticle implements IAreaParticle {
+
+    private final AreaHelper _area = new AreaHelper();
+
+    /**
+     * Constructor.
+     *
+     * @param type  The particle type.
+     */
+    AbstractAreaParticle(ParticleType type) {
+        super(type);
+    }
+
+    @Override
+    public double getXArea() {
+        return _area.getXArea();
+    }
+
+    @Override
+    public double getYArea() {
+        return _area.getYArea();
+    }
+
+    @Override
+    public double getZArea() {
+        return _area.getZArea();
+    }
+
+    @Override
+    public void setXArea(double areaSize) {
+        _area.setXArea(areaSize);
+    }
+
+    @Override
+    public void setYArea(double areaSize) {
+        _area.setYArea(areaSize);
+    }
+
+    @Override
+    public void setZArea(double areaSize) {
+        _area.setZArea(areaSize);
+    }
+
+    @Override
+    public void setArea(double areaSize) {
+        _area.setArea(areaSize);
+    }
 }

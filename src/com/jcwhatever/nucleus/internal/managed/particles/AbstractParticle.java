@@ -24,13 +24,14 @@
 
 package com.jcwhatever.nucleus.internal.managed.particles;
 
-import com.jcwhatever.nucleus.managed.particles.IColoredParticle;
-import com.jcwhatever.nucleus.managed.particles.IDirectionalParticle;
+import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
+import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.ISizeableParticle;
+import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
-import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
 import com.jcwhatever.nucleus.utils.coords.ICoords3D;
 import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
@@ -41,7 +42,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.Collection;
 
@@ -49,14 +49,6 @@ import java.util.Collection;
  * Abstract implementation of {@link IParticleEffect}.
  */
 abstract class AbstractParticle implements IParticleEffect {
-
-    private static ThreadSingletons<Vector> VECTORS =
-            new ThreadSingletons<>(new ISingletonFactory<Vector>() {
-                @Override
-                public Vector create() {
-                    return new Vector(0, 0, 0);
-                }
-            });
 
     private static ThreadSingletons<Location> LOCATIONS = LocationUtils.createThreadSingleton();
 
@@ -90,16 +82,11 @@ abstract class AbstractParticle implements IParticleEffect {
     }
 
     @Override
-    public float getData() {
-        return 0;
-    }
-
-    @Override
     public boolean showTo(Player player, Location location, int count) {
         PreCon.notNull(player);
         PreCon.notNull(location);
-        PreCon.greaterThanZero(count);
-        PreCon.isValid(player.getWorld().equals(location.getWorld()), "Location must be in same world as player.");
+        PreCon.isValid(player.getWorld().equals(location.getWorld()),
+                "Location must be in same world as player.");
 
         return showTo(player, location.getX(), location.getY(), location.getZ(), count);
     }
@@ -108,7 +95,6 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Player player, ICoords3D coords, int count) {
         PreCon.notNull(player);
         PreCon.notNull(coords);
-        PreCon.greaterThanZero(count);
 
         return showTo(player, coords.getX(), coords.getY(), coords.getZ(), count);
     }
@@ -117,7 +103,7 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Player player, ICoords3Di coords, int count) {
         PreCon.notNull(player);
         PreCon.notNull(coords);
-        PreCon.greaterThanZero(count);
+        PreCon.positiveNumber(count);
 
         return showTo(player, coords.getX(), coords.getY(), coords.getZ(), count);
     }
@@ -126,7 +112,6 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Collection<? extends Player> players, Location location, int count) {
         PreCon.notNull(players);
         PreCon.notNull(location);
-        PreCon.greaterThanZero(count);
 
         boolean isShown = false;
 
@@ -141,7 +126,6 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Collection<? extends Player> players, ICoords3D coords, int count) {
         PreCon.notNull(players);
         PreCon.notNull(coords);
-        PreCon.greaterThanZero(count);
 
         boolean isShown = false;
 
@@ -156,7 +140,6 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Collection<? extends Player> players, ICoords3Di coords, int count) {
         PreCon.notNull(players);
         PreCon.notNull(coords);
-        PreCon.greaterThanZero(count);
 
         boolean isShown = false;
 
@@ -169,6 +152,7 @@ abstract class AbstractParticle implements IParticleEffect {
     @Override
     public boolean showFrom(Location location, int count) {
         PreCon.notNull(location);
+        PreCon.positiveNumber(count);
 
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
@@ -183,6 +167,49 @@ abstract class AbstractParticle implements IParticleEffect {
         }
 
         return isShown;
+    }
+
+    protected float getNmsSpeed() {
+        if (this instanceof ISpeedParticle)
+            return ((ISpeedParticle)this).getSpeed();
+
+        if (this instanceof ISizeableParticle)
+            return ((ISizeableParticle)this).getSize();
+
+        return 1.0f;
+    }
+
+    protected double radiusSquared() {
+        return _radiusSquared;
+    }
+
+    protected double getOffsetX() {
+        if (this instanceof IAreaParticle)
+            return ((IAreaParticle)this).getXArea();
+
+        return 0.0f;
+    }
+
+    protected double getOffsetY() {
+        if (this instanceof IAreaParticle)
+            return ((IAreaParticle)this).getYArea();
+
+        return 0.0f;
+    }
+
+    protected double getOffsetZ() {
+        if (this instanceof IAreaParticle)
+            return ((IAreaParticle)this).getZArea();
+
+        return 0.0f;
+    }
+
+    protected void showParticleTo(INmsParticleEffectHandler handler, Player player,
+                                  double x, double y, double z, int count) {
+        PreCon.greaterThanZero(count, "count");
+
+        handler.send(player, getType(), true, x, y, z,
+                getOffsetX(), getOffsetY(), getOffsetZ(), getNmsSpeed(), count - 1);
     }
 
     private boolean showTo(Player player, double x, double y, double z, int count) {
@@ -201,62 +228,23 @@ abstract class AbstractParticle implements IParticleEffect {
         if (distance > _radiusSquared)
             return false;
 
-        if (this instanceof IDirectionalParticle) {
-
-            IDirectionalParticle directional = (IDirectionalParticle)this;
-            Vector vector = directional.getVector(VECTORS.get());
-
-            handler.send(player, getType(), true, x, y, z,
-                    vector.getX(), vector.getY(), vector.getZ(), getData(), count);
-        }
-        else if (this instanceof IColoredParticle) {
-
-            IColoredParticle colored = (IColoredParticle)this;
-
-            handler.send(player, getType(), true, x, y, z,
-                    colored.getRed(), colored.getGreen(), colored.getBlue(), getData(), count);
+        if (this instanceof AbstractRGBColorParticle) {
+            ((AbstractRGBColorParticle)this).showColoredTo(handler, player, x, y, z, count);
+            return true;
         }
         else {
-            handler.send(player, getType(), true, x, y, z, 0.0f, 0.0f, 0.0f, getData(), count);
+            showParticleTo(handler, player, x, y, z, count);
         }
+
         return true;
     }
 
-    static class DirectionalHelper implements IDirectionalParticle {
+    static class ColorHelper implements IRGBColorParticle {
 
-        private Vector _vector = new Vector(0, 1, 0);
-
-        @Override
-        public Vector getVector() {
-            return getVector(new Vector(0, 0, 0));
-        }
-
-        @Override
-        public Vector getVector(Vector output) {
-            PreCon.notNull(output);
-
-            output.setX(_vector.getX());
-            output.setY(_vector.getY());
-            output.setZ(_vector.getZ());
-            return output;
-        }
-
-        @Override
-        public void setVector(Vector vector) {
-            PreCon.notNull(vector);
-
-            _vector.setX(vector.getX());
-            _vector.setY(vector.getY());
-            _vector.setZ(vector.getZ());
-        }
-    }
-
-    static class ColorHelper implements IColoredParticle {
-
-        private Color _color;
-        private double _red;
-        private double _green;
-        private double _blue;
+        private Color color;
+        private double red;
+        private double green;
+        private double blue;
 
         ColorHelper() {
             setColor(Color.LIME);
@@ -264,33 +252,85 @@ abstract class AbstractParticle implements IParticleEffect {
 
         @Override
         public Color getColor() {
-            return _color;
+            return color;
         }
 
         @Override
         public void setColor(Color color) {
             PreCon.notNull(color);
 
-            _color = color;
+            this.color = color;
 
-            _red = color.getRed() / 255D;
-            _green = color.getGreen() / 255D;
-            _blue = color.getBlue() / 255D;
+            red = color.getRed() / 255D;
+            green = color.getGreen() / 255D;
+            blue = color.getBlue() / 255D;
         }
 
         @Override
         public double getRed() {
-            return _red;
+            return red;
         }
 
         @Override
         public double getGreen() {
-            return _green;
+            return green;
         }
 
         @Override
         public double getBlue() {
-            return _blue;
+            return blue;
+        }
+    }
+
+    static class AreaHelper implements IAreaParticle {
+
+        private double x;
+        private double y;
+        private double z;
+
+        @Override
+        public double getXArea() {
+            return x;
+        }
+
+        @Override
+        public double getYArea() {
+            return y;
+        }
+
+        @Override
+        public double getZArea() {
+            return z;
+        }
+
+        @Override
+        public void setXArea(double areaSize) {
+            PreCon.positiveNumber(areaSize);
+
+            x = areaSize;
+        }
+
+        @Override
+        public void setYArea(double areaSize) {
+            PreCon.positiveNumber(areaSize);
+
+            y = areaSize;
+        }
+
+        @Override
+        public void setZArea(double areaSize) {
+            PreCon.positiveNumber(areaSize);
+
+            z = areaSize;
+        }
+
+        @Override
+        public void setArea(double areaSize) {
+            PreCon.positiveNumber(areaSize);
+
+            x = areaSize;
+            y = areaSize;
+            z = areaSize;
         }
     }
 }
