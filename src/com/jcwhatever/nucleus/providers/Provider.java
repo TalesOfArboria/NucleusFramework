@@ -55,7 +55,7 @@ public abstract class Provider implements IProvider {
     }
 
     @Override
-    public void enable() {
+    public final void enable() {
         if (_isEnabled)
             throw new IllegalStateException("Provider can only be enabled once.");
 
@@ -65,7 +65,7 @@ public abstract class Provider implements IProvider {
     }
 
     @Override
-    public void disable() {
+    public final void disable() {
         if (!_isEnabled)
             throw new IllegalStateException("Provider cannot be disabled until it is enabled.");
 
