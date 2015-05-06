@@ -34,9 +34,9 @@ import java.util.WeakHashMap;
  */
 public class ThreadSingletons<S> {
 
-    private final S _mainSingleton;
     private final ISingletonFactory<S> _factory;
     private final Object _sync = new Object();
+    private S _mainSingleton;
     private Map<Thread, S> _singletons;
 
     /**
@@ -47,8 +47,11 @@ public class ThreadSingletons<S> {
     public ThreadSingletons(ISingletonFactory<S> factory) {
         PreCon.notNull(factory);
 
+        if (!Bukkit.isPrimaryThread())
+            throw new IllegalStateException("ThreadSingletons must be instantiated on the main thread.");
+
         _factory = factory;
-        _mainSingleton = factory.create();
+        setMainSingleton(factory.create(Thread.currentThread()));
     }
 
     /**
@@ -59,21 +62,58 @@ public class ThreadSingletons<S> {
         if (Bukkit.isPrimaryThread())
             return _mainSingleton;
 
-        synchronized (_sync) {
-            if (_singletons == null)
+        synchronized (getSync()) {
+            if (singletons() == null)
                 _singletons = new WeakHashMap<>(10);
 
             Thread thread = Thread.currentThread();
 
-            S singleton = _singletons.get(thread);
+            S singleton = singletons().get(thread);
 
             if (singleton == null) {
-                singleton = _factory.create();
-                _singletons.put(Thread.currentThread(), singleton);
+                singleton = factory().create(thread);
+                singletons().put(thread, singleton);
             }
 
             return singleton;
         }
+    }
+
+    /**
+     * Get the singletons map.
+     */
+    protected Map<Thread, S> singletons() {
+        return _singletons;
+    }
+
+    /**
+     * Get main thread singleton.
+     */
+    protected S mainSingleton() {
+        return _mainSingleton;
+    }
+
+    /**
+     * Set main thread singleton.
+     *
+     * @param singleton  Main thread singleton.
+     */
+    protected void setMainSingleton(S singleton) {
+        _mainSingleton = singleton;
+    }
+
+    /**
+     * Get the singleton factory.
+     */
+    protected ISingletonFactory<S> factory() {
+        return _factory;
+    }
+
+    /**
+     * Get the synchronization object.
+     */
+    protected Object getSync() {
+        return _sync;
     }
 
     /**
@@ -85,7 +125,9 @@ public class ThreadSingletons<S> {
 
         /**
          * Create a new singleton instance.
+         *
+         * @param thread  The thread the instance is being created for.
          */
-        S create();
+        S create(Thread thread);
     }
 }

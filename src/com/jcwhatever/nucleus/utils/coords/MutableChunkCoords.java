@@ -40,7 +40,7 @@ public class MutableChunkCoords extends ChunkCoords {
     public static ThreadSingletons<MutableChunkCoords> createThreadSingletons() {
         return new ThreadSingletons<>(new ISingletonFactory<MutableChunkCoords>() {
             @Override
-            public MutableChunkCoords create() {
+            public MutableChunkCoords create(Thread thread) {
                 return new MutableChunkCoords();
             }
         });

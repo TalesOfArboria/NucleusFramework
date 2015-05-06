@@ -43,7 +43,7 @@ public class MutableCoords2D extends Coords2D {
     public static ThreadSingletons<MutableCoords2D> createThreadSingletons() {
         return new ThreadSingletons<>(new ISingletonFactory<MutableCoords2D>() {
             @Override
-            public MutableCoords2D create() {
+            public MutableCoords2D create(Thread thread) {
                 return new MutableCoords2D();
             }
         });

@@ -65,7 +65,7 @@ public final class LocationUtils {
 
     private static final ISingletonFactory<Location> SINGLETON_FACTORY = new ISingletonFactory<Location>() {
         @Override
-        public Location create() {
+        public Location create(Thread thread) {
             return new Location(null, 0, 0, 0);
         }
     };

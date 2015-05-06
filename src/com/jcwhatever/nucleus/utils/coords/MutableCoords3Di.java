@@ -42,7 +42,7 @@ public class MutableCoords3Di extends Coords3Di {
     public static ThreadSingletons<MutableCoords3Di> createThreadSingletons() {
         return new ThreadSingletons<>(new ISingletonFactory<MutableCoords3Di>() {
             @Override
-            public MutableCoords3Di create() {
+            public MutableCoords3Di create(Thread thread) {
                 return new MutableCoords3Di();
             }
         });
