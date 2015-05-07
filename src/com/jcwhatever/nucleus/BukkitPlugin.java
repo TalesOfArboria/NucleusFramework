@@ -262,6 +262,10 @@ public final class BukkitPlugin extends NucleusPlugin {
             if (plugin instanceof BukkitPlugin)
                 continue;
 
+            // skip plugins that were disabled before this point.
+            if (!plugin.isEnabled())
+                continue;
+
             try {
                 plugin._isEnabled = true;
                 plugin.onEnablePlugin();
