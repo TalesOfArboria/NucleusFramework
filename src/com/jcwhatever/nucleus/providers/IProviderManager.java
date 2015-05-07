@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.sql.ISqlProvider;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 
 import org.bukkit.plugin.Plugin;
@@ -122,6 +123,14 @@ public interface IProviderManager {
      * Get the economy provider.
      */
     IEconomyProvider getEconomy();
+
+    /**
+     * Get the Sql database provider.
+     *
+     * @return  The provider or null if not installed.
+     */
+    @Nullable
+    ISqlProvider getSql();
 
     /**
      * Get the default data storage provider.

@@ -52,6 +52,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.sql.ISqlProvider;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -96,6 +97,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile IJailProvider _jail;
     private volatile IStorageProvider _defaultStorage;
     private volatile IKitProvider _kits;
+    private volatile ISqlProvider _sql;
 
     private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
 
@@ -309,6 +311,14 @@ public final class InternalProviderManager implements IProviderManager {
             }
         }
 
+        if (provider instanceof ISqlProvider) {
+            addName(provider, ProviderType.SQL);
+            if (remove(_sql, ProviderType.SQL)) {
+                _sql = add(provider);
+                isAdded = true;
+            }
+        }
+
         return isAdded;
     }
 
@@ -463,6 +473,12 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         return _economy;
+    }
+
+    @Nullable
+    @Override
+    public ISqlProvider getSql() {
+        return _sql;
     }
 
     @Nullable

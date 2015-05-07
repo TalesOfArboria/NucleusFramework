@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.sql.ISqlProvider;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -55,7 +56,8 @@ public enum ProviderType implements INamedInsensitive {
     PERMISSIONS   ("Permissions",  IPermissionsProvider.class),
     PLAYER_LOOKUP ("PlayerLookup", IPlayerLookupProvider.class),
     REGION_SELECT ("RegionSelect", IRegionSelectProvider.class),
-    STORAGE       ("Storage",      IStorageProvider.class);
+    STORAGE       ("Storage",      IStorageProvider.class),
+    SQL           ("SQL",          ISqlProvider.class);
 
     private static Map<Class<? extends IProvider>, ProviderType> _typeMap;
     private static Map<String, ProviderType> _nameMap;
