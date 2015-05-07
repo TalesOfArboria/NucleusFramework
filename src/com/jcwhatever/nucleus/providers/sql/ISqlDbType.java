@@ -32,7 +32,8 @@ import com.jcwhatever.nucleus.mixins.INamed;
 public interface ISqlDbType extends INamed {
 
     /**
-     * Get the size of the data type.
+     * Get the size of the data type. Returns -1 if the
+     * size should be ignored (i.e numerical data types)
      */
     int size();
 
@@ -46,4 +47,11 @@ public interface ISqlDbType extends INamed {
      * that requires special handling by the provider.
      */
     boolean isCompound();
+
+    /**
+     * Determine if the data type is a signed or unsigned type.
+     *
+     * <p>Only applies to numerical data types.</p>
+     */
+    boolean isSigned();
 }

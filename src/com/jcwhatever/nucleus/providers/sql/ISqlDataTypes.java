@@ -33,7 +33,13 @@ import javax.annotation.Nullable;
 public interface ISqlDataTypes {
 
     /**
-     * Get a data type by value type.
+     * Get a data type by the Java value type.
+     *
+     * <p>Does not return data types that require extra parameters such
+     * as size.</p>
+     *
+     * <p>If the data type is a numerical type that can be signed or unsigned,
+     * the database default is returned.</p>
      *
      * @param typeClazz  The java class data type equivalent. For primitives, use
      *                   the primitive class, not the wrapper.
@@ -45,10 +51,30 @@ public interface ISqlDataTypes {
     ISqlDbType getDataType(Class<?> typeClazz);
 
     /**
+     * Get a data type by value type.
+     *
+     * <p>If the data type is not a signable type, the</p>
+     *
+     * @param typeClazz  The java class data type equivalent. For primitives, use
+     *                   the primitive class, not the wrapper.
+     * @param isSigned   Specify if the data type is a signed or unsigned numerical
+     *                   value. If the requested data type is not signable, this
+     *                   argument is ignored.
+     *
+     * @return  The database data type or null if an equivalent could not
+     * be found.
+     */
+    @Nullable
+    ISqlDbType getDataType(Class<?> typeClazz, boolean isSigned);
+
+    /**
      * Get a data type by name.
      *
      * <p>Does not return data types that require extra parameters such
      * as size.</p>
+     *
+     * <p>If the data type is a numerical type that can be signed or unsigned,
+     * the database default is returned.</p>
      *
      * @param typeName  The name of the data type.
      *
@@ -56,6 +82,22 @@ public interface ISqlDataTypes {
      */
     @Nullable
     ISqlDbType getDataType(String typeName);
+
+    /**
+     * Get a data type by name.
+     *
+     * <p>Does not return data types that require extra parameters such
+     * as size.</p>
+     *
+     * @param typeName  The name of the data type.
+     * @param isSigned  Specify if the data type is a signed or unsigned numerical
+     *                  value. If the requested data type is not signable, this
+     *                  argument is ignored.
+     *
+     * @return  The data type or null if not found.
+     */
+    @Nullable
+    ISqlDbType getDataType(String typeName, boolean isSigned);
 
     /**
      * Get all available data types for the database.
@@ -71,29 +113,54 @@ public interface ISqlDataTypes {
     ISqlDbType getBoolean();
 
     /**
-     * Get the data type for storing a byte.
+     * Get the data type for storing a signed byte.
      */
-    ISqlDbType getByte();
+    ISqlDbType getSignedByte();
 
     /**
-     * Get the data type for storing a short.
+     * Get the data type for storing an unsigned byte.
      */
-    ISqlDbType getShort();
+    ISqlDbType getUnsignedByte();
 
     /**
-     * Get the data type for storing a 3-byte integer.
+     * Get the data type for storing a signed short.
      */
-    ISqlDbType getMediumInteger();
+    ISqlDbType getSignedShort();
 
     /**
-     * Get the data type for storing a 4-byte integer.
+     * Get the data type for storing an unsigned short.
      */
-    ISqlDbType getInteger();
+    ISqlDbType getUnsignedShort();
 
     /**
-     * Get the data type for storing a long.
+     * Get the data type for storing a 3-byte signed integer.
      */
-    ISqlDbType getLong();
+    ISqlDbType getSignedMediumInteger();
+
+    /**
+     * Get the data type for storing a 3-byte unsigned integer.
+     */
+    ISqlDbType getUnsignedMediumInteger();
+
+    /**
+     * Get the data type for storing a 4-byte signed integer.
+     */
+    ISqlDbType getSignedInteger();
+
+    /**
+     * Get the data type for storing a 4-byte unsigned integer.
+     */
+    ISqlDbType getUnsignedInteger();
+
+    /**
+     * Get the data type for storing a signed long.
+     */
+    ISqlDbType getSignedLong();
+
+    /**
+     * Get the data type for storing an unsigned long.
+     */
+    ISqlDbType getUnsignedLong();
 
     /**
      * Get the data type for storing a float.

@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Collection;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -42,19 +43,29 @@ public class SqlDbType {
 
     public static final ISqlDbType BOOLEAN = new DbTypeWrapper(boolean.class);
 
-    public static final ISqlDbType BYTE = new DbTypeWrapper(byte.class);
+    public static final ISqlDbType BYTE_SIGNED = new DbTypeWrapper(byte.class, true);
 
-    public static final ISqlDbType SHORT = new DbTypeWrapper(short.class);
+    public static final ISqlDbType BYTE_UNSIGNED = new DbTypeWrapper(byte.class, false);
 
-    public static final ISqlDbType INTEGER = new DbTypeWrapper(int.class);
+    public static final ISqlDbType SHORT_SIGNED = new DbTypeWrapper(short.class, true);
 
-    public static final ISqlDbType LONG = new DbTypeWrapper(long.class);
+    public static final ISqlDbType SHORT_UNSIGNED = new DbTypeWrapper(short.class, false);
+
+    public static final ISqlDbType INTEGER_SIGNED = new DbTypeWrapper(int.class, true);
+
+    public static final ISqlDbType INTEGER_UNSIGNED = new DbTypeWrapper(int.class, false);
+
+    public static final ISqlDbType LONG_SIGNED = new DbTypeWrapper(long.class, true);
+
+    public static final ISqlDbType LONG_UNSIGNED = new DbTypeWrapper(long.class, false);
 
     public static final ISqlDbType FLOAT = new DbTypeWrapper(float.class);
 
     public static final ISqlDbType DOUBLE = new DbTypeWrapper(double.class);
 
     public static final ISqlDbType BIG_DECIMAL = new DbTypeWrapper(BigDecimal.class);
+
+    public static final ISqlDbType DATE = new DbTypeWrapper(Date.class);
 
     public static final ISqlDbType LOCATION = new DbTypeWrapper(Location.class);
 
@@ -63,6 +74,8 @@ public class SqlDbType {
     public static final ISqlDbType UNIQUE_ID = new DbTypeWrapper(UUID.class);
 
     public static final ISqlDbType ITEM_STACKS = new DbTypeWrapper(ItemStack[].class);
+
+
 
     /**
      * Get a data type by value type.
@@ -145,10 +158,17 @@ public class SqlDbType {
     private static class DbTypeWrapper implements ISqlDbType {
 
         private final Class<?> _dataClass;
+        private final boolean _isSigned;
         private ISqlDbType _type;
 
         DbTypeWrapper(Class<?> dataClass) {
             _dataClass = dataClass;
+            _isSigned = false;
+        }
+
+        DbTypeWrapper(Class<?> dataClass, boolean isSigned) {
+            _dataClass = dataClass;
+            _isSigned = isSigned;
         }
 
         @Override
@@ -167,13 +187,18 @@ public class SqlDbType {
         }
 
         @Override
+        public boolean isSigned() {
+            return type().isSigned();
+        }
+
+        @Override
         public String getName() {
             return type().getName();
         }
 
         private ISqlDbType type() {
             if (_type == null) {
-                _type = Sql.provider().getDataType(_dataClass);
+                _type = Sql.provider().getDataType(_dataClass, _isSigned);
                 if (_type == null) {
                     throw new UnsupportedOperationException("Sql provider does not support a " +
                             "data type for class: " + _dataClass.getName());
