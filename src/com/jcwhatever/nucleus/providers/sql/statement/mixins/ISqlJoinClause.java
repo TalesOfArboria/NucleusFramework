@@ -22,28 +22,37 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
-
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Database table.
+ * Sql Join clause mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlJoinClause<T> {
 
     /**
-     * Get the tables database.
+     * "ON" clause of "JOIN" syntax.
+     *
+     * <p>Matches the specified column name to a column from the
+     * primary table. Assumes that the column names are the same.</p>
+     *
+     * <p>The column name is extracted from the provided column name
+     * (which should also contain the table name or alias) to get the
+     * column name to match on the primary table.</p>
+     *
+     * @param column  The column from the joining table.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlDatabase getDatabase();
+    T on(String column);
 
     /**
-     * Get the table definition.
+     * "ON" clause of "JOIN" syntax.
+     *
+     * @param column       The column from the joining table.
+     * @param otherColumn  The matching column from another joined table or
+     *                     the primary table.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlTableDefinition getDefinition();
+    T on(String column, String otherColumn);
 }

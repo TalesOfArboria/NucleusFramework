@@ -22,28 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
-
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Database table.
+ * Sql statement boolean operator mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlLogicalOperator<T> {
 
     /**
-     * Get the tables database.
+     * "And" operator.
+     *
+     * @param column  The name of the next column in the statement.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlDatabase getDatabase();
+    T and(String column);
 
     /**
-     * Get the table definition.
+     * "Or" operator.
+     *
+     * @param column  The name of the next column in the statement.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlTableDefinition getDefinition();
+    T or(String column);
 }

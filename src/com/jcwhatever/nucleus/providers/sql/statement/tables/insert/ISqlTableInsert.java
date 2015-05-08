@@ -22,37 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
 
 /**
- * Sql Join clause mixin.
+ * Sql table insert.
  */
-public interface ISqlJoinClause<T> {
+public interface ISqlTableInsert {
 
-    /**
-     * "ON" clause of "JOIN" syntax.
-     *
-     * <p>Matches the specified column name to a column from the
-     * primary table. Assumes that the column names are the same.</p>
-     *
-     * <p>The column name is extracted from the provided column name
-     * (which should also contain the table name or alias) to get the
-     * column name to match on the primary table.</p>
-     *
-     * @param column  The column from the joining table.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T on(String column);
-
-    /**
-     * "ON" clause of "JOIN" syntax.
-     *
-     * @param column       The column from the joining table.
-     * @param otherColumn  The matching column from another joined table or
-     *                     the primary table.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T on(String column, String otherColumn);
+    ISqlTableInsertFinal values(Object... values);
 }

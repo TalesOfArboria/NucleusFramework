@@ -162,13 +162,5 @@ public interface ISqlTableDefinition {
          * @return  The start value or -1 if the column is not auto incrementing.
          */
         long getAutoIncrementStart();
-
-        /**
-         * Get the incremental value.
-         *
-         * @return  The incremental value or -1 if the column is not auto
-         * incrementing.
-         */
-        long getAutoIncrement();
     }
 }

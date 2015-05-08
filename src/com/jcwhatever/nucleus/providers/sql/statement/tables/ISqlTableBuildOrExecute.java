@@ -22,28 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables;
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlBuildOrExecute;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
 
 /**
- * Sql statement boolean operator mixin.
+ * Table based {@link ISqlBuildOrExecute}.
  */
-public interface ISqlLogicalOperator<T> {
-
-    /**
-     * "And" operator.
-     *
-     * @param column  The name of the next column in the statement.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T and(String column);
-
-    /**
-     * "Or" operator.
-     *
-     * @param column  The name of the next column in the statement.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T or(String column);
+public interface ISqlTableBuildOrExecute extends
+        ISqlBuildOrExecute<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete> {
 }

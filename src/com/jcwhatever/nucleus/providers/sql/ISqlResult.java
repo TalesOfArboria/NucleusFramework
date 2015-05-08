@@ -24,97 +24,49 @@
 
 package com.jcwhatever.nucleus.providers.sql;
 
-import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
- * Sql results.
+ * Results for 1 or more executed sql statements.
  */
-public interface ISqlResult extends ResultSet {
+public interface ISqlResult {
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link UUID}.
-     *
-     * @param columnIndex The column index. Starts at 1.
-     *
-     * @throws SQLException
+     * Determine if the result contains query results.
      */
-    UUID getUUID(int columnIndex) throws SQLException;
+    boolean hasQueryResults();
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link UUID}.
-     *
-     * @param columnName  The column name.
-     *
-     * @throws SQLException
+     * Determine if the result contains row update counts.
      */
-    UUID getUUID(String columnName) throws SQLException;
+    boolean hasUpdatedRows();
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link SyncLocation}.
+     * Get the first query result.
      *
-     * @param columnIndex  The column index. Starts at 1.
-     *
-     * @throws SQLException
+     * @return  The result or null if there are no query results.
      */
-    SyncLocation getLocation(int columnIndex) throws SQLException;
+    @Nullable
+    ISqlQueryResult getFirstResult();
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link SyncLocation}.
+     * Get the first row update count.
      *
-     * @param columnName  The column name.
-     *
-     * @throws SQLException
+     * @return  The count or 0 if there are no row update counts.
      */
-    SyncLocation getLocation(String columnName) throws SQLException;
+    int getFirstRowUpdate();
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link Vector}.
+     * Get all query results in the order they were executed.
      *
-     * @param columnIndex  The column index. Starts at 1.
-     *
-     * @throws SQLException
+     * @return  The results.
      */
-    Vector getVector(int columnIndex) throws SQLException;
+    ISqlQueryResult[] getQueryResults();
 
     /**
-     * Retrieves the value of the specified column in the current row
-     * as a {@link Vector}.
-     *
-     * @param columnName  The column name.
-     *
-     * @throws SQLException
+     * Get all row update counts in the order they were executed.
      */
-    Vector getVector(String columnName) throws SQLException;
+    int[] getRowsUpdated();
 
-    /**
-     * Retrieves the value of the specified column in the current row
-     * as an {@link ItemStack}.
-     *
-     * @param columnIndex  The column index. Starts at 1.
-     *
-     * @throws SQLException
-     */
-    ItemStack[] getItemStacks(int columnIndex) throws SQLException;
 
-    /**
-     * Retrieves the value of the specified column in the current row
-     * as an {@link ItemStack}.
-     *
-     * @param columnName  The column name.
-     *
-     * @throws SQLException
-     */
-    ItemStack[] getItemStacks(String columnName) throws SQLException;
 }

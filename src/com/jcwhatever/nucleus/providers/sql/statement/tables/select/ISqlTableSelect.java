@@ -22,35 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
-
-import javax.annotation.Nullable;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
 
 /**
- * Statement data setter.
+ * Sql table select.
  */
-public interface ISqlDataSetter<T> {
+public interface ISqlTableSelect extends ISqlTableSelectJoin, ISqlTableSelectWhere, ISqlTableSelectClause {
 
-    /**
-     * Set the value of a column.
-     *
-     * @param columnName  The name of the column.
-     * @param value       The value to set. If the value is null and the column does not
-     *                    accept null values, the columns default value is used.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T set(String columnName, @Nullable Object value);
-
-    /**
-     * Set the value of the specified column to the value of another column.
-     *
-     * <p>Useful for joins.</p>
-     *
-     * @param columnName       The column to set.
-     * @param otherColumnName  The other column to get a value from.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T setColumn(String columnName, String otherColumnName);
+    ISqlTableSelectWhere into(String tableName);
 }

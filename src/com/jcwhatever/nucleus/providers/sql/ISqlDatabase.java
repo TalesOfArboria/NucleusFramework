@@ -48,7 +48,7 @@ public interface ISqlDatabase extends INamed {
      *
      * @return  The table builder.
      */
-    ISqlTableDefiner createTableDefiner();
+    ISqlTableBuilder createTableDefiner();
 
     /**
      * Create or get a table with the specified table definition.
@@ -59,17 +59,20 @@ public interface ISqlDatabase extends INamed {
      * @param name        The name of the table.
      * @param definition  The table definition.
      */
-    IFutureResult<ISqlTable> create(String name, ISqlTableDefinition definition);
+    IFutureResult<ISqlTable> createTable(String name, ISqlTableDefinition definition);
 
     /**
      * Get a table from the database.
+     *
+     * <p>The table must be created and/or defined via {@link #createTable} before it
+     * cab be returned from this method.</p>
      *
      * @param name  The name of the table.
      *
      * @return  The table or null if not found or loaded yet.
      */
     @Nullable
-    ISqlTable get(String name);
+    ISqlTable getTable(String name);
 
     /**
      * Create a prepared sql statement using the database connection.

@@ -59,15 +59,6 @@ public class Sql {
     }
 
     /**
-     * Create a new statement transaction.
-     *
-     * @throws UnsupportedOperationException if an Sql provider is not installed.
-     */
-    public static ISqlTransaction createTransaction(ISqlDatabase database) {
-        return provider().createTransaction(database);
-    }
-
-    /**
      * Execute a query statement.
      *
      * <p>Provides access to the providers async statement execution.</p>
@@ -78,7 +69,7 @@ public class Sql {
      *
      * @throws UnsupportedOperationException if an Sql provider is not installed.
      */
-    public static IFutureResult<ISqlResult> executeQuery(PreparedStatement statement) {
+    public static IFutureResult<ISqlQueryResult> executeQuery(PreparedStatement statement) {
         return provider().executeQuery(statement);
     }
 

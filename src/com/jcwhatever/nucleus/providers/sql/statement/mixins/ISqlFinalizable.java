@@ -22,28 +22,49 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
- * Database table.
+ * Sql statement finalizing methods mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlFinalizable<S, U, I, D> {
 
     /**
-     * Get the tables database.
+     * Terminate the current statement to begin the next statement.
+     *
+     * <p>Causes the current statement to be finalized.</p>
      */
-    ISqlDatabase getDatabase();
+    ISqlStatementBuilder<S, U, I, D> endStatement();
 
     /**
-     * Get the table definition.
+     * Terminate the current statement to begin the next statement
+     * on a different table.
+     *
+     * <p>Causes the current statement to be finalized.</p>
+     *
+     * @param table  The table the next statement applies to.
      */
-    ISqlTableDefinition getDefinition();
+    ISqlStatementBuilder<S, U, I, D> endStatement(ISqlTable table);
+
+    /**
+     * Insert the end of a transaction.
+     *
+     * <p>Causes the current statement to be finalized.</p>
+     */
+    ISqlBuildOrExecute<S, U, I, D> commitTransaction();
+
+    /**
+     * Create a prepared statement.
+     *
+     * <p>Causes the statement to be finalized.</p>
+     *
+     * @throws SQLException
+     */
+    PreparedStatement[] prepareStatements() throws SQLException;
 }

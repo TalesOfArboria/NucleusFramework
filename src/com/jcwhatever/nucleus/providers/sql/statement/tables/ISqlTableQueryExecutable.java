@@ -22,28 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
+package com.jcwhatever.nucleus.providers.sql.statement.tables;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
 import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
 import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
 import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
 
 /**
- * Database table.
+ * Table based {@link ISqlTableQueryExecutable}.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
-
-    /**
-     * Get the tables database.
-     */
-    ISqlDatabase getDatabase();
-
-    /**
-     * Get the table definition.
-     */
-    ISqlTableDefinition getDefinition();
+public interface ISqlTableQueryExecutable extends
+        ISqlExecutable<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete> {
 }

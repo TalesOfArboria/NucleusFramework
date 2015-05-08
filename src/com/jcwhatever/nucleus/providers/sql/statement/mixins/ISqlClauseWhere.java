@@ -22,19 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
-
-import com.jcwhatever.nucleus.utils.observer.future.IFuture;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Sql executable statement mixin.
+ * Sql statement "WHERE" clause mixin.
  */
-public interface ISqlUpdateExecutable extends ISqlFinalizable {
+public interface ISqlClauseWhere<T> {
 
     /**
-     * Execute a non-query statement.
+     * Sql statement where clause.
      *
-     * <p>Causes the statement to be finalized.</p>
+     * @param columnName  The name of the column in the first condition.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    IFuture execute();
+    T where(String columnName);
 }

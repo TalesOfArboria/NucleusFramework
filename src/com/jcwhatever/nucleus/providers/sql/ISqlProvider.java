@@ -29,7 +29,6 @@ import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 /**
  * Interface for the global MySql data manager.
@@ -48,20 +47,15 @@ public interface ISqlProvider extends IProvider, ISqlDataTypes {
             String address, String databaseName, String userName, String password);
 
     /**
-     * Create a new statement transaction.
-     */
-    ISqlTransaction createTransaction(ISqlDatabase database);
-
-    /**
      * Execute a query statement.
      *
      * <p>Provides access to the providers async statement execution.</p>
      *
      * @param statement  The query statement.
      *
-     * @return  A future to return the {@link ResultSet} when it is ready.
+     * @return  A future to return the {@link ISqlQueryResult} when it is ready.
      */
-    IFutureResult<ISqlResult> executeQuery(PreparedStatement statement);
+    IFutureResult<ISqlQueryResult> executeQuery(PreparedStatement statement);
 
     /**
      * Execute an update/insert statement.
@@ -70,7 +64,7 @@ public interface ISqlProvider extends IProvider, ISqlDataTypes {
      *
      * @param statement  The statement.
      *
-     * @return  A future to return the result.
+     * @return  A future to to indicate success or failure.
      */
     IFuture execute(PreparedStatement statement);
 }

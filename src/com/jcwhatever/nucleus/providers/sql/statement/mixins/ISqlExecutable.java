@@ -22,28 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+import com.jcwhatever.nucleus.providers.sql.ISqlResult;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 /**
- * Database table.
+ * Sql executable query mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlExecutable<S, U, I, D> extends ISqlFinalizable<S, U, I, D> {
 
     /**
-     * Get the tables database.
+     * Execute the query.
+     *
+     * <p>Causes the current statement to be finalized.</p>
      */
-    ISqlDatabase getDatabase();
-
-    /**
-     * Get the table definition.
-     */
-    ISqlTableDefinition getDefinition();
+    IFutureResult<ISqlResult> execute();
 }

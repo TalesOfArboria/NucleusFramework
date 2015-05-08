@@ -22,28 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables;
+
+/* 
+ * 
+ */
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
 
 /**
- * Sql statement sort order clause mixin.
+ * Table based {@link ISqlTableExecutable}.
  */
-public interface ISqlClauseOrder<T> {
-
-    /**
-     * Order rows in ascending order using the specified column.
-     *
-     * @param columnName  The name of the column to order by.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T orderByAscend(String columnName);
-
-    /**
-     * Order rows in descending order using the specified column.
-     *
-     * @param columnName  The name of the column to order by.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T orderByDescend(String columnName);
+public interface ISqlTableExecutable extends
+        ISqlExecutable<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete> {
 }

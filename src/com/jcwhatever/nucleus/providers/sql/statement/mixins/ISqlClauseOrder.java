@@ -22,28 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
-
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Database table.
+ * Sql statement sort order clause mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlClauseOrder<T> {
 
     /**
-     * Get the tables database.
+     * Order rows in ascending order using the specified column.
+     *
+     * @param columnName  The name of the column to order by.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlDatabase getDatabase();
+    T orderByAscend(String columnName);
 
     /**
-     * Get the table definition.
+     * Order rows in descending order using the specified column.
+     *
+     * @param columnName  The name of the column to order by.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlTableDefinition getDefinition();
+    T orderByDescend(String columnName);
 }

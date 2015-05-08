@@ -22,21 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
 
 /**
- * Sql statement limit clause mixin.
+ * Table based {@link ISqlDataSetter}.
  */
-public interface ISqlClauseLimitOffset<T> {
-
-    /**
-     * Limit the number of results returned to a segment starting from the
-     * offset until the count or last row has been returned.
-     *
-     * @param offset  The offset to begin returning rows from.
-     * @param count   The maximum number of rows to return.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T limit(int offset, int count);
+public interface ISqlTableUpdate extends ISqlDataSetter<ISqlTableUpdateFinal> {
 }

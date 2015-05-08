@@ -22,50 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
-
-import com.jcwhatever.nucleus.providers.sql.ISqlTransaction;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Sql statement finalizing methods mixin.
+ * Sql statement limit clause mixin.
  */
-public interface ISqlFinalizable {
+public interface ISqlClauseLimit<T> {
 
     /**
-     * Create a prepared statement.
+     * Limit the number of rows returned or modified.
      *
-     * <p>Causes the statement to be finalized.</p>
+     * @param count  The maximum row count.
      *
-     * @throws SQLException
+     * @throws IllegalStateException if the statement is finalized.
      */
-    PreparedStatement prepareStatement() throws SQLException;
-
-    /**
-     * Add the constructed statement to a transaction.
-     *
-     * <p>Causes the statement to be finalized.</p>
-     *
-     * @param transaction  The transaction to add the statement to.
-     *
-     * @throws IllegalStateException if the transaction is finalized.
-     */
-    void addToTransaction(ISqlTransaction transaction);
-
-    /**
-     * Get an ordered array containing the data values in the statement.
-     *
-     * <p>Causes the statement to be finalized.</p>
-     */
-    Object[] getValues();
-
-    /**
-     * Get the statement as a string.
-     *
-     * <p>Causes the statement to be finalized.</p>
-     */
-    @Override
-    String toString();
+    T limit(int count);
 }

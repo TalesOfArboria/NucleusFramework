@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 import javax.annotation.Nullable;
 

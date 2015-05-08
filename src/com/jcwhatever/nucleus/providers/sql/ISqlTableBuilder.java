@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.providers.sql;
 /**
  * Used to define a database tables.
  */
-public interface ISqlTableDefiner {
+public interface ISqlTableBuilder {
 
     /**
      * Specify that the table will most often be used for reading and
@@ -115,17 +115,6 @@ public interface ISqlTableDefiner {
          * support auto increment.
          */
         ISqlTableDefinerFinal autoIncrement();
-
-        /**
-         * Add auto incrementing to a primary key.
-         *
-         * @param start      The initial value.
-         * @param increment  The incremental value.
-         *
-         * @throws IllegalStateException if the primary key data type does not
-         * support auto increment.
-         */
-        ISqlTableDefinerFinal autoIncrement(long start, long increment);
     }
 
     interface ISqlTableDefinerForeign extends ISqlTableDefinerFinal {

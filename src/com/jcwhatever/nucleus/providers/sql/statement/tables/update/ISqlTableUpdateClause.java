@@ -22,54 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
 
-import com.jcwhatever.nucleus.utils.observer.future.IFuture;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-/**
- * Transaction statement.
+/*
+ * 
  */
-public interface ISqlTransaction {
+public interface ISqlTableUpdateClause extends
+        ISqlTableExecutable,
+        ISqlClauseOrder<ISqlTableUpdateClause>,
+        ISqlClauseLimit<ISqlTableUpdateClause> {
 
-    /**
-     * Execute a query.
-     *
-     * <p>Causes the transaction to be finalized.</p>
-     */
-    IFutureResult<ISqlResult> executeQuery();
-
-    /**
-     * Execute a statement.
-     *
-     * <p>Causes the transaction to be finalized.</p>
-     */
-    IFuture execute();
-
-    /**
-     * Create a prepared statement.
-     *
-     * <p>Causes the transaction to be finalized.</p>
-     *
-     * @throws SQLException
-     */
-    PreparedStatement prepareStatement() throws SQLException;
-
-    /**
-     * Get an ordered array containing the data values in the statement.
-     *
-     * <p>Causes the transaction to be finalized.</p>
-     */
-    Object[] getValues();
-
-    /**
-     * Get the statement as a string.
-     *
-     * <p>Causes the transaction to be finalized.</p>
-     */
-    @Override
-    String toString();
 }

@@ -22,28 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
-
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * Database table.
+ * Sql statement limit clause mixin.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlClauseLimitOffset<T> {
 
     /**
-     * Get the tables database.
+     * Limit the number of results returned to a segment starting from the
+     * offset until the count or last row has been returned.
+     *
+     * @param offset  The offset to begin returning rows from.
+     * @param count   The maximum number of rows to return.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    ISqlDatabase getDatabase();
-
-    /**
-     * Get the table definition.
-     */
-    ISqlTableDefinition getDefinition();
+    T limit(int offset, int count);
 }

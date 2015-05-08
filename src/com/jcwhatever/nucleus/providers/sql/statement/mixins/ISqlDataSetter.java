@@ -22,20 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import com.jcwhatever.nucleus.providers.sql.ISqlResult;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+import javax.annotation.Nullable;
 
 /**
- * Sql executable query mixin.
+ * Statement data setter.
  */
-public interface ISqlQueryExecutable extends ISqlFinalizable {
+public interface ISqlDataSetter<T> {
 
     /**
-     * Execute the query.
+     * Set the value of a column.
      *
-     * <p>Causes the statement to be finalized.</p>
+     * @param columnName  The name of the column.
+     * @param value       The value to set. If the value is null and the column does not
+     *                    accept null values, the columns default value is used.
+     *
+     * @throws IllegalStateException if the statement is finalized.
      */
-    IFutureResult<ISqlResult> executeQuery();
+    T set(String columnName, @Nullable Object value);
+
+    /**
+     * Set the value of the specified column to the value of another column.
+     *
+     * <p>Useful for joins.</p>
+     *
+     * @param columnName       The column to set.
+     * @param otherColumnName  The other column to get a value from.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T setColumn(String columnName, String otherColumnName);
 }

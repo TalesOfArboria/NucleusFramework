@@ -22,19 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
+
+import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
 
 /**
- * Sql statement limit clause mixin.
+ * Sql table insert based {@link ISqlTableExecutable}
  */
-public interface ISqlClauseLimit<T> {
+public interface ISqlTableInsertExecutable extends ISqlTableExecutable {
 
     /**
-     * Limit the number of rows returned or modified.
-     *
-     * @param count  The maximum row count.
-     *
-     * @throws IllegalStateException if the statement is finalized.
+     * Selects the identity column value of the inserted row.
      */
-    T limit(int count);
+    ISqlTableQueryExecutable selectIdentity();
 }
+

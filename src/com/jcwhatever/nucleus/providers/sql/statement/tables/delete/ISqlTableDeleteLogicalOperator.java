@@ -22,19 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.delete;
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
 
 /**
- * Sql statement "WHERE" clause mixin.
+ * Sql table delete based {@link ISqlLogicalOperator}.
  */
-public interface ISqlClauseWhere<T> {
+public interface ISqlTableDeleteLogicalOperator extends
+        ISqlLogicalOperator<ISqlTableDeleteOperator>, ISqlTableExecutable {
 
-    /**
-     * Sql statement where clause.
-     *
-     * @param columnName  The name of the column in the first condition.
-     *
-     * @throws IllegalStateException if the statement is finalized.
-     */
-    T where(String columnName);
 }

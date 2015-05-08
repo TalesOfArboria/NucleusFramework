@@ -22,28 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql;
+package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
+import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
 
 /**
- * Database table.
+ * Sql table select logical operator.
  */
-public interface ISqlTable extends
-        ISqlStatementBuilder<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete>, INamed {
+public interface ISqlTableSelectLogicalOperator extends
+        ISqlLogicalOperator<ISqlTableSelectOperator>,
+        ISqlTableSelectClause, ISqlTableQueryExecutable {
 
     /**
-     * Get the tables database.
+     * End the current query and add a union select.
      */
-    ISqlDatabase getDatabase();
+    ISqlTableSelect unionSelect(ISqlTable table, String... columnNames);
 
     /**
-     * Get the table definition.
+     * End the current query and add a union all select.
      */
-    ISqlTableDefinition getDefinition();
+    ISqlTableSelect unionAllSelect(ISqlTable table, String... columnNames);
 }
