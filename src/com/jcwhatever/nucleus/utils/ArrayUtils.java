@@ -58,6 +58,7 @@ public final class ArrayUtils {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static final ItemStack[] EMPTY_ITEMSTACK_ARRAY = new ItemStack[0];
     public static final Entity[] EMPTY_ENTITY_ARRAY = new Entity[0];
+    public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
     /**
      * Copy the source array elements to the destination array starting from the
