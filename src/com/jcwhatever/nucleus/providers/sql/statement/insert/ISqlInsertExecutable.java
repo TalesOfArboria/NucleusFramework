@@ -22,12 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
+package com.jcwhatever.nucleus.providers.sql.statement.insert;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
- * Sql table select based {@link ISqlOperator}.
+ * Sql table insert based {@link ISqlExecutable}
  */
-public interface ISqlTableSelectOperator extends ISqlOperator<ISqlTableSelectLogicalOperator> {
+public interface ISqlInsertExecutable extends ISqlExecutable {
+
+    /**
+     * Selects the identity column value of the inserted row.
+     */
+    ISqlExecutable selectIdentity();
 }
+

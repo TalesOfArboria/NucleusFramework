@@ -28,6 +28,5 @@ package com.jcwhatever.nucleus.providers.sql.statement.mixins;
  * Sql statement mixin for continuing a new statement or executing
  * the current statement.
  */
-public interface ISqlBuildOrExecute<S, U, I, D> extends
-        ISqlBuildOrFinalize<S, U, I, D>, ISqlExecutable<S, U, I, D> {
+public interface ISqlBuildOrExecute extends ISqlBuildOrFinalize, ISqlExecutable {
 }

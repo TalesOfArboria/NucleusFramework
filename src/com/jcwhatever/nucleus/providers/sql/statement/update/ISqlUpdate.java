@@ -22,20 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.mixins;
+package com.jcwhatever.nucleus.providers.sql.statement.update;
 
-import com.jcwhatever.nucleus.providers.sql.ISqlResult;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
 
 /**
- * Sql executable query mixin.
+ * Table based {@link ISqlDataSetter}.
  */
-public interface ISqlExecutable extends ISqlFinalizable {
-
-    /**
-     * Execute the query.
-     *
-     * <p>Causes the current statement to be finalized.</p>
-     */
-    IFutureResult<ISqlResult> execute();
+public interface ISqlUpdate extends ISqlDataSetter<ISqlUpdateFinal> {
 }

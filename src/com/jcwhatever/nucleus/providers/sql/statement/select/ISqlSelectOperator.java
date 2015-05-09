@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
 
 /**
- * Table based {@link ISqlDataSetter}.
+ * Sql table select based {@link ISqlOperator}.
  */
-public interface ISqlTableUpdate extends ISqlDataSetter<ISqlTableUpdateFinal> {
+public interface ISqlSelectOperator extends ISqlOperator<ISqlSelectLogicalOperator> {
 }

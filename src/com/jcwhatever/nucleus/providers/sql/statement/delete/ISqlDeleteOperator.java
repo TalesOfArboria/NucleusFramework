@@ -22,15 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+package com.jcwhatever.nucleus.providers.sql.statement.delete;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
 
 /**
- * Sql table based logical operator.
+ * Sql table delete operator.
  */
-public interface ISqlTableUpdateLogicalOperator extends
-        ISqlLogicalOperator<ISqlTableUpdateOperator>,
-        ISqlTableExecutable, ISqlTableUpdateClause {
-}
+public interface ISqlDeleteOperator extends ISqlOperator<ISqlDeleteLogicalOperator> {}

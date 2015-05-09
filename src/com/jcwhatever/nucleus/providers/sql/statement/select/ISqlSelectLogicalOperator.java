@@ -22,19 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
 
 /**
- * Sql table insert based {@link ISqlTableExecutable}
+ * Sql table select logical operator.
  */
-public interface ISqlTableInsertExecutable extends ISqlTableExecutable {
+public interface ISqlSelectLogicalOperator extends
+        ISqlLogicalOperator<ISqlSelectOperator>,
+        ISqlSelectClause, ISqlExecutable {
 
     /**
-     * Selects the identity column value of the inserted row.
+     * End the current query and add a union select.
      */
-    ISqlTableQueryExecutable selectIdentity();
-}
+    ISqlSelect unionSelect(ISqlTable table, String... columnNames);
 
+    /**
+     * End the current query and add a union all select.
+     */
+    ISqlSelect unionAllSelect(ISqlTable table, String... columnNames);
+}

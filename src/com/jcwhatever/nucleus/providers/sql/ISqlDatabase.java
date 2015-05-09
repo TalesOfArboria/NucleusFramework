@@ -43,12 +43,12 @@ public interface ISqlDatabase extends INamed {
     Connection getConnection();
 
     /**
-     * Create a new table definer used to define and/or build
+     * Create a new table builder used to define and/or build
      * a table in the database.
      *
      * @return  The table builder.
      */
-    ISqlTableBuilder createTableDefiner();
+    ISqlTableBuilder createTableBuilder();
 
     /**
      * Create or get a table with the specified table definition.

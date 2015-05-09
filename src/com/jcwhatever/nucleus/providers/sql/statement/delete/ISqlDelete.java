@@ -22,13 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.delete;
-
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseWhere;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
+package com.jcwhatever.nucleus.providers.sql.statement.delete;
 
 /**
  * Sql table delete.
  */
-public interface ISqlTableDelete extends ISqlClauseWhere<ISqlTableDeleteOperator>, ISqlTableExecutable {
+public interface ISqlDelete extends ISqlDeleteWhere {
 }

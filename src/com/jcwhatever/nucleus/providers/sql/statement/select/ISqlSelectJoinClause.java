@@ -22,26 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.ISqlTable;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlJoinClause;
 
 /**
- * Sql table select logical operator.
+ * Sql table select clause.
  */
-public interface ISqlTableSelectLogicalOperator extends
-        ISqlLogicalOperator<ISqlTableSelectOperator>,
-        ISqlTableSelectClause, ISqlTableQueryExecutable {
-
-    /**
-     * End the current query and add a union select.
-     */
-    ISqlTableSelect unionSelect(ISqlTable table, String... columnNames);
-
-    /**
-     * End the current query and add a union all select.
-     */
-    ISqlTableSelect unionAllSelect(ISqlTable table, String... columnNames);
+public interface ISqlSelectJoinClause extends
+        ISqlSelectWhere, ISqlJoinClause<ISqlSelectJoin> {
 }

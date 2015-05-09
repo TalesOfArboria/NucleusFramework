@@ -22,14 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
-
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 /**
- * ISql table based "where" executable.
+ * Sql column reference mixin.
  */
-public interface ISqlTableSelectWhere extends ISqlTableQueryExecutable {
+public interface ISqlColumn<T> {
 
-    ISqlTableSelectOperator where(String column);
+    /**
+     * Reference the specified column.
+     *
+     * @param columnName  The name of the column.
+     */
+    T column(String columnName);
 }

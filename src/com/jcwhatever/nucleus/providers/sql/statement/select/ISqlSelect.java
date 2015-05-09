@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
 /**
- * Sql table insert.
+ * Sql table select.
  */
-public interface ISqlTableInsert {
+public interface ISqlSelect extends
+        ISqlSelectJoin, ISqlSelectWhere, ISqlSelectClause {
 
-    ISqlTableInsertFinal values(Object... values);
+    ISqlSelectWhere into(String tableName);
 }

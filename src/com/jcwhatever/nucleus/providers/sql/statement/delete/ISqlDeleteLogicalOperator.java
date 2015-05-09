@@ -22,15 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.delete;
+package com.jcwhatever.nucleus.providers.sql.statement.delete;
 
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
 
 /**
  * Sql table delete based {@link ISqlLogicalOperator}.
  */
-public interface ISqlTableDeleteLogicalOperator extends
-        ISqlLogicalOperator<ISqlTableDeleteOperator>, ISqlTableExecutable {
-
+public interface ISqlDeleteLogicalOperator extends
+        ISqlLogicalOperator<ISqlDeleteOperator>, ISqlExecutable {
 }

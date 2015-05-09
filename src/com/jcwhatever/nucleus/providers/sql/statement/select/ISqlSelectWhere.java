@@ -22,12 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseWhere;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
- * Sql table update based {@link ISqlOperator}.
+ * ISql table based "where" executable.
  */
-public interface ISqlTableUpdateOperator extends ISqlOperator<ISqlTableUpdateLogicalOperator> {
+public interface ISqlSelectWhere extends
+        ISqlClauseWhere<ISqlSelectOperator>, ISqlExecutable {
 }

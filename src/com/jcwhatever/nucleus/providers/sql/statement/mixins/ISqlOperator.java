@@ -24,6 +24,9 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
+import com.jcwhatever.nucleus.utils.converters.IConverter;
+
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
@@ -42,6 +45,28 @@ public interface ISqlOperator<T> {
     T isEqualTo(@Nullable Object value);
 
     /**
+     * Determine if the previously specified column is equal to 1 or more of the
+     * specified values.
+     *
+     * @param values  The values to compare.
+     *
+     * @param <T1>  The value type.
+     */
+    <T1> T isEqualToAny(Collection<T1> values);
+
+    /**
+     * Determine if the previously specified column is equal to 1 or more of the
+     * specified values.
+     *
+     * @param values     The values to compare.
+     * @param converter  Converter used to convert objects in collection to the
+     *                   proper value.
+     *
+     * @param <T1>  The value type.
+     */
+    <T1, T2> T isEqualToAny(Collection<T1> values, IConverter<T1, T2> converter);
+
+    /**
      * Determine if the previously specified column is equal to the specified
      * column.
      *
@@ -50,6 +75,16 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is equal to 1 or more of the
+     * specified columns.
+     *
+     * @param columnNames  The columns to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isEqualToAnyColumn(String... columnNames);
 
     /**
      * Determine if the previously specified column is greater than the
@@ -62,6 +97,28 @@ public interface ISqlOperator<T> {
     T isGreaterThan(@Nullable Object value);
 
     /**
+     * Determine if the previously specified column is greater than 1 or more
+     * of the specified values.
+     *
+     * @param values  The value to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1> T isGreaterThanAny(Collection<T1> values);
+
+    /**
+     * Determine if the previously specified column is greater than 1 or more
+     * of the specified values.
+     *
+     * @param values     The value to compare.
+     * @param converter  Converter used to convert objects in collection to the
+     *                   proper value.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1, T2> T isGreaterThanAny(Collection<T1> values, IConverter<T1, T2> converter);
+
+    /**
      * Determine if the previously specified column is greater than the
      * specified column.
      *
@@ -70,6 +127,16 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isGreaterThanColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is greater than 1 or more
+     * of the specified columns.
+     *
+     * @param columnNames  The columns to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isGreaterThanAnyColumn(String... columnNames);
 
     /**
      * Determine if the previously specified column is greater than or
@@ -83,6 +150,28 @@ public interface ISqlOperator<T> {
 
     /**
      * Determine if the previously specified column is greater than or
+     * equal to 1 or more of the specified values.
+     *
+     * @param values  The values to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1> T isGreaterOrEqualToAny(Collection<T1> values);
+
+    /**
+     * Determine if the previously specified column is greater than or
+     * equal to 1 or more of the specified values.
+     *
+     * @param values     The values to compare.
+     * @param converter  Converter used to convert objects in collection to the
+     *                   proper value.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1, T2> T isGreaterOrEqualToAny(Collection<T1> values, IConverter<T1, T2> converter);
+
+    /**
+     * Determine if the previously specified column is greater than or
      * equal to the specified column.
      *
      * @param columnName  The column to compare.
@@ -90,6 +179,16 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isGreaterOrEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is greater than or
+     * equal to 1 or more of the specified columns.
+     *
+     * @param columnNames  The columns to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isGreaterOrEqualToAnyColumn(String... columnNames);
 
     /**
      * Determine if the previously specified column is less than the
@@ -102,6 +201,28 @@ public interface ISqlOperator<T> {
     T isLessThan(@Nullable Object value);
 
     /**
+     * Determine if the previously specified column is less than 1 or
+     * more of the specified values.
+     *
+     * @param values  The values to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1> T isLessThanAny(Collection<T1> values);
+
+    /**
+     * Determine if the previously specified column is less than 1 or
+     * more of the specified values.
+     *
+     * @param values     The values to compare.
+     * @param converter  Converter used to convert objects in collection to the
+     *                   proper value.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1, T2> T isLessThanAny(Collection<T1> values, IConverter<T1, T2> converter);
+
+    /**
      * Determine if the previously specified column is less than the
      * specified column.
      *
@@ -110,6 +231,16 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isLessThanColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is less than 1 or
+     * more of the specified columns.
+     *
+     * @param columnNames  The columns to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isLessThanAnyColumn(String... columnNames);
 
     /**
      * Determine if the previously specified column is less than or
@@ -123,6 +254,28 @@ public interface ISqlOperator<T> {
 
     /**
      * Determine if the previously specified column is less than or
+     * equal to 1 or more of the specified values.
+     *
+     * @param values  The values to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1> T isLessOrEqualToAny(Collection<T1> values);
+
+    /**
+     * Determine if the previously specified column is less than or
+     * equal to 1 or more of the specified values.
+     *
+     * @param values     The values to compare.
+     * @param converter  Converter used to convert objects in collection to the
+     *                   proper value.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    <T1, T2> T isLessOrEqualToAny(Collection<T1> values, IConverter<T1, T2> converter);
+
+    /**
+     * Determine if the previously specified column is less than or
      * equal to the specified column.
      *
      * @param columnName  The column to compare.
@@ -130,4 +283,14 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isLessOrEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is less than or
+     * equal to 1 or more of the specified columns.
+     *
+     * @param columnNames  The columns to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isLessOrEqualToAnyColumn(String... columnNames);
 }

@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+package com.jcwhatever.nucleus.providers.sql.statement.insert;
 
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
 
 /**
- * Executable Update statement.
+ * Sql table insert based {@link ISqlDataSetter}.
  */
-public interface ISqlTableUpdateFinal extends ISqlTableUpdate, ISqlTableExecutable {
-
-    ISqlTableUpdateOperator where(String column);
+public interface ISqlInsertExists extends
+        ISqlDataSetter<ISqlInsertExists>, ISqlInsertExecutable {
 }

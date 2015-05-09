@@ -22,12 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
+package com.jcwhatever.nucleus.providers.sql.statement.update;
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
- * Sql table insert based executable.
+ * Sql table update clause.
  */
-public interface ISqlTableInsertFinal extends ISqlTableInsert, ISqlTableInsertExecutable {
-
-    ISqlTableInsertExists ifExists();
+public interface ISqlUpdateClause extends
+        ISqlExecutable,
+        ISqlClauseOrder<ISqlUpdateClause>,
+        ISqlClauseLimit<ISqlUpdateClause> {
 }

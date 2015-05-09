@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.insert;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlJoin;
 
 /**
- * Sql table insert based {@link ISqlDataSetter}.
+ * Sql table select based {@link ISqlJoin}.
  */
-public interface ISqlTableInsertExists extends
-        ISqlDataSetter<ISqlTableInsertExists>, ISqlTableInsertExecutable {
+public interface ISqlSelectJoin extends
+        ISqlJoin<ISqlSelectJoinClause>, ISqlSelectWhere {
 }

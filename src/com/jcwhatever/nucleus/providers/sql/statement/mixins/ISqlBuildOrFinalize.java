@@ -24,12 +24,11 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
+import com.jcwhatever.nucleus.providers.sql.statement.ISqlNextStatementBuilder;
 
 /**
  * Sql statement mixin for continuing a new statement or finalizing
  * the current statement.
  */
-public interface ISqlBuildOrFinalize<S, U, I, D> extends
-        ISqlStatementBuilder<S, U, I, D>, ISqlFinalizable<S, U, I, D> {
+public interface ISqlBuildOrFinalize extends ISqlNextStatementBuilder, ISqlFinalizable {
 }

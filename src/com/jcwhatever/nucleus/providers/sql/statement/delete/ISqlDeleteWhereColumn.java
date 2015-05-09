@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
+package com.jcwhatever.nucleus.providers.sql.statement.delete;
+
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlColumn;
 
 /**
- * Sql table select.
+ * Sql delete "where" column selector.
  */
-public interface ISqlTableSelect extends ISqlTableSelectJoin, ISqlTableSelectWhere, ISqlTableSelectClause {
-
-    ISqlTableSelectWhere into(String tableName);
+public interface ISqlDeleteWhereColumn extends ISqlColumn<ISqlDeleteOperator> {
 }

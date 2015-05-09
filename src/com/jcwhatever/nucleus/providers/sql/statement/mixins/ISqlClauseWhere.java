@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 /**
  * Sql statement "WHERE" clause mixin.
  */
-public interface ISqlClauseWhere<T> {
+public interface ISqlClauseWhere<T1> {
 
     /**
      * Sql statement where clause.
@@ -36,5 +36,5 @@ public interface ISqlClauseWhere<T> {
      *
      * @throws IllegalStateException if the statement is finalized.
      */
-    T where(String columnName);
+    T1 where(String columnName);
 }

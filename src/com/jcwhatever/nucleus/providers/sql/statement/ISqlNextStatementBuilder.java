@@ -22,18 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.update;
+package com.jcwhatever.nucleus.providers.sql.statement;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlCommittable;
 
-/*
- * 
+/**
+ * Sql statement builder used after initial statement is created.
  */
-public interface ISqlTableUpdateClause extends
-        ISqlTableExecutable,
-        ISqlClauseOrder<ISqlTableUpdateClause>,
-        ISqlClauseLimit<ISqlTableUpdateClause> {
-
+public interface ISqlNextStatementBuilder extends ISqlStatementBuilder, ISqlCommittable {
 }

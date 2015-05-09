@@ -22,17 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables;
+package com.jcwhatever.nucleus.providers.sql.statement.delete;
 
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseWhere;
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
 
 /**
- * Table based {@link ISqlTableQueryExecutable}.
+ * Sql delete "where" clause.
  */
-public interface ISqlTableQueryExecutable extends
-        ISqlExecutable<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete> {
+public interface ISqlDeleteWhere extends
+        ISqlClauseWhere<ISqlDeleteOperator>, ISqlExecutable {
 }

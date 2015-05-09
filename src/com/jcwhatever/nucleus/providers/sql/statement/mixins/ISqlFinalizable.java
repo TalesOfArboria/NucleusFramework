@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
 import com.jcwhatever.nucleus.providers.sql.ISqlTable;
-import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatementBuilder;
+import com.jcwhatever.nucleus.providers.sql.statement.ISqlNextStatementBuilder;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,36 +33,28 @@ import java.sql.SQLException;
 /**
  * Sql statement finalizing methods mixin.
  */
-public interface ISqlFinalizable<S, U, I, D> {
+public interface ISqlFinalizable extends ISqlCommittable {
 
     /**
      * Terminate the current statement to begin the next statement.
      *
      * <p>Causes the current statement to be finalized.</p>
      */
-    ISqlStatementBuilder<S, U, I, D> endStatement();
+    ISqlNextStatementBuilder endStatement();
 
     /**
-     * Terminate the current statement to begin the next statement
-     * on a different table.
+     * Set the current table.
      *
      * <p>Causes the current statement to be finalized.</p>
      *
-     * @param table  The table the next statement applies to.
+     * @param table  The table the next statements apply to.
      */
-    ISqlStatementBuilder<S, U, I, D> endStatement(ISqlTable table);
-
-    /**
-     * Insert the end of a transaction.
-     *
-     * <p>Causes the current statement to be finalized.</p>
-     */
-    ISqlBuildOrExecute<S, U, I, D> commitTransaction();
+    ISqlNextStatementBuilder setTable(ISqlTable table);
 
     /**
      * Create a prepared statement.
      *
-     * <p>Causes the statement to be finalized.</p>
+     * <p>Causes the current statement to be finalized.</p>
      *
      * @throws SQLException
      */

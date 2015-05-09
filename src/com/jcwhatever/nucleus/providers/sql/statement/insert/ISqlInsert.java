@@ -22,17 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables;
-
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlBuildOrExecute;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.delete.ISqlTableDelete;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.insert.ISqlTableInsert;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.select.ISqlTableSelect;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.update.ISqlTableUpdate;
+package com.jcwhatever.nucleus.providers.sql.statement.insert;
 
 /**
- * Table based {@link ISqlBuildOrExecute}.
+ * Sql table insert.
  */
-public interface ISqlTableBuildOrExecute extends
-        ISqlBuildOrExecute<ISqlTableSelect, ISqlTableUpdate, ISqlTableInsert, ISqlTableDelete> {
+public interface ISqlInsert {
+
+    ISqlInsertFinal values(Object... values);
 }

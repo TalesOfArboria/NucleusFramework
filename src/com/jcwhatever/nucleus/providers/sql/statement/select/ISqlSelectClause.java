@@ -22,13 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlJoin;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimitOffset;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
-/**
- * Sql table select based {@link ISqlJoin}.
+/*
+ * 
  */
-public interface ISqlTableSelectJoin extends
-        ISqlJoin<ISqlTableSelectJoinClause>, ISqlTableSelectWhere {
+public interface ISqlSelectClause extends
+        ISqlExecutable, ISqlClauseLimit<ISqlSelectClause>,
+        ISqlClauseLimitOffset<ISqlSelectClause>,
+        ISqlClauseOrder<ISqlSelectClause> {
 }

@@ -24,15 +24,20 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement;
 
+import com.jcwhatever.nucleus.providers.sql.statement.delete.ISqlDelete;
+import com.jcwhatever.nucleus.providers.sql.statement.insert.ISqlInsert;
+import com.jcwhatever.nucleus.providers.sql.statement.select.ISqlSelect;
+import com.jcwhatever.nucleus.providers.sql.statement.update.ISqlUpdate;
+
 /**
  * Sql statement builder.
  */
-public interface ISqlStatementBuilder<S, U, I, D> {
+public interface ISqlStatementBuilder {
 
     /**
      * Insert the beginning of a transaction.
      */
-    ISqlStatementBuilder<S, U, I, D> beginTransaction();
+    ISqlStatementBuilder beginTransaction();
 
     /**
      * Construct a Select query.
@@ -41,7 +46,7 @@ public interface ISqlStatementBuilder<S, U, I, D> {
      *
      * @param columns  The columns to select. Leave empty to select all.
      */
-    S selectRow(String... columns);
+    ISqlSelect selectRow(String... columns);
 
     /**
      * Construct a Select query.
@@ -50,21 +55,21 @@ public interface ISqlStatementBuilder<S, U, I, D> {
      *
      * @param columns  The columns to select. Leave empty to select all.
      */
-    S selectRows(String... columns);
+    ISqlSelect selectRows(String... columns);
 
     /**
      * Construct an Update statement.
      *
      * <p>Equivalent to invoking {@link #updateRows}.</p>
      */
-    U updateRow();
+    ISqlUpdate updateRow();
 
     /**
      * Construct an Update statement.
      *
      * <p>Equivalent to invoking {@link #updateRow}.</p>
      */
-    U updateRows();
+    ISqlUpdate updateRows();
 
     /**
      * Construct an Insert statement.
@@ -74,7 +79,7 @@ public interface ISqlStatementBuilder<S, U, I, D> {
      * @param columns  The columns with values to insert. Leave empty to auto
      *                 insert all.
      */
-    I insertRow(String... columns);
+    ISqlInsert insertRow(String... columns);
 
     /**
      * Construct an Insert statement.
@@ -84,19 +89,19 @@ public interface ISqlStatementBuilder<S, U, I, D> {
      * @param columns  The columns with values to insert. Leave empty to auto
      *                 insert all.
      */
-    I insertRows(String... columns);
+    ISqlInsert insertRows(String... columns);
 
     /**
      * Construct a Delete statement.
      *
      * <p>Equivalent to invoking {@link #deleteRows}.</p>
      */
-    D deleteRow();
+    ISqlDelete deleteRow();
 
     /**
      * Construct a Delete statement.
      *
      * <p>Equivalent to invoking {@link #deleteRow}.</p>
      */
-    D deleteRows();
+    ISqlDelete deleteRows();
 }

@@ -22,18 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.select;
+package com.jcwhatever.nucleus.providers.sql.statement.update;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimitOffset;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
-import com.jcwhatever.nucleus.providers.sql.statement.tables.ISqlTableQueryExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
 
-/*
- * 
+/**
+ * Sql table update based {@link ISqlOperator}.
  */
-public interface ISqlTableSelectClause extends
-        ISqlTableQueryExecutable, ISqlClauseLimit<ISqlTableSelectClause>,
-        ISqlClauseLimitOffset<ISqlTableSelectClause>,
-        ISqlClauseOrder<ISqlTableSelectClause> {
+public interface ISqlUpdateOperator extends ISqlOperator<ISqlUpdateLogicalOperator> {
 }

@@ -22,11 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.tables.delete;
+package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
-
-/*
- * 
+/**
+ * Sql statement commit mixin.
  */
-public interface ISqlTableDeleteOperator extends ISqlOperator<ISqlTableDeleteLogicalOperator> {}
+public interface ISqlCommittable {
+
+    /**
+     * Insert the end of a transaction.
+     *
+     * <p>Causes the current statement to be finalized.</p>
+     */
+    ISqlBuildOrExecute commitTransaction();
+}
