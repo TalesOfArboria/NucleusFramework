@@ -566,20 +566,20 @@ public class SimpleRegionSelection implements IRegionSelection {
             }
 
             _chunkX = Math.min(_p1.getBlockX(), _p2.getBlockX()) == _p1.getBlockX()
-                    ? (int)Math.floor((double) _p1.getBlockX() / 16)
-                    : (int)Math.floor((double) _p2.getBlockX() / 16);
+                    ? (int)Math.floor(_p1.getBlockX() / 16.0D)
+                    : (int)Math.floor(_p2.getBlockX() / 16.0D);
 
             _chunkZ = Math.min(_p1.getBlockZ(), _p2.getBlockZ()) == _p1.getBlockZ()
-                    ? (int)Math.floor((double)_p1.getBlockZ() / 16)
-                    : (int)Math.floor((double)_p2.getBlockZ() / 16);
+                    ? (int)Math.floor(_p1.getBlockZ() / 16.0D)
+                    : (int)Math.floor(_p2.getBlockZ() / 16.0D);
 
             int chunkEndX = Math.max(_p1.getBlockX(), _p2.getBlockX()) == _p1.getBlockX()
-                    ? (int)Math.floor((double) _p1.getBlockX() / 16)
-                    : (int)Math.floor((double) _p2.getBlockX() / 16);
+                    ? (int)Math.floor(_p1.getBlockX() / 16.0D)
+                    : (int)Math.floor(_p2.getBlockX() / 16.0D);
 
             int chunkEndZ = Math.max(_p1.getBlockZ(), _p2.getBlockZ()) == _p1.getBlockZ()
-                    ? (int)Math.floor((double) _p1.getBlockZ() / 16)
-                    : (int)Math.floor((double) _p2.getBlockZ() / 16);
+                    ? (int)Math.floor(_p1.getBlockZ() / 16.0D)
+                    : (int)Math.floor(_p2.getBlockZ() / 16.0D);
 
             _chunkXWidth = chunkEndX - _chunkX + 1;
             _chunkZWidth = chunkEndZ - _chunkZ + 1;
