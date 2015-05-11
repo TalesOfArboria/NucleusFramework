@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.providers.sql;
 
 import com.jcwhatever.nucleus.mixins.INamed;
 
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
@@ -134,6 +135,17 @@ public interface ISqlTableDefinition {
         boolean isAutoIncrement();
 
         /**
+         * Determine if the column has a default value specified.
+         */
+        boolean hasDefaultValue();
+
+        /**
+         * Get the default value.
+         */
+        @Nullable
+        Object getDefaultValue();
+
+        /**
          * Get the foreign key table name.
          *
          * @return  The table name or null if the column does not have
@@ -162,5 +174,10 @@ public interface ISqlTableDefinition {
          * @return  The start value or -1 if the column is not auto incrementing.
          */
         long getAutoIncrementStart();
+
+        /**
+         * Get the names of the indexes the column is assigned to.
+         */
+        Collection<String> getIndexNames();
     }
 }

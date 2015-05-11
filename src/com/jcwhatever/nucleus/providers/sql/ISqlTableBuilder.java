@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.sql;
 
+import javax.annotation.Nullable;
+
 /**
  * Used to define a database tables.
  */
@@ -33,12 +35,12 @@ public interface ISqlTableBuilder {
      * Specify that the table will most often be used for reading and
      * inserting data.
      */
-    ISqlTableDefinerTransact usageReadInsert();
+    ISqlTableBuilderTransact usageReadInsert();
 
     /**
      * Specify that the table will most often be used for writing data.
      */
-    ISqlTableDefinerTransact usageReadInsertUpdate();
+    ISqlTableBuilderTransact usageReadInsertUpdate();
 
     /**
      * Skip table engine specification and set the explicit name
@@ -50,29 +52,29 @@ public interface ISqlTableBuilder {
      *
      * @param engineName  The name of the engine to use.
      */
-    ISqlTableDefinerColumns setEngine(String engineName);
+    ISqlTableBuilderColumns setEngine(String engineName);
 
     /**
      * Use the sql servers default engine.
      */
-    ISqlTableDefinerColumns defaultEngine();
+    ISqlTableBuilderColumns defaultEngine();
 
 
-    interface ISqlTableDefinerTransact {
+    interface ISqlTableBuilderTransact {
 
         /**
          * Specify that the table will be used for ACID transactions
          * and/or requires excellent data integrity.
          */
-        ISqlTableDefinerColumns transactional();
+        ISqlTableBuilderColumns transactional();
 
         /**
          * Specify that the table will not use ACID transactions.
          */
-        ISqlTableDefinerColumns nonTransactional();
+        ISqlTableBuilderColumns nonTransactional();
     }
 
-    interface ISqlTableDefinerColumns {
+    interface ISqlTableBuilderColumns {
 
         /**
          * Add a data column.
@@ -80,33 +82,78 @@ public interface ISqlTableBuilder {
          * @param name  The name of the column.
          * @param type  The column data type.
          */
-        ISqlTableDefinerConstraints column(String name, ISqlDbType type);
+        ISqlTableBuilderConstraints column(String name, ISqlDbType type);
     }
 
-    interface ISqlTableDefinerConstraints extends ISqlTableDefinerFinal {
+    interface ISqlTableBuilderConstraints extends
+            ISqlTableBuilderFinal, ISqlTableBuilderNullable,
+            ISqlTableBuilderIndex, ISqlTableBuilderDefaultValue {
 
         /**
          * Set the previously specified column as the primary key.
+         *
+         * <p>When added to more than one column, a composite primary key is created.</p>
          */
-        ISqlTableDefinerPrimaryKey primary();
+        ISqlTableBuilderPrimaryKey primary();
 
         /**
          * Specify a unique key column.
          */
-        ISqlTableDefinerFinal unique();
+        ISqlTableBuilderFinal unique();
 
         /**
          * Specify the previously specified column as a foreign key constraint
          */
-        ISqlTableDefinerForeign foreign(String tableName, String primaryKey);
+        ISqlTableBuilderForeign foreign(String tableName, String primaryKey);
+    }
+
+    interface ISqlTableBuilderNullable {
 
         /**
          * Specify a column as allowing null values.
          */
-        ISqlTableDefinerFinal nullable();
+        ISqlTableBuilderFinal nullable();
     }
 
-    interface ISqlTableDefinerPrimaryKey extends ISqlTableDefinerFinal {
+    interface ISqlTableBuilderIndex {
+
+        /**
+         * Specify the previously specified column as having an index.
+         *
+         * <p>The default index type is used.</p>
+         *
+         * @param indexNames  The name of the index or indexes to add the column to. The names
+         *                    are primarily used by the API to assign index context. The
+         *                    implementation may or may not use the specified names for the
+         *                    actual indexes.
+         */
+        ISqlTableBuilderIndexFinal index(String... indexNames);
+    }
+
+
+    interface ISqlTableBuilderDefaultValue {
+
+        /**
+         * Specify the default value for the previously specified column.
+         *
+         * <p>Note that not all providers will be able to support default values
+         * for compound data types.</p>
+         *
+         * @param value  The default value.
+         */
+        ISqlTableBuilderDefaultValueFinal defaultValue(@Nullable Object value);
+    }
+
+    interface ISqlTableBuilderIndexFinal extends
+            ISqlTableBuilderFinal, ISqlTableBuilderNullable, ISqlTableBuilderDefaultValue {
+    }
+
+
+    interface ISqlTableBuilderDefaultValueFinal extends
+            ISqlTableBuilderFinal, ISqlTableBuilderNullable, ISqlTableBuilderIndex {
+    }
+
+    interface ISqlTableBuilderPrimaryKey extends ISqlTableBuilderFinal {
 
         /**
          * Add auto incrementing to a primary key.
@@ -114,18 +161,18 @@ public interface ISqlTableBuilder {
          * @throws IllegalStateException if the primary key data type does not
          * support auto increment.
          */
-        ISqlTableDefinerFinal autoIncrement();
+        ISqlTableBuilderFinal autoIncrement();
     }
 
-    interface ISqlTableDefinerForeign extends ISqlTableDefinerFinal {
+    interface ISqlTableBuilderForeign extends ISqlTableBuilderFinal {
 
         /**
          * Add cascade delete clause for a foreign key.
          */
-        ISqlTableDefinerFinal cascadeDelete();
+        ISqlTableBuilderFinal cascadeDelete();
     }
 
-    interface ISqlTableDefinerFinal extends ISqlTableDefinerColumns {
+    interface ISqlTableBuilderFinal extends ISqlTableBuilderColumns {
 
         /**
          * Define the database table.

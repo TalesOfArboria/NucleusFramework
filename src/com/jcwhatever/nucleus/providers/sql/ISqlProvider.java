@@ -36,6 +36,33 @@ import java.sql.PreparedStatement;
 public interface ISqlProvider extends IProvider, ISqlDataTypes {
 
     /**
+     * MySql brand name.
+     */
+    String MYSQL = "MySQL";
+
+    /**
+     * Microsoft SQL brand name.
+     */
+    String MSSQL = "MSSQL";
+
+    /**
+     * Oracle SQL brand name.
+     */
+    String ORACLE = "Oracle";
+
+    /**
+     * PostgreSQL brand name.
+     */
+    String POSTGRE = "PostgreSQL";
+
+    /**
+     * Get the database brand.
+     *
+     * <p>Returns one of the four SQL brand constants or other brand name.</p>
+     */
+    String getDatabaseBrand();
+
+    /**
      * Connect to a database.
      *
      * @param address       The address of the database.
