@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Array utilities.
@@ -2711,6 +2712,48 @@ public final class ArrayUtils {
 
         for (int i=0; i < array.length; i++)
             array[i] = 0;
+    }
+
+    /**
+     * Fill an array with a single value.
+     *
+     * @param array  The array to fill.
+     * @param value  The value to fill the array with.
+     *
+     * @param <T>  The array component type.
+     *
+     * @return  The filled array.
+     */
+    public static <T> T[] fill(T[] array, @Nullable T value) {
+        PreCon.notNull(array);
+        for (int i=0; i < array.length; i++) {
+            array[i] = value;
+        }
+        return array;
+    }
+
+    /**
+     * Fill an array from the specified index to the specified "from" index (+1) with
+     * a single value.
+     *
+     * @param array      The array to fill.
+     * @param value      The value to fill the array with.
+     * @param fromIndex  The start index to fill.
+     * @param toIndexP1  The end index (+1) to end at.
+     *
+     * @param <T>  The array component type.
+     *
+     * @return  The filled array.
+     */
+    public static <T> T[] fill(T[] array, @Nullable T value, int fromIndex, int toIndexP1) {
+        PreCon.notNull(array);
+        PreCon.positiveNumber(fromIndex);
+        PreCon.lessThanEqual(toIndexP1, array.length);
+
+        for (int i = fromIndex; i < toIndexP1; i++) {
+            array[i] =  value;
+        }
+        return array;
     }
 
     /**
