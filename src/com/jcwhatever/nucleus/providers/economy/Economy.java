@@ -213,7 +213,9 @@ public final class Economy {
      *
      * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static IFutureResult<IEconomyTransaction> deposit(UUID playerId, double amount, ICurrency currency) {
+    public static IFutureResult<IEconomyTransaction> deposit(
+            UUID playerId, double amount, ICurrency currency) {
+
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
@@ -223,6 +225,39 @@ public final class Economy {
             return new FutureResultAgent<IEconomyTransaction>()
                     .error(null, "Failed to retrieve account " + playerId);
         }
+
+        return deposit(account, amount, currency);
+    }
+
+    /**
+     * Deposit money into a players global account.
+     *
+     * <p>The currency of the amount is the economy providers default currency.</p>
+     *
+     * @param account  The account to give money to.
+     * @param amount   The amount to give the player.
+     *
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
+     */
+    public static IFutureResult<IEconomyTransaction> deposit(IAccount account, double amount) {
+        return deposit(account, amount, getCurrency());
+    }
+
+    /**
+     * Deposit money into a players global account.
+     *
+     * @param account   The account to give money to.
+     * @param amount    The amount to give the player.
+     * @param currency  The currency of the amount.
+     *
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
+     */
+    public static IFutureResult<IEconomyTransaction> deposit(
+            IAccount account, double amount, ICurrency currency) {
+
+        PreCon.notNull(account);
+        PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
 
         IEconomyTransaction transaction = getProvider().createTransaction();
         transaction.deposit(account, amount, currency);
@@ -263,6 +298,39 @@ public final class Economy {
             return new FutureResultAgent<IEconomyTransaction>()
                     .error(null, "Failed to retrieve account for " + playerId);
         }
+
+        return withdraw(account, amount, currency);
+    }
+
+    /**
+     * Withdraw money from a players global account.
+     *
+     * <p>The currency of the amount is the economy providers default currency.</p>
+     *
+     * @param account  The account to take money from.
+     * @param amount   The amount to take.
+     *
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
+     */
+    public static IFutureResult<IEconomyTransaction> withdraw(IAccount account, double amount) {
+        return withdraw(account, amount, getCurrency());
+    }
+
+    /**
+     * Withdraw money from a players global account.
+     *
+     * @param account   The account to take money from.
+     * @param amount    The amount to take.
+     * @param currency  The currency of the amount.
+     *
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
+     */
+    public static IFutureResult<IEconomyTransaction> withdraw(
+            IAccount account, double amount, ICurrency currency) {
+
+        PreCon.notNull(account);
+        PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
 
         IEconomyTransaction transaction = getProvider().createTransaction();
 
