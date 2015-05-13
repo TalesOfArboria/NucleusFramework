@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.managed.commands.ICommandDispatcher;
 import com.jcwhatever.nucleus.managed.language.ILanguageContext;
 import com.jcwhatever.nucleus.managed.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
+import com.jcwhatever.nucleus.mixins.ILoadable;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -51,7 +52,8 @@ import java.util.Map;
  * An abstract implementation of a Bukkit plugin with
  * NucleusFramework specific features.
  */
-public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed {
+public abstract class NucleusPlugin extends JavaPlugin
+        implements IChatPrefixed, ILoadable {
 
     static List<NucleusPlugin> _enabled = new ArrayList<>(10);
 
@@ -111,6 +113,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     /**
      * Determine if the plugin is finished loading.
      */
+    @Override
     public boolean isLoaded() {
         return isEnabled() && _isEnabled;
     }

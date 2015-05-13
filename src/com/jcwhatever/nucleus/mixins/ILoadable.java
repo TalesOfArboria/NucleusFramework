@@ -22,37 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.coords;
-
-import com.jcwhatever.nucleus.mixins.ILoadable;
-
-import org.bukkit.World.Environment;
-
-import java.util.UUID;
+package com.jcwhatever.nucleus.mixins;
 
 /**
- * An object that contains info about a world.
+ * Mixin for a type that is loaded from a data source or
+ * requires time to set itself up.
  */
-public interface IWorldInfo extends ILoadable {
+public interface ILoadable {
 
     /**
-     * Get the world unique ID.
+     * Determine if the object is loaded.
      */
-    UUID getId();
-
-    /**
-     * Get the world name.
-     */
-    String getName();
-
-    /**
-     * Get the world environment type.
-     */
-    Environment getEnvironment();
-
-    /**
-     * Determine if the world is loaded.
-     */
-    @Override
     boolean isLoaded();
 }

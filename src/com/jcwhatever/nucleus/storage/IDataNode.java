@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.storage;
 
+import com.jcwhatever.nucleus.mixins.ILoadable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
@@ -43,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a key/value data storage node.
  */
-public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
+public interface IDataNode extends Iterable<IDataNode>, ILoadable, IPluginOwned {
 
     /**
      * Specifies auto save settings for an {@link IDataNode}.
@@ -57,6 +58,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     /**
      * Determine if the data is loaded.
      */
+    @Override
     boolean isLoaded();
 
     /**
