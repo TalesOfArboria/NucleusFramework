@@ -48,6 +48,120 @@ public class FutureResultAgent<R> extends SubscriberAgent {
     private boolean _hasFutureSubscribers;
 
     /**
+     * Create a new agent and immediately create a success result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> successResult() {
+        return new FutureResultAgent<T>().success();
+    }
+
+    /**
+     * Create a new agent and immediately create a success result.
+     *
+     * @param result  The result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> successResult(@Nullable T result) {
+        return new FutureResultAgent<T>().success(result);
+    }
+
+    /**
+     * Create a new agent and immediately create a success result.
+     *
+     * @param result   The result.
+     * @param message  The result message.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> successResult(@Nullable T result, String message) {
+        return new FutureResultAgent<T>().success(result, message);
+    }
+
+    /**
+     * Create a new agent and immediately create a cancel result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> cancelResult() {
+        return new FutureResultAgent<T>().cancel();
+    }
+
+    /**
+     * Create a new agent and immediately create a cancel result.
+     *
+     * @param result  The result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> cancelResult(@Nullable T result) {
+        return new FutureResultAgent<T>().cancel(result);
+    }
+
+    /**
+     * Create a new agent and immediately create a cancel result.
+     *
+     * @param result  The result.
+     * @param message The result message.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> cancelResult(@Nullable T result, String message) {
+        return new FutureResultAgent<T>().cancel(result, message);
+    }
+
+    /**
+     * Create a new agent and immediately create an error result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> errorResult() {
+        return new FutureResultAgent<T>().error();
+    }
+
+    /**
+     * Create a new agent and immediately create an error result.
+     *
+     * @param result  The result.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> errorResult(@Nullable T result) {
+        return new FutureResultAgent<T>().error(result);
+    }
+
+    /**
+     * Create a new agent and immediately create an error result.
+     *
+     * @param result   The result.
+     * @param message  The result message.
+     *
+     * @param <T>  The result type.
+     *
+     * @return  The future result.
+     */
+    public static <T> IFutureResult<T> errorResult(@Nullable T result, String message) {
+        return new FutureResultAgent<T>().error(result, message);
+    }
+
+    /**
      * Constructor.
      */
     public FutureResultAgent() {
