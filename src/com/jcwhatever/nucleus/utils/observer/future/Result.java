@@ -165,7 +165,7 @@ public class Result<R> {
      * Determine if the result is cancelled.
      */
     public boolean isCancelled() {
-        return isComplete() && _resultCompletion < 0.0D;
+        return isComplete() && Double.compare(_resultCompletion, 0.0D) == 0;
     }
 
     /**
