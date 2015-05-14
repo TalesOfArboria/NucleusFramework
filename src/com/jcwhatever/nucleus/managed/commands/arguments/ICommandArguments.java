@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.managed.commands.arguments;
 
+import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidParameterException;
@@ -55,6 +57,14 @@ public interface ICommandArguments extends IPluginOwned, Iterable<ICommandArgume
      * Get the raw unparsed arguments.
      */
     String[] getRawArguments();
+
+    /**
+     * Generate a new {@link ICommandArguments} instance for the specified command
+     * using the arguments in this instance.
+     *
+     * @param command  The command.
+     */
+    ICommandArguments forCommand(IRegisteredCommand command) throws CommandException;
 
     /**
      * The number of static arguments in the collection.

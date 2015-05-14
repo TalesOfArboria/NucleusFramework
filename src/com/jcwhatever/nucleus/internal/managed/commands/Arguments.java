@@ -148,6 +148,11 @@ class Arguments implements ICommandArguments {
     }
 
     @Override
+    public ICommandArguments forCommand(IRegisteredCommand command) throws CommandException {
+        return new Arguments(command, _rawArguments);
+    }
+
+    @Override
     public int staticSize() {
         return _parseResults.getStaticArgs().size();
     }

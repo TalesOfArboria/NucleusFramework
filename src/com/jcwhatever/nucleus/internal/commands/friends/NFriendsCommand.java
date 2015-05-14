@@ -59,7 +59,7 @@ public final class NFriendsCommand extends AbstractCommand implements IExecutabl
         assert command != null;
 
         if (command.getCommand() instanceof IExecutableCommand)
-            ((IExecutableCommand) command.getCommand()).execute(sender, args);
+            ((IExecutableCommand) command.getCommand()).execute(sender, args.forCommand(command));
 
         ICommandUsageGenerator generator =
                 Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
