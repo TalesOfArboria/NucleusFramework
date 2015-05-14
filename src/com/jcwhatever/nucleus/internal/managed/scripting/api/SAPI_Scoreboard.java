@@ -33,6 +33,8 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -73,12 +75,12 @@ public class SAPI_Scoreboard implements IDisposable {
             ScoreboardExtension extension = (ScoreboardExtension)scoreboard.getExtension();
             assert extension != null;
 
-            synchronized (extension.visible) {
-                for (Player player : extension.visible) {
-                    scoreboard.remove(player);
-                    scoreboard.dispose();
-                }
+            List<Player> players = new ArrayList<>(extension.visible);
+            for (Player player : players) {
+                scoreboard.remove(player);
+                scoreboard.dispose();
             }
+            extension.visible.clear();
         }
 
         _scoreboards.clear();
