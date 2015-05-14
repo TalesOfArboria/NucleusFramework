@@ -222,11 +222,27 @@ class Arguments implements ICommandArguments {
 
     @Override
     public String getString(String parameterName) throws InvalidArgumentException {
+        return getString(parameterName, 1, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public String getString(String parameterName, int maxLen) throws InvalidArgumentException {
+        return getString(parameterName, 1, maxLen);
+    }
+
+    @Override
+    public String getString(String parameterName, int minLen, int maxLen) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
+        PreCon.positiveNumber(minLen);
+        PreCon.positiveNumber(maxLen);
+        PreCon.isValid(maxLen >= minLen, "maxLen cannot be less than minLen.");
 
         // get the raw argument
         String value = getRawArgument(parameterName);
         if (value == null)
+            throw invalidArg(parameterName, ArgumentValueType.STRING);
+
+        if (value.length() < minLen || value.length() > maxLen)
             throw invalidArg(parameterName, ArgumentValueType.STRING);
 
         // make sure if pipes are used, that the argument is one of the possible values

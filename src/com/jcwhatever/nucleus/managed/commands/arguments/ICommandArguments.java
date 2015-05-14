@@ -118,12 +118,40 @@ public interface ICommandArguments extends IPluginOwned, Iterable<ICommandArgume
     /**
      * Get an argument as a string.
      *
+     * <p>Minimum length is 1. Maximum length is "infinite", or up to the
+     * technical limit.</p>
+     *
      * @param parameterName  The name of the arguments parameter
      *
      * @throws InvalidArgumentException  If the argument is not present or is
      * not an expected value.
      */
     String getString(String parameterName) throws InvalidArgumentException;
+
+    /**
+     * Get an argument as a string.
+     *
+     * <p>Minimum length is 1.</p>
+     *
+     * @param parameterName  The name of the arguments parameter
+     * @param maxLen         The maximum length of the string.
+     *
+     * @throws InvalidArgumentException  If the argument is not present or is
+     * not an expected value.
+     */
+    String getString(String parameterName, int maxLen) throws InvalidArgumentException;
+
+    /**
+     * Get an argument as a string.
+     *
+     * @param parameterName  The name of the arguments parameter
+     * @param minLen         The minimum length of the string.
+     * @param maxLen         The maximum length of the string.
+     *
+     * @throws InvalidArgumentException  If the argument is not present or is
+     * not an expected value.
+     */
+    String getString(String parameterName, int minLen, int maxLen) throws InvalidArgumentException;
 
     /**
      * Gets an argument as a boolean.
