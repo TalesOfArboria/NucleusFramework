@@ -76,13 +76,14 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result   The result.
      * @param message  The result message.
+     * @param args     Optional message format arguments.
      *
      * @param <T>  The result type.
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> successResult(@Nullable T result, String message) {
-        return new FutureResultAgent<T>().success(result, message);
+    public static <T> IFutureResult<T> successResult(@Nullable T result, String message, Object... args) {
+        return new FutureResultAgent<T>().success(result, message, args);
     }
 
     /**
@@ -114,13 +115,14 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result  The result.
      * @param message The result message.
+     * @param args    Optional message format arguments.
      *
      * @param <T>  The result type.
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> cancelResult(@Nullable T result, String message) {
-        return new FutureResultAgent<T>().cancel(result, message);
+    public static <T> IFutureResult<T> cancelResult(@Nullable T result, String message, Object... args) {
+        return new FutureResultAgent<T>().cancel(result, message, args);
     }
 
     /**
@@ -152,13 +154,14 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result   The result.
      * @param message  The result message.
+     * @param args     Optional message format arguments.
      *
      * @param <T>  The result type.
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> errorResult(@Nullable T result, String message) {
-        return new FutureResultAgent<T>().error(result, message);
+    public static <T> IFutureResult<T> errorResult(@Nullable T result, String message, Object... args) {
+        return new FutureResultAgent<T>().error(result, message, args);
     }
 
     /**
@@ -242,15 +245,16 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public FutureResult<R> cancel(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> cancel(@Nullable R result, @Nullable String message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .cancel()
                 .result(result)
-                .message(message)
+                .message(message, args)
                 .build());
 
         return getFuture();
@@ -294,15 +298,16 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public FutureResult<R> error(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> error(@Nullable R result, @Nullable String message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .error()
                 .result(result)
-                .message(message)
+                .message(message, args)
                 .build());
 
         return getFuture();
@@ -346,15 +351,16 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public FutureResult<R> success(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> success(@Nullable R result, @Nullable String message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .success()
                 .result(result)
-                .message(message)
+                .message(message, args)
                 .build());
 
         return getFuture();

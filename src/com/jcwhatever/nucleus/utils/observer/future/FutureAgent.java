@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,8 +69,9 @@ public class FutureAgent extends SubscriberAgent {
      *
      * @param status   The status.
      * @param message  Optional status message.
+     * @param args     Optional message format arguments.
      */
-    public void sendStatus(FutureStatus status, @Nullable String message) {
+    public void sendStatus(FutureStatus status, @Nullable String message, Object... args) {
         PreCon.notNull(status);
 
         _finalStatus = status;
@@ -80,17 +82,17 @@ public class FutureAgent extends SubscriberAgent {
 
         switch (status) {
             case CANCEL:
-                sendToSubscribers("onCancel", status, message);
+                sendToSubscribers("onCancel", status, message, args);
                 break;
             case ERROR:
-                sendToSubscribers("onError", status, message);
+                sendToSubscribers("onError", status, message, args);
                 break;
             case SUCCESS:
-                sendToSubscribers("onSuccess", status, message);
+                sendToSubscribers("onSuccess", status, message, args);
                 break;
         }
 
-        sendToSubscribers("onStatus", status, message);
+        sendToSubscribers("onStatus", status, message, args);
     }
 
     /**
@@ -106,11 +108,12 @@ public class FutureAgent extends SubscriberAgent {
      * Declare the futures operation cancelled.
      *
      * @param message  Optional cancel message.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public IFuture cancel(@Nullable String message) {
-        sendStatus(FutureStatus.CANCEL, message);
+    public IFuture cancel(@Nullable String message, Object... args) {
+        sendStatus(FutureStatus.CANCEL, message, args);
         return getFuture();
     }
 
@@ -128,11 +131,12 @@ public class FutureAgent extends SubscriberAgent {
      * Declare the futures operation status as error.
      *
      * @param message  Optional error message.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public IFuture error(@Nullable String message) {
-        sendStatus(FutureStatus.ERROR, message);
+    public IFuture error(@Nullable String message, Object... args) {
+        sendStatus(FutureStatus.ERROR, message, args);
         return getFuture();
     }
 
@@ -149,11 +153,12 @@ public class FutureAgent extends SubscriberAgent {
      * Declare the futures operation status as success.
      *
      * @param message  Optional success message.
+     * @param args     Optional message format arguments.
      *
      * @return The agents future.
      */
-    public IFuture success(@Nullable String message) {
-        sendStatus(FutureStatus.SUCCESS, message);
+    public IFuture success(@Nullable String message, Object... args) {
+        sendStatus(FutureStatus.SUCCESS, message, args);
         return getFuture();
     }
 
@@ -172,7 +177,11 @@ public class FutureAgent extends SubscriberAgent {
         _subscribers.dispose();
     }
 
-    private void sendToSubscribers(String agentName, FutureStatus status, @Nullable String message) {
+    private void sendToSubscribers(
+            String agentName, FutureStatus status, @Nullable String message, Object[] args) {
+
+        if (message != null)
+            message = TextUtils.format(message, args);
 
         List<ISubscriber> list = new ArrayList<>(subscribers());
 

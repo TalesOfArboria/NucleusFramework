@@ -24,6 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.observer.future;
 
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+
+import javax.annotation.Nullable;
+
 /**
  * A utility to help with building a {@link Result}.
  *
@@ -113,11 +117,12 @@ public class ResultBuilder<R> {
      * Set the result message.
      *
      * @param message  The message.
+     * @param args     Optional message format arguments.
      *
      * @return  Self for chaining.
      */
-    public ResultBuilder<R> message(String message) {
-        _message = message;
+    public ResultBuilder<R> message(@Nullable String message, Object... args) {
+        _message = message == null ? null : TextUtils.format(message, args);
         return this;
     }
 
