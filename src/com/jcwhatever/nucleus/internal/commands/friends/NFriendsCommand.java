@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.commands.friends;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
@@ -54,9 +55,11 @@ public final class NFriendsCommand extends AbstractCommand implements IExecutabl
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         // show friends
-        ListSubCommand command = (ListSubCommand) getCommand("list");
-        if (command != null)
-            command.execute(sender, args);
+        IRegisteredCommand command = getCommand("list");
+        assert command != null;
+
+        if (command.getCommand() instanceof IExecutableCommand)
+            ((IExecutableCommand) command.getCommand()).execute(sender, args);
 
         ICommandUsageGenerator generator =
                 Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);

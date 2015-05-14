@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.commands.economy;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.commands.economy.admin.AdminCommand;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
@@ -57,9 +58,11 @@ public final class NEconomyCommand extends AbstractCommand implements IExecutabl
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         // show balance
-        BalanceSubCommand command = (BalanceSubCommand) getCommand("balance");
-        if (command != null)
-            command.execute(sender, args);
+        IRegisteredCommand command = getCommand("balance");
+        assert command != null;
+
+        if (command.getCommand() instanceof IExecutableCommand)
+            ((IExecutableCommand) command.getCommand()).execute(sender, args);
 
         ICommandUsageGenerator generator =
                 Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);

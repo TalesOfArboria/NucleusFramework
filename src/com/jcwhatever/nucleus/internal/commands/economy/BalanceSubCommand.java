@@ -72,33 +72,33 @@ class BalanceSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Player player = (Player)sender;
 
-        String bankName = args.getString("bank");
-
-        if (bankName.isEmpty()) {
+        if (args.isDefaultValue("bank")) {
             double balance = Economy.getBalance(player.getUniqueId());
             tellSuccess(sender, NucLang.get(_GLOBAL_BALANCE, Economy.getCurrency().format(balance)));
+            return;
+        }
+
+        String bankName = args.getString("bank");
+
+        if (!Economy.hasBankSupport())
+            throw new CommandException(NucLang.get(_NO_BANK_SUPPORT));
+
+        IBank bank = Economy.getBank(bankName);
+        if (bank == null)
+            throw new CommandException(NucLang.get(_BANK_NOT_FOUND, bankName));
+
+        IAccount account = bank.getAccount(player.getUniqueId());
+        if (account == null)
+            throw new CommandException(NucLang.get(_ACCOUNT_NOT_FOUND, bank.getName()));
+
+        if (account.getBalance() >= 0) {
+            tellSuccess(sender, NucLang.get(_BANK_BALANCE,
+                    Economy.getCurrency().format(account.getBalance()), bank.getName()));
         }
         else {
-
-            if (!Economy.hasBankSupport())
-                throw new CommandException(NucLang.get(_NO_BANK_SUPPORT));
-
-            IBank bank = Economy.getBank(bankName);
-            if (bank == null)
-                throw new CommandException(NucLang.get(_BANK_NOT_FOUND, bankName));
-
-            IAccount account = bank.getAccount(player.getUniqueId());
-            if (account == null)
-                throw new CommandException(NucLang.get(_ACCOUNT_NOT_FOUND, bank.getName()));
-
-            if (account.getBalance() >= 0) {
-                tellSuccess(sender, NucLang.get(_BANK_BALANCE,
-                        Economy.getCurrency().format(account.getBalance()), bank.getName()));
-            }
-            else {
-                throw new CommandException(NucLang.get(_BANK_BALANCE,
-                        Economy.getCurrency().format(account.getBalance()), bank.getName()));
-            }
+            throw new CommandException(NucLang.get(_BANK_BALANCE,
+                    Economy.getCurrency().format(account.getBalance()), bank.getName()));
         }
+
     }
 }
