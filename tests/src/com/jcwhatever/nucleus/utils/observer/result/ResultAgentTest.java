@@ -68,7 +68,7 @@ public class ResultAgentTest {
 
 
         resultList.clear();
-        agent.sendResult(new Result<String>(1.0D, 0.5D, "completed/failed"));
+        agent.sendResult(new Result<String>(1.0D, -1.0D, "completed/failed"));
         assertEquals(2, resultList.size());
         assertEquals("ERROR", resultList.get(0));
         assertEquals("RESULT", resultList.get(1));
@@ -81,7 +81,7 @@ public class ResultAgentTest {
         assertEquals("RESULT", resultList.get(1));
 
         resultList.clear();
-        agent.sendResult(new Result<String>(1.0D, -1.0D, "completed/cancelled"));
+        agent.sendResult(new Result<String>(1.0D, 0.0D, "completed/cancelled"));
         assertEquals(2, resultList.size());
         assertEquals("CANCEL", resultList.get(0));
         assertEquals("RESULT", resultList.get(1));

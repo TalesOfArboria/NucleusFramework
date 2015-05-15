@@ -20,14 +20,14 @@ public class ResultTest {
         assertEquals("test", result.getMessage());
 
 
-        Result<String> failed = new Result<String>(1.0D, 0.0D, "test");
+        Result<String> failed = new Result<String>(1.0D, -1.0D, "test");
 
         assertEquals(true, failed.isComplete());
         assertEquals(false, failed.isCancelled());
         assertEquals(false, failed.isSuccess());
         assertEquals("test", result.getMessage());
 
-        Result<String> cancelled = new Result<String>(1.0D, -1.0D, "test");
+        Result<String> cancelled = new Result<String>(1.0D, 0.0D, "test");
 
         assertEquals(true, cancelled.isComplete());
         assertEquals(true, cancelled.isCancelled());

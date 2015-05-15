@@ -57,14 +57,14 @@ public class FutureResultAgentTest {
         assertEquals("RESULT", updates.get(1));
 
         updates.clear();
-        agent.sendResult(new Result<String>(1.0D, 0.0D, "test"));
+        agent.sendResult(new Result<String>(1.0D, -1.0D, "test"));
 
         assertEquals(2, updates.size());
         assertEquals("ERROR", updates.get(0));
         assertEquals("RESULT", updates.get(1));
 
         updates.clear();
-        agent.sendResult(new Result<String>(1.0D, -1.0D, "test"));
+        agent.sendResult(new Result<String>(1.0D, 0.0D, "test"));
 
         assertEquals(2, updates.size());
         assertEquals("CANCEL", updates.get(0));
