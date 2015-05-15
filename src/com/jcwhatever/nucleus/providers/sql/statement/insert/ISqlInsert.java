@@ -24,10 +24,37 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.insert;
 
+import java.util.Collection;
+
 /**
  * Sql table insert.
  */
 public interface ISqlInsert {
 
+    /**
+     * Insert a row of values.
+     *
+     * @param values  The values to insert.
+     */
     ISqlInsertFinal values(Object... values);
+
+    /**
+     * Insert a collection of row values.
+     *
+     * @param values           The collection of row values.
+     * @param valuesConverter  The converter used to convert objects to a row of values.
+     *
+     * @param <T>  The collection element type.
+     */
+    <T> ISqlInsertFinal values(Collection<T> values, ISqlInsertValueConverter<T> valuesConverter);
+
+    /**
+     * Converter used to convert an element into row values.
+     *
+     * @param <T>  The element type.
+     */
+    interface ISqlInsertValueConverter<T> {
+
+        Object[] getRowValues(T element);
+    }
 }
