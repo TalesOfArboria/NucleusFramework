@@ -175,6 +175,25 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     }
 
     /**
+     * Get the command to type to get help for the current command.
+     */
+    protected String getInlineHelpCommand() {
+        return getInlineHelpCommand(getRegistered());
+    }
+
+    /**
+     * Get the command to type to get help for the specified command.
+     *
+     * @param command  The command.
+     */
+    protected String getInlineHelpCommand(IRegisteredCommand command) {
+        ICommandUsageGenerator generator =
+                Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
+
+        return generator.generate(command);
+    }
+
+    /**
      * Set the specified players region selection.
      *
      * <p>Handles error message if any.</p>
