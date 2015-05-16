@@ -21,6 +21,7 @@ import org.junit.runners.Suite;
         ArrayListPaginatorTest.class,
         CircularQueueTest.class,
         ElementCounterTest.class,
+        OutputBufferListTest.class,
         PaginatedTest.class,
         TreeEntryNodeTest.class,
         TreeNodeTest.class
