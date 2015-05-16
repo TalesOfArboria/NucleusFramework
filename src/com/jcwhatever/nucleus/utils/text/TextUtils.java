@@ -1231,6 +1231,16 @@ public final class TextUtils {
     }
 
     /**
+     * Convert a UUID to a string without dashes.
+     *
+     * @param uuid  The UUID to convert.
+     */
+    public static String uuidToString(UUID uuid) {
+        return TextUtils.PATTERN_DASH.matcher(
+                uuid.toString()).replaceAll("");
+    }
+
+    /**
      * Print an array of {@link java.lang.StackTraceElement} to an {@link java.lang.Appendable}.
      *
      * @param stackTrace  The stack trace to append.
