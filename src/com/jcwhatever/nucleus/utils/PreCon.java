@@ -27,6 +27,8 @@ package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import javax.annotation.Nullable;
 
 /**
@@ -47,7 +49,7 @@ public final class PreCon {
      * @throws java.lang.IllegalStateException if condition is false.
      */
     public static void isValid(boolean condition) {
-        isValid(condition, null);
+        isValid(condition, IllegalStateException.class, null);
     }
 
     /**
@@ -60,13 +62,23 @@ public final class PreCon {
      * @throws java.lang.IllegalStateException if condition is false.
      */
     public static void isValid(boolean condition, @Nullable String message, Object... args) {
+        isValid(condition, IllegalStateException.class, message, args);
+    }
+
+    /**
+     * Ensure supplied condition is true.
+     *
+     * @param condition  The condition to test.
+     * @param message    The exception message to use if the condition is false.
+     * @param args       Optional message format arguments.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if condition is false.
+     */
+    public static void isValid(boolean condition, Class<? extends RuntimeException> exception,
+                               @Nullable String message, Object... args) {
         if (!condition) {
-            if (message != null) {
-                throw new IllegalStateException(TextUtils.format(message, args));
-            }
-            else {
-                throw new IllegalStateException();
-            }
+            throw exception(exception, message, args);
         }
     }
 
@@ -101,7 +113,7 @@ public final class PreCon {
      *
      * @param value  The object to check.
      *
-     * @throws java.lang.NullPointerException if value is null.
+     * @throws java.lang.IllegalArgumentException if value is null.
      */
     public static void notNull(@Nullable Object value) {
         notNull(value, "a checked argument");
@@ -113,11 +125,24 @@ public final class PreCon {
      * @param value      The object to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException if value is null.
+     * @throws java.lang.IllegalArgumentException if value is null.
      */
     public static void notNull(@Nullable Object value, String paramName) {
+        notNull(value, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensure supplied object is not null.
+     *
+     * @param value      The object to check.
+     * @param paramName  The name of the parameter being checked.
+     *
+     * @throws RuntimeException if value is null.
+     */
+    public static void notNull(@Nullable Object value, String paramName,
+                               Class<? extends RuntimeException> exception) {
         if (value == null) {
-            nullArg("The value of {0} cannot be null.", paramName);
+            throw exception(exception, "The value of {0} cannot be null.", paramName);
         }
     }
 
@@ -126,8 +151,7 @@ public final class PreCon {
      *
      * @param value  The string to check.
      *
-     * @throws java.lang.NullPointerException      if value is null.
-     * @throws java.lang.IllegalArgumentException  if value is empty.
+     * @throws java.lang.IllegalArgumentException  if value is empty or null.
      */
     public static void notNullOrEmpty(@Nullable String value) {
         notNullOrEmpty(value, "a checked argument");
@@ -139,13 +163,27 @@ public final class PreCon {
      * @param value      The string to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException      if value is null.
-     * @throws java.lang.IllegalArgumentException  if value is empty.
+     * @throws java.lang.IllegalArgumentException  if value is empty or null.
      */
     public static void notNullOrEmpty(@Nullable String value, String paramName) {
-        PreCon.notNull(value, paramName);
+       notNullOrEmpty(value, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied string is not null or empty.
+     *
+     * @param value      The string to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if value is empty or null.
+     */
+    public static void notNullOrEmpty(@Nullable String value, String paramName,
+                                      Class<? extends RuntimeException> exception) {
+        PreCon.notNull(value, paramName, exception);
+
         if (value.isEmpty()) {
-            badArg("The value of {0} cannot be empty.", paramName);
+            throw exception(exception, "The value of {0} cannot be empty.", paramName);
         }
     }
 
@@ -157,7 +195,6 @@ public final class PreCon {
      *
      * @param nodeName  The name of the node.
      *
-     * @throws java.lang.NullPointerException      if nodeName is null.
      * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
     public static void validNodeName(@Nullable String nodeName) {
@@ -173,15 +210,32 @@ public final class PreCon {
      * @param nodeName   The name of the node.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException      if nodeName is null.
      * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
     public static void validNodeName(@Nullable String nodeName, String paramName) {
-        PreCon.notNullOrEmpty(nodeName, paramName);
+        validNodeName(nodeName, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node name.
+     *
+     * <p>A valid node name is alphanumeric with no spaces and can only
+     * contain the symbols: - _</p>
+     *
+     * @param nodeName   The name of the node.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if nodeName is not a valid node name.
+     */
+    public static void validNodeName(@Nullable String nodeName,
+                                     String paramName, Class<? extends RuntimeException> exception) {
+        PreCon.notNullOrEmpty(nodeName, paramName, exception);
 
         if (!TextUtils.PATTERN_NODE_NAMES.matcher(nodeName).matches()) {
-            badArg("{0} is an invalid node name. Is '{1}'. Node names must be alphanumeric " +
-                            "and can contain the following symbols: - _", paramName, nodeName);
+            throw exception(exception,
+                    "{0} is an invalid node name. Is '{1}'. Node names must be alphanumeric "
+                            + "and can contain the following symbols: - _", paramName, nodeName);
         }
     }
 
@@ -193,7 +247,6 @@ public final class PreCon {
      *
      * @param nodePath  The node path.
      *
-     * @throws java.lang.NullPointerException      if nodePath is null.
      * @throws java.lang.IllegalArgumentException  if nodePath is not a valid node path.
      */
     public static void validNodePath(@Nullable String nodePath) {
@@ -209,15 +262,33 @@ public final class PreCon {
      * @param nodePath   The node path.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException      if nodePath is null.
      * @throws java.lang.IllegalArgumentException  if nodePath is not a valid node path.
      */
     public static void validNodePath(@Nullable String nodePath, String paramName) {
-        PreCon.notNull(nodePath, paramName);
+        validNodePath(nodePath, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node path.
+     *
+     * <p>A valid node path is alphanumeric with no spaces and can only
+     * contain the symbols: - . _</p>
+     *
+     * @param nodePath   The node path.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if nodePath is not a valid node path.
+     */
+    public static void validNodePath(@Nullable String nodePath,
+                                     String paramName, Class<? extends RuntimeException> exception) {
+        PreCon.notNull(nodePath, paramName, exception);
 
         if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches()) {
-            badArg("The argument for {0} is an invalid node path. Is '{1}'. Node paths must be alphanumeric " +
-                            "and can contain the following symbols: - . _", paramName, nodePath);
+            throw exception(exception,
+                    "The argument for {0} is an invalid node path. Is '{1}'. "
+                            + "Node paths must be alphanumeric and can contain the "
+                            + "following symbols: - . _", paramName, nodePath);
         }
     }
 
@@ -241,8 +312,25 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(long number, String paramName) {
+        greaterThanZero(number, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is greater than zero.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than or equal to 0.
+     */
+    public static void greaterThanZero(long number, String paramName,
+                                       Class<? extends RuntimeException> exception) {
+
         if (number <= 0) {
-            badArg("Value of {0} must be greater than zero. Is {1}.", paramName, number);
+            throw exception(exception,
+                    "Value of {0} must be greater than zero. Is {1}.",
+                    paramName, number);
         }
     }
 
@@ -266,8 +354,24 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(double number, String paramName) {
+        greaterThanZero(number, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is greater than zero.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than or equal to 0.
+     */
+    public static void greaterThanZero(double number, String paramName,
+                                       Class<? extends RuntimeException> exception) {
         if (number <= 0.0D) {
-            badArg("The value of {0} must be greater than zero. Is {1}.", paramName, number);
+            throw exception(exception,
+                    "The value of {0} must be greater than zero. Is {1}.",
+                    paramName, number);
         }
     }
 
@@ -291,8 +395,25 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
      */
     public static void greaterThan(long number, long limit, String paramName) {
+        greaterThan(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is greater than a specified limit.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(long number, long limit,
+                                   String paramName, Class<? extends RuntimeException> exception) {
+
         if (number <= limit) {
-            badArg("Value of {0} must be greater than {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "Value of {0} must be greater than {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
@@ -316,8 +437,25 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
      */
     public static void greaterThan(double number, double limit, String paramName) {
+        greaterThan(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is greater than limit.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(double number, double limit,
+                                   String paramName, Class<? extends RuntimeException> exception) {
+
         if (number <= limit) {
-            badArg("The value of {0} must be greater than {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "The value of {0} must be greater than {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
@@ -341,8 +479,25 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(long number, String paramName) {
+        positiveNumber(number, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is a positive number.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than 0.
+     */
+    public static void positiveNumber(long number, String paramName,
+                                      Class<? extends RuntimeException> exception) {
+
         if (number < 0) {
-            badArg("The value of {0} must be a positive number (0 or greater). Is {1}.", paramName, number);
+            throw exception(exception,
+                    "The value of {0} must be a positive number (0 or greater). Is {1}.",
+                    paramName, number);
         }
     }
 
@@ -366,8 +521,25 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(double number, String paramName) {
+        positiveNumber(number, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is a positive number.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is less than 0.
+     */
+    public static void positiveNumber(double number, String paramName,
+                                      Class<? extends RuntimeException> exception) {
+
         if (number < 0.0D) {
-            badArg("The value of {0} must be a positive number (0 or greater). Is {1}.", paramName, number);
+            throw exception(exception,
+                    "The value of {0} must be a positive number (0 or greater). Is {1}.",
+                    paramName, number);
         }
     }
 
@@ -393,8 +565,26 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan(long number, long limit, String paramName) {
+        lessThan(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is less than limit.
+     *
+     * @param number     The number to check.
+     * @param limit      The numbers limit.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is greater than or equal to limit.
+     */
+    public static void lessThan(long number, long limit,
+                                String paramName, Class<? extends RuntimeException> exception) {
+
         if (number >= limit) {
-            badArg("The value of {0} must be less than {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "The value of {0} must be less than {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
@@ -420,8 +610,26 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan (double number, double limit, String paramName) {
+        lessThan(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is less than limit.
+     *
+     * @param number     The number to check.
+     * @param limit      The numbers limit.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is greater than or equal to limit.
+     */
+    public static void lessThan (double number, double limit,
+                                 String paramName, Class<? extends RuntimeException> exception) {
+
         if (number >= limit) {
-            badArg("The value of {0} must be less than {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "The value of {0} must be less than {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
@@ -447,8 +655,26 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (long number, long limit, String paramName) {
+        lessThanEqual(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is less than or equal to limit.
+     *
+     * @param number     The number to check.
+     * @param limit      The numbers limit.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is greater than limit.
+     */
+    public static void lessThanEqual (long number, long limit, String paramName,
+                                      Class<? extends RuntimeException> exception) {
+
         if (number > limit) {
-            badArg("The value of {0} must be less than or equal to {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "The value of {0} must be less than or equal to {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
@@ -474,19 +700,65 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (double number, double limit, String paramName) {
+        lessThanEqual(number, limit, paramName, IllegalArgumentException.class);
+    }
+
+    /**
+     * Ensures supplied number is less than or equal to limit.
+     *
+     * @param number     The number to check.
+     * @param limit      The numbers limit.
+     * @param paramName  The name of the parameter being checked.
+     * @param exception  The exception to throw if not valid.
+     *
+     * @throws RuntimeException  if number is greater than limit.
+     */
+    public static void lessThanEqual (double number, double limit,
+                                      String paramName, Class<? extends RuntimeException> exception) {
+
         if (number > limit) {
-            badArg("The value of {0} must be less than or equal to {1}. Is {2}.", paramName, limit, number);
+            throw exception(exception,
+                    "The value of {0} must be less than or equal to {1}. Is {2}.",
+                    paramName, limit, number);
         }
     }
 
-    // throw an IllegalArgumentException
-    private static void badArg(Object message, Object... args) {
-        throw new IllegalArgumentException(TextUtils.format(message, args));
-    }
+    private static RuntimeException exception(
+            Class<? extends RuntimeException> clazz, @Nullable String message, Object... args) {
 
-    // throw a NullPointerException
-    private static void nullArg(Object message, Object... args) {
-        throw new NullPointerException(TextUtils.format(message, args));
+        if (message != null)
+            message = TextUtils.format(message, args);
+
+        if (clazz == IllegalArgumentException.class) {
+            return message == null
+                    ? new IllegalArgumentException()
+                    : new IllegalArgumentException(message);
+        }
+        else if (clazz == NullPointerException.class) {
+            return message == null
+                    ? new NullPointerException()
+                    : new NullPointerException(message);
+        }
+        else if (clazz == IllegalStateException.class) {
+            return message == null
+                    ? new IllegalStateException()
+                    : new IllegalStateException(message);
+        }
+        else {
+
+            try {
+                Constructor constructor = message == null
+                        ? clazz.getConstructor()
+                        : clazz.getConstructor(String.class);
+
+                return (RuntimeException)constructor.newInstance(message);
+
+            } catch (NoSuchMethodException | InvocationTargetException
+                    | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                return new RuntimeException(message);
+            }
+        }
     }
 }
 
