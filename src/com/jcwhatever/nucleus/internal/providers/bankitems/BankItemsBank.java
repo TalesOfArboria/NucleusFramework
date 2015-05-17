@@ -36,6 +36,8 @@ import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
+import org.bukkit.Bukkit;
+
 import java.util.Date;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -72,7 +74,9 @@ class BankItemsBank implements IBankItemsBank, IDisposable {
         _searchName = name.toLowerCase();
         _ownerId = ownerId;
         _dataNode = dataNode;
-        _accountsNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bankitems.banks." + name));
+
+        String fileName = Bukkit.getOnlineMode() ? name : "offline-" + name;
+        _accountsNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bankitems.banks." + fileName));
         _accountsNode.load();
         _accountsNode.setAutoSaveMode(AutoSaveMode.ENABLED);
 
@@ -197,7 +201,9 @@ class BankItemsBank implements IBankItemsBank, IDisposable {
             if (_isDisposed)
                 return;
 
-            DataStorage.remove(Nucleus.getPlugin(), new DataPath("bankitems.banks." + _name));
+            String fileName = Bukkit.getOnlineMode() ? _name : "offline-" + _name;
+
+            DataStorage.remove(Nucleus.getPlugin(), new DataPath("bankitems.banks." + fileName));
 
             _dataNode.remove();
             _dataNode.save();

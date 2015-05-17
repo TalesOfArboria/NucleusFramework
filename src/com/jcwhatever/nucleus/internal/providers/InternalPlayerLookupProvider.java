@@ -133,7 +133,9 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
                 if (_nameData != null)
                     return _nameData;
 
-                IDataNode data = DataStorage.get(Nucleus.getPlugin(), new DataPath("player-names"));
+                String dataPath = Bukkit.getOnlineMode() ? "player-names" : "offline-player-names";
+
+                IDataNode data = DataStorage.get(Nucleus.getPlugin(), new DataPath(dataPath));
                 if (!data.load()) {
                     NucMsg.warning("Failed to load player names file.");
                 }

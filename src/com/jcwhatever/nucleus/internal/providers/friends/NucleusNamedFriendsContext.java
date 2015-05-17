@@ -36,6 +36,8 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
+import org.bukkit.Bukkit;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -83,8 +85,10 @@ class NucleusNamedFriendsContext extends NucleusFriendsContext implements INamed
                 return;
         }
 
+        String diskName = Bukkit.getOnlineMode() ? getName() : "offline-" + getName();
+
         IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath(
-                "friends." + getName() + '.' + playerId.toString()));
+                "friends." + diskName + '.' + playerId.toString()));
         dataNode.load();
 
         synchronized (_sync) {

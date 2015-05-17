@@ -36,6 +36,8 @@ import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -70,7 +72,8 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
         setInfo(new InternalProviderInfo(this.getClass(),
                 "NucleusFriends", "Default friends provider."));
 
-        _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("friends"));
+        String dataPath = Bukkit.getOnlineMode() ? "friends" : "offline-friends";
+        _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath(dataPath));
         _defaultContext = new NucleusNamedFriendsContext(this, "_default");
 
         registerLevel(FriendLevels.CASUAL);

@@ -38,6 +38,8 @@ import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
+import org.bukkit.Bukkit;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -146,7 +148,9 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
     @Nullable
     static BankItemsAccount loadAccountFromFile (UUID playerId) {
 
-        DataPath path = new DataPath("bankitems.global." + playerId);
+        DataPath path = new DataPath(
+                (Bukkit.getOnlineMode() ? "bankitems.global." : "bankitems.global.offline")
+                        + playerId);
 
         IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), path);
         if (!dataNode.load())
