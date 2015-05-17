@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.mixins.IInitializableCommand;
 import com.jcwhatever.nucleus.managed.commands.mixins.ITabCompletable;
+import com.jcwhatever.nucleus.managed.commands.mixins.IVisibleCommand;
 import com.jcwhatever.nucleus.managed.commands.parameters.ICommandParameter;
 import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
 import com.jcwhatever.nucleus.managed.language.Localizable;
@@ -520,10 +521,14 @@ class RegisteredCommand implements IRegisteredCommand {
     protected boolean isHelpVisible(CommandSender sender) {
 
         // determine if the CommandSender has permission to use the command
-        if (sender instanceof Player && !Permissions.has((Player)sender, getPermission().getName()))
+        if (sender instanceof Player
+                && !Permissions.has((Player) sender, getPermission().getName())) {
             return false;
+        }
 
         // determine if the commands is visible in help
-        return getInfo().isHelpVisible();
+        return getInfo().isHelpVisible()
+                && (!(_command instanceof IVisibleCommand)
+                || ((IVisibleCommand) _command).isVisible(sender));
     }
 }

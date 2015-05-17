@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.managed.commands.ICommandDispatcher;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.mixins.IVisibleCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
@@ -133,6 +134,13 @@ class CommandDispatcher implements ICommandDispatcher {
 
         // Check if the player has permissions to run the command
         if (sender instanceof Player && !Permissions.has((Player)sender, command.getPermission().getName())) {
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_ACCESS_DENIED));
+            return true;
+        }
+
+        // make sure the command is visible to the command sender
+        if (command.getCommand() instanceof IVisibleCommand
+                && !((IVisibleCommand) command.getCommand()).isVisible(sender)) {
             NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_ACCESS_DENIED));
             return true;
         }
