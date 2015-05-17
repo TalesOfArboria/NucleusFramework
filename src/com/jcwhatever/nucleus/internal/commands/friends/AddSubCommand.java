@@ -46,7 +46,7 @@ import java.util.UUID;
 @CommandInfo(
         command="add",
         staticParams = { "friendName", "level=casual" },
-        description="Add a friend to your friends list.",
+        description="Add a friend to your friends list or change friendship level.",
         paramDescriptions = {
                 "friendName= The name of player to add as a friend.",
                 "level= Optional. The level of friendship. Possible values " +
@@ -58,15 +58,15 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _LEVEL_NOT_FOUND = "A friend level named '{0}' was not found.";
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: friend name}' was not found.";
-    @Localizable static final String _ALREADY_FRIEND = "Player '{0}' is already in your friends list.";
-    @Localizable static final String _SUCCESS =  "Player '{0}' added to your friends list.";
+    @Localizable static final String _SUCCESS_ADD =  "Player '{0}' added to your friends list.";
+    @Localizable static final String _SUCCESS_SET =  "Player '{0}' friendship level changed.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         CommandException.checkNotConsole(getPlugin(), this, sender);
 
-        String name = null;
+        String name = args.getString("friendName");
         int rawLevel;
 
         if (args.hasInteger("level")) {
@@ -80,7 +80,6 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
             if (level == null)
                 throw new CommandException(NucLang.get(_LEVEL_NOT_FOUND, levelName));
 
-            name = level.getName();
             rawLevel = level.getRawLevel();
         }
 
@@ -92,13 +91,13 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
 
         IFriend friend = Friends.get(player, friendId);
         if (friend != null) {
-            tell(sender, NucLang.get(_ALREADY_FRIEND, friend.getName()));
-            return; // finish
+            friend.setRawLevel(rawLevel);
+            tellSuccess(sender, NucLang.get(_SUCCESS_SET, name));
         }
-
-        Friends.add(player, friendId, rawLevel);
-
-        tellSuccess(sender, NucLang.get(_SUCCESS, name));
+        else {
+            Friends.add(player, friendId, rawLevel);
+            tellSuccess(sender, NucLang.get(_SUCCESS_ADD, name));
+        }
     }
 }
 
