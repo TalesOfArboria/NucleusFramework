@@ -67,6 +67,10 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      */
     public static final MaterialProperty PRESSURE_PLATE = new MaterialProperty("Pressure_Plate");
     /**
+     * The material is a lever.
+     */
+    public static final MaterialProperty LEVER = new MaterialProperty("Lever");
+    /**
      * The material is wearable.
      */
     public static final MaterialProperty WEARABLE = new MaterialProperty("Wearable");
@@ -230,6 +234,14 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      * The material is a solid surface that players can walk on.
      */
     public static final MaterialProperty SURFACE = new MaterialProperty("Surface");
+    /**
+     * The material is leaves.
+     */
+    public static final MaterialProperty LEAVES = new MaterialProperty("Leaves");
+    /**
+     * The material is a log.
+     */
+    public static final MaterialProperty LOG = new MaterialProperty("Log");
 
     /**
      * Get a temporary {@link MaterialProperty} used to lookup a property from a map.

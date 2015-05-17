@@ -239,7 +239,8 @@ public class Materials {
     /**
      * Determine if a material is a button.
      *
-     * @param material The {@link org.bukkit.Material} to check.
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
      * @see MaterialProperty#BUTTON
      */
     public static boolean isButton(Material material) {
@@ -249,11 +250,45 @@ public class Materials {
     /**
      * Determine if a material is a pressure plate.
      *
-     * @param material The {@link org.bukkit.Material} to check.
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
      * @see MaterialProperty#PRESSURE_PLATE
      */
     public static boolean isPressurePlate(Material material) {
         return hasProperty(material, MaterialProperty.PRESSURE_PLATE);
+    }
+
+    /**
+     * Determine if a material is a lever.
+     *
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
+     * @see MaterialProperty#LEVER
+     */
+    public static boolean isLever(Material material) {
+        return hasProperty(material, MaterialProperty.LEVER);
+    }
+
+    /**
+     * Determine if a material is leaves.
+     *
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
+     * @see MaterialProperty#LEAVES
+     */
+    public static boolean isLeaves(Material material) {
+        return hasProperty(material, MaterialProperty.LEAVES);
+    }
+
+    /**
+     * Determine if a material is a log.
+     *
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
+     * @see MaterialProperty#LOG
+     */
+    public static boolean isLog(Material material) {
+        return hasProperty(material, MaterialProperty.LOG);
     }
 
     /**
@@ -1801,20 +1836,23 @@ public class Materials {
                 MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.LEAVES);
 
         add(Material.LEAVES_2,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.LEAVES);
 
         add(Material.LEVER,
                 MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.REDSTONE_SWITCH,
+                MaterialProperty.LEVER,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
@@ -1824,13 +1862,15 @@ public class Materials {
                 MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.LOG);
 
         add(Material.LOG_2,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.LOG);
 
         add(Material.LONG_GRASS,
                 MaterialProperty.BLOCK,
