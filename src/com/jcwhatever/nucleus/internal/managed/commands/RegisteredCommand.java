@@ -38,6 +38,7 @@ import com.jcwhatever.nucleus.managed.commands.mixins.ITabCompletable;
 import com.jcwhatever.nucleus.managed.commands.mixins.IVisibleCommand;
 import com.jcwhatever.nucleus.managed.commands.parameters.ICommandParameter;
 import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
+import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
@@ -402,7 +403,9 @@ class RegisteredCommand implements IRegisteredCommand {
         if (_command instanceof IExecutableCommand && isHelpVisible(sender)) {
 
             // add command to paginator
-            pagin.add(_usageGenerator.generate(this), getInfo().getDescription());
+            pagin.add(
+                    _usageGenerator.generate(this, ICommandUsageGenerator.HELP_USAGE),
+                    getInfo().getDescription());
         }
 
         List<RegisteredCommand> subCommands = new ArrayList<>(20);
