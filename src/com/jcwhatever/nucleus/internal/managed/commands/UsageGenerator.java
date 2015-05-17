@@ -60,6 +60,7 @@ class UsageGenerator implements ICommandUsageGenerator {
 
     @Override
     public String generate(IRegisteredCommand command) {
+        PreCon.notNull(command);
 
         if (_defaultTemplate != null) {
             return generate(command, _defaultTemplate);

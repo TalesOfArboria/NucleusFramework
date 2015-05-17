@@ -48,6 +48,9 @@ public interface ICommandOwner {
 
     /**
      * Get a command by name.
+     *
+     * <p>Sub commands can be retrieved by separating command names with a period.
+     * ie "command.subcommand1.subcommand2"</p>
      */
     @Nullable
     IRegisteredCommand getCommand(String commandName);

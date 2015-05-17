@@ -204,6 +204,8 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @param command  The command.
      */
     protected String getInlineHelpCommand(IRegisteredCommand command) {
+        PreCon.notNull(command);
+
         ICommandUsageGenerator generator =
                 Nucleus.getCommandManager()
                         .getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
@@ -241,6 +243,8 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @param command  The command.
      */
     protected String getInlineCommand(IRegisteredCommand command) {
+        PreCon.notNull(command);
+
         ICommandUsageGenerator generator =
                 Nucleus.getCommandManager()
                         .getUsageGenerator(ICommandUsageGenerator.INLINE_COMMAND);

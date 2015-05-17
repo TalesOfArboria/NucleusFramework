@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.managed.commands.ICommandOwner;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 
@@ -120,7 +121,24 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
     public RegisteredCommand getCommand(String name) {
         PreCon.notNull(name);
 
-        return _commandMap.get(name);
+        if (name.indexOf('.') == -1)
+            return _commandMap.get(name);
+
+        String[] commands = TextUtils.PATTERN_DOT.split(name);
+
+        RegisteredCommand command = null;
+
+        for (String commandName : commands) {
+
+            command = command == null
+                    ? _commandMap.get(commandName)
+                    : command.getCommand(commandName);
+
+            if (command == null)
+                break;
+        }
+
+        return command;
     }
 
     /**
