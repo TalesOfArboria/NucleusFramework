@@ -269,8 +269,7 @@ public class CommandException extends Exception {
     // get inline command help usage
     private static String getInlineUsage(IRegisteredCommand command) {
         ICommandUsageGenerator usageGenerator = Nucleus.getCommandManager().getUsageGenerator();
-        return usageGenerator.generate(command, command.getInfo().getRootAliasName(),
-                ICommandUsageGenerator.INLINE_HELP);
+        return usageGenerator.generate(command, ICommandUsageGenerator.INLINE_HELP);
     }
 
     private String _message;

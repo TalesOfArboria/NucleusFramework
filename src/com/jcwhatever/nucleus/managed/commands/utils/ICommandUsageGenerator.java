@@ -55,14 +55,6 @@ public interface ICommandUsageGenerator {
     String generate(IRegisteredCommand command);
 
     /**
-     * Generate command usage using the specified root command name.
-     *
-     * @param command          The command to generate usage text for.
-     * @param rootCommandName  The root command name.
-     */
-    String generate(IRegisteredCommand command, String rootCommandName);
-
-    /**
      * Generate command usage using the specified root command name and
      * a formatting template that uses the following parameters:
      *
@@ -77,8 +69,7 @@ public interface ICommandUsageGenerator {
      * except when the parameter value is empty.</p>
      *
      * @param command          The command to generate usage text for.
-     * @param rootCommandName  The name of the root command.
      * @param template         The format template for the generated text.
      */
-    String generate(IRegisteredCommand command, String rootCommandName, String template);
+    String generate(IRegisteredCommand command, String template);
 }

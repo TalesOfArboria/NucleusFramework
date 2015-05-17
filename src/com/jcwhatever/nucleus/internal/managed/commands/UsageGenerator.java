@@ -61,35 +61,28 @@ class UsageGenerator implements ICommandUsageGenerator {
     @Override
     public String generate(IRegisteredCommand command) {
 
-        String rootCommandName = command.getInfo().getRootAliasName();
-        if (rootCommandName == null) {
-            rootCommandName = command.getInfo().getCurrentAlias();
-        }
-
-        return generate(command, rootCommandName);
-    }
-
-    @Override
-    public String generate(IRegisteredCommand command, String rootCommandName) {
-        PreCon.isValid(command instanceof RegisteredCommand);
-
         if (_defaultTemplate != null) {
-            return generate(command, rootCommandName, _defaultTemplate);
+            return generate(command, _defaultTemplate);
         }
 
         String hardCodeUsage = command.getInfo().getUsage();
         if (!hardCodeUsage.isEmpty()) {
-            return generate(command, rootCommandName, hardCodeUsage);
+            return generate(command, hardCodeUsage);
         }
 
         return ((RegisteredCommand)command).getCommandCollection().size() == 0
-                ? generate(command, rootCommandName, ICommandUsageGenerator.HELP_USAGE)
-                : generate(command, rootCommandName, ICommandUsageGenerator.HELP_USAGE_HAS_SUB_COMMANDS);
+                ? generate(command, ICommandUsageGenerator.HELP_USAGE)
+                : generate(command, ICommandUsageGenerator.HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
     @Override
-    public String generate(IRegisteredCommand command, String rootCommandName, String template) {
+    public String generate(IRegisteredCommand command, String template) {
         PreCon.isValid(command instanceof RegisteredCommand);
+
+        String rootCommandName = command.getInfo().getRootAliasName();
+        if (rootCommandName == null) {
+            rootCommandName = command.getInfo().getCurrentAlias();
+        }
 
         LinkedList<RegisteredCommand> parentCommands = new LinkedList<>();
         StringBuilder commandPath = new StringBuilder(30);

@@ -317,8 +317,7 @@ class RegisteredCommand implements IRegisteredCommand {
                 : UsageGenerator.PARAMETER_HELP;
 
         // add usage and description
-        pagin.add(_usageGenerator.generate(this,
-                getInfo().getRootAliasName(), template), description);
+        pagin.add(_usageGenerator.generate(this, template), description);
 
         if (!paramDescriptions.isEmpty()) {
 

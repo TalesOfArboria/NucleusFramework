@@ -170,7 +170,7 @@ class CommandDispatcher implements ICommandDispatcher {
         if (!(command.getCommand() instanceof IExecutableCommand)) {
             NucMsg.tell(getPlugin(), sender,
                     ERROR_TEMPLATE, NucLang.get(_COMMAND_INCOMPLETE,
-                            _usageGenerator.generate(command, rootName, UsageGenerator.INLINE_HELP)));
+                            _usageGenerator.generate(command, UsageGenerator.INLINE_HELP)));
             return true; // finished
         }
 
