@@ -182,13 +182,68 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     }
 
     /**
+     * Get the command to type to get help for the specified sub command.
+     *
+     * @param subCommandName  The name of the sub-command.
+     */
+    protected String getInlineHelpCommand(String subCommandName) {
+        PreCon.notNullOrEmpty(subCommandName);
+
+        IRegisteredCommand command = getCommand(subCommandName);
+        if (command == null) {
+            throw new IllegalArgumentException("Command not found: "
+                    + subCommandName);
+        }
+
+        return getInlineHelpCommand(command);
+    }
+
+    /**
      * Get the command to type to get help for the specified command.
      *
      * @param command  The command.
      */
     protected String getInlineHelpCommand(IRegisteredCommand command) {
         ICommandUsageGenerator generator =
-                Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
+                Nucleus.getCommandManager()
+                        .getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
+
+        return generator.generate(command);
+    }
+
+    /**
+     * Get the command to type for the current command.
+     */
+    protected String getInlineCommand() {
+        return getInlineCommand(getRegistered());
+    }
+
+    /**
+     * Get the command to type for the specified sub command.
+     *
+     * @param subCommandName  The name of the sub-command.
+     */
+    protected String getInlineCommand(String subCommandName) {
+        PreCon.notNullOrEmpty(subCommandName);
+
+        IRegisteredCommand command = getCommand(subCommandName);
+        if (command == null) {
+            throw new IllegalArgumentException("Command not found: "
+                    + subCommandName);
+        }
+
+        return getInlineCommand(command);
+    }
+
+    /**
+     * Get the command to type for the specified command.
+     *
+     * @param command  The command.
+     */
+    protected String getInlineCommand(IRegisteredCommand command) {
+        ICommandUsageGenerator generator =
+                Nucleus.getCommandManager()
+                        .getUsageGenerator(ICommandUsageGenerator.INLINE_COMMAND);
 
         return generator.generate(command);
     }

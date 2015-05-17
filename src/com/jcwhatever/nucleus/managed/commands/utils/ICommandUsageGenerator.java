@@ -44,6 +44,9 @@ public interface ICommandUsageGenerator {
     @Localizable String INLINE_HELP =
             "{GREEN}/{0: root command}{1: command path}{2: command}?";
 
+    @Localizable String INLINE_COMMAND =
+            "{GREEN}/{0: root command}{1: command path}{2: command}";
+
     /**
      * Generate default command usage.
      *
