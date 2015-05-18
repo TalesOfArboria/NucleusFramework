@@ -218,6 +218,7 @@ class Messenger implements IMessenger {
 
         data.set(playerId.toString() + '.' + context + ".message", TextUtils.format(message, params));
         data.set(playerId.toString() + '.' + context + ".prefix", _chatPrefix);
+        data.set(playerId.toString() + '.' + context + ".lineLen", _maxLineLen);
         data.save();
     }
 

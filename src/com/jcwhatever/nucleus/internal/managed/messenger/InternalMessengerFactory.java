@@ -24,16 +24,20 @@
 
 package com.jcwhatever.nucleus.internal.managed.messenger;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
-import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -49,9 +53,15 @@ import javax.annotation.Nullable;
  */
 public final class InternalMessengerFactory implements IMessengerFactory {
 
+    @Localizable static final String _MESSAGES_HEADER =
+            "{GOLD} ---- Messages -------------------";
+
+    @Localizable static final String _MESSAGES_FOOTER =
+            "{GOLD} ---------------------------------";
+
     public static final Logger LOGGER = Logger.getLogger("Minecraft");
 
-    private Map<Plugin, IDataNode> _nodeCache = new WeakHashMap<>(25);
+    private Map<Plugin, IDataNode> _importantNodeCache = new WeakHashMap<>(25);
     private Map<Plugin, IMessenger> _messengers = new WeakHashMap<>(25);
     private Map<Plugin, IMessenger> _anonMessengers = new WeakHashMap<>(25);
 
@@ -104,10 +114,11 @@ public final class InternalMessengerFactory implements IMessengerFactory {
     }
 
     @Override
-    public void tellImportant(Player player, boolean clearMessages) {
+    public void tellImportant(final Player player, boolean clearMessages) {
         PreCon.notNull(player);
 
-        List<IDataNode> dataNodes = new ArrayList<>(_nodeCache.values());
+        List<IDataNode> dataNodes = new ArrayList<>(_importantNodeCache.values());
+        final List<String> messages = new ArrayList<>(10);
 
         for (IDataNode data : dataNodes) {
 
@@ -119,12 +130,16 @@ public final class InternalMessengerFactory implements IMessengerFactory {
 
                 String prefix = contextData.getString("prefix", "");
                 String message = contextData.getString("message", "");
+                int lineLen = contextData.getInteger("lineLen", 60);
 
                 assert prefix != null;
                 assert message != null;
 
                 if (!message.isEmpty()) {
-                    tellMissed(player, prefix + message);
+                    String[] lines = TextUtils.PATTERN_NEW_LINE.split(message);
+                    for (String line : lines) {
+                        messages.addAll(TextUtils.paginateString(line, prefix, lineLen, true));
+                    }
                 }
 
                 if (clearMessages) {
@@ -135,6 +150,21 @@ public final class InternalMessengerFactory implements IMessengerFactory {
 
             if (save)
                 data.save();
+        }
+
+        if (!messages.isEmpty()) {
+            Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    player.sendRawMessage(NucLang.get(_MESSAGES_HEADER));
+
+                    for (String msg : messages) {
+                        player.sendRawMessage(msg);
+                    }
+
+                    player.sendRawMessage(NucLang.get(_MESSAGES_FOOTER));
+                }
+            });
         }
     }
 
@@ -181,7 +211,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
      */
     public IDataNode getImportantData(Plugin plugin) {
 
-        IDataNode dataNode = _nodeCache.get(plugin);
+        IDataNode dataNode = _importantNodeCache.get(plugin);
         if (dataNode != null)
             return dataNode;
 
@@ -189,12 +219,8 @@ public final class InternalMessengerFactory implements IMessengerFactory {
         dataNode = DataStorage.get(plugin, new DataPath("nucleus.important-messages"));
         dataNode.load();
 
-        _nodeCache.put(plugin, dataNode);
+        _importantNodeCache.put(plugin, dataNode);
 
         return dataNode;
-    }
-
-    private static void tellMissed(Player p, String message) {
-        p.sendRawMessage(ChatColor.GOLD + "[Missed] " + ChatColor.RESET + message);
     }
 }
