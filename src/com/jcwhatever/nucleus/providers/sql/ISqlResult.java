@@ -68,5 +68,11 @@ public interface ISqlResult {
      */
     int[] getRowsUpdated();
 
-
+    /**
+     * Close all query results.
+     *
+     * <p>Invoke when finished with results. If there are no query results,
+     * nothing happens.</p>
+     */
+    void closeQueryResults();
 }
