@@ -82,29 +82,9 @@ public class SAPI_Scheduler implements IDisposable {
     public IScheduledTask runTaskLater(int delay, final Runnable runnable) {
         PreCon.notNull(runnable);
 
-        TaskHandler handler = new TaskHandler() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
+        ScriptTaskWrapper taskHandler = new ScriptTaskWrapper(runnable);
 
-            @Override
-            protected void onCancel() {
-
-                // remove task from reference collection if a script
-                // cancels the task
-                IScheduledTask task = getTask();
-                if (task != null)
-                    _taskReferences.remove(task);
-            }
-        };
-
-        IScheduledTask task = Scheduler.runTaskLater(_plugin, delay, handler);
+        IScheduledTask task = Scheduler.runTaskLater(_plugin, delay, taskHandler);
 
         // add reference so it can be cancelled if api is disposed
         _taskReferences.add(task);
@@ -129,34 +109,43 @@ public class SAPI_Scheduler implements IDisposable {
     public IScheduledTask runTaskRepeat(int initialDelay, int repeatDelay, final Runnable runnable) {
         PreCon.notNull(runnable);
 
-        TaskHandler handler = new TaskHandler() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
+        ScriptTaskWrapper taskHandler = new ScriptTaskWrapper(runnable);
 
-            @Override
-            protected void onCancel() {
-
-                // remove task from reference collection if a script
-                // cancels the task
-                IScheduledTask task = getTask();
-                if (task != null)
-                    _taskReferences.remove(task);
-            }
-        };
-
-        IScheduledTask task = Scheduler.runTaskRepeat(_plugin, initialDelay, repeatDelay, handler);
+        IScheduledTask task = Scheduler.runTaskRepeat(_plugin, initialDelay, repeatDelay, taskHandler);
 
         // add reference so it can be cancelled if api is disposed
         _taskReferences.add(task);
 
         return task;
+    }
+
+    private class ScriptTaskWrapper extends TaskHandler {
+
+        Runnable runnable;
+
+        ScriptTaskWrapper(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            try {
+                this.runnable.run();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onCancel() {
+
+            // remove task from reference collection if a script
+            // cancels the task
+            IScheduledTask task = getTask();
+            if (task != null)
+                _taskReferences.remove(task);
+        }
     }
 }
 
