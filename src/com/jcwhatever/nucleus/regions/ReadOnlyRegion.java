@@ -418,7 +418,7 @@ public class ReadOnlyRegion implements IRegion, IReadOnly {
 
     @Override
     public boolean isDisposed() {
-        return false;
+        return _region.isDisposed();
     }
 
     @Override

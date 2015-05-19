@@ -484,6 +484,9 @@ public final class InternalPlayerWatcher {
             while (!queue.isEmpty()) {
                 EventInfo info = queue.removeFirst();
 
+                if (info.region.isDisposed())
+                    continue;
+
                 IRegionEventListener listener = info.region.getEventListener();
                 if (listener == null) {
                     try {
