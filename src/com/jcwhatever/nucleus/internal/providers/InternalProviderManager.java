@@ -352,32 +352,38 @@ public final class InternalProviderManager implements IProviderManager {
         IProvider provider;
 
         switch (providerType) {
-            case PLAYER_LOOKUP:
-                provider = _playerLookup;
-                break;
-            case PERMISSIONS:
-                provider = _permissions;
-                break;
-            case REGION_SELECT:
-                provider = _regionSelect;
-                break;
             case BANK_ITEMS:
                 provider = _bankItems;
                 break;
             case ECONOMY:
                 provider = _economy;
                 break;
-            case STORAGE:
-                provider = _defaultStorage;
-                break;
             case FRIENDS:
                 provider = _friends;
+                break;
+            case JAIL:
+                provider = _jail;
+                break;
+            case KITS:
+                provider = _kits;
                 break;
             case NPC:
                 provider = _npc;
                 break;
-            case JAIL:
-                provider = _jail;
+            case PERMISSIONS:
+                provider = _permissions;
+                break;
+            case PLAYER_LOOKUP:
+                provider = _playerLookup;
+                break;
+            case REGION_SELECT:
+                provider = _regionSelect;
+                break;
+            case STORAGE:
+                provider = _defaultStorage;
+                break;
+            case SQL:
+                provider = _sql;
                 break;
             default:
                 throw new AssertionError();
