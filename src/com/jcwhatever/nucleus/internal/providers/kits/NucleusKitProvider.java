@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.IKitContext;
@@ -61,6 +62,9 @@ public final class NucleusKitProvider extends Provider implements IKitProvider {
         dataNode.load();
 
         _globalContext = new NucleusKitContext(Nucleus.getPlugin(), dataNode);
+
+        setInfo(new InternalProviderInfo(this.getClass(),
+                NAME, "Default kit provider."));
     }
 
     @Override
