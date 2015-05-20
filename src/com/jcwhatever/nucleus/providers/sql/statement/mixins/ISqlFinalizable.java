@@ -24,8 +24,12 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
+import com.jcwhatever.nucleus.providers.sql.ISqlResult;
 import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 import com.jcwhatever.nucleus.providers.sql.statement.ISqlNextStatementBuilder;
+import com.jcwhatever.nucleus.providers.sql.statement.ISqlStatement;
+import com.jcwhatever.nucleus.providers.sql.statement.ISqlTransaction;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -59,4 +63,23 @@ public interface ISqlFinalizable extends ISqlCommittable {
      * @throws SQLException
      */
     PreparedStatement[] prepareStatements() throws SQLException;
+
+    /**
+     * Get the SQL statement object.
+     *
+     * <p>Causes the current statement to be finalized.</p>
+     */
+    ISqlStatement getStatement();
+
+    /**
+     * Add the statement to a transaction.
+     *
+     * <p>Causes the current statement to be finalized.</p>
+     *
+     * @param transaction  The transaction.
+     *
+     * @return  A future result. The result only contains data created in the statement
+     * added to the transaction. Closing any sql results will not effect other statements.
+     */
+    IFutureResult<ISqlResult> addToTransaction(ISqlTransaction transaction);
 }
