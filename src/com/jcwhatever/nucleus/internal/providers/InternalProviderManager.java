@@ -129,6 +129,8 @@ public final class InternalProviderManager implements IProviderManager {
                 ? new MemoryDataNode(Nucleus.getPlugin())
                 : new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
 
+        _dataNode.load();
+
         // setup preferred internal bank items
         String prefBankItems = getPreferred(ProviderType.BANK_ITEMS);
         if (BankItemsProvider.NAME.equalsIgnoreCase(prefBankItems)) {
@@ -662,7 +664,7 @@ public final class InternalProviderManager implements IProviderManager {
             return true;
 
         String preferred = _dataNode.getString("preferred." + providerType.getName());
-        if (preferred != null && provider.getInfo().getSearchName().equals(preferred))
+        if (preferred != null && provider.getInfo().getName().equalsIgnoreCase(preferred))
             return false;
 
         _toEnable.remove(provider);
