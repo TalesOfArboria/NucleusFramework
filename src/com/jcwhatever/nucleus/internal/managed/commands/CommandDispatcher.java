@@ -67,6 +67,8 @@ class CommandDispatcher implements ICommandDispatcher {
 
     @Localizable static final String _ACCESS_DENIED = "{RED}Access denied.";
 
+    @Localizable static final String _UNAVAILABLE = "{RED}Command unavailable.";
+
     @Localizable static final String _COMMAND_INCOMPLETE =
             "{RED}Command incomplete. Type '{0: usage}' for help.";
 
@@ -141,7 +143,7 @@ class CommandDispatcher implements ICommandDispatcher {
         // make sure the command is visible to the command sender
         if (command.getCommand() instanceof IVisibleCommand
                 && !((IVisibleCommand) command.getCommand()).isVisible(sender)) {
-            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_ACCESS_DENIED));
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_UNAVAILABLE));
             return true;
         }
 
