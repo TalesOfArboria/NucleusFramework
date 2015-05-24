@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -549,6 +550,9 @@ public class YamlDataNode extends AbstractDataNode {
 
             if (value instanceof UUID) {
                 value = String.valueOf(value);
+            }
+            else if (value instanceof Date) {
+                value = ((Date)value).getTime();
             }
             else if (value instanceof Location) {
                 value = LocationUtils.serialize((Location) value, 3);

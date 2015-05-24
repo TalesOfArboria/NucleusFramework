@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -421,6 +422,27 @@ public interface IDataNode extends Iterable<IDataNode>, ILoadable, IPluginOwned 
      */
     @Nullable
     UUID getUUID(String keyPath, @Nullable UUID def);
+
+    /**
+     * Get the {@link Date} value of a node key.
+     *
+     * @param keyPath  The name or relative path and name of the key.
+     *
+     * @return  Value of key or null.
+     */
+    @Nullable
+    Date getDate(String keyPath);
+
+    /**
+     * Get the {@link Date} value of a node key.
+     *
+     * @param keyPath  The name or relative path and name of the key.
+     * @param def      The default value to return if the key value is not found.
+     *
+     * @return  Value of key or null.
+     */
+    @Nullable
+    Date getDate(String keyPath, @Nullable Date def);
 
     /**
      * Get the {@link Location} value of a node key.

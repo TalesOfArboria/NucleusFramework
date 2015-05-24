@@ -47,6 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -294,6 +295,27 @@ public abstract class AbstractDataNode implements IDataNode {
                 return result;
         }
 
+        return def;
+    }
+
+    @Nullable
+    @Override
+    public Date getDate(String keyPath) {
+        return getDate(keyPath, null);
+    }
+
+    @Nullable
+    @Override
+    public Date getDate(String keyPath, @Nullable Date def) {
+
+        Object value = get(keyPath);
+        if (value instanceof Date) {
+            return (Date) value;
+        }
+        else if (value instanceof Number) {
+            return new Date(((Number)value).longValue());
+        }
+        
         return def;
     }
 

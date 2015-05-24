@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
@@ -13,6 +12,7 @@ import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
+import com.jcwhatever.v1_8_R2.BukkitTester;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ public abstract class IDataNodeTest {
         node.set("enum", TestEnum.CONSTANT);
         node.set("location", new Location(BukkitTester.world("world"), 0, 0, 0));
         node.set("items", new ItemStackBuilder(Material.WOOD).build());
+        node.set("date", new Date(0));
     }
 
     /**
@@ -108,11 +110,11 @@ public abstract class IDataNodeTest {
         // add 9 key values
         initDataNode(dataNode);
 
-        assertEquals(9, dataNode.size());
+        assertEquals(10, dataNode.size());
 
         dataNode.set("testSize", "value");
 
-        assertEquals(10, dataNode.size());
+        assertEquals(11, dataNode.size());
 
         dataNode.clear();
 
@@ -652,6 +654,42 @@ public abstract class IDataNodeTest {
         assertEquals(null, dataNode.getUUID("testGetUUID1"));
 
         Assert.assertEquals(true, dataNode.getUUID("uuid") != null);
+    }
+
+    /**
+     * test getDate on root node.
+     */
+    @Test
+    public void testGetDateRoot() {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetDate(dataNode);
+    }
+
+    /**
+     * test getDate on sub node.
+     */
+    @Test
+    public void testGetDateSub() {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetDate(dataNode.getNode("newNode"));
+    }
+
+    private void testGetDate(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        Date date = new Date();
+
+        dataNode.set("testGetDate", date);
+
+        Assert.assertEquals(true, dataNode.getDate("testGetDate") != null);
+        assertEquals(null, dataNode.getDate("testGetDate1"));
+
+        Assert.assertEquals(date, dataNode.getDate("testGetDate"));
+
+        Assert.assertEquals(true, dataNode.getDate("date") != null);
+        Assert.assertEquals(new Date(0), dataNode.getDate("date"));
     }
 
     /**
