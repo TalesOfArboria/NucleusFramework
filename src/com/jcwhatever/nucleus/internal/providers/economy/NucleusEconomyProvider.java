@@ -78,6 +78,9 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
         _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));
         _plugin = plugin;
 
+        dataNode.load();
+        _globalAccountNode.load();
+
         String singular = dataNode.getString("currency-singular", "Dollar");
         String plural = dataNode.getString("currency-plural", "Dollars");
         String formatTemplate = dataNode.getString("format-template", "{0: amount} {1: currencyName}");
