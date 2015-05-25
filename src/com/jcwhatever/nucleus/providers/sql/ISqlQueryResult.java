@@ -39,6 +39,11 @@ import java.util.UUID;
 public interface ISqlQueryResult extends ResultSet {
 
     /**
+     * Get columns that are present in the query result.
+     */
+    String[] getColumns();
+
+    /**
      * Retrieves the value of the specified column in the current row
      * as a {@link UUID}.
      *
