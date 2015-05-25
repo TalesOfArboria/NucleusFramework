@@ -25,8 +25,12 @@
 package com.jcwhatever.nucleus.providers.sql;
 
 import com.jcwhatever.nucleus.providers.IProvider;
+import com.jcwhatever.nucleus.providers.sql.datanode.ISqlDataNodeBuilder;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+
+import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
 
@@ -94,4 +98,13 @@ public interface ISqlProvider extends IProvider, ISqlDataTypes {
      * @return  A future to to indicate success or failure.
      */
     IFuture execute(PreparedStatement statement);
+
+    /**
+     * Create a new SQL based {@link IDataNode} using a new builder.
+     *
+     * @param plugin  The data nodes owning plugin.
+     *
+     * @return  A new {@link ISqlDataNodeBuilder}.
+     */
+    ISqlDataNodeBuilder createDataNodeBuilder(Plugin plugin);
 }

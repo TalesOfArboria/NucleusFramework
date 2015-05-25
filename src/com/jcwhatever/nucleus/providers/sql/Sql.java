@@ -25,8 +25,12 @@
 package com.jcwhatever.nucleus.providers.sql;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.sql.datanode.ISqlDataNodeBuilder;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+
+import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -86,6 +90,17 @@ public class Sql {
      */
     public static IFuture execute(PreparedStatement statement) {
         return provider().execute(statement);
+    }
+
+    /**
+     * Create a new SQL based {@link IDataNode} using a new builder.
+     *
+     * @param plugin  The data nodes owning plugin.
+     *
+     * @return  A new {@link ISqlDataNodeBuilder}.
+     */
+    public static ISqlDataNodeBuilder createDataNodeBuilder(Plugin plugin) {
+        return provider().createDataNodeBuilder(plugin);
     }
 
     /**
