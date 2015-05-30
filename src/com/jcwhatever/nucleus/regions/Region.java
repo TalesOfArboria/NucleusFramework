@@ -101,7 +101,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         PreCon.notNullOrEmpty(name);
 
         _meta.set(InternalRegionManager.REGION_HANDLE, this);
-        _eventListener = new RegionListener(this);
+        _eventListener = new RegionListener();
 
         _name = name;
         _plugin = plugin;
@@ -595,21 +595,15 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
     /*
      * private implementation of IRegionEventListener
      */
-    private static class RegionListener implements IRegionEventListener {
-
-        final Region _region;
-
-        RegionListener(Region region) {
-            _region = region;
-        }
+    private class RegionListener implements IRegionEventListener {
 
         @Override
         public void onPlayerEnter(Player player, EnterRegionReason reason) {
 
-            if (_region.canDoPlayerEnter(player, reason))
-                _region.onPlayerEnter(player, reason);
+            if (Region.this.canDoPlayerEnter(player, reason))
+                Region.this.onPlayerEnter(player, reason);
 
-            for (IRegionEventHandler handler : _region._eventHandlers) {
+            for (IRegionEventHandler handler : _eventHandlers) {
                 if (handler.canDoPlayerEnter(player, reason)) {
                     handler.onPlayerEnter(player, reason);
                 }
@@ -619,10 +613,10 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         @Override
         public void onPlayerLeave(Player player, LeaveRegionReason reason) {
 
-            if (_region.canDoPlayerLeave(player, reason))
-                _region.onPlayerLeave(player, reason);
+            if (Region.this.canDoPlayerLeave(player, reason))
+                Region.this.onPlayerLeave(player, reason);
 
-            for (IRegionEventHandler handler : _region._eventHandlers) {
+            for (IRegionEventHandler handler : _eventHandlers) {
                 if (handler.canDoPlayerLeave(player, reason)) {
                     handler.onPlayerLeave(player, reason);
                 }
