@@ -72,4 +72,11 @@ public interface ISqlTransaction {
      * @return  A future result. The result data is for all data in the transaction.
      */
     IFutureResult<ISqlResult> execute();
+
+    /**
+     * Get the transactions future result.
+     *
+     * @return  A future result. The result data is for all data in the transaction.
+     */
+    IFutureResult<ISqlResult> future();
 }
