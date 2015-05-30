@@ -159,6 +159,7 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
         }
 
         IDataNode node = new YamlDataNode(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
+        node.load();
 
         NucleusBank bank = new NucleusBank(this, bankName, playerId, node);
 
