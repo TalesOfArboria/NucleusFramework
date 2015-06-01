@@ -25,6 +25,10 @@
 package com.jcwhatever.nucleus.providers;
 
 import com.jcwhatever.nucleus.mixins.ILoadable;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
+
+import java.io.File;
 
 /**
  * Basic interface for a NucleusFramework service provider.
@@ -35,6 +39,24 @@ public interface IProvider extends ILoadable {
      * Get info about the provider.
      */
     IProviderInfo getInfo();
+
+    /**
+     * Get the providers data folder.
+     */
+    File getDataFolder();
+
+    /**
+     * Get the providers configuration data node.
+     */
+    IDataNode getDataNode();
+
+    /**
+     * Get a data path using a base path that points to the providers
+     * data folder.
+     *
+     * @param path  The relative path.
+     */
+    DataPath getDataPath(String path);
 
     /**
      * Invoked to set the providers info.

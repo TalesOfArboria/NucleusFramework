@@ -24,7 +24,13 @@
 
 package com.jcwhatever.nucleus.providers;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+
+import java.io.File;
 
 /**
  * Abstract implementation of a NucleusFramework service provider.
@@ -32,6 +38,8 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public abstract class Provider implements IProvider {
 
     private IProviderInfo _info;
+    private File _dataFolder;
+    private IDataNode _dataNode;
     private boolean _isTypesRegistered;
     private boolean _isEnabled;
     private boolean _isDisabled;
@@ -47,6 +55,42 @@ public abstract class Provider implements IProvider {
             throw new IllegalStateException("Provider info not set yet.");
 
         return _info;
+    }
+
+    @Override
+    public final File getDataFolder() {
+
+        if (_dataFolder == null) {
+            File base = Nucleus.getPlugin().getDataFolder();
+            File providers = new File(base, "providers");
+            _dataFolder = new File(providers, getInfo().getName());
+
+            if (!_dataFolder.exists() && !_dataFolder.mkdirs()) {
+                throw new RuntimeException(
+                        "Failed to create data folder for provider '" + getInfo().getName() + "'.");
+            }
+        }
+
+        return _dataFolder;
+    }
+
+    @Override
+    public final IDataNode getDataNode() {
+
+        if (_dataNode == null) {
+            _dataNode = new YamlDataNode(
+                    Nucleus.getPlugin(), new DataPath("providers." + getInfo().getName() + ".config"));
+            _dataNode.load();
+        }
+
+        return _dataNode;
+    }
+
+    @Override
+    public DataPath getDataPath(String path) {
+        PreCon.notNullOrEmpty(path);
+
+        return new DataPath("providers." + getInfo().getName() + '.' + path);
     }
 
     @Override
