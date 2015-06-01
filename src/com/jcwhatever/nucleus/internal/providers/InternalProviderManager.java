@@ -58,10 +58,16 @@ import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
+import com.jcwhatever.nucleus.utils.DependencyRunner;
+import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
+import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
+import com.jcwhatever.nucleus.utils.DependencyRunner.IFinishHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
-
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,7 +76,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Internal provider manager implementation.
@@ -190,7 +195,12 @@ public final class InternalProviderManager implements IProviderManager {
     /**
      * Enable all providers.
      */
-    public void enableProviders() {
+    public IFuture enableProviders() {
+
+        final FutureAgent agent = new FutureAgent();
+
+        DependencyRunner<IDependantRunnable> runner =
+                new DependencyRunner<IDependantRunnable>(Nucleus.getPlugin());
 
         Iterator<IProvider> iterator = _toEnable.iterator();
         while (iterator.hasNext()) {
@@ -206,16 +216,42 @@ public final class InternalProviderManager implements IProviderManager {
             }
         }
 
-        for (IProvider provider : _toEnable) {
+        for (final IProvider provider : _toEnable) {
             try {
                 provider.enable();
             }
             catch (Throwable e) {
                 e.printStackTrace();
+                continue;
             }
+
+            runner.add(new IDependantRunnable() {
+                @Override
+                public DependencyStatus getDependencyStatus() {
+                    return provider.isLoaded()
+                            ? DependencyStatus.READY
+                            : DependencyStatus.NOT_READY;
+                }
+
+                @Override
+                public void run() {
+                    // do nothing
+                }
+            });
         }
 
+        runner.onFinish(new IFinishHandler<IDependantRunnable>() {
+            @Override
+            public void onFinish(List<IDependantRunnable> notRun) {
+                agent.success();
+            }
+        });
+
         _toEnable.clear();
+
+        runner.start();
+
+        return agent.getFuture();
     }
 
     /**

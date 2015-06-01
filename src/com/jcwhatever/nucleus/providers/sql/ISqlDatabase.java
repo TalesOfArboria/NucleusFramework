@@ -24,19 +24,20 @@
 
 package com.jcwhatever.nucleus.providers.sql;
 
+import com.jcwhatever.nucleus.mixins.ILoadable;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.providers.sql.statement.ISqlTransaction;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.annotation.Nullable;
 
 /**
  * Sql database.
  */
-public interface ISqlDatabase extends INamed {
+public interface ISqlDatabase extends INamed, ILoadable {
 
     /**
      * Get the database connection.

@@ -27,18 +27,21 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.BukkitPlugin;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
 import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IFinishHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
 import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
+import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -46,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
-import javax.annotation.Nullable;
 
 /**
  * Loads provider modules from /plugins/NucleusFramework/providers folder
@@ -103,9 +105,13 @@ public final class InternalProviderLoader extends JarModuleLoader<Provider> {
             public void onFinish(List<IDependantRunnable> notRun) {
 
                 _manager.setLoading(false);
-                _manager.enableProviders();
-
-                ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
+                _manager.enableProviders()
+                        .onSuccess(new FutureSubscriber() {
+                            @Override
+                            public void on(FutureStatus status, @Nullable String message) {
+                                ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
+                            }
+                        });
             }
         });
 

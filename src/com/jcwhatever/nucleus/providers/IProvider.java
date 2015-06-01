@@ -24,10 +24,12 @@
 
 package com.jcwhatever.nucleus.providers;
 
+import com.jcwhatever.nucleus.mixins.ILoadable;
+
 /**
  * Basic interface for a NucleusFramework service provider.
  */
-public interface IProvider {
+public interface IProvider extends ILoadable {
 
     /**
      * Get info about the provider.

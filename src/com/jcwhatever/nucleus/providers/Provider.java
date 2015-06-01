@@ -37,6 +37,11 @@ public abstract class Provider implements IProvider {
     private boolean _isDisabled;
 
     @Override
+    public boolean isLoaded() {
+        return _isTypesRegistered && _isEnabled && !_isDisabled;
+    }
+
+    @Override
     public final IProviderInfo getInfo() {
         if (_info == null)
             throw new IllegalStateException("Provider info not set yet.");
