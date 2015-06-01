@@ -30,12 +30,10 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendsContext;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -85,10 +83,11 @@ class NucleusNamedFriendsContext extends NucleusFriendsContext implements INamed
                 return;
         }
 
-        String diskName = Bukkit.getOnlineMode() ? getName() : "offline-" + getName();
-
-        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath(
-                "friends." + diskName + '.' + playerId.toString()));
+        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(),
+                getProvider().getDataPath(
+                                    getName() + '.'
+                                    + (Bukkit.getOnlineMode() ? "" : "-offline.")
+                                    + playerId.toString()));
         dataNode.load();
 
         synchronized (_sync) {

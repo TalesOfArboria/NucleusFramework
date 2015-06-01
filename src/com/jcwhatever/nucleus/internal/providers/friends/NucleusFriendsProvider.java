@@ -31,13 +31,12 @@ import com.jcwhatever.nucleus.providers.friends.FriendLevels;
 import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriendsContext;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -49,7 +48,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import javax.annotation.Nullable;
 
 /**
  * Nucleus implementation of {@link IFriendsProvider}.
@@ -72,8 +70,11 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
         setInfo(new InternalProviderInfo(this.getClass(),
                 "NucleusFriends", "Default friends provider."));
 
-        String dataPath = Bukkit.getOnlineMode() ? "friends" : "offline-friends";
-        _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath(dataPath));
+        _dataNode = Bukkit.getOnlineMode()
+                ? getDataNode()
+                : DataStorage.get(Nucleus.getPlugin(), getDataPath("config-offline"));
+        _dataNode.load();
+
         _defaultContext = new NucleusNamedFriendsContext(this, "_default");
 
         registerLevel(FriendLevels.CASUAL);
@@ -81,7 +82,6 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
         registerLevel(FriendLevels.BEST);
 
         loadContexts();
-
     }
 
     @Override

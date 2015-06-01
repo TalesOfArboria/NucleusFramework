@@ -31,17 +31,16 @@ import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.IKitContext;
 import com.jcwhatever.nucleus.providers.kits.IKitProvider;
 import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Nucleus implementation of a kit provider.
@@ -58,13 +57,12 @@ public final class NucleusKitProvider extends Provider implements IKitProvider {
      */
     public NucleusKitProvider() {
 
-        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("kits"));
-        dataNode.load();
-
-        _globalContext = new NucleusKitContext(Nucleus.getPlugin(), dataNode);
-
         setInfo(new InternalProviderInfo(this.getClass(),
                 NAME, "Default kit provider."));
+
+        IDataNode dataNode = getDataNode();
+
+        _globalContext = new NucleusKitContext(Nucleus.getPlugin(), dataNode);
     }
 
     @Override

@@ -35,7 +35,6 @@ import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;
@@ -44,7 +43,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -58,6 +56,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -66,7 +65,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Internal implementation of {@link IJailProvider}.
@@ -95,8 +93,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
     @Override
     public void onEnable() {
 
-        _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("jails"));
-        _dataNode.load();
+        _dataNode = getDataNode();
 
         _serverJail = new NucleusJail(this, Nucleus.getPlugin(), "Server", _dataNode.getNode("Server"));
 
@@ -151,7 +148,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
 
         IDataNode dataNode = _dataNodes.get(plugin);
         if (dataNode == null) {
-            dataNode = DataStorage.get(plugin, new DataPath("jails"));
+            dataNode = DataStorage.get(plugin, getDataPath("jails"));
             dataNode.load();
 
             _dataNodes.put(plugin, dataNode);

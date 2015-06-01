@@ -31,19 +31,18 @@ import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccount;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsBank;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
-
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Nucleus implementation of {@link IBankItemsProvider}.
@@ -51,6 +50,7 @@ import javax.annotation.Nullable;
 public class BankItemsProvider extends Provider implements IBankItemsProvider {
 
     public static final String NAME = "NucleusBankItems";
+    private static BankItemsProvider _instance;
 
     private final TimedHashMap<UUID, BankItemsAccount> _globalAccounts =
             new TimedHashMap<>(Nucleus.getPlugin(), 25, 10, TimeScale.MINUTES);
@@ -62,10 +62,14 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
      * Constructor.
      */
     public BankItemsProvider() {
+
+        _instance = this;
+
         setInfo(new InternalProviderInfo(this.getClass(),
                 NAME, "Default bank items provider."));
 
-        _bankNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bankitems.banks"));
+        _bankNode = DataStorage.get(Nucleus.getPlugin(), getDataPath("banks"));
+        _bankNode.load();
         load();
     }
 
@@ -145,11 +149,18 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
         }
     }
 
+    @Override
+    protected void onDisable() {
+        super.onDisable();
+
+        _instance = null;
+    }
+
     @Nullable
     static BankItemsAccount loadAccountFromFile (UUID playerId) {
 
-        DataPath path = new DataPath(
-                (Bukkit.getOnlineMode() ? "bankitems.global." : "bankitems.global.offline")
+        DataPath path = _instance.getDataPath(
+                (Bukkit.getOnlineMode() ? "global." : ".global-offline.")
                         + playerId);
 
         IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), path);

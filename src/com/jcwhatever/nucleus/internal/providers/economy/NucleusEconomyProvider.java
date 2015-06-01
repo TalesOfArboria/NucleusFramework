@@ -33,13 +33,12 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * NucleusFramework's simple economy provider
@@ -56,7 +54,6 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
 
     public static final String NAME = "NucleusEconomy";
 
-    private final Plugin _plugin;
     private final IDataNode _globalAccountNode;
 
     private final Map<UUID, NucleusAccount> _accounts =
@@ -74,17 +71,18 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
         setInfo(new InternalProviderInfo(this.getClass(),
                 NAME, "Default economy provider."));
 
-        IDataNode dataNode = new YamlDataNode(plugin, new DataPath("economy.config"));
-        _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));
-        _plugin = plugin;
 
-        dataNode.load();
+        _globalAccountNode = new YamlDataNode(plugin, getDataPath("global"));
+
         _globalAccountNode.load();
 
+        IDataNode dataNode = getDataNode();
+        dataNode.setDefaultsSaved(true);
         String singular = dataNode.getString("currency-singular", "Dollar");
         String plural = dataNode.getString("currency-plural", "Dollars");
         String formatTemplate = dataNode.getString("format-template", "{0: amount} {1: currencyName}");
         String decimalFormat = dataNode.getString("decimal-format", "###,###,###,###.00");
+        dataNode.save();
 
         assert decimalFormat != null;
         DecimalFormat formatter = new DecimalFormat(decimalFormat);
@@ -158,7 +156,7 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
             }
         }
 
-        IDataNode node = new YamlDataNode(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
+        IDataNode node = new YamlDataNode(Nucleus.getPlugin(), getDataPath("banks." + bankName));
         node.load();
 
         NucleusBank bank = new NucleusBank(this, bankName, playerId, node);
@@ -182,9 +180,8 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
                 return false;
         }
 
-        File economyFolder = new File(_plugin.getDataFolder(), "economy");
-        File accountsFolder = new File(economyFolder, "accounts");
-        File accountFile = new File(accountsFolder, bank.getName() + ".yml");
+        File bankFolder = new File(getDataFolder(), "banks");
+        File accountFile = new File(bankFolder, bank.getName() + ".yml");
 
         return accountFile.delete();
     }

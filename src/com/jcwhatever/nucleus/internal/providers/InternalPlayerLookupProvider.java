@@ -26,13 +26,11 @@ package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.Provider;
-import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,8 +39,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Nucleus frameworks default player lookup provider
@@ -135,7 +133,7 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
 
                 String dataPath = Bukkit.getOnlineMode() ? "player-names" : "offline-player-names";
 
-                IDataNode data = DataStorage.get(Nucleus.getPlugin(), new DataPath(dataPath));
+                IDataNode data = DataStorage.get(Nucleus.getPlugin(), getDataPath(dataPath));
                 if (!data.load()) {
                     NucMsg.warning("Failed to load player names file.");
                 }
