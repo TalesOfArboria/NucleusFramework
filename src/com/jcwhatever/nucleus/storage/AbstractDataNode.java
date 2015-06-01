@@ -25,23 +25,23 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
-import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -58,7 +58,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
-import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of an {@link IDataNode}.
@@ -75,6 +74,7 @@ public abstract class AbstractDataNode implements IDataNode {
     private volatile AutoSaveMode _saveMode = AutoSaveMode.DEFAULT;
     private volatile boolean _isDirty;
     private volatile int _dirtyChildren;
+    private volatile Boolean _isDefaultSaved;
 
     protected final String _rawPath;
     protected final String _path;
@@ -99,7 +99,6 @@ public abstract class AbstractDataNode implements IDataNode {
         ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         _read = lock.readLock();
         _write = lock.writeLock();
-
     }
 
     /**
@@ -146,19 +145,13 @@ public abstract class AbstractDataNode implements IDataNode {
             return null;
 
         if (_parent == null) {
-            _root._write.lock();
-            try {
 
-                if (_parent != null)
-                    return _parent;
+            if (_parent != null)
+                return _parent;
 
-                _parent = _parentPath.isEmpty()
-                        ? (AbstractDataNode) getRoot()
-                        : (AbstractDataNode) getRoot().getNode(_parentPath);
-
-            } finally {
-                _root._write.unlock();
-            }
+            _parent = _parentPath.isEmpty()
+                    ? (AbstractDataNode) getRoot()
+                    : (AbstractDataNode) getRoot().getNode(_parentPath);
         }
 
         return _parent;
@@ -185,19 +178,51 @@ public abstract class AbstractDataNode implements IDataNode {
     }
 
     @Override
+    public boolean isDefaultsSaved() {
+
+        Boolean isSaved;
+        AbstractDataNode node = this;
+
+        while (node != null) {
+
+            isSaved = node._isDefaultSaved;
+
+            if (isSaved != null)
+                return isSaved;
+
+            if (node == _root)
+                break;
+
+            node = (AbstractDataNode) node.getParent();
+        }
+
+        return false;
+    }
+
+    @Override
+    public void setDefaultsSaved(boolean isSaved) {
+        _isDefaultSaved = isSaved;
+    }
+
+    @Override
     public boolean getBoolean(String keyPath) {
         return getBoolean(keyPath, false);
     }
 
     @Override
     public boolean getBoolean(String keyPath, boolean def) {
+
         Object value = get(keyPath);
+
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
         else if (value instanceof String) {
             return TextUtils.parseBoolean((String) value);
         }
+
+        if (isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -209,13 +234,18 @@ public abstract class AbstractDataNode implements IDataNode {
 
     @Override
     public int getInteger(String keyPath, int def) {
+
         Object value = get(keyPath);
+
         if (value instanceof Number) {
             return ((Number) value).intValue();
         }
         else if (value instanceof String) {
             return TextUtils.parseInt((String)value, def);
         }
+
+        if (isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -227,13 +257,18 @@ public abstract class AbstractDataNode implements IDataNode {
 
     @Override
     public long getLong(String keyPath, long def) {
+
         Object value = get(keyPath);
+
         if (value instanceof Number) {
             return ((Number) value).longValue();
         }
         else if (value instanceof String) {
             return TextUtils.parseLong((String)value, def);
         }
+
+        if (isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -245,13 +280,18 @@ public abstract class AbstractDataNode implements IDataNode {
 
     @Override
     public double getDouble(String keyPath, double def) {
+
         Object value = get(keyPath);
+
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         }
         else if (value instanceof String) {
             return TextUtils.parseDouble((String)value, def);
         }
+
+        if (isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -265,6 +305,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public String getString(String keyPath, @Nullable String def) {
+
         Object value = get(keyPath);
 
         if (value instanceof MemorySection)
@@ -272,6 +313,9 @@ public abstract class AbstractDataNode implements IDataNode {
 
         if (value != null)
             return String.valueOf(value);
+
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -285,7 +329,9 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public UUID getUUID(String keyPath, @Nullable UUID def) {
+
         Object value = get(keyPath);
+
         if (value instanceof UUID) {
             return (UUID) value;
         }
@@ -294,6 +340,9 @@ public abstract class AbstractDataNode implements IDataNode {
             if (result != null)
                 return result;
         }
+
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -309,13 +358,17 @@ public abstract class AbstractDataNode implements IDataNode {
     public Date getDate(String keyPath, @Nullable Date def) {
 
         Object value = get(keyPath);
+
         if (value instanceof Date) {
             return (Date) value;
         }
         else if (value instanceof Number) {
             return new Date(((Number)value).longValue());
         }
-        
+
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
+
         return def;
     }
 
@@ -341,6 +394,9 @@ public abstract class AbstractDataNode implements IDataNode {
         if (def == null)
             return null;
 
+        if (isDefaultsSaved())
+            set(keyPath, def);
+
         if (def instanceof SyncLocation)
             return (SyncLocation)def;
 
@@ -362,7 +418,9 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack[] def) {
+
         Object value = get(keyPath);
+
         if (value instanceof ItemStack) {
             return new ItemStack[]{(ItemStack) value};
         }
@@ -382,6 +440,9 @@ public abstract class AbstractDataNode implements IDataNode {
             } catch (InvalidItemStackStringException ignore) {}
         }
 
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
+
         return def;
     }
 
@@ -394,7 +455,9 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public <T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass) {
+
         Object value = get(keyPath);
+
         if (enumClass.isInstance(value)) {
 
             @SuppressWarnings("unchecked")
@@ -408,13 +471,18 @@ public abstract class AbstractDataNode implements IDataNode {
                 return result;
         }
 
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
+
         return def;
     }
 
     @Nullable
     @Override
     public Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass) {
+
         Object value = get(keyPath);
+
         if (enumClass.isInstance(value)) {
 
             @SuppressWarnings("unchecked")
@@ -425,6 +493,9 @@ public abstract class AbstractDataNode implements IDataNode {
         else if (value instanceof String) {
             return EnumUtils.searchGenericEnum((String)value, enumClass, def);
         }
+
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -457,6 +528,9 @@ public abstract class AbstractDataNode implements IDataNode {
 
             return result;
         }
+
+        if (def != null && isDefaultsSaved())
+            set(keyPath, def);
 
         return def;
     }
@@ -649,7 +723,7 @@ public abstract class AbstractDataNode implements IDataNode {
 
                     if (dataNode.getAutoSaveMode() == AutoSaveMode.ENABLED ||
                             (dataNode.getAutoSaveMode() == AutoSaveMode.DEFAULT &&
-                            dataNode.getDefaultAutoSaveMode() == AutoSaveMode.ENABLED)) {
+                                    dataNode.getDefaultAutoSaveMode() == AutoSaveMode.ENABLED)) {
                         dataNode.save();
                         dataNode.clean();
                     }

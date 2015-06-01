@@ -30,17 +30,16 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
-
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Represents a key/value data storage node.
@@ -61,6 +60,25 @@ public interface IDataNode extends Iterable<IDataNode>, ILoadable, IPluginOwned 
      */
     @Override
     boolean isLoaded();
+
+    /**
+     * Determine if the default value specified when retrieving a data node value
+     * is saved if the node value is not found.
+     *
+     * <p>Default value is false.</p>
+     *
+     * <p>When the default value is saved, it is only set in memory. The source is
+     * not modified until the data node is saved.</p>
+     */
+    boolean isDefaultsSaved();
+
+    /**
+     * Set default value saved if value specified when retrieving a data node value
+     * is not found.
+     *
+     * @param isSaved  True to save default values, otherwise false.
+     */
+    void setDefaultsSaved(boolean isSaved);
 
     /**
      * Get the name of the node.
