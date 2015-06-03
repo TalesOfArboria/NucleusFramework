@@ -41,7 +41,7 @@ public class UsageGeneratorTest {
 
         UsageGenerator generator = new UsageGenerator();
 
-        String usage = generator.generate(command, "root");
+        String usage = generator.generate(command);
 
         Assert.assertEquals(
                 TextUtils.format(UsageGenerator.HELP_USAGE, "root ", "", command.getInfo().getName() + ' ', ""),

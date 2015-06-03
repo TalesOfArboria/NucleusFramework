@@ -45,8 +45,10 @@ public class DummyRegisteredCommand extends RegisteredCommand {
 
     @Override
     public RegisteredCommandInfo getInfo() {
-        if (_info == null && getDispatcher() != null)
+        if (_info == null && getDispatcher() != null) {
             _info = new RegisteredCommandInfo(this, null);
+            _info.setCurrentAlias("root");
+        }
 
         return _info;
     }

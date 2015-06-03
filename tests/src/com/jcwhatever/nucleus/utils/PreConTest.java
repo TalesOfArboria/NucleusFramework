@@ -44,12 +44,12 @@ public class PreConTest {
         PreCon.supported(true, "Error message.");
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testNotNull() throws Exception {
         PreCon.notNull(null);
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testNotNull1() throws Exception {
         PreCon.notNull(null, "paramName");
     }
@@ -65,7 +65,7 @@ public class PreConTest {
     }
 
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testNotNullOrEmpty() throws Exception {
         PreCon.notNullOrEmpty(null);
     }
@@ -75,7 +75,7 @@ public class PreConTest {
         PreCon.notNullOrEmpty("");
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testNotNullOrEmpty2() throws Exception {
         PreCon.notNullOrEmpty(null, "paramName");
     }
@@ -95,7 +95,7 @@ public class PreConTest {
         PreCon.notNullOrEmpty("valid", "paramName");
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testValidNodeName() throws Exception {
         PreCon.validNodeName(null);
     }
@@ -115,7 +115,7 @@ public class PreConTest {
         PreCon.validNodeName("valid-name");
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testValidNodePath() throws Exception {
         PreCon.validNodePath(null);
     }
