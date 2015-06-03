@@ -29,14 +29,13 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * A dropped item.
@@ -208,4 +207,16 @@ public interface IFloatingItem extends IPluginOwned, INamedInsensitive, IDisposa
      * @return  Self for chaining.
      */
     IFloatingItem onPickup(IUpdateSubscriber<Player> subscriber);
+
+    /**
+     * Get updated when an item pick up is attempted by a player.
+     *
+     * <p>Is called even if the item cannot be picked up.</p>
+     *
+     * @param subscriber  The update subscriber. The subscriber will receive the player
+     *                    that was detected attempting to pick up the item.
+     *
+     * @return  Self for chaining.
+     */
+    IFloatingItem onTryPickup(IUpdateSubscriber<Player> subscriber);
 }

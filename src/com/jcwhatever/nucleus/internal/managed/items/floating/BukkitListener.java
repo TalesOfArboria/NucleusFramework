@@ -130,6 +130,8 @@ class BukkitListener implements Listener {
 
         event.setCancelled(fiEvent.isCancelled());
 
+        item.onTryPickup(event.getPlayer());
+
         // check for cancelled event.
         if (event.isCancelled()) {
 

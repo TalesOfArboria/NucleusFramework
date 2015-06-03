@@ -27,16 +27,15 @@ package com.jcwhatever.nucleus.internal.managed.items.floating;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemSpawnEvent;
+import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
-import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
-import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -47,8 +46,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Represents a controlled item stack entity.
@@ -382,9 +381,23 @@ class FloatingItem implements IFloatingItem {
         return this;
     }
 
+    @Override
+    public IFloatingItem onTryPickup(IUpdateSubscriber<Player> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onTryPickup").addSubscriber(subscriber);
+
+        return this;
+    }
+
     void onPickup(Player p) {
 
         _agents.update("onPickup", p);
+    }
+
+    void onTryPickup(Player p) {
+
+        _agents.update("onTryPickup", p);
     }
 
     private void loadSettings() {
