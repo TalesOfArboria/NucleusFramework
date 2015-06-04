@@ -22,6 +22,6 @@ public class NucleusTest {
         plugin.setDebugging(true);
 
         // pause to allow providers to be loaded
-        BukkitTester.pause(20);
+        BukkitTester.pause(40);
     }
 }
