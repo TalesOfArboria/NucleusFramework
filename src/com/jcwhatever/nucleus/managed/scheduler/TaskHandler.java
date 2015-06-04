@@ -74,11 +74,6 @@ public abstract class TaskHandler implements Runnable {
      * Cancel the task.
      */
     public void cancelTask() {
-        if (_task != null) {
-            _task.cancel();
-            onCancel();
-            _task = null;
-        }
         cancelUp();
         cancelDown();
     }
@@ -113,6 +108,8 @@ public abstract class TaskHandler implements Runnable {
         if (_parent != null) {
             _parent.cancelUp();
         }
+
+        cancel();
     }
 
     /*
@@ -121,6 +118,16 @@ public abstract class TaskHandler implements Runnable {
     private void cancelDown() {
         if (_child != null) {
             _child.cancelDown();
+        }
+
+        cancel();
+    }
+
+    private void cancel() {
+        if (_task != null) {
+            _task.cancel();
+            onCancel();
+            _task = null;
         }
     }
 }
