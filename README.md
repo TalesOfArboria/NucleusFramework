@@ -36,6 +36,7 @@ _Coders like versatility. Server operators like stability. Users like usability.
 
 ## Providers
  * [CitizensNPCProvider](https://github.com/JCThePants/CitizensNpcProvider) - NPC Provider using [Citizens2](https://github.com/CitizensDev/Citizens2/) as its core.
+ * [MySqlProvider](https://github.com/JCThePants/MySqlProvider) - MySql database provider.
 
 ## Plugin dependencies
  * [WorldEdit](https://github.com/sk89q/WorldEdit) - soft dependency, not required
