@@ -26,14 +26,13 @@
 package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.utils.materials.Materials;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * Compares {@link org.bukkit.inventory.ItemStack}'s to determine if they are the same based
@@ -197,7 +196,8 @@ public class ItemStackMatcher {
 
             Material type = stack1.getType();
 
-            if (!_matchMeta && (Materials.hasColorData(type) || Materials.hasSubMaterialData(type)) &&
+            // match data if type has color or sub material data
+            if ((Materials.hasColorData(type) || Materials.hasSubMaterialData(type)) &&
                     !stack1.getData().equals(stack2.getData())) {
                 return false;
             }
