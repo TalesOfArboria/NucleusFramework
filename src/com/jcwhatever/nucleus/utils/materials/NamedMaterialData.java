@@ -535,6 +535,13 @@ public final class NamedMaterialData {
                 .add("ORANGE_DYE", new MaterialData(Material.INK_SACK, (byte) 14))
                 .add("WHITE_DYE", new MaterialData(Material.INK_SACK, (byte) 15))
                 .add("BONE_MEAL", new MaterialData(Material.INK_SACK, (byte) 15))
+
+                .add("POTATOE", new MaterialData(Material.POTATO))
+                .add("POTATOES", new MaterialData(Material.POTATO))
+                .add("POTATO_BLOCK", new MaterialData(Material.POTATO))
+
+                .add("CARROTS", new MaterialData(Material.CARROT))
+                .add("CARROT_BLOCK", new MaterialData(Material.CARROT))
         ;
     }
 }
