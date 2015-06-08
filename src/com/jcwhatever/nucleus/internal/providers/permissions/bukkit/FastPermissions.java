@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.managed.reflection.Reflection;
 
+import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
@@ -75,16 +76,24 @@ public final class FastPermissions extends BatchTracker {
      *  @param permission  The permission to add.
      */
     public void addPermission(Permission permission) {
+        PreCon.notNull(permission);
 
         // make sure a batch operation is in progress.
         if (_permissions == null || !isRunning()) {
+
+            if (Bukkit.getPluginManager().getPermission(permission.getName()) != null)
+                return;
+
             Bukkit.getPluginManager().addPermission(permission);
             return;
         }
 
+        if (_permissions.containsKey(permission.getName().toLowerCase()))
+            return;
+
         loadSets();
 
-        _permissions.put(permission.getName(), permission);
+        _permissions.put(permission.getName().toLowerCase(), permission);
 
         // add permission to the collection of permissions that need to be recalculated
         if (!_dontRecalculate.contains(permission))
@@ -105,6 +114,11 @@ public final class FastPermissions extends BatchTracker {
      * @param value   The permission value.
      */
     public void addParent(Permission child, Permission parent, boolean value) {
+        PreCon.notNull(child);
+        PreCon.notNull(parent);
+
+        if (parent.getChildren().containsKey(child.getName().toLowerCase()))
+            return;
 
         if (_permissions == null || !isRunning()) {
             child.addParent(parent, value);
@@ -113,7 +127,7 @@ public final class FastPermissions extends BatchTracker {
 
         loadSets();
 
-        parent.getChildren().put(child.getName(), value);
+        parent.getChildren().put(child.getName().toLowerCase(), value);
 
         if (!_dontRecalculate.contains(parent))
             _toRecalculate.add(parent);
@@ -161,7 +175,6 @@ public final class FastPermissions extends BatchTracker {
     private boolean loadPermissionsMap() throws NoSuchFieldException, IllegalAccessException {
 
         PluginManager pm = Bukkit.getPluginManager();
-
 
         Field field = pm.getClass().getDeclaredField("permissions");
         if (!Reflection.removeFinal(field))
