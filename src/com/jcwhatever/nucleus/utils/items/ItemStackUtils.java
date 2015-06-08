@@ -34,7 +34,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -42,11 +41,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 /**
  * {@link ItemStack} utilities.
@@ -237,7 +236,11 @@ public final class ItemStackUtils {
 
             switch (nameResult) {
                 case REQUIRED:
-                    String materialName = NamedMaterialData.get(stack.getData()).toLowerCase();
+                    String materialName = NamedMaterialData.getAlternate(stack.getData());
+                    if (materialName == null) {
+                        materialName = stack.getType().name().toLowerCase();
+                    }
+
                     String spaced = PATTERN_REPLACE_UNDERSCORE.matcher(materialName).replaceAll(" ");
                     return TextUtils.titleCase(spaced);
 
