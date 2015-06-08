@@ -88,6 +88,9 @@ public final class NamedMaterialData {
      * Get the name of the specified {@link org.bukkit.material.MaterialData} using
      * the most descriptive available name.
      *
+     * <p>An alternate name is returned if available, otherwise the material name and
+     * data is returned.</p>
+     *
      * @param materialData  The material data to get a name for.
      */
     public static String get(MaterialData materialData) {
@@ -103,6 +106,21 @@ public final class NamedMaterialData {
         } else {
             return name;
         }
+    }
+
+    /**
+     * Get the alternate name of the specified {@link org.bukkit.material.MaterialData} using
+     * the most descriptive available name.
+     *
+     * <p>The first alternate name is returned if there is more than one available.</p>
+     *
+     * @param materialData  The material data to get a name for.
+     *
+     * @return  An alternate name or null if none found.
+     */
+    @Nullable
+    public static String getAlternate(MaterialData materialData) {
+        return _alternateNames.getKey(materialData);
     }
 
     static {
