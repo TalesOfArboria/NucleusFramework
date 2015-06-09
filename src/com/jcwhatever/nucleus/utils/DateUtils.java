@@ -51,6 +51,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static long getDeltaMilliseconds(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return end.getTime() - start.getTime();
     }
 
@@ -61,6 +64,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static long getDeltaTicks(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return (end.getTime() - start.getTime()) / 50;
     }
 
@@ -71,6 +77,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static double getDeltaSeconds(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return (double)getDeltaMilliseconds(start, end) / 1000.0D;
     }
 
@@ -82,6 +91,10 @@ public final class DateUtils {
      * @param rounding  Specify how the result should be rounded
      */
     public static long getDeltaSeconds(Date start, Date end, TimeRound rounding) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+        PreCon.notNull(rounding);
+
         double seconds = (double)getDeltaMilliseconds(start, end) / 1000.0D;
 
         switch (rounding) {
@@ -101,6 +114,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static double getDeltaMinutes(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return getDeltaSeconds(start, end) / 60.0D;
     }
 
@@ -112,6 +128,10 @@ public final class DateUtils {
      * @param rounding  Specify how the result should be rounded
      */
     public static long getDeltaMinutes(Date start, Date end, TimeRound rounding) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+        PreCon.notNull(rounding);
+
         double seconds = getDeltaSeconds(start, end, rounding) / 60.0D;
 
         switch (rounding) {
@@ -131,6 +151,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static double getDeltaHours(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return getDeltaMinutes(start, end) / 60.0D;
     }
 
@@ -142,6 +165,10 @@ public final class DateUtils {
      * @param rounding  Specify how the result should be rounded
      */
     public static long getDeltaHours(Date start, Date end, TimeRound rounding) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+        PreCon.notNull(rounding);
+
         double minutes = getDeltaMinutes(start, end, rounding) / 60.0D;
 
         switch (rounding) {
@@ -161,6 +188,9 @@ public final class DateUtils {
      * @param end    The end date
      */
     public static double getDeltaDays(Date start, Date end) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+
         return getDeltaHours(start, end) / 24.0D;
     }
 
@@ -172,6 +202,10 @@ public final class DateUtils {
      * @param rounding  Specify how the result should be rounded
      */
     public static long getDeltaDays(Date start, Date end, TimeRound rounding) {
+        PreCon.notNull(start);
+        PreCon.notNull(end);
+        PreCon.notNull(rounding);
+
         double hours = (double)getDeltaHours(start, end, rounding) / 24.0D;
 
         switch (rounding) {
@@ -191,6 +225,9 @@ public final class DateUtils {
      * @param format  The format to use
      */
     public static String format(Date date, String format) {
+        PreCon.notNull(date);
+        PreCon.notNull(format);
+
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(date);
     }
