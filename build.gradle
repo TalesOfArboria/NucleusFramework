@@ -4,7 +4,7 @@
 ext.jcBuildSettings = [
         projectName : 'NucleusFramework',
         majorVersion : '0',
-        minorVersion : '4',
+        minorVersion : '5',
         buildBy : null, // auto filled
         buildNumber : null, // auto filled when using teamcity
         mainClass : null,
@@ -23,7 +23,7 @@ ext.jcBuildSettings = [
 // provided dependencies (provided by the runtime environment)
         providedDependsFiles : null,
         providedDepends : [
-                'org.spigotmc:spigot-api:1.8.3-R0.1-SNAPSHOT',
+                'org.spigotmc:spigot-api:1.8.7-R0.1-SNAPSHOT',
                 'com.sk89q:WorldEdit:SNAPSHOT',
                 'net.milkbowl.vault:Vault:1.5.2',
                 'com.google.code.findbugs:jsr305:3.0.0'

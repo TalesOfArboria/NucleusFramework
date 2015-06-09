@@ -5,7 +5,7 @@ A plugin framework and rapid development library for Bukkit/Spigot. Developed co
 
 Currently under development, expect breaking changes.
 
-Compatible with Spigot for 1.8.1 through 1.8.3
+Tested with Spigot 1.8.1, 1.8.3 and 1.8.7
 
 _Coders like versatility. Server operators like stability. Users like usability._
 
