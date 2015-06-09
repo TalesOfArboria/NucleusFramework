@@ -37,6 +37,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
+import javax.annotation.Nullable;
+
 /**
  * Abstract implementation of a permissions handler
  */
@@ -44,9 +46,15 @@ public abstract class AbstractPermissionsProvider extends Provider implements IP
 
     private final FastPermissions _fastPerms = new FastPermissions();
 
+    @Nullable
     @Override
     public IPermission get(String permissionName) {
-        return new SuperPermission(this, manager().getPermission(permissionName), _fastPerms);
+
+        Permission permission = manager().getPermission(permissionName);
+        if (permission == null)
+            return null;
+
+        return new SuperPermission(this, permission, _fastPerms);
     }
 
     @Override
