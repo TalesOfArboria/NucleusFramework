@@ -27,8 +27,9 @@ package com.jcwhatever.nucleus.providers.playerlookup;
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Interface for a player lookup provider.
@@ -66,4 +67,34 @@ public interface IPlayerLookupProvider extends IProvider {
      */
     @Nullable
     String getPlayerName(UUID playerId);
+
+    /**
+     * Get the Date the player first logged in successfully.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return  The date or null if the player was not found.
+     */
+    @Nullable
+    Date getFirstLogin(UUID playerId);
+
+    /**
+     * Get the last Date the player logged in successfully.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return  The date or null if the player was not found.
+     */
+    @Nullable
+    Date getLastLogin(UUID playerId);
+
+    /**
+     * Get the number of times a player has successfully logged into the server.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return The number of times or 0 if a player with the specified ID
+     * was not found.
+     */
+    int getLoginCount(UUID playerId);
 }

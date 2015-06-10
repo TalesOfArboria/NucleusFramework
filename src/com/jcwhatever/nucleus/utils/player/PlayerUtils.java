@@ -32,7 +32,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,11 +42,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Provides {@link org.bukkit.entity.Player} related utilities.
@@ -239,6 +238,42 @@ public final class PlayerUtils {
     @Nullable
     public static String getPlayerName(UUID playerId) {
         return Nucleus.getProviders().getPlayerLookup().getPlayerName(playerId);
+    }
+
+    /**
+     * Get the Date the player first logged in successfully.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return  The date or null if the player was not found.
+     */
+    @Nullable
+    public static Date getFirstLogin(UUID playerId) {
+        return Nucleus.getProviders().getPlayerLookup().getFirstLogin(playerId);
+    }
+
+    /**
+     * Get the last Date the player logged in successfully.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return  The date or null if the player was not found.
+     */
+    @Nullable
+    public static Date getLastLogin(UUID playerId) {
+        return Nucleus.getProviders().getPlayerLookup().getLastLogin(playerId);
+    }
+
+    /**
+     * Get the number of times a player has successfully logged into the server.
+     *
+     * @param playerId  The ID of the player.
+     *
+     * @return The number of times or 0 if a player with the specified ID
+     * was not found.
+     */
+    public static int getLoginCount(UUID playerId) {
+        return Nucleus.getProviders().getPlayerLookup().getLoginCount(playerId);
     }
 
     /**

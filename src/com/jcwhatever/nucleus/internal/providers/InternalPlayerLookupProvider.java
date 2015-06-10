@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -67,12 +68,12 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
             return p.getUniqueId();
 
         // check stored id/name map
-        IDataNode nameData = getNameData();
+        IDataNode nameData = getPlayerData();
 
         synchronized (_dataSync) {
 
             for (IDataNode node : nameData) {
-                String name = node.getString("");
+                String name = node.getString("name");
 
                 if (name != null && name.equalsIgnoreCase(playerName)) {
 
@@ -94,10 +95,53 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
     public String getPlayerName(UUID playerId) {
         PreCon.notNull(playerId);
 
-        IDataNode nameData = getNameData();
+        IDataNode data = getPlayerData(playerId);
+        if (data == null)
+            return null;
 
         synchronized (_dataSync) {
-            return nameData.getString(playerId.toString());
+            return data.getString("name");
+        }
+    }
+
+    @Nullable
+    @Override
+    public Date getFirstLogin(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        IDataNode data = getPlayerData(playerId);
+        if (data == null)
+            return null;
+
+        synchronized (_dataSync) {
+            return data.getDate("first");
+        }
+    }
+
+    @Nullable
+    @Override
+    public Date getLastLogin(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        IDataNode data = getPlayerData(playerId);
+        if (data == null)
+            return null;
+
+        synchronized (_dataSync) {
+            return data.getDate("last");
+        }
+    }
+
+    @Override
+    public int getLoginCount(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        IDataNode data = getPlayerData(playerId);
+        if (data == null)
+            return 0;
+
+        synchronized (_dataSync) {
+            return data.getInteger("count", 0);
         }
     }
 
@@ -108,7 +152,22 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
         PreCon.notNull(playerId);
         PreCon.notNullOrEmpty(name);
 
-        IDataNode nameData = getNameData();
+        Date loginDate = new Date();
+
+        IDataNode data = getPlayerData(playerId);
+
+        synchronized (_dataSync) {
+            if (data == null) {
+                data = getPlayerData().getNode(playerId.toString());
+
+                data.set("first", loginDate);
+            }
+
+            int count = data.getInteger("count", 0);
+
+            data.set("last", loginDate);
+            data.set("count", count + 1);
+        }
 
         String currentName = getPlayerName(playerId);
 
@@ -116,14 +175,14 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
             return;
 
         synchronized (_dataSync) {
-            nameData.set(playerId.toString(), name);
+            data.set("name", name);
         }
 
-        nameData.save();
+        data.save();
     }
 
     // get the node that contains player id/name data.
-    private IDataNode getNameData() {
+    private IDataNode getPlayerData() {
 
         if (_nameData == null) {
 
@@ -131,16 +190,27 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
                 if (_nameData != null)
                     return _nameData;
 
-                String dataPath = Bukkit.getOnlineMode() ? "player-names" : "offline-player-names";
+                String dataPath = Bukkit.getOnlineMode() ? "player-data" : "offline-player-data";
 
                 IDataNode data = DataStorage.get(Nucleus.getPlugin(), getDataPath(dataPath));
                 if (!data.load()) {
-                    NucMsg.warning("Failed to load player names file.");
+                    NucMsg.warning("Failed to load player data file.");
                 }
                 _nameData = data;
             }
         }
         return _nameData;
+    }
+
+    @Nullable
+    private IDataNode getPlayerData(UUID playerId) {
+        IDataNode data = getPlayerData();
+        String nodeName = playerId.toString();
+
+        if (!data.hasNode(nodeName))
+            return null;
+
+        return data.getNode(nodeName);
     }
 
     private class BukkitEventListener implements Listener {
