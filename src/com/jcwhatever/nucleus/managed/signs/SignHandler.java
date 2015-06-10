@@ -261,8 +261,10 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
             PreCon.notNull(handler);
             PreCon.isValid(handler._registration == this, "Invalid registration.");
 
-            if (handler._dataNode == null)
+            if (handler._dataNode == null) {
                 handler._dataNode = DataStorage.get(handler.getPlugin(), new DataPath("nucleus.signs"));
+                handler._dataNode.load();
+            }
 
             return handler._dataNode;
         }
