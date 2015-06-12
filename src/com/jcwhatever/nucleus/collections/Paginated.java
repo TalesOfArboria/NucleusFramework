@@ -110,12 +110,19 @@ public class Paginated<E> extends ListWrapper<E> implements IPaginator<E> {
     }
 
     protected void checkPage(int page) {
+
+        int totalPages = getTotalPages();
+
         switch (_start) {
             case ZERO:
+                if (totalPages == 0 && page == 0)
+                    return;
                 PreCon.positiveNumber(page, "page");
                 PreCon.lessThan(page, getTotalPages(), "page");
                 break;
             case ONE:
+                if (totalPages == 0 && page == 1)
+                    return;
                 PreCon.greaterThanZero(page, "page");
                 PreCon.lessThanEqual(page, getTotalPages(), "page");
                 break;
