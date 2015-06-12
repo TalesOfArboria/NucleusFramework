@@ -65,6 +65,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
 
     @Override
     public Player getPlayer() {
+        PreCon.isValid(_session != null, "The views Session is not set yet.");
         return _session.getPlayer();
     }
 
@@ -77,6 +78,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
      * Get the views {@link ViewSession}.
      */
     public ViewSession getViewSession() {
+        PreCon.isValid(_session != null, "The views Session is not set yet.");
         return _session;
     }
 
@@ -153,6 +155,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
      */
     boolean close(ViewCloseReason reason) {
         PreCon.notNull(reason);
+        PreCon.isValid(_session != null, "The views Session is not set yet.");
 
         if (_session.getCurrent() != this)
             return false;
