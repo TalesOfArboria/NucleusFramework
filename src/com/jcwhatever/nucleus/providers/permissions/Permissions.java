@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -35,8 +34,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Static convenience methods for accessing the permissions provider.
@@ -459,13 +458,11 @@ public final class Permissions {
 
         for (IPermissionGroup group : groups) {
             boolean canAssign = group.canAssign(player);
-            boolean hasGroup = hasGroup(player, group.getName());
 
-            if (!canAssign && hasGroup) {
-                removeGroup(plugin, player, group.getName());
-            }
-            else if (canAssign && !hasGroup) {
+            if (canAssign) {
                 addGroup(plugin, player, group.getName());
+            } else {
+                removeGroup(plugin, player, group.getName());
             }
         }
     }
