@@ -36,6 +36,7 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -120,8 +121,13 @@ public class ManagedHudObjective extends AbstractObjective implements IHudObject
         return this;
     }
 
+    @Nullable
     @Override
     public IDynamicText get(int lineIndex) {
+
+        if (lineIndex >= _lines.size())
+            return null;
+
         Line line = _lines.get(lineIndex);
         return line.text;
     }

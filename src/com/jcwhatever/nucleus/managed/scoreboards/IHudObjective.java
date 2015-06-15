@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for a scoreboard used as a sidebar hud
  */
@@ -61,7 +63,10 @@ public interface IHudObjective extends IObjective {
      * Get the text at the specified line index.
      *
      * @param lineIndex  The 0 based index of the line.
+     *
+     * @return  The text or null if there is no line at the specified index.
      */
+    @Nullable
     IDynamicText get(int lineIndex);
 
     /**
