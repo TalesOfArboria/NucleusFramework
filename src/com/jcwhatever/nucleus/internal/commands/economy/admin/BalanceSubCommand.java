@@ -74,17 +74,18 @@ class BalanceSubCommand extends AbstractCommand implements IExecutableCommand {
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String playerName = args.getName("playerName");
-        String bankName = args.getString("bank");
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null)
             throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, playerName));
 
-        if (bankName.isEmpty()) {
+        if (args.isDefaultValue("bank")) {
             double balance = Economy.getBalance(playerId);
             tellSuccess(sender, NucLang.get(_GLOBAL_BALANCE, Economy.getCurrency().format(balance)));
         }
         else {
+
+            String bankName = args.getString("bank");
 
             if (!Economy.hasBankSupport())
                 throw new CommandException(NucLang.get(_NO_BANK_SUPPORT));
