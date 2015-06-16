@@ -30,9 +30,9 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Static convenience functions for accessing the economy provider.
@@ -185,8 +185,12 @@ public final class Economy {
 
         IEconomyTransaction transaction = createTransaction();
 
-        transaction.withdraw(fromAccount, amount, currency);
-        transaction.deposit(toAccount, amount, currency);
+        if (!transaction.withdraw(fromAccount, amount, currency))
+            return FutureResultAgent.errorResult(null, "Insufficient funds");
+
+        if (!transaction.deposit(toAccount, amount, currency))
+            return FutureResultAgent.errorResult(null, "Unable to deposit.");
+
         return transaction.commit();
     }
 
@@ -260,7 +264,9 @@ public final class Economy {
         PreCon.notNull(currency);
 
         IEconomyTransaction transaction = getProvider().createTransaction();
-        transaction.deposit(account, amount, currency);
+
+        if (!transaction.deposit(account, amount, currency))
+            return FutureResultAgent.errorResult(null, "Failed to deposit.");
 
         return transaction.commit();
     }
@@ -334,7 +340,8 @@ public final class Economy {
 
         IEconomyTransaction transaction = getProvider().createTransaction();
 
-        transaction.withdraw(account, amount, currency);
+        if (!transaction.withdraw(account, amount, currency))
+            return FutureResultAgent.errorResult(null, "Insufficient funds.");
 
         return transaction.commit();
     }
@@ -424,9 +431,13 @@ public final class Economy {
         IEconomyTransaction transaction = getProvider().createTransaction();
 
         if (amount >= 0) {
-            transaction.deposit(account, amount, currency);
+            if (!transaction.deposit(account, amount, currency))
+                return FutureResultAgent.errorResult(null, "Failed to deposit.");
+
         } else if (amount < 0) {
-            transaction.withdraw(account, -amount, currency);
+
+            if (!transaction.withdraw(account, -amount, currency))
+                return FutureResultAgent.errorResult(null, "Insufficient funds.");
         }
 
         return transaction.commit();
