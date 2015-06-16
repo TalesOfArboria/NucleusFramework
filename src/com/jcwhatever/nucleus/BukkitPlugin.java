@@ -60,6 +60,7 @@ import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptEngineMan
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.managed.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.managed.sounds.InternalSoundManager;
+import com.jcwhatever.nucleus.internal.managed.teleport.InternalTeleportManager;
 import com.jcwhatever.nucleus.internal.managed.titles.InternalTitleManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderLoader;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -67,15 +68,14 @@ import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import javax.script.ScriptEngineManager;
 
 /**
  * NucleusFramework's Bukkit Plugin
@@ -100,6 +100,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalBlockSelector _blockSelector;
     InternalResponseRequestor _responseRequestor;
     InternalItemMetaHandlers _itemMetaHandlers;
+    InternalTeleportManager _teleportManager;
     InternalTitleManager _titleManager;
     InternalActionBarManager _actionBarManager;
     InternalReflectionManager _reflectionManager;
@@ -168,6 +169,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _equipperManager = new InternalEquipperManager();
         _scoreboardTracker = new InternalScoreboardManager();
         _scheduler = new InternalTaskScheduler();
+        _teleportManager = new InternalTeleportManager();
         _leashTracker = new InternalLeashTracker();
 
         _providerManager = new InternalProviderManager(isTesting());

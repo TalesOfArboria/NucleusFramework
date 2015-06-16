@@ -32,20 +32,16 @@ import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 /**
  * Location utilities.
@@ -210,45 +206,6 @@ public final class LocationUtils {
         output.setPitch(source.getPitch());
 
         return output;
-    }
-
-    /**
-     * Teleport an entity to a {@link org.bukkit.Location} centered on the X and Z
-     * axis of the locations block.
-     *
-     * @param entity    The entity to teleport.
-     * @param location  The teleport location.
-     *
-     * @return  True if successful.
-     */
-    public static boolean teleportCentered(Entity entity, Location location) {
-        PreCon.notNull(entity);
-        PreCon.notNull(location);
-
-        Location adjusted = getCenteredLocation(location, MUTABLE_LOCATIONS.get());
-
-        return entity.teleport(adjusted, PlayerTeleportEvent.TeleportCause.PLUGIN);
-    }
-
-    /**
-     * Teleport an entity to a {@link org.bukkit.Location}.
-     *
-     * <p>Fixes entities/players falling through floor.</p>
-     *
-     * @param entity    The entity to teleport.
-     * @param location  The location to teleport the entity to.
-     *
-     * @return  True if successful.
-     */
-    public static boolean teleport(Entity entity, Location location) {
-        PreCon.notNull(entity);
-        PreCon.notNull(location);
-
-        Location adjusted = Bukkit.isPrimaryThread()
-                ? copy(location, MUTABLE_LOCATIONS.get()).add(0, 0.01D, 0)
-                : copy(location).add(0, 0.01D, 0);
-
-        return entity.teleport(adjusted);
     }
 
     /**

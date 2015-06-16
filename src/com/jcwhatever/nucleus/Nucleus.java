@@ -25,12 +25,12 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.managed.commands.ICommandManager;
-import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.managed.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBarManager;
 import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
+import com.jcwhatever.nucleus.managed.commands.ICommandManager;
+import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
@@ -47,20 +47,20 @@ import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.signs.ISignManager;
 import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
+import com.jcwhatever.nucleus.managed.teleport.ITeleportManager;
 import com.jcwhatever.nucleus.managed.titles.ITitleManager;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
-
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
+import javax.script.ScriptEngineManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.script.ScriptEngineManager;
 
 /**
  * NucleusFramework Services
@@ -360,6 +360,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._soundManager != null, ERROR_NOT_READY);
 
         return _plugin._soundManager;
+    }
+
+    /**
+     * Get the global teleport manager.
+     */
+    public static ITeleportManager getTeleportManager() {
+        PreCon.isValid(_plugin._teleportManager != null, ERROR_NOT_READY);
+
+        return _plugin._teleportManager;
     }
 
     /**

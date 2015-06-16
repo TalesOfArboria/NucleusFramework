@@ -1,24 +1,21 @@
 package com.jcwhatever.nucleus.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import com.jcwhatever.v1_8_R2.BukkitTester;
-import com.jcwhatever.v1_8_R2.MockEntity;
-import com.jcwhatever.v1_8_R2.MockWorld;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-
+import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R2.MockWorld;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
 import org.easetech.easytest.annotation.Repeat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LocationUtilsTest {
 
@@ -35,22 +32,6 @@ public class LocationUtilsTest {
         Location centered = LocationUtils.getCenteredLocation(location);
 
         assertTrue(centered != location); // must be a different instance
-        assertEquals(10.5D, centered.getX(), 0.0D);
-        assertEquals(10.0D, centered.getY(), 0.0D);
-        assertEquals(10.5D, centered.getZ(), 0.0D);
-    }
-
-    @Test
-    public void testTeleportCentered() throws Exception {
-
-        MockEntity entity = new MockEntity(0, EntityType.BAT);
-
-        Location location = new Location(BukkitTester.world("dummy"), 10, 10, 10);
-
-        LocationUtils.teleportCentered(entity, location);
-
-        Location centered = entity.getLocation();
-
         assertEquals(10.5D, centered.getX(), 0.0D);
         assertEquals(10.0D, centered.getY(), 0.0D);
         assertEquals(10.5D, centered.getZ(), 0.0D);

@@ -25,26 +25,25 @@
 
 package com.jcwhatever.nucleus.utils.player;
 
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
-import com.jcwhatever.nucleus.storage.DataPath;
-import com.jcwhatever.nucleus.providers.storage.DataStorage;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-
+import com.jcwhatever.nucleus.managed.teleport.Teleporter;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Saves and restores snapshots of a players state.
@@ -229,8 +228,9 @@ public class PlayerState implements IPluginOwned {
         if (_snapshot == null)
             return null;
 
-        if (restoreLocation == RestoreLocation.TRUE && _snapshot.getLocation() != null)
-            LocationUtils.teleportCentered(_player, _snapshot.getLocation());
+        if (restoreLocation == RestoreLocation.TRUE && _snapshot.getLocation() != null) {
+            Teleporter.teleport(_player, _snapshot.getLocation());
+        }
 
         // wait till after the player is teleported to restore
         Scheduler.runTaskLater(_plugin, 2, new Runnable() {
