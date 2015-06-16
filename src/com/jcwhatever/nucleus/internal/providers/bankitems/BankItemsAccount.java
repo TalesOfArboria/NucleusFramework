@@ -36,11 +36,11 @@ import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.MatchableItem;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,7 +49,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Nucleus implementation of {@link IBankItemsAccount}.
@@ -192,6 +191,7 @@ class BankItemsAccount implements IBankItemsAccount {
             if (item == null) {
                 UUID id = UUID.randomUUID();
                 IDataNode itemNode = _dataNode.getNode(id.toString());
+                itemNode.set("item", itemStack);
                 item = new BankItem(id, itemStack, 0, itemNode);
                 _items.put(wrapper, item);
             }
