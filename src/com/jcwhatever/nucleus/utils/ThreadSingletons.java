@@ -51,7 +51,7 @@ public class ThreadSingletons<S> {
             throw new IllegalStateException("ThreadSingletons must be instantiated on the main thread.");
 
         _factory = factory;
-        setMainSingleton(factory.create(Thread.currentThread()));
+        _mainSingleton = getMainSingleton(factory);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ThreadSingletons<S> {
      */
     public S get() {
 
-        if (Bukkit.isPrimaryThread())
+        if (_mainSingleton != null && Bukkit.isPrimaryThread())
             return _mainSingleton;
 
         synchronized (getSync()) {
@@ -96,10 +96,10 @@ public class ThreadSingletons<S> {
     /**
      * Set main thread singleton.
      *
-     * @param singleton  Main thread singleton.
+     * @param factory  The singleton factory to use.
      */
-    protected void setMainSingleton(S singleton) {
-        _mainSingleton = singleton;
+    protected S getMainSingleton(ISingletonFactory<S> factory) {
+        return factory.create(Thread.currentThread());
     }
 
     /**
