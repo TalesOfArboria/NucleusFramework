@@ -24,7 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.providers.economy;
 
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
@@ -47,8 +49,24 @@ import java.util.Set;
  */
 class NucleusTransaction implements IEconomyTransaction {
 
+    @Localizable static final String _INSUFFICIENT_FUNDS =
+            "Account does not have sufficient funds.";
+
+    @Localizable static final String _DEPOSIT_FAILED =
+            "Failed to deposit amount: {0: amount} into account: {1: account}";
+
+    @Localizable static final String _WITHDRAW_FAILED =
+            "Failed to withdraw amount: {0: amount} into account: {1: account}";
+
+    @Localizable static final String _TRANSACTION_SUCCESS =
+            "Transaction success.";
+
+    @Localizable static final String _GLOBAL_BANK =
+            "<global>";
+
     private final Map<IAccount, Double> _balanceDelta = new HashMap<>(5);
     private boolean _isCommitted;
+    private String _error;
 
     @Override
     public synchronized boolean isCommitted() {
@@ -130,8 +148,11 @@ class NucleusTransaction implements IEconomyTransaction {
 
         delta -= amount;
 
-        if (account.getBalance() + delta < 0.0D)
+        if (account.getBalance() + delta < 0.0D) {
+            if (_error != null)
+                _error = NucLang.get(_INSUFFICIENT_FUNDS);
             return false;
+        }
 
         _balanceDelta.put(account, delta);
 
@@ -154,6 +175,9 @@ class NucleusTransaction implements IEconomyTransaction {
         checkCommitted();
 
         _isCommitted = true;
+
+        if (_error != null)
+            return FutureResultAgent.errorResult((IEconomyTransaction)this, _error);
 
         Set<Entry<IAccount, Double>> accounts = _balanceDelta.entrySet();
 
@@ -179,8 +203,9 @@ class NucleusTransaction implements IEconomyTransaction {
                 withdraw.put(account, Math.abs(delta));
 
                 if (!force && account.getBalance() + delta < 0) {
-                    return new FutureResultAgent<IEconomyTransaction>()
-                            .error(this, "Account does not have sufficient funds.");
+                    return FutureResultAgent
+                            .errorResult((IEconomyTransaction)this,
+                                    NucLang.get(_INSUFFICIENT_FUNDS));
                 }
             }
         }
@@ -207,7 +232,7 @@ class NucleusTransaction implements IEconomyTransaction {
             return agent.getFuture();
         }
 
-        return agent.success(this, "Transaction Success.");
+        return agent.success(this, NucLang.get(_TRANSACTION_SUCCESS));
     }
 
     private boolean performOps(Map<IAccount, Double> operations,
@@ -220,16 +245,14 @@ class NucleusTransaction implements IEconomyTransaction {
             if (type == OperationType.DEPOSIT) {
 
                 if (accountDeposit(entry.getKey(), entry.getValue()) == null) {
-                    agent.error(this, "Failed to deposit amount: "
-                                    + entry.getValue() + " into account: " + entry.getKey());
+                    agent.error(this, NucLang.get(_DEPOSIT_FAILED, entry.getValue(), entry.getKey()));
                     return false;
                 }
             }
             else {
 
                 if (accountWithdraw(entry.getKey(), entry.getValue()) == null) {
-                    agent.error(this, "Failed to withdraw amount: "
-                                    + entry.getValue() + " into account: " + entry.getKey());
+                    agent.error(this, NucLang.get(_WITHDRAW_FAILED, entry.getValue(), entry.getKey()));
                     return false;
                 }
             }
@@ -288,7 +311,7 @@ class NucleusTransaction implements IEconomyTransaction {
     private String getBankName(IAccount account) {
         return account.getBank() != null
                 ? account.getBank().getName()
-                : "<global>";
+                : NucLang.get(_GLOBAL_BANK);
     }
 
     private void checkCommitted() {
