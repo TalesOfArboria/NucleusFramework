@@ -38,7 +38,7 @@ public interface IScoreboardExtension {
      *
      * @param scoreboard  The managed scoreboard.
      */
-    void onAttach(IManagedScoreboard scoreboard);
+    void onAttach(IScoreboard scoreboard);
 
     /**
      * Invoked after a managed scoreboard is applied to a player.
@@ -46,7 +46,7 @@ public interface IScoreboardExtension {
      * @param player      The player.
      * @param scoreboard  The managed scoreboard that was applied.
      */
-    void onApply(Player player, IManagedScoreboard scoreboard);
+    void onApply(Player player, IScoreboard scoreboard);
 
     /**
      * Invoked after a managed scoreboard is removed from a player.
@@ -54,5 +54,12 @@ public interface IScoreboardExtension {
      * @param player      The player.
      * @param scoreboard  The managed scoreboard that was removed.
      */
-    void onRemove(Player player, IManagedScoreboard scoreboard);
+    void onRemove(Player player, IScoreboard scoreboard);
+
+    /**
+     * Invoked when an attached scoreboard is disposed.
+     *
+     * @param scoreboard  The disposed scoreboard.
+     */
+    void onScoreboardDispose(IScoreboard scoreboard);
 }

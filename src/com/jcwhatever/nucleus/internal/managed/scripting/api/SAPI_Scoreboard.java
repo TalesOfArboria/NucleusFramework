@@ -27,18 +27,18 @@ package com.jcwhatever.nucleus.internal.managed.scripting.api;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerSet;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Scoreboard script API object.
@@ -52,11 +52,17 @@ public class SAPI_Scoreboard implements IDisposable {
     /**
      * Create a new managed scoreboard using a new Bukkit scoreboard.
      */
-    public IManagedScoreboard create(@Nullable Runnable onApply, @Nullable Runnable onRemove) {
+    public IManagedScoreboard create() {
+        return create(null);
+    }
+
+    /**
+     * Create a new managed scoreboard using a new Bukkit scoreboard.
+     */
+    public IManagedScoreboard create(@Nullable IScoreboardExtension extension) {
 
         IManagedScoreboard managedScoreboard = Nucleus.getScoreboardTracker()
-                .create(ScoreboardLifespan.PERSISTENT,
-                        new ScoreboardExtension(onApply, onRemove));
+                .create(ScoreboardLifespan.PERSISTENT, new ScoreboardExtension(extension));
 
         _scoreboards.put(managedScoreboard, null);
         return managedScoreboard;
@@ -90,34 +96,39 @@ public class SAPI_Scoreboard implements IDisposable {
 
     private static class ScoreboardExtension implements IScoreboardExtension {
 
-        final Runnable apply;
-        final Runnable remove;
+        final IScoreboardExtension extension;
         final Set<Player> visible = new PlayerSet(Nucleus.getPlugin());
 
-        ScoreboardExtension(@Nullable Runnable apply, @Nullable Runnable remove) {
-            this.apply = apply;
-            this.remove = remove;
+        ScoreboardExtension(@Nullable IScoreboardExtension extension) {
+            this.extension = extension;
         }
 
         @Override
-        public void onAttach(IManagedScoreboard scoreboard) {
-            // do nothing
+        public void onAttach(IScoreboard scoreboard) {
+            if (extension != null)
+                extension.onAttach(scoreboard);
         }
 
         @Override
-        public void onApply(Player player, IManagedScoreboard scoreboard) {
+        public void onApply(Player player, IScoreboard scoreboard) {
             visible.add(player);
 
-            if (apply != null)
-                apply.run();
+            if (extension != null)
+                extension.onApply(player, scoreboard);
         }
 
         @Override
-        public void onRemove(Player player, IManagedScoreboard scoreboard) {
+        public void onRemove(Player player, IScoreboard scoreboard) {
             visible.remove(player);
 
-            if (remove != null)
-                remove.run();
+            if (extension != null)
+                extension.onRemove(player, scoreboard);
+        }
+
+        @Override
+        public void onScoreboardDispose(IScoreboard scoreboard) {
+            if (extension != null)
+                extension.onScoreboardDispose(scoreboard);
         }
     }
 }

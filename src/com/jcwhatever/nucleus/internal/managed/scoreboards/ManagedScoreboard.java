@@ -36,7 +36,6 @@ import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
 import com.jcwhatever.nucleus.managed.scoreboards.ITeam;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -44,12 +43,12 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Internal implementation of {@link IManagedScoreboard}
@@ -327,6 +326,10 @@ class ManagedScoreboard implements IScoreboard {
         for (Objective objective : objectives) {
             objective.unregister();
         }
+
+        if (_extension != null)
+            _extension.onScoreboardDispose(this);
+
         _isDisposed = true;
     }
 
