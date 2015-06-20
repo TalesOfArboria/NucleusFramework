@@ -108,7 +108,6 @@ public class SAPI_Events implements IDisposable {
         if (priorityComp.length == 2) {
             if (priorityComp[1].equalsIgnoreCase("invokeForCancelled")) {
                 ignoreCancelled = false;
-                priority = priorityComp[0];
             }
         }
 
@@ -124,10 +123,10 @@ public class SAPI_Events implements IDisposable {
         // check for and register bukkit events
         if (Event.class.isAssignableFrom(eventClass)) {
             Class<? extends Event> bukkitEventClass = eventClass.asSubclass(Event.class);
-            return registerBukkitEvent(bukkitEventClass, priority, ignoreCancelled, handler);
+            return registerBukkitEvent(bukkitEventClass, priorityComp[0], ignoreCancelled, handler);
         }
         else {
-            return registerNucleusEvent(eventClass, priority, ignoreCancelled, handler);
+            return registerNucleusEvent(eventClass, priorityComp[0], ignoreCancelled, handler);
         }
     }
 
