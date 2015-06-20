@@ -35,7 +35,6 @@ import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 import com.jcwhatever.nucleus.views.ViewSession;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -46,9 +45,9 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Represents an anvil that can allow or disallow items.
@@ -106,7 +105,7 @@ public class FilteredAnvilView extends AnvilView {
      * Invoked to get the craft deny message.
      */
     protected String getDenyMessage() {
-        return NucLang.get(_NOT_REPAIRABLE);
+        return NucLang.get(getPlugin(), _NOT_REPAIRABLE);
     }
 
     /**

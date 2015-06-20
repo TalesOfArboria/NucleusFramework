@@ -27,11 +27,10 @@ package com.jcwhatever.nucleus.views.workbench;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,9 +42,9 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * A workbench view that can allow or deny specific items from being crafted.
@@ -107,7 +106,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      * Invoked to get the craft deny message displayed in item lore.
      */
     protected String getDenyLore() {
-        return NucLang.get(_NOT_CRAFTABLE_LORE);
+        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_LORE);
     }
 
     /**
@@ -117,7 +116,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      */
     @Nullable
     protected String getDenyChat() {
-        return NucLang.get(_NOT_CRAFTABLE_CHAT);
+        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_CHAT);
     }
 
     /**
