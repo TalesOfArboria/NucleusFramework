@@ -68,16 +68,15 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
+import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.script.ScriptEngineManager;
 
 /**
  * NucleusFramework's default ScriptManager.
@@ -373,13 +372,7 @@ public final class InternalScriptManager implements IScriptManager {
         loadScripts();
         evaluate();
 
-        Scheduler.runTaskLater(Nucleus.getPlugin(), 20, new Runnable() {
-            @Override
-            public void run() {
-                // remove long lived objects
-                System.gc();
-            }
-        });
+        Scheduler.runTaskLater(Nucleus.getPlugin(), 20, new ScriptReloadGC());
     }
 
     @Override
@@ -594,5 +587,13 @@ public final class InternalScriptManager implements IScriptManager {
                 return new SAPI_Regions();
             }
         }));
+    }
+
+    private static class ScriptReloadGC implements Runnable {
+        @Override
+        public void run() {
+            // remove long lived objects
+            System.gc();
+        }
     }
 }
