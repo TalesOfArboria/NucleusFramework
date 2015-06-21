@@ -30,17 +30,19 @@ import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.mixins.ITabCompletable;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.regionselect.RegionSelection;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @CommandInfo(
@@ -53,7 +55,7 @@ import java.util.List;
                 "regionName= Optional. Specifies which region to use when standing in more " +
                         "than one region."})
 
-class SelectSubCommand extends AbstractCommand implements IExecutableCommand {
+class SelectSubCommand extends AbstractCommand implements IExecutableCommand, ITabCompletable {
 
     @Localizable static final String _NO_REGIONS =
             "No Nucleus based region was found where you are standing.";
@@ -71,6 +73,14 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand {
     @Localizable static final String _SUCCESS =
             "Region selection set using the coordinates from region " +
                     "'{0: region name}' from plugin '{1: plugin name}'.";
+
+    private static final CollectionUtils.ISearchTextGetter<IRegion> SEARCH_GETTER =
+            new CollectionUtils.ISearchTextGetter<IRegion>() {
+                @Override
+                public String getText(IRegion element) {
+                    return element.getName();
+                }
+            };
 
     @Override
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
@@ -120,5 +130,24 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand {
 
         tellSuccess(sender, NucLang.get(_SUCCESS,
                 region.getName(), region.getPlugin().getName()));
+    }
+
+    @Override
+    public void onTabComplete(CommandSender sender, String[] arguments, Collection<String> completions) {
+
+        if (arguments.length != 1)
+            return;
+
+        if (!(sender instanceof Player))
+            return;
+
+        Player player = (Player)sender;
+
+        List<IRegion> regions = Nucleus.getRegionManager().getRegions(player.getLocation());
+
+        List<IRegion> results = CollectionUtils.textSearch(regions, arguments[0], SEARCH_GETTER);
+
+        for (IRegion region : results)
+            completions.add(region.getName());
     }
 }
