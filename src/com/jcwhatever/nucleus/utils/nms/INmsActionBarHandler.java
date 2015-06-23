@@ -28,8 +28,9 @@ import com.jcwhatever.nucleus.managed.actionbar.ActionBars;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
 import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
 import com.jcwhatever.nucleus.managed.actionbar.ITimedActionBar;
-
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 /**
  * Interface for NucleusFramework's Minecraft Action Bar handler.
@@ -43,23 +44,23 @@ import org.bukkit.entity.Player;
 public interface INmsActionBarHandler extends INmsHandler {
 
     /**
-     * Send action bar text to a player.
+     * Send action bar text to a collection of players.
      *
      * <p>The handler is responsible for converting the raw text
      * to whatever format is required.</p>
      *
-     * @param player   The player to send the text to.
+     * @param players  The players to send the text to.
      * @param rawText  The raw text.
      */
-    void send(Player player, String rawText);
+    void send(Collection<? extends Player> players, String rawText);
 
     /**
-     * Send action bar text to a player.
+     * Send action bar text to a collection of players.
      *
      * <p>Bypasses the handlers text conversion.</p>
      *
-     * @param player    The player to send the text to.
+     * @param players   The player to send the text to.
      * @param jsonText  The Json text.
      */
-    void sendJson(Player player, String jsonText);
+    void sendJson(Collection<? extends Player> players, String jsonText);
 }

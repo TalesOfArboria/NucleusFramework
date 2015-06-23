@@ -25,11 +25,12 @@
 package com.jcwhatever.nucleus.internal.managed.particles;
 
 import com.jcwhatever.nucleus.managed.particles.IAreaParticle;
-import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffect;
+import com.jcwhatever.nucleus.managed.particles.IRGBColorParticle;
 import com.jcwhatever.nucleus.managed.particles.ISizeableParticle;
 import com.jcwhatever.nucleus.managed.particles.ISpeedParticle;
 import com.jcwhatever.nucleus.managed.particles.ParticleType;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
 import com.jcwhatever.nucleus.utils.coords.ICoords3D;
@@ -37,20 +38,21 @@ import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract implementation of {@link IParticleEffect}.
  */
 abstract class AbstractParticle implements IParticleEffect {
 
-    private static ThreadSingletons<Location> LOCATIONS = LocationUtils.createThreadSingleton();
+    private static final ThreadSingletons<Location> LOCATIONS = LocationUtils.createThreadSingleton();
 
     private final ParticleType _type;
     private double _radius = 20;
@@ -88,7 +90,8 @@ abstract class AbstractParticle implements IParticleEffect {
         PreCon.isValid(player.getWorld().equals(location.getWorld()),
                 "Location must be in same world as player.");
 
-        return showTo(player, location.getX(), location.getY(), location.getZ(), count);
+        return showTo(ArrayUtils.asList(player),
+                location.getX(), location.getY(), location.getZ(), count);
     }
 
     @Override
@@ -96,7 +99,8 @@ abstract class AbstractParticle implements IParticleEffect {
         PreCon.notNull(player);
         PreCon.notNull(coords);
 
-        return showTo(player, coords.getX(), coords.getY(), coords.getZ(), count);
+        return showTo(ArrayUtils.asList(player),
+                coords.getX(), coords.getY(), coords.getZ(), count);
     }
 
     @Override
@@ -105,68 +109,63 @@ abstract class AbstractParticle implements IParticleEffect {
         PreCon.notNull(coords);
         PreCon.positiveNumber(count);
 
-        return showTo(player, coords.getX(), coords.getY(), coords.getZ(), count);
+        return showTo(ArrayUtils.asList(player),
+                coords.getX(), coords.getY(), coords.getZ(), count);
     }
 
     @Override
-    public boolean showTo(Collection<? extends Player> players, Location location, int count) {
+    public boolean showTo(Collection<? extends Player> players,
+                          Location location, int count) {
         PreCon.notNull(players);
         PreCon.notNull(location);
 
-        boolean isShown = false;
-
-        for (Player player : players) {
-            isShown = showTo(player, location, count) || isShown;
-        }
-
-        return isShown;
+        return showTo(players,
+                location.getX(), location.getY(), location.getZ(), count);
     }
 
     @Override
-    public boolean showTo(Collection<? extends Player> players, ICoords3D coords, int count) {
+    public boolean showTo(Collection<? extends Player> players,
+                          ICoords3D coords, int count) {
         PreCon.notNull(players);
         PreCon.notNull(coords);
 
-        boolean isShown = false;
-
-        for (Player player : players) {
-            isShown = showTo(player, coords, count) || isShown;
-        }
-
-        return isShown;
+        return showTo(players,
+                coords.getX(), coords.getY(), coords.getZ(), count);
     }
 
     @Override
-    public boolean showTo(Collection<? extends Player> players, ICoords3Di coords, int count) {
+    public boolean showTo(Collection<? extends Player> players,
+                          ICoords3Di coords, int count) {
         PreCon.notNull(players);
         PreCon.notNull(coords);
 
-        boolean isShown = false;
-
-        for (Player player : players) {
-            isShown = showTo(player, coords, count) || isShown;
-        }
-        return isShown;
+        return showTo(players,
+                coords.getX(), coords.getY(), coords.getZ(), count);
     }
 
     @Override
     public boolean showFrom(Location location, int count) {
         PreCon.notNull(location);
-        PreCon.positiveNumber(count);
 
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-
-        boolean isShown = false;
+        List<Player> visible = new ArrayList<>(30);
 
         for (Player player : players) {
 
             if (!player.getWorld().equals(location.getWorld()))
                 continue;
 
-            isShown = showTo(player, location, count) || isShown;
+            Location playerLocation = player.getLocation(LOCATIONS.get());
+
+            if (playerLocation.distanceSquared(location) > getRadius())
+                continue;
+
+            visible.add(player);
         }
 
-        return isShown;
+        return !visible.isEmpty() &&
+                showTo(visible, location.getX(), location.getY(), location.getZ(), count);
+
     }
 
     protected float getNmsSpeed() {
@@ -204,36 +203,28 @@ abstract class AbstractParticle implements IParticleEffect {
         return 0.0f;
     }
 
-    protected void showParticleTo(INmsParticleEffectHandler handler, Player player,
+    protected void showParticleTo(INmsParticleEffectHandler handler,
+                                  Collection<? extends Player> players,
                                   double x, double y, double z, int count) {
         PreCon.greaterThanZero(count, "count");
 
-        handler.send(player, getType(), true, x, y, z,
+        handler.send(players, getType(), true, x, y, z,
                 getOffsetX(), getOffsetY(), getOffsetZ(), getNmsSpeed(), count - 1);
     }
 
-    private boolean showTo(Player player, double x, double y, double z, int count) {
+    private boolean showTo(Collection<? extends Player> players,
+                           double x, double y, double z, int count) {
 
         INmsParticleEffectHandler handler = NmsUtils.getParticleEffectHandler();
         if (handler == null)
             return false;
 
-        Location playerLocation = player.getLocation(LOCATIONS.get());
-
-        double deltaX = playerLocation.getX() - x;
-        double deltaY = playerLocation.getY() - y;
-        double deltaZ = playerLocation.getZ() - z;
-
-        double distance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-        if (distance > _radiusSquared)
-            return false;
-
         if (this instanceof AbstractRGBColorParticle) {
-            ((AbstractRGBColorParticle)this).showColoredTo(handler, player, x, y, z, count);
+            ((AbstractRGBColorParticle)this).showColoredTo(handler, players, x, y, z, count);
             return true;
         }
         else {
-            showParticleTo(handler, player, x, y, z, count);
+            showParticleTo(handler, players, x, y, z, count);
         }
 
         return true;

@@ -25,21 +25,8 @@
 package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsListHeaderFooterHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsSoundEffectHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsActionBarHandler_v1_8_R2;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsListHeaderFooterHandler_v1_8_R2;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsParticleEffectHandler_v1_8_R2;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsSoundEffectHandler_v1_8_R2;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsTitleHandler_v1_8_R2;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3.NmsActionBarHandler_v1_8_R3;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3.NmsListHeaderFooterHandler_v1_8_R3;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3.NmsParticleEffectHandler_v1_8_R3;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3.NmsSoundEffectHandler_v1_8_R3;
-import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3.NmsTitleHandler_v1_8_R3;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 
 /**
  * NucleusFramework's internal NMS manager.
@@ -71,24 +58,44 @@ public final class InternalNmsManager extends NmsManager {
      */
     public static final String SOUND_EFFECT = "SOUND_EFFECT";
 
+    private static INms _nms;
+
+    /**
+     * Get the NMS handler for the current Minecraft version.
+     */
+    public static INms getNms() {
+        if (_nms == null) {
+            switch (NmsUtils.getNmsVersion()) {
+                case "v1_8_R3":
+                    return _nms = new v1_8_R3();
+                case "v1_8_R2":
+                    return _nms = new v1_8_R2();
+                case "v1_8_R1":
+                    return _nms = new v1_8_R1();
+            }
+        }
+
+        return _nms;
+    }
+
     public InternalNmsManager() {
         super(Nucleus.getPlugin());
 
-        registerHandler("v1_8_R1", TITLES, NmsTitleHandler_v1_8_R1.class);
-        registerHandler("v1_8_R1", ACTION_BAR, NmsActionBarHandler_v1_8_R1.class);
-        registerHandler("v1_8_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R1.class);
-        registerHandler("v1_8_R1", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R1.class);
+        registerHandler("v1_8_R1", TITLES, NmsTitleHandler.class);
+        registerHandler("v1_8_R1", ACTION_BAR, NmsActionBarHandler.class);
+        registerHandler("v1_8_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
+        registerHandler("v1_8_R1", SOUND_EFFECT, NmsSoundEffectHandler.class);
 
-        registerHandler("v1_8_R2", TITLES, NmsTitleHandler_v1_8_R2.class);
-        registerHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler_v1_8_R2.class);
-        registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R2.class);
-        registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R2.class);
-        registerHandler("v1_8_R2", PARTICLE_EFFECT, NmsParticleEffectHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", TITLES, NmsTitleHandler.class);
+        registerHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler.class);
+        registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
+        registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler.class);
+        registerHandler("v1_8_R2", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
 
-        registerHandler("v1_8_R3", TITLES, NmsTitleHandler_v1_8_R3.class);
-        registerHandler("v1_8_R3", ACTION_BAR, NmsActionBarHandler_v1_8_R3.class);
-        registerHandler("v1_8_R3", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R3.class);
-        registerHandler("v1_8_R3", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R3.class);
-        registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler_v1_8_R3.class);
+        registerHandler("v1_8_R3", TITLES, NmsTitleHandler.class);
+        registerHandler("v1_8_R3", ACTION_BAR, NmsActionBarHandler.class);
+        registerHandler("v1_8_R3", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
+        registerHandler("v1_8_R3", SOUND_EFFECT, NmsSoundEffectHandler.class);
+        registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
     }
 }

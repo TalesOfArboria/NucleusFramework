@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.nms;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for NucleusFramework's Minecraft Titles handler.
@@ -41,14 +42,30 @@ public interface INmsTitleHandler extends INmsHandler {
      * <p>The handler is responsible for converting the raw
      * text into the appropriate format.</p>
      *
-     * @param player        The player to send the title to.
-     * @param rawTitle      The title text.
-     * @param rawSubtitle   Optional subtitle text.
-     * @param fadeIn        The fade-in time.
-     * @param stay          The stay time.
-     * @param fadeOut       The fade-out time.
+     * @param player       The player to send the title to.
+     * @param rawTitle     The title text.
+     * @param rawSubtitle  Optional subtitle text.
+     * @param fadeIn       The fade-in time.
+     * @param stay         The stay time.
+     * @param fadeOut      The fade-out time.
      */
     void send(Player player, String rawTitle, @Nullable String rawSubtitle,
+              int fadeIn, int stay, int fadeOut);
+
+    /**
+     * Send a title to a collection of players.
+     *
+     * <p>The handler is responsible for converting the raw
+     * text into the appropriate format.</p>
+     *
+     * @param players      The players to send the title to.
+     * @param rawTitle     The title text.
+     * @param rawSubtitle  Optional subtitle text.
+     * @param fadeIn       The fade-in time.
+     * @param stay         The stay time.
+     * @param fadeOut      The fade-out time.
+     */
+    void send(Collection<? extends Player> players, String rawTitle, @Nullable String rawSubtitle,
               int fadeIn, int stay, int fadeOut);
 
     /**
@@ -64,5 +81,20 @@ public interface INmsTitleHandler extends INmsHandler {
      * @param fadeOut       The fade-out time.
      */
     void sendJson(Player player, String jsonTitle, @Nullable String jsonSubtitle,
-              int fadeIn, int stay, int fadeOut);
+                  int fadeIn, int stay, int fadeOut);
+
+    /**
+     * Send a title to a collection of players.
+     *
+     * <p>Bypasses the handlers text conversion.</p>
+     *
+     * @param players       The players to send the title to.
+     * @param jsonTitle     The title text.
+     * @param jsonSubtitle  Optional subtitle text.
+     * @param fadeIn        The fade-in time.
+     * @param stay          The stay time.
+     * @param fadeOut       The fade-out time.
+     */
+    void sendJson(Collection<? extends Player> players, String jsonTitle, @Nullable String jsonSubtitle,
+                  int fadeIn, int stay, int fadeOut);
 }

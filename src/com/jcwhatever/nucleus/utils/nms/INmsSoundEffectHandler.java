@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.utils.nms;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * Interface for NucleusFramework's Minecraft Named Sound Effect handler.
  *
@@ -34,9 +36,9 @@ import org.bukkit.entity.Player;
 public interface INmsSoundEffectHandler extends INmsHandler {
 
     /**
-     * Send a named sound effect to a player.
+     * Send a named sound effect to a collection of players.
      *
-     * @param player     The player to send the sound to.
+     * @param players    The players to send the sound to.
      * @param soundName  The name of the sound.
      * @param x          The X coordinates to play the sound at.
      * @param y          The Y coordinates to play the sound at.
@@ -44,5 +46,6 @@ public interface INmsSoundEffectHandler extends INmsHandler {
      * @param volume     The volume of the sound.
      * @param pitch      The sound pitch.
      */
-    void send(Player player, String soundName, double x, double y, double z, float volume, float pitch);
+    void send(Collection<? extends Player> players,
+              String soundName, double x, double y, double z, float volume, float pitch);
 }

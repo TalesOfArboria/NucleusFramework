@@ -22,53 +22,54 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
- * Minecraft named sound effect packet sender for NMS version v1_8_R2
+ * Minecraft named sound effect packet handler
  */
-public final class NmsSoundEffectHandler_v1_8_R2 extends v1_8_R2 implements INmsSoundEffectHandler {
-
-    public NmsSoundEffectHandler_v1_8_R2() {
-
-    }
+class NmsSoundEffectHandler extends AbstractNMSHandler
+        implements INmsSoundEffectHandler {
 
     @Override
-    public void send(final Player player, final String soundName,
+    public void send(final Collection<? extends Player> players,
+                     final String soundName,
                      final double x, final double y, final double z,
                      final float volume, final float pitch) {
 
         if (Bukkit.isPrimaryThread()) {
-            syncSend(player, soundName, x, y, z, volume, pitch);
+            syncSend(players, soundName, x, y, z, volume, pitch);
         }
         else {
             Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    syncSend(player, soundName, x, y, z, volume, pitch);
+                    syncSend(players, soundName, x, y, z, volume, pitch);
                 }
             });
         }
     }
 
-    private void syncSend(Player player, String soundName,
+    private void syncSend(Collection<? extends Player> players, String soundName,
                           double x, double y, double z, float volume, float pitch) {
 
         try {
-            Object packet = _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
+            Object packet = nms().getNamedSoundPacket(soundName, x, y, z, volume, pitch);
 
-            sendPacket(player, packet);
+            for (Player player : players) {
+                nms().sendPacket(player, packet);
+            }
         }
         catch (RuntimeException e) {
             e.printStackTrace();
-            _isAvailable = false;
+            setAvailable(false);
         }
     }
 }

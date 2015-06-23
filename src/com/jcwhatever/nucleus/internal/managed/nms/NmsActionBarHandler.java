@@ -22,52 +22,64 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
- * Minecraft named sound effect packet sender for NMS version v1_8_R3
+ * Minecraft Action Bar handler.
  */
-public final class NmsSoundEffectHandler_v1_8_R3 extends v1_8_R3 implements INmsSoundEffectHandler {
+class NmsActionBarHandler extends AbstractNMSHandler implements INmsActionBarHandler {
 
-    public NmsSoundEffectHandler_v1_8_R3() {
+    @Override
+    public void send(Collection<? extends Player> players, String rawText) {
+        PreCon.notNull(players);
+        PreCon.notNull(rawText);
 
+        String jsonText = "{text:\"" + TextUtils.format(rawText).replace("\"", "\\\"") + "\"}";
+
+        sendJson(players, jsonText);
     }
 
     @Override
-    public void send(final Player player, final String soundName,
-                     final double x, final double y, final double z,
-                     final float volume, final float pitch) {
+    public void sendJson(final Collection<? extends Player> players, final String jsonText) {
+        PreCon.notNull(players);
+        PreCon.notNull(jsonText);
 
         if (Bukkit.isPrimaryThread()) {
-            syncSend(player, soundName, x, y, z, volume, pitch);
+            syncSend(players, jsonText);
         }
         else {
             Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    syncSend(player, soundName, x, y, z, volume, pitch);
+                    syncSend(players, jsonText);
                 }
             });
         }
     }
 
-    private void syncSend(Player player, String soundName,
-                          double x, double y, double z, float volume, float pitch) {
+    private void syncSend(Collection<? extends Player> players, String text) {
 
         try {
-            Object packet = _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
 
-            sendPacket(player, packet);
+            Object packet = nms().getActionBarPacket(text);
+
+            for (Player player : players) {
+                nms().sendPacket(player, packet);
+            }
         }
         catch (RuntimeException e) {
             e.printStackTrace();
-            _isAvailable = false;
+            setAvailable(false);
         }
     }
 }

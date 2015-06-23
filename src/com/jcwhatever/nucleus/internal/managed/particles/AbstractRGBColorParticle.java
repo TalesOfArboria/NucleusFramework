@@ -29,9 +29,10 @@ import com.jcwhatever.nucleus.managed.particles.ParticleType;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
-
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 /**
  * Abstract implementation of a particle with color.
@@ -99,7 +100,7 @@ abstract class AbstractRGBColorParticle extends AbstractParticle implements IRGB
     }
 
     protected void showColoredTo(INmsParticleEffectHandler handler,
-                                 Player player, double x, double y, double z, int count) {
+                                 Collection<? extends Player> players, double x, double y, double z, int count) {
         PreCon.greaterThanZero(count, "count");
 
         double red = getRelativeRed();
@@ -109,7 +110,7 @@ abstract class AbstractRGBColorParticle extends AbstractParticle implements IRGB
         boolean isDefaultColor = red == 0 && green == 0 && blue == 0;
 
         if (isDefaultColor && count > 0) {
-            handler.send(player, getType(), true, x, y, z,
+            handler.send(players, getType(), true, x, y, z,
                     getOffsetX(), getOffsetY(), getOffsetZ(), 1, count - 1);
         }
         else {
@@ -120,7 +121,7 @@ abstract class AbstractRGBColorParticle extends AbstractParticle implements IRGB
                 double gy = y + Rand.getGaussian(0, getOffsetY());
                 double gz = z + Rand.getGaussian(0, getOffsetZ());
 
-                handler.send(player, getType(), true, gx, gy, gz,
+                handler.send(players, getType(), true, gx, gy, gz,
                         red, green, blue, 1, 0);
             }
         }

@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.utils.nms;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * Interface for NucleusFramework's Minecraft List Header and Footer handler.
  *
@@ -34,25 +36,25 @@ import org.bukkit.entity.Player;
 public interface INmsListHeaderFooterHandler extends INmsHandler {
 
     /**
-     * Send a tab list header and/or footer to a player.
+     * Send a tab list header and/or footer to a collection of players.
      *
      * <p>The handler is responsible for converting the raw
      * header and footer text into the appropriate format.</p>
      *
-     * @param player         The player to send the header/footer to.
+     * @param players        The players to send the header/footer to.
      * @param rawHeaderText  The header text.
      * @param rawFooterText  The footer text.
      */
-    void send(Player player, String rawHeaderText, String rawFooterText);
+    void send(Collection<? extends Player> players, String rawHeaderText, String rawFooterText);
 
     /**
-     * Send a tab list header and/or footer to a player.
+     * Send a tab list header and/or footer to a collection of players.
      *
      * <p>Bypasses the handlers text conversion.</p>
      *
-     * @param player           The player to send the header/footer to.
+     * @param players         The players to send the header/footer to.
      * @param jsonHeaderText  The json header text.
      * @param jsonFooterText  The json footer text.
      */
-    void sendJson(Player player, String jsonHeaderText, String jsonFooterText);
+    void sendJson(Collection<? extends Player> players, String jsonHeaderText, String jsonFooterText);
 }

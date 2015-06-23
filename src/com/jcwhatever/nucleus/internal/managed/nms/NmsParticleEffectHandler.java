@@ -22,29 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
- * Minecraft particle effect packet sender for NMS version v1_8_R3
+ * Minecraft particle effect packet handler.
  */
-public class NmsParticleEffectHandler_v1_8_R3 extends v1_8_R3 implements INmsParticleEffectHandler {
+class NmsParticleEffectHandler extends AbstractNMSHandler implements INmsParticleEffectHandler {
 
     @Override
-    public void send(Player player, INmsParticleType particleType, boolean force,
+    public void send(Collection<? extends Player> players,
+                     INmsParticleType particleType, boolean force,
                      double x, double y, double z,
                      double offsetX, double offsetY, double offsetZ,
                      float data, int count) {
 
-        Object enumParticle = _EnumParticle.getEnum(particleType.getName());
+        Object packet = nms().getParticlePacket(
+                particleType, force, x, y, z, offsetX, offsetY, offsetZ, data, count);
 
-        Object packet = _PacketPlayOutWorldParticles.construct("new", enumParticle, force,
-                (float)x, (float)y, (float)z,
-                (float)offsetX, (float)offsetY, (float)offsetZ,
-                data, count, particleType.getPacketInts());
-
-        sendPacket(player, packet);
+        for (Player player : players) {
+            nms().sendPacket(player, packet);
+        }
     }
 }

@@ -42,6 +42,7 @@ import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
@@ -49,18 +50,17 @@ import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Nucleus implementation of {@link ISoundManager}.
@@ -211,7 +211,7 @@ public final class InternalSoundManager implements ISoundManager {
 
             if (nmsHandler != null) {
                 // send sound packet to player
-                nmsHandler.send(player, sound.getName(),
+                nmsHandler.send(ArrayUtils.asList(player), sound.getName(),
                         location.getX(), location.getY(), location.getZ(),
                         settings.getVolume(), settings.getPitch());
             }

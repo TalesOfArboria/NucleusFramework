@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.collections.SetMap;
 import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
@@ -368,14 +369,14 @@ class BarSender implements Runnable {
         if (text != null) {
 
             if (Bukkit.isPrimaryThread()) {
-                _nmsHandler.send(player, text);
+                _nmsHandler.send(ArrayUtils.asList(player), text);
             }
             else {
 
                 Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
-                        _nmsHandler.send(player, text);
+                        _nmsHandler.send(ArrayUtils.asList(player), text);
                     }
                 });
 

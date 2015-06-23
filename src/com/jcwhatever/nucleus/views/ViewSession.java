@@ -34,14 +34,13 @@ import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
-
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * A session that tracks and provides session context data to view instances.
@@ -258,6 +257,9 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
         Scheduler.runTaskLater(_current.view.getPlugin(), new Runnable() {
             @Override
             public void run() {
+
+                if (_current == null)
+                    return;
 
                 if (_current.view.close(ViewCloseReason.PREV)) {
                     _current = _current.prev;

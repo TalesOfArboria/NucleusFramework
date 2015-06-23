@@ -22,30 +22,38 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
-import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
-
-import org.bukkit.entity.Player;
+import com.jcwhatever.nucleus.utils.nms.INmsHandler;
 
 /**
- * Minecraft particle effect packet sender for NMS version v1_8_R2
+ * Abstract {@link INmsHandler}.
  */
-public class NmsParticleEffectHandler_v1_8_R2 extends v1_8_R2 implements INmsParticleEffectHandler {
+abstract class AbstractNMSHandler implements INmsHandler {
+
+    private final INms _nms;
+    private boolean _isAvailable = true;
+
+    /**
+     * Constructor.
+     */
+    public AbstractNMSHandler() {
+        _nms = InternalNmsManager.getNms();
+    }
+
+    /**
+     * Get the NMS for the current Minecraft version.
+     */
+    public INms nms() {
+        return _nms;
+    }
 
     @Override
-    public void send(Player player, INmsParticleType particleType, boolean force,
-                     double x, double y, double z,
-                     double offsetX, double offsetY, double offsetZ,
-                     float data, int count) {
+    public boolean isAvailable() {
+        return _isAvailable && _nms.isAvailable();
+    }
 
-        Object enumParticle = _EnumParticle.getEnum(particleType.getName());
-
-        Object packet = _PacketPlayOutWorldParticles.construct("new", enumParticle, force,
-                (float)x, (float)y, (float)z,
-                (float)offsetX, (float)offsetY, (float)offsetZ,
-                data, count, particleType.getPacketInts());
-
-        sendPacket(player, packet);
+    protected void setAvailable(boolean isAvailable) {
+        _isAvailable = isAvailable;
     }
 }

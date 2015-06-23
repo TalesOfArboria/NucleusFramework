@@ -22,69 +22,78 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R3;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.nms.INmsListHeaderFooterHandler;
+import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
+
 /**
- * Minecraft Action Bar sender for NMS version v1_8_R2
+ * Minecraft Tab List Header Footer Title handler.
  */
-public final class NmsActionBarHandler_v1_8_R3 extends v1_8_R3 implements INmsActionBarHandler {
+class NmsListHeaderFooterHandler extends AbstractNMSHandler
+        implements INmsListHeaderFooterHandler {
 
-    /**
-     * Send the action bar packet.
-     *
-     * @param player    The player to send the text to.
-     * @param rawText  The Json text.
-     */
     @Override
-    public void send(Player player, String rawText) {
-        PreCon.notNull(player);
-        PreCon.notNull(rawText);
+    public void send(Collection<? extends Player> players,
+                     String rawHeaderText, String rawFooterText) {
 
-        String jsonText = "{text:\"" + TextUtils.format(rawText).replace("\"", "\\\"") + "\"}";
+        PreCon.notNull(players);
 
-        sendJson(player, jsonText);
+        if (rawHeaderText == null && rawFooterText == null)
+            return;
+
+        String jsonHeader = rawHeaderText != null
+                ? SimpleJSONBuilder.text(rawHeaderText)
+                : null;
+
+        String jsonFooter = rawFooterText != null
+                ? SimpleJSONBuilder.text(rawFooterText)
+                : null;
+
+        sendJson(players, jsonHeader, jsonFooter);
     }
 
     @Override
-    public void sendJson(final Player player, final String jsonText) {
-        PreCon.notNull(player);
-        PreCon.notNull(jsonText);
+    public void sendJson(final Collection<? extends Player> players,
+                         final @Nullable String jsonHeaderText, final @Nullable String jsonFooterText) {
+        PreCon.notNull(players);
 
         if (Bukkit.isPrimaryThread()) {
-            syncSend(player, jsonText);
+            syncSend(players, jsonHeaderText, jsonFooterText);
         }
         else {
             Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    syncSend(player, jsonText);
+                    syncSend(players, jsonHeaderText, jsonFooterText);
                 }
             });
         }
     }
 
-    private void syncSend(Player player, String text) {
+    private void syncSend (Collection<? extends Player> players,
+                           @Nullable String headerText, @Nullable String footerText) {
 
         try {
 
-            Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
-
-            Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
-
-            sendPacket(player, packet);
-
+            // create packet instance based on the presence of a header
+            Object packet = nms().getHeaderFooterPacket(headerText, footerText);
+            for (Player player : players) {
+                // send packet
+                nms().sendPacket(player, packet);
+            }
         }
         catch (RuntimeException e) {
             e.printStackTrace();
-            _isAvailable = false;
+            setAvailable(false);
         }
     }
 }

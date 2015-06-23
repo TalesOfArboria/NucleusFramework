@@ -22,24 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1;
+package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
- * Minecraft Title packet sender for NMS version v1_8_R1
+ * Minecraft Title packet handler.
  */
-public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleHandler {
+class NmsTitleHandler extends AbstractNMSHandler implements INmsTitleHandler {
 
     /**
      * Send the packet to a player.
@@ -52,11 +53,19 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
      * @param fadeOut       The fade-out time.
      */
     @Override
-    public void send(final Player player,
-                     final String rawTitle,
-                     @Nullable final String rawSubtitle,
-                     final int fadeIn, final int stay, final int fadeOut) {
+    public void send(Player player,
+                     String rawTitle,
+                     @Nullable String rawSubtitle,
+                     int fadeIn, int stay, int fadeOut) {
         PreCon.notNull(player);
+
+        send(ArrayUtils.asList(player), rawTitle, rawSubtitle, fadeIn, stay, fadeOut);
+    }
+
+    @Override
+    public void send(Collection<? extends Player> players,
+                     String rawTitle, @Nullable String rawSubtitle, int fadeIn, int stay, int fadeOut) {
+        PreCon.notNull(players);
         PreCon.notNullOrEmpty(rawTitle);
 
         String jsonTitle = SimpleJSONBuilder.text(rawTitle);
@@ -64,8 +73,7 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
                 ? SimpleJSONBuilder.text(rawSubtitle)
                 : null;
 
-        sendJson(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
-
+        sendJson(players, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
     }
 
     /**
@@ -79,54 +87,62 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
      * @param fadeOut       The fade-out time.
      */
     @Override
-    public void sendJson(final Player player,
+    public void sendJson(Player player,
+                         String jsonTitle,
+                         @Nullable String jsonSubtitle,
+                         int fadeIn, int stay, int fadeOut) {
+        sendJson(ArrayUtils.asList(player), jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+    }
+
+    @Override
+    public void sendJson(final Collection<? extends Player> players,
                          final String jsonTitle,
-                         @Nullable final String jsonSubtitle,
+                         final @Nullable String jsonSubtitle,
                          final int fadeIn, final int stay, final int fadeOut) {
 
         if (Bukkit.isPrimaryThread()) {
-            syncSend(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+            syncSend(players, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
         }
         else {
             Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    syncSend(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+                    syncSend(players, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
                 }
             });
         }
     }
 
-    private void syncSend(Player player, String title, @Nullable String subTitle,
+    private void syncSend(Collection<? extends Player> players, String title, @Nullable String subTitle,
                           int fadeIn, int stay, int fadeOut) {
 
         try {
 
-            IReflectedInstance connection = getConnection(player);
-
             // times packet
-            Object timesPacket = _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);
-            connection.invoke("sendPacket", timesPacket);
+            Object timesPacket = nms().getTitlePacketTimes(fadeIn, stay, fadeOut);
+            Object subTitlePacket = null;
 
             // sub title packet
             if (subTitle != null) {
-                Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", subTitle);
-                Object subTitlePacket = _PacketPlayOutTitle.construct(
-                        "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
-
-                connection.invoke("sendPacket", subTitlePacket);
+                subTitlePacket = nms().getTitlePacketSub(subTitle);
             }
 
             // title packet
-            Object titleComponent = _ChatSerializer.invokeStatic("serialize", title);
-            Object titlePacket = _PacketPlayOutTitle.construct(
-                    "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
+            Object titlePacket = nms().getTitlePacket(title);
 
-            connection.invoke("sendPacket", titlePacket);
+            for (Player player : players) {
+                IReflectedInstance connection = nms().getConnection(player);
+                nms().sendPacket(connection, timesPacket);
+
+                if (subTitlePacket != null)
+                    nms().sendPacket(connection, subTitlePacket);
+
+                nms().sendPacket(connection, titlePacket);
+            }
         }
         catch (RuntimeException e) {
             e.printStackTrace();
-            _isAvailable = false;
+            setAvailable(false);
         }
     }
 }

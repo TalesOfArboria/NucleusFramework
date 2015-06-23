@@ -29,8 +29,9 @@ import com.jcwhatever.nucleus.managed.particles.types.INoteParticle;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
-
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 /**
  * Implementation of {@link INoteParticle}.
@@ -96,10 +97,11 @@ class NoteParticle extends AbstractParticle implements INoteParticle {
 
     @Override
     protected void showParticleTo(INmsParticleEffectHandler handler,
-                                 Player player, double x, double y, double z, int count) {
+                                 Collection<? extends Player> players,
+                                  double x, double y, double z, int count) {
 
         if (count > 0) {
-            handler.send(player, getType(), true, x, y, z,
+            handler.send(players, getType(), true, x, y, z,
                     getXArea(), getYArea(), getZArea(), 1, count);
         }
         else {
@@ -110,7 +112,7 @@ class NoteParticle extends AbstractParticle implements INoteParticle {
                 double gy = y + Rand.getGaussian(0, getYArea());
                 double gz = z + Rand.getGaussian(0, getZArea());
 
-                handler.send(player, getType(), true, gx, gy, gz,
+                handler.send(players, getType(), true, gx, gy, gz,
                         getColor(), 0, 0, 1, 0);
             }
         }

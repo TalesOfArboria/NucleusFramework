@@ -28,14 +28,13 @@ import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.collections.HashMapMap;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * Manages NMS code.
@@ -174,7 +173,9 @@ public class NmsManager implements IPluginOwned {
     private Constructor<? extends INmsHandler> getConstructor(
             Class<? extends INmsHandler> handlerClass, Class<?>... parameters) {
         try {
-            return handlerClass.getConstructor(parameters);
+            Constructor<? extends INmsHandler> constructor = handlerClass.getDeclaredConstructor(parameters);
+            constructor.setAccessible(true);
+            return constructor;
         } catch (NoSuchMethodException ignore) {
             return null;
         }
