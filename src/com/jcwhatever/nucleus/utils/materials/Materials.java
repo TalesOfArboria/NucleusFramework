@@ -671,6 +671,17 @@ public class Materials {
     }
 
     /**
+     * Determine if a material can potentially be used as a potion ingredient.
+     *
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
+     * @see  MaterialProperty#POTION_INGREDIENT
+     */
+    public static boolean isPotionIngredient(Material material) {
+        return hasProperty(material, MaterialProperty.POTION_INGREDIENT);
+    }
+
+    /**
      * Register custom {@link MaterialProperty}'s for the specified
      * {@link org.bukkit.Material}.
      *
@@ -843,7 +854,8 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.BLAZE_POWDER,
-                MaterialProperty.CRAFTABLE);
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.BOAT,
                 MaterialProperty.CRAFTABLE);
@@ -1345,7 +1357,8 @@ public class Materials {
                 MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
-        add(Material.FERMENTED_SPIDER_EYE);
+        add(Material.FERMENTED_SPIDER_EYE,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.FIRE,
                 MaterialProperty.BLOCK,
@@ -1385,7 +1398,8 @@ public class Materials {
                 MaterialProperty.GUI,
                 MaterialProperty.SURFACE);
 
-        add(Material.GHAST_TEAR);
+        add(Material.GHAST_TEAR,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.GLASS,
                 MaterialProperty.BLOCK,
@@ -1405,7 +1419,8 @@ public class Materials {
                 MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
-        add(Material.GLOWSTONE_DUST);
+        add(Material.GLOWSTONE_DUST,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.GOLD_AXE,
                 MaterialProperty.GOLD_BASED,
@@ -1522,7 +1537,8 @@ public class Materials {
         add(Material.GOLDEN_CARROT,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.FOOD,
-                MaterialProperty.CRAFTABLE);
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.GRASS,
                 MaterialProperty.BLOCK,
@@ -1877,7 +1893,8 @@ public class Materials {
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.SUB_MATERIAL_DATA);
 
-        add(Material.MAGMA_CREAM);
+        add(Material.MAGMA_CREAM,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.MAP);
 
@@ -1943,7 +1960,8 @@ public class Materials {
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
-        add(Material.NETHER_STALK); // Nether wart item
+        add(Material.NETHER_STALK,
+                MaterialProperty.POTION_INGREDIENT); // Nether wart item
 
         add(Material.NETHER_STAR);
 
@@ -2010,7 +2028,8 @@ public class Materials {
         add(Material.POTATO_ITEM,
                 MaterialProperty.FOOD);
 
-        add(Material.POTION);
+        add(Material.POTION,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.POWERED_MINECART);
 
@@ -2068,7 +2087,8 @@ public class Materials {
 
         add(Material.RABBIT);
 
-        add(Material.RABBIT_FOOT);
+        add(Material.RABBIT_FOOT,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.RABBIT_HIDE);
 
@@ -2090,7 +2110,8 @@ public class Materials {
 
         add(Material.RAW_FISH,
                 MaterialProperty.FOOD,
-                MaterialProperty.SUB_MATERIAL_DATA);
+                MaterialProperty.SUB_MATERIAL_DATA,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.RECORD_10);
 
@@ -2138,7 +2159,8 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.REDSTONE_BLOCK,
                 MaterialProperty.BLOCK,
@@ -2299,9 +2321,11 @@ public class Materials {
                 MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
-        add(Material.SPECKLED_MELON); // Glistering Melon
+        add(Material.SPECKLED_MELON,
+                MaterialProperty.POTION_INGREDIENT); // Glistering Melon
 
-        add(Material.SPIDER_EYE);
+        add(Material.SPIDER_EYE,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.SPONGE,
                 MaterialProperty.BLOCK,
@@ -2467,7 +2491,8 @@ public class Materials {
 
         add(Material.STRING);
 
-        add(Material.SUGAR);
+        add(Material.SUGAR,
+                MaterialProperty.POTION_INGREDIENT);
 
         add(Material.SUGAR_CANE,
                 MaterialProperty.PLACEABLE);
@@ -2477,7 +2502,8 @@ public class Materials {
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK);
 
-        add(Material.SULPHUR); // gunpowder
+        add(Material.SULPHUR,
+                MaterialProperty.POTION_INGREDIENT); // gunpowder
 
         add(Material.THIN_GLASS,
                 MaterialProperty.BLOCK,

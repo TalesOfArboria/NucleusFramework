@@ -242,6 +242,10 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      * The material is a log.
      */
     public static final MaterialProperty LOG = new MaterialProperty("Log");
+    /**
+     * The material can potentially be used as a potion ingredient.
+     */
+    public static final MaterialProperty POTION_INGREDIENT = new MaterialProperty("Potion_Ingredient");
 
     /**
      * Get a temporary {@link MaterialProperty} used to lookup a property from a map.
