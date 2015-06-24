@@ -33,13 +33,16 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.potions.PotionNames;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.MaterialData;
+import org.bukkit.potion.Potion;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -236,6 +239,12 @@ public final class ItemStackUtils {
 
             switch (nameResult) {
                 case REQUIRED:
+
+                    if (meta instanceof PotionMeta) {
+                        Potion potion = new Potion(stack.getDurability());
+                        return PotionNames.getSimple(potion);
+                    }
+
                     String materialName = NamedMaterialData.getAlternate(stack.getData());
                     if (materialName == null) {
                         materialName = stack.getType().name().toLowerCase();
