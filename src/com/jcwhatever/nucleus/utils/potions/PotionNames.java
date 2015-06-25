@@ -38,6 +38,10 @@ public class PotionNames {
 
     private PotionNames() {}
 
+    @Localizable static final String _AWKWARD = "Awkward Potion";
+    @Localizable static final String _THICK = "Thick Potion";
+    @Localizable static final String _MUNDANE = "Mundane Potion";
+
     @Localizable static final String _WATER = "Water Bottle";
     @Localizable static final String _REGEN = "Potion of Regeneration";
     @Localizable static final String _SPEED = "Potion of Swiftness";
@@ -98,6 +102,20 @@ public class PotionNames {
         PreCon.notNull(potion);
 
         PotionType type = potion.getType();
+        if (type == null) {
+
+            switch (potion.getNameId()) {
+                case 16:
+                    return NucLang.get(_AWKWARD);
+                case 32:
+                    return NucLang.get(_THICK);
+                case 64:
+                    return NucLang.get(_MUNDANE);
+                default:
+                    throw new AssertionError();
+            }
+        }
+
         StringBuilder buffer = buffer();
 
         if (potion.isSplash()) {
