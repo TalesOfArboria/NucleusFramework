@@ -52,7 +52,7 @@ public class PotionConverter extends Converter<Potion> {
         }
 
         if (value instanceof Short) {
-            return Potion.fromDamage((Short) value);
+            return new Potion((Short) value);
         }
 
         return null;
