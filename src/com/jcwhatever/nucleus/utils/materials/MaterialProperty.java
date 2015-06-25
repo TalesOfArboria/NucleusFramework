@@ -47,6 +47,10 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      */
     public static final MaterialProperty SUB_MATERIAL_DATA = new MaterialProperty("Sub_Material_Data");
     /**
+     * The material uses durability to define sub materials. (i.e. Potion)
+     */
+    public static final MaterialProperty SUB_MATERIAL_DURABILITY = new MaterialProperty("Durability_Sub_Materials");
+    /**
      * The materials byte meta data determines which direction it is facing.
      */
     public static final MaterialProperty DIRECTIONAL_DATA = new MaterialProperty("Directional_Data");

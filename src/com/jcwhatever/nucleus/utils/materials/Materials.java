@@ -671,6 +671,18 @@ public class Materials {
     }
 
     /**
+     * Determine if a materials durability data is used to specify
+     * a sub material.
+     *
+     * @param material  The {@link org.bukkit.Material} to check.
+     *
+     * @see  MaterialProperty#SUB_MATERIAL_DURABILITY
+     */
+    public static boolean hasSubMaterialDurability(Material material) {
+        return hasProperty(material, MaterialProperty.SUB_MATERIAL_DURABILITY);
+    }
+
+    /**
      * Determine if a material can potentially be used as a potion ingredient.
      *
      * @param material  The {@link org.bukkit.Material} to check.
@@ -2029,7 +2041,8 @@ public class Materials {
                 MaterialProperty.FOOD);
 
         add(Material.POTION,
-                MaterialProperty.POTION_INGREDIENT);
+                MaterialProperty.POTION_INGREDIENT,
+                MaterialProperty.SUB_MATERIAL_DURABILITY);
 
         add(Material.POWERED_MINECART);
 

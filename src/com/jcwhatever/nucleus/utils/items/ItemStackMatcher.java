@@ -196,6 +196,12 @@ public class ItemStackMatcher {
 
             Material type = stack1.getType();
 
+            // check potion type
+            if (Materials.hasSubMaterialDurability(type)
+                    && stack1.getDurability() != stack2.getDurability()) {
+                return false;
+            }
+
             // match data if type has color or sub material data
             if ((Materials.hasColorData(type) || Materials.hasSubMaterialData(type)) &&
                     !stack1.getData().equals(stack2.getData())) {
