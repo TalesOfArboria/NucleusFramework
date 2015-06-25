@@ -2041,6 +2041,7 @@ public class Materials {
                 MaterialProperty.FOOD);
 
         add(Material.POTION,
+                MaterialProperty.THROWABLE,
                 MaterialProperty.POTION_INGREDIENT,
                 MaterialProperty.SUB_MATERIAL_DURABILITY);
 
