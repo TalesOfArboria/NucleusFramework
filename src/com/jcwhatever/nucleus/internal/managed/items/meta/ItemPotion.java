@@ -25,60 +25,60 @@
 package com.jcwhatever.nucleus.internal.managed.items.meta;
 
 import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
-import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandlers;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Manages {@link org.bukkit.inventory.ItemStack} meta data handlers.
+ * Handles {@link org.bukkit.inventory.ItemStack} potion ID.
+ *
+ * @see InternalItemMetaHandlers
  */
-public final class InternalItemMetaHandlers implements IItemMetaHandlers {
+public class ItemPotion implements IItemMetaHandler {
 
-    private final Map<String, IItemMetaHandler> _handlers = new HashMap<>(15);
-
-    public InternalItemMetaHandlers() {
-        register(new ItemColor());
-        register(new ItemDisplayName());
-        register(new ItemEnchantment());
-        register(new ItemLore());
-        register(new ItemBookAuthor());
-        register(new ItemBookTitle());
-        register(new ItemBookPage());
-        register(new ItemDurability());
-        register(new ItemPotion());
+    @Override
+    public String getMetaName() {
+        return "potionId";
     }
 
     @Override
-    @Nullable
-    public IItemMetaHandler getHandler(String metaName) {
-        return _handlers.get(metaName);
+    public boolean canHandle(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
+        return itemStack.getType() == Material.POTION && itemStack.getDurability() != 0;
     }
 
     @Override
-    public List<IItemMetaHandler> getHandlers() {
-        return new ArrayList<>(_handlers.values());
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
+        PreCon.notNull(itemStack);
+        PreCon.notNull(meta);
+
+        if (!meta.getName().equals(getMetaName()))
+            return false;
+
+        short potionId = TextUtils.parseShort(meta.getRawData(), (short)0);
+
+        itemStack.setDurability(potionId);
+
+        return true;
     }
 
-    /**
-     * Register a meta data handler.
-     *
-     * <p>If a meta data handler with the same meta name is already
-     * registered, it is overwritten.</p>
-     *
-     * @param handler  The handler to register.
-     *
-     * @return  Self for chaining.
-     */
-    protected InternalItemMetaHandlers register(IItemMetaHandler handler) {
-        PreCon.notNull(handler);
+    @Override
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
 
-        _handlers.put(handler.getMetaName(), handler);
+        if (!canHandle(itemStack))
+            return new ArrayList<>(0);
 
-        return this;
+        List<ItemMetaValue> result = new ArrayList<>(1);
+
+        result.add(new ItemMetaValue(getMetaName(), String.valueOf(itemStack.getDurability())));
+
+        return result;
     }
 }
