@@ -40,6 +40,8 @@ import com.jcwhatever.nucleus.managed.commands.mixins.IInitializableCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
+import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.providers.regionselect.RegionSelection;
@@ -47,17 +49,24 @@ import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
 import com.jcwhatever.nucleus.storage.settings.PropertyDefinition;
 import com.jcwhatever.nucleus.storage.settings.PropertyValueType;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.LinkedList;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * An abstract implementation of a command that adds common protected
@@ -99,6 +108,70 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
 
     @Localizable private static final String _PROPERTY_DESCRIPTION =
             "Description for '{0: property value}':\n{GRAY}{1: description}";
+
+    private static final CollectionUtils.ISearchTextGetter<Object> GENERIC_TEXT_GETTER =
+            new CollectionUtils.ISearchTextGetter<Object>() {
+                @Override
+                public String getText(Object obj) {
+
+                    if (obj == null)
+                        return null;
+
+                    if (obj instanceof INamed)
+                        return ((INamed) obj).getName();
+
+                    return obj.toString();
+                }
+            };
+
+    private static final CollectionUtils.ISearchTextGetter<Player> PLAYER_OBJECT_NAME_GETTER =
+            new CollectionUtils.ISearchTextGetter<Player>() {
+                @Override
+                public String getText(Player player) {
+                    return player.getName();
+                }
+            };
+
+    private static final CollectionUtils.ISearchTextGetter<Object> PLAYER_NAME_GETTER =
+            new CollectionUtils.ISearchTextGetter<Object>() {
+                @Override
+                public String getText(Object obj) {
+
+                    if (obj instanceof Player)
+                        return ((Player) obj).getName();
+
+                    if (obj instanceof UUID)
+                        return PlayerUtils.getPlayerName((UUID) obj);
+
+                    if (obj instanceof String)
+                        return (String)obj;
+
+                    if (obj instanceof IPlayerReference)
+                        return ((IPlayerReference) obj).getPlayer().getName();
+
+                    return GENERIC_TEXT_GETTER.getText(obj);
+                }
+            };
+
+    private static final CollectionUtils.ISearchTextGetter<Object> WORLD_NAME_GETTER =
+            new CollectionUtils.ISearchTextGetter<Object>() {
+                @Override
+                public String getText(Object obj) {
+
+                    if (obj instanceof World)
+                        return ((World) obj).getName();
+
+                    if (obj instanceof UUID) {
+                        World world = Bukkit.getWorld((UUID) obj);
+                        return world == null ? null : world.getName();
+                    }
+
+                    if (obj instanceof String)
+                        return (String)obj;
+
+                    return GENERIC_TEXT_GETTER.getText(obj);
+                }
+            };
 
     private LinkedList<Class<? extends ICommand>> _registerQueue;
     private IRegisteredCommand _command;
@@ -340,7 +413,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * or other problem.
      */
     protected void clearSetting(CommandSender sender, final ISettingsManager settings,
-                             ICommandArguments args, String propertyArgName)
+                                ICommandArguments args, String propertyArgName)
             throws CommandException {
 
         final String settingName = args.getString(propertyArgName);
@@ -373,7 +446,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @throws CommandException               for all other problems.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
-                           ICommandArguments args, String propertyArgName, String valueArgName)
+                              ICommandArguments args, String propertyArgName, String valueArgName)
             throws CommandException {
 
         setSetting(sender, settings, args, propertyArgName, valueArgName, null);
@@ -398,8 +471,8 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @throws CommandException               for all other problems.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
-                           ICommandArguments args, String propertyArgName,
-                           String valueArgName, @Nullable final Runnable onSuccess)
+                              ICommandArguments args, String propertyArgName,
+                              String valueArgName, @Nullable final Runnable onSuccess)
             throws CommandException {
 
         PreCon.notNull(sender);
@@ -509,5 +582,294 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
             return null;
 
         return _command.getCommand(commandName);
+    }
+
+    /**
+     * Fill a "matches" collection with names of online players that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for player name arguments.</p>
+     *
+     * @param arguments  The current arguments.
+     * @param matches    The collection of tab completion matches.
+     */
+    protected void tabCompletePlayerName(String[] arguments, Collection<String> matches) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(matches);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        searchOnlinePlayers(tabArg, matches);
+    }
+
+    /**
+     * Fill a "matches" collection with names of players that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for player name arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param candidates  A collection of candidates to search.
+     * @param matches     The collection of tab completion matches.
+     */
+    protected void tabCompletePlayerName(String[] arguments,
+                                         Collection candidates, Collection<String> matches) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(candidates);
+        PreCon.notNull(matches);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        searchPlayers(tabArg, candidates, matches);
+    }
+
+    /**
+     * Fill a "matches" collection with names of worlds that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for world name arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param matches     The collection of tab completion matches.
+     */
+    protected void tabCompleteWorldName(String[] arguments, Collection<String> matches) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(matches);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        searchWorlds(tabArg, Bukkit.getWorlds(), matches);
+    }
+
+    /**
+     * Fill a "matches" collection with names of worlds that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for world name arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param candidates  A collection of candidates to search.
+     * @param matches     The collection of tab completion matches.
+     */
+    protected void tabCompleteWorldName(String[] arguments,
+                                        Collection candidates, Collection<String> matches) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(candidates);
+        PreCon.notNull(matches);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        searchWorlds(tabArg, candidates, matches);
+    }
+
+    /**
+     * Fill a "matches" collection with names of worlds that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for enum arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param enumType    The enum type.
+     * @param matches     The collection of tab completion matches.
+     */
+    protected void tabCompleteEnum(String[] arguments, Class<? extends Enum> enumType,
+                                   Collection<String> matches) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(enumType);
+        PreCon.notNull(matches);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        searchEnum(tabArg, enumType, matches);
+    }
+
+    /**
+     * Fill a "matches" collection with names of worlds that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for generic arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param candidates  A collection of candidates to search.
+     * @param matches     The collection of tab completion matches.
+     */
+    protected void tabCompleteSearch(String[] arguments,
+                                     Collection candidates, Collection<String> matches) {
+        tabCompleteSearch(arguments, candidates, matches, GENERIC_TEXT_GETTER);
+    }
+
+    /**
+     * Fill a "matches" collection with names of worlds that are possible matches
+     * for the last argument.
+     *
+     * <p>Use with tab completion for generic arguments.</p>
+     *
+     * @param arguments   The current arguments.
+     * @param candidates  A collection of candidates to search.
+     * @param matches     The collection of tab completion matches.
+     * @param textGetter  A text getter to convert candidate objects into searchable text.
+     */
+    protected void tabCompleteSearch(String[] arguments,
+                                     Collection candidates, Collection<String> matches,
+                                     CollectionUtils.ISearchTextGetter textGetter) {
+        PreCon.notNull(arguments);
+        PreCon.notNull(candidates);
+        PreCon.notNull(matches);
+        PreCon.notNull(textGetter);
+
+        if (arguments.length == 0)
+            return;
+
+        String tabArg = arguments[arguments.length - 1];
+
+        search(tabArg, candidates, matches, textGetter);
+    }
+
+    /**
+     * Fill an output collection with names of online players that are possible matches
+     * for the specified search term.
+     *
+     * @param searchTerm  The search term.
+     * @param output      The output collection of name matches.
+     *
+     * @return  The output collection.
+     */
+    protected Collection<String> searchOnlinePlayers(String searchTerm, Collection<String> output) {
+        PreCon.notNull(searchTerm);
+        PreCon.notNull(output);
+
+        Collection<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+
+        List<Player> matchingPlayers = CollectionUtils.textSearch(players, searchTerm, PLAYER_OBJECT_NAME_GETTER);
+
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity(matchingPlayers.size());
+
+        for (Player player : matchingPlayers) {
+            output.add(player.getName());
+        }
+
+        return output;
+    }
+
+    /**
+     * Fill an output collection with names of players that are possible matches
+     * for the specified search term.
+     *
+     * @param searchTerm  The search term.
+     * @param candidates  The candidates to search.
+     * @param output      The output collection of name matches.
+     *
+     * @return  The output collection.
+     */
+    protected Collection<String> searchPlayers(String searchTerm,
+                                               Collection candidates,
+                                               Collection<String> output) {
+        return search(searchTerm, candidates, output, PLAYER_NAME_GETTER);
+    }
+
+    /**
+     * Fill an output collection with names of worlds that are possible matches
+     * for the specified search term.
+     *
+     * @param searchTerm  The search term.
+     * @param candidates  The candidates to search.
+     * @param output      The output collection of name matches.
+     *
+     * @return  The output collection.
+     */
+    protected Collection<String> searchWorlds(String searchTerm,
+                                              Collection candidates,
+                                              Collection<String> output) {
+        return search(searchTerm, candidates, output, WORLD_NAME_GETTER);
+    }
+
+    /**
+     * Fill an output collection with names of enum constants that are possible matches
+     * for the specified search term.
+     *
+     * @param searchTerm  The search term.
+     * @param enumType    The enum type.
+     * @param output      The output collection of name matches.
+     *
+     * @return  The output collection.
+     */
+    protected Collection<String> searchEnum(String searchTerm,
+                                            Class<? extends Enum> enumType,
+                                            Collection<String> output) {
+        Collection<String> candidates = new ArrayList<>(enumType.getEnumConstants().length);
+
+        for (Enum e : enumType.getEnumConstants()) {
+            candidates.add(e.name().toLowerCase());
+        }
+
+        return search(searchTerm, candidates, output, GENERIC_TEXT_GETTER);
+    }
+
+    /**
+     * Generic candidate search.
+     *
+     * <p>Use candidates toString method to retrieve searchable text.</p>
+     *
+     * @param searchTerm  The search term.
+     * @param candidates  The search candidates.
+     * @param output      The output result collection.
+     *
+     * @return  The output result collection.
+     */
+    protected Collection<String> search(String searchTerm,
+                                        Collection candidates,
+                                        Collection<String> output) {
+        return search(searchTerm, candidates, output, GENERIC_TEXT_GETTER);
+    }
+
+    /**
+     * Generic candidate search.
+     *
+     * @param searchTerm  The search term.
+     * @param candidates  The search candidates.
+     * @param output      The output result collection.
+     * @param textGetter  The text getter for converting objects to strings.
+     *
+     * @return  The output result collection.
+     */
+    protected Collection<String> search(String searchTerm,
+                                        Collection candidates,
+                                        Collection<String> output,
+                                        CollectionUtils.ISearchTextGetter textGetter) {
+        PreCon.notNull(searchTerm);
+        PreCon.notNull(candidates);
+        PreCon.notNull(output);
+
+        @SuppressWarnings("unchecked")
+        List<Object> matching = CollectionUtils.textSearch(candidates, searchTerm, textGetter);
+
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity(matching.size());
+
+        for (Object match : matching) {
+
+            @SuppressWarnings("unchecked")
+            String text = textGetter.getText(match);
+
+            output.add(text);
+        }
+
+        return output;
     }
 }
