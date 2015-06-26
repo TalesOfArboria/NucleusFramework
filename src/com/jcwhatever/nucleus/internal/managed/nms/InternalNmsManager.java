@@ -58,6 +58,11 @@ public final class InternalNmsManager extends NmsManager {
      */
     public static final String SOUND_EFFECT = "SOUND_EFFECT";
 
+    /**
+     * The name of the internal anvil view handler.
+     */
+    public static final String ANVIL_VIEW = "ANVIL_VIEW";
+
     private static INms _nms;
 
     /**
@@ -67,11 +72,11 @@ public final class InternalNmsManager extends NmsManager {
         if (_nms == null) {
             switch (NmsUtils.getNmsVersion()) {
                 case "v1_8_R3":
-                    return _nms = new v1_8_R3();
+                    return _nms = new v1_8_R3_Nms();
                 case "v1_8_R2":
-                    return _nms = new v1_8_R2();
+                    return _nms = new v1_8_R2_Nms();
                 case "v1_8_R1":
-                    return _nms = new v1_8_R1();
+                    return _nms = new v1_8_R1_Nms();
             }
         }
 
@@ -91,11 +96,13 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
         registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler.class);
         registerHandler("v1_8_R2", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
+        registerHandler("v1_8_R2", ANVIL_VIEW, NmsAnvilViewHandler.class);
 
         registerHandler("v1_8_R3", TITLES, NmsTitleHandler.class);
         registerHandler("v1_8_R3", ACTION_BAR, NmsActionBarHandler.class);
         registerHandler("v1_8_R3", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
         registerHandler("v1_8_R3", SOUND_EFFECT, NmsSoundEffectHandler.class);
         registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
+        registerHandler("v1_8_R3", ANVIL_VIEW, NmsAnvilViewHandler.class);
     }
 }

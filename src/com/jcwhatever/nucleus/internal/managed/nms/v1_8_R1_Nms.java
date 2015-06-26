@@ -29,20 +29,22 @@ import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
 
 import javax.annotation.Nullable;
 
 /**
- * Minecraft version v1_8_R3
+ * Minecraft version v1_8_R1
  */
-class v1_8_R3 implements INms {
+class v1_8_R1_Nms implements INms {
 
     private IReflection _reflection = Reflection.newContext();
 
     private IReflectedType _IChatBaseComponent = _reflection.nmsType("IChatBaseComponent");
 
-    private IReflectedType _EnumTitleAction = _reflection.nmsType("PacketPlayOutTitle$EnumTitleAction");
+    private IReflectedType _EnumTitleAction = _reflection.nmsType("EnumTitleAction");
 
     private IReflectedType _EntityPlayer = _reflection.nmsType("EntityPlayer");
 
@@ -60,18 +62,10 @@ class v1_8_R3 implements INms {
             .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
             .fieldAlias("footer", "b");
 
-    private IReflectedType _EnumParticle = _reflection.nmsType("EnumParticle");
-
-    private IReflectedType _PacketPlayOutWorldParticles = _reflection.nmsType("PacketPlayOutWorldParticles")
-            .constructorAlias("new", _EnumParticle.getHandle(), boolean.class,
-                    float.class, float.class, float.class,
-                    float.class, float.class, float.class,
-                    float.class, int.class, int[].class);
-
     private IReflectedType _PacketPlayOutNamedSoundEffect = _reflection.nmsType("PacketPlayOutNamedSoundEffect")
             .constructorAlias("new", String.class, double.class, double.class, double.class, float.class, float.class);
 
-    private IReflectedType _ChatSerializer = _reflection.nmsType("IChatBaseComponent$ChatSerializer")
+    private IReflectedType _ChatSerializer = _reflection.nmsType("ChatSerializer")
             .methodAlias("serialize", "a", String.class);
 
     private IReflectedType _PlayerConnection = _reflection.nmsType("PlayerConnection")
@@ -97,12 +91,6 @@ class v1_8_R3 implements INms {
         return _reflection;
     }
 
-    /**
-     * Send an NMS packet.
-     *
-     * @param player  The player to send the packet to.
-     * @param packet  The packet to send.
-     */
     @Override
     public void sendPacket(Player player, Object packet) {
 
@@ -131,11 +119,6 @@ class v1_8_R3 implements INms {
         }
     }
 
-    /**
-     * Get the players NMS connection.
-     *
-     * @param player The player.
-     */
     @Override
     public IReflectedInstance getConnection(Player player) {
 
@@ -164,14 +147,11 @@ class v1_8_R3 implements INms {
 
     @Override
     public Object getTitlePacketTimes(int fadeIn, int stay, int fadeOut) {
-
-        // times packet
         return _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);
     }
 
     @Override
     public Object getTitlePacketSub(String subTitle) {
-        // sub title packet
         Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", subTitle);
         return _PacketPlayOutTitle.construct(
                 "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
@@ -179,7 +159,6 @@ class v1_8_R3 implements INms {
 
     @Override
     public Object getTitlePacket(String title) {
-        // title packet
         Object titleComponent = _ChatSerializer.invokeStatic("serialize", title);
         return _PacketPlayOutTitle.construct(
                 "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
@@ -192,23 +171,15 @@ class v1_8_R3 implements INms {
     }
 
     @Override
-    public Object getParticlePacket(
-            INmsParticleEffectHandler.INmsParticleType particleType, boolean force,
-            double x, double y, double z,
-            double offsetX, double offsetY, double offsetZ,
-            float data, int count) {
-
-        Object enumParticle = _EnumParticle.getEnum(particleType.getName());
-
-        return _PacketPlayOutWorldParticles.construct("new", enumParticle, force,
-                (float)x, (float)y, (float)z,
-                (float)offsetX, (float)offsetY, (float)offsetZ,
-                data, count, particleType.getPacketInts());
+    public Object getParticlePacket(INmsParticleEffectHandler.INmsParticleType particleType,
+                                    boolean force, double x, double y, double z,
+                                    double offsetX, double offsetY, double offsetZ,
+                                    float data, int count) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getHeaderFooterPacket(@Nullable String headerText, @Nullable String footerText) {
-
         // create packet instance based on the presence of a header
         Object packet = headerText != null
                 ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader",
@@ -228,9 +199,14 @@ class v1_8_R3 implements INms {
 
     @Override
     public Object getActionBarPacket(String text) {
-
         Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
 
         return _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
+    }
+
+    @Nullable
+    @Override
+    public InventoryView openAnvilInventory(Player player, @Nullable Block position) {
+        throw new UnsupportedOperationException();
     }
 }

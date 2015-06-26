@@ -29,20 +29,33 @@ import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.ChatComponentText;
+import net.minecraft.server.v1_8_R2.Container;
+import net.minecraft.server.v1_8_R2.ContainerAnvil;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.PacketPlayInCloseWindow;
+import net.minecraft.server.v1_8_R2.PacketPlayOutOpenWindow;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R2.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_8_R2.inventory.CraftContainer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 
 import javax.annotation.Nullable;
 
 /**
  * Minecraft version v1_8_R1
  */
-class v1_8_R1 implements INms {
+class v1_8_R2_Nms implements INms {
 
     private IReflection _reflection = Reflection.newContext();
 
     private IReflectedType _IChatBaseComponent = _reflection.nmsType("IChatBaseComponent");
 
-    private IReflectedType _EnumTitleAction = _reflection.nmsType("EnumTitleAction");
+    private IReflectedType _EnumTitleAction = _reflection.nmsType("PacketPlayOutTitle$EnumTitleAction");
 
     private IReflectedType _EntityPlayer = _reflection.nmsType("EntityPlayer");
 
@@ -60,10 +73,18 @@ class v1_8_R1 implements INms {
             .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
             .fieldAlias("footer", "b");
 
+    private IReflectedType _EnumParticle = _reflection.nmsType("EnumParticle");
+
+    private IReflectedType _PacketPlayOutWorldParticles = _reflection.nmsType("PacketPlayOutWorldParticles")
+            .constructorAlias("new", _EnumParticle.getHandle(), boolean.class,
+                    float.class, float.class, float.class,
+                    float.class, float.class, float.class,
+                    float.class, int.class, int[].class);
+
     private IReflectedType _PacketPlayOutNamedSoundEffect = _reflection.nmsType("PacketPlayOutNamedSoundEffect")
             .constructorAlias("new", String.class, double.class, double.class, double.class, float.class, float.class);
 
-    private IReflectedType _ChatSerializer = _reflection.nmsType("ChatSerializer")
+    private IReflectedType _ChatSerializer = _reflection.nmsType("IChatBaseComponent$ChatSerializer")
             .methodAlias("serialize", "a", String.class);
 
     private IReflectedType _PlayerConnection = _reflection.nmsType("PlayerConnection")
@@ -89,6 +110,12 @@ class v1_8_R1 implements INms {
         return _reflection;
     }
 
+    /**
+     * Send an NMS packet.
+     *
+     * @param player  The player to send the packet to.
+     * @param packet  The packet to send.
+     */
     @Override
     public void sendPacket(Player player, Object packet) {
 
@@ -117,6 +144,11 @@ class v1_8_R1 implements INms {
         }
     }
 
+    /**
+     * Get the players NMS connection.
+     *
+     * @param player The player.
+     */
     @Override
     public IReflectedInstance getConnection(Player player) {
 
@@ -132,6 +164,11 @@ class v1_8_R1 implements INms {
         }
     }
 
+    /**
+     * Get the net.minecraft.server.EntityPlayer nms object of the player.
+     *
+     * @param player  The player.
+     */
     @Override
     public IReflectedInstance getEntityPlayer(Player player) {
         try {
@@ -163,17 +200,20 @@ class v1_8_R1 implements INms {
     }
 
     @Override
-    public Object getNamedSoundPacket(String soundName,
-                                      double x, double y, double z, float volume, float pitch) {
+    public Object getNamedSoundPacket(String soundName, double x, double y, double z, float volume, float pitch) {
         return _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
     }
 
     @Override
     public Object getParticlePacket(INmsParticleEffectHandler.INmsParticleType particleType,
                                     boolean force, double x, double y, double z,
-                                    double offsetX, double offsetY, double offsetZ,
-                                    float data, int count) {
-        throw new UnsupportedOperationException();
+                                    double offsetX, double offsetY, double offsetZ, float data, int count) {
+        Object enumParticle = _EnumParticle.getEnum(particleType.getName());
+
+        return _PacketPlayOutWorldParticles.construct("new", enumParticle, force,
+                (float)x, (float)y, (float)z,
+                (float)offsetX, (float)offsetY, (float)offsetZ,
+                data, count, particleType.getPacketInts());
     }
 
     @Override
@@ -200,5 +240,48 @@ class v1_8_R1 implements INms {
         Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
 
         return _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
+    }
+
+    @Nullable
+    @Override
+    public InventoryView openAnvilInventory(Player bukkitPlayer, @Nullable Block block) {
+
+        if (!(bukkitPlayer instanceof CraftPlayer))
+            return null;
+
+        EntityPlayer player = ((CraftPlayer)bukkitPlayer).getHandle();
+
+        BlockPosition position = block == null
+                ? new BlockPosition(0, 0, 0)
+                : new BlockPosition(block.getX(), block.getY(), block.getZ());
+
+        if (player.playerConnection == null)
+            return null;
+
+        if (player.activeContainer != player.defaultContainer) {
+            // fire INVENTORY_CLOSE if one already open
+            player.playerConnection.a(new PacketPlayInCloseWindow(player.activeContainer.windowId));
+        }
+
+        String windowType = CraftContainer.getNotchInventoryType(InventoryType.ANVIL);
+
+        Container container = new ContainerAnvil(player.inventory, player.world, position, player);
+        container = CraftEventFactory.callInventoryOpenEvent(player, container);
+        if(container == null)
+            return null;
+
+        container.windowId = player.nextContainerCounter();
+
+        String title = container.getBukkitView().getTitle();
+        int size = 0;
+
+        player.playerConnection.sendPacket(new PacketPlayOutOpenWindow(
+                container.windowId, windowType, new ChatComponentText(title), size));
+
+        player.activeContainer = container;
+        player.activeContainer.addSlotListener(player);
+        container.checkReachable = false;
+
+        return container.getBukkitView();
     }
 }

@@ -27,7 +27,9 @@ package com.jcwhatever.nucleus.internal.managed.nms;
 import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
 
 import javax.annotation.Nullable;
 
@@ -154,4 +156,16 @@ interface INms {
      * @param text  The action bar text.
      */
     Object getActionBarPacket(String text);
+
+    /**
+     * Open an anvil view.
+     *
+     * @param player    The player to show the view to.
+     * @param position  Option position of the anvil block.
+     *
+     * @return  The inventory view or null if could not show view or view was
+     * cancelled by an event.
+     */
+    @Nullable
+    InventoryView openAnvilInventory(Player player, @Nullable Block position);
 }

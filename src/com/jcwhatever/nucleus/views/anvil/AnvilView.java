@@ -24,11 +24,13 @@
 
 package com.jcwhatever.nucleus.views.anvil;
 
+import com.jcwhatever.nucleus.utils.nms.INmsAnvilViewHandler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
-
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -56,9 +58,23 @@ public class AnvilView extends View {
     @Override
     protected boolean openView(ViewOpenReason reason) {
 
-        _inventory = Bukkit.createInventory(getPlayer(), InventoryType.ANVIL);
+        Player player = getPlayer();
 
-        _inventoryView = getPlayer().openInventory(_inventory);
+        INmsAnvilViewHandler handler = NmsUtils.getAnvilViewHandler();
+        if (handler == null) {
+            _inventory = Bukkit.createInventory(player, InventoryType.ANVIL);
+            _inventoryView = player.openInventory(_inventory);
+            if (_inventoryView == null)
+                return false;
+        }
+        else {
+
+            _inventoryView = handler.open(player, getViewSession().getSessionBlock());
+            if (_inventoryView == null)
+                return false;
+
+            _inventory = _inventoryView.getTopInventory();
+        }
 
         return true;
     }

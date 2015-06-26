@@ -28,14 +28,13 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 /**
  * NMS utilities.
@@ -172,6 +171,17 @@ public final class NmsUtils {
     @Nullable
     public static INmsTitleHandler getTitleHandler() {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.TITLES);
+    }
+
+    /**
+     * Get NucleusFramework's internal anvil view handler.
+     *
+     * @return  The anvil view handler or null if a handler for the current version
+     * of Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsAnvilViewHandler getAnvilViewHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.ANVIL_VIEW);
     }
 
     // load the the craft package version from NucleusFramework's config
