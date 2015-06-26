@@ -43,18 +43,17 @@ import com.jcwhatever.nucleus.providers.permissions.Permissions;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Dispatches Bukkit commands to the proper {@link AbstractCommand} for execution.
@@ -204,7 +203,7 @@ class CommandDispatcher implements ICommandDispatcher {
         if (args.length == 0)
             return new ArrayList<>(0);
 
-        RegisteredCommand rootCommand = _rootCommands.getCommand(args[0]);
+        RegisteredCommand rootCommand = _rootCommands.getCommand(cmd.getName());
         if (rootCommand == null) {
             rootCommand = _defaultRoot;
         }
