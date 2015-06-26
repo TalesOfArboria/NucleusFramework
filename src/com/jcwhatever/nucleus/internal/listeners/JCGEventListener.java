@@ -32,11 +32,11 @@ import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.regions.RegionEventReason;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -179,13 +179,13 @@ public final class JCGEventListener implements Listener {
         if (!(entity instanceof Player))
             return;
 
-        Player p = (Player)entity;
+        final Player p = (Player)entity;
 
         Inventory inventory = event.getInventory();
         if (!(inventory instanceof AnvilInventory))
             return;
 
-        AnvilInventory anvilInventory = (AnvilInventory)inventory;
+        final AnvilInventory anvilInventory = (AnvilInventory)inventory;
         InventoryView view = event.getView();
         int rawSlot = event.getRawSlot();
 
@@ -197,6 +197,10 @@ public final class JCGEventListener implements Listener {
             return;
 
         ItemStack slot1 = anvilInventory.getItem(0);
+        ItemStack slot2 = anvilInventory.getItem(0);
+
+        final ItemStack original1 = slot1 == null ? null : slot1.clone();
+        final ItemStack original2 = slot2 == null ? null : slot2.clone();
 
         // check for rename
         String originalName = slot1 != null
@@ -213,25 +217,33 @@ public final class JCGEventListener implements Listener {
             Nucleus.getEventManager().callBukkit(this, renameEvent);
 
             if (renameEvent.isCancelled()) {
-                event.setCancelled(true);
+                cancelAnvilEvent(p, anvilInventory, original1, original2);
                 return;
             }
 
             ItemStackUtils.setDisplayName(resultItem, renameEvent.getNewName());
         }
 
-        // check for repair
-        short startDurability = slot1 != null ? slot1.getDurability() : Short.MAX_VALUE;
-        short resultDurability = resultItem.getDurability();
+        AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
+        Nucleus.getEventManager().callBukkit(this, repairEvent);
 
-        if (resultDurability > startDurability) {
-            AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
-
-            Nucleus.getEventManager().callBukkit(this, repairEvent);
-
-            if (repairEvent.isCancelled()) {
-                event.setCancelled(true);
-            }
+        if (repairEvent.isCancelled()) {
+            cancelAnvilEvent(p, anvilInventory, original1, original2);
         }
+    }
+
+    private void cancelAnvilEvent(final Player player, final Inventory inventory,
+                                  final ItemStack original1, final ItemStack original2) {
+
+        player.setItemOnCursor(null);
+
+        Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                inventory.setItem(0, original1);
+                inventory.setItem(2, original2);
+                player.setItemOnCursor(null);
+            }
+        });
     }
 }
