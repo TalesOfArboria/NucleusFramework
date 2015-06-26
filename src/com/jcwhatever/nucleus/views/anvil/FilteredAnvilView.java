@@ -25,10 +25,12 @@
 package com.jcwhatever.nucleus.views.anvil;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.anvil.AnvilEnchantEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.views.View;
@@ -36,11 +38,15 @@ import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 import com.jcwhatever.nucleus.views.ViewSession;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -113,43 +119,98 @@ public class FilteredAnvilView extends AnvilView {
      */
     static class AnvilEventListener implements Listener {
 
-        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-        private void onAnvilItemRepair(AnvilItemRepairEvent event) {
-            check(event.getPlayer(), event.getItem());
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onAnvilRepair(AnvilItemRepairEvent event) {
+            if (!isValid(event.getPlayer(), event.getItem())) {
+                event.setCancelled(true);
+            }
         }
 
-        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onAnvilEnchant(AnvilEnchantEvent event) {
+            if (!isValid(event.getPlayer(), event.getItem())) {
+                event.setCancelled(true);
+            }
+        }
+
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         private void onAnvilItemRename(AnvilItemRenameEvent event) {
-            check(event.getPlayer(), event.getItem());
+            if (!isValid(event.getPlayer(), event.getItem())) {
+                event.setCancelled(true);
+            }
         }
 
-        private void check(Player p, ItemStack repaired) {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private void onAnvilClick(InventoryClickEvent event) {
 
-            ViewSession session = _anvilMap.get(p);
-            if (session == null)
+            if (event.getView().getType() != InventoryType.ANVIL)
                 return;
 
-            View current = session.getCurrent();
-            if (current == null)
+            final FilteredAnvilView view = getAnvil(event.getWhoClicked());
+            if (view == null)
                 return;
-
-            if (!(current instanceof FilteredAnvilView))
-                return;
-
-            FilteredAnvilView view = (FilteredAnvilView)current;
 
             ItemFilter filter = view.getItemFilter();
             if (filter == null)
                 return;
 
-            if (!filter.isValid(repaired)) {
-                InventoryView invView = current.getInventoryView();
+            if (!event.getView().getTopInventory().equals(event.getClickedInventory()))
+                return;
+
+            ItemStack input = event.getView().getTopInventory().getItem(0);
+            if (input == null || input.getType() == Material.AIR)
+                return;
+
+            if (!filter.isValid(input)) {
+                final InventoryView invView = event.getView();
                 if (invView != null) {
-                    ItemStack stack = repaired.clone();
-                    ItemStackUtils.setLore(stack, view.getDenyMessage());
-                    invView.setItem(0, stack);
+
+                    Scheduler.runTaskLater(Nucleus.getPlugin(), 2, new Runnable() {
+                        @Override
+                        public void run() {
+
+                            ItemStack output = invView.getTopInventory().getItem(2);
+                            if (output == null || output.getType() == Material.AIR)
+                                return;
+
+                            ItemStackUtils.setLore(output, view.getDenyMessage());
+                            invView.setItem(2, output.clone());
+                        }
+                    });
+
                 }
             }
+        }
+
+        @Nullable
+        private FilteredAnvilView getAnvil(HumanEntity entity) {
+            if (!(entity instanceof Player))
+                return null;
+
+            Player player = (Player)entity;
+
+            ViewSession session = _anvilMap.get(player);
+            if (session == null)
+                return null;
+
+            View current = session.getCurrent();
+            if (current == null)
+                return null;
+
+            if (!(current instanceof FilteredAnvilView))
+                return null;
+
+            return (FilteredAnvilView)current;
+        }
+
+        private boolean isValid(Player p, ItemStack repaired) {
+
+            FilteredAnvilView view = getAnvil(p);
+            if (view == null)
+                return true;
+
+            ItemFilter filter = view.getItemFilter();
+            return filter == null || filter.isValid(repaired);
         }
     }
 }
