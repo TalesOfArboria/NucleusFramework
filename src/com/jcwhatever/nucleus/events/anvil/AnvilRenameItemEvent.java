@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 /**
  * Called when an item is renamed on an anvil.
  */
-public class AnvilItemRenameEvent extends Event implements
+public class AnvilRenameItemEvent extends Event implements
 		Cancellable, ICancellable, IPlayerReference {
 	
 	private static final HandlerList handlers = new HandlerList();
@@ -63,7 +63,7 @@ public class AnvilItemRenameEvent extends Event implements
 	 * @param newName         The new name.
 	 * @param oldName         The old name.
 	 */
-	public AnvilItemRenameEvent(Player player, AnvilInventory anvilInventory,
+	public AnvilRenameItemEvent(Player player, AnvilInventory anvilInventory,
 								ItemStack item, String newName, @Nullable String oldName) {
 
 		_player = player;

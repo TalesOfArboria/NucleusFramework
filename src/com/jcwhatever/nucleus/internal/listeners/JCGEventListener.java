@@ -26,8 +26,9 @@
 package com.jcwhatever.nucleus.internal.listeners;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
-import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilEnchantItemEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilRenameItemEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilRepairItemEvent;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
@@ -197,10 +198,10 @@ public final class JCGEventListener implements Listener {
             return;
 
         ItemStack slot1 = anvilInventory.getItem(0);
-        ItemStack slot2 = anvilInventory.getItem(0);
+        ItemStack slot2 = anvilInventory.getItem(1);
 
-        final ItemStack original1 = slot1 == null ? null : slot1.clone();
-        final ItemStack original2 = slot2 == null ? null : slot2.clone();
+        ItemStack slot1Clone = slot1 == null ? null : slot1.clone();
+        ItemStack slot2Clone = slot2 == null ? null : slot2.clone();
 
         // check for rename
         String originalName = slot1 != null
@@ -211,24 +212,39 @@ public final class JCGEventListener implements Listener {
 
         if (newName != null && !newName.equals(originalName)) {
 
-            AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
+            AnvilRenameItemEvent renameEvent = new AnvilRenameItemEvent(
                     p, anvilInventory, resultItem, newName, originalName);
 
             Nucleus.getEventManager().callBukkit(this, renameEvent);
 
             if (renameEvent.isCancelled()) {
-                cancelAnvilEvent(p, anvilInventory, original1, original2);
+                cancelAnvilEvent(p, anvilInventory, slot1Clone, slot2Clone);
                 return;
             }
 
             ItemStackUtils.setDisplayName(resultItem, renameEvent.getNewName());
         }
 
-        AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
-        Nucleus.getEventManager().callBukkit(this, repairEvent);
+        if (slot2 == null || slot2.getType() == Material.AIR)
+            return;
 
-        if (repairEvent.isCancelled()) {
-            cancelAnvilEvent(p, anvilInventory, original1, original2);
+        if (slot2.getType() == Material.ENCHANTED_BOOK) {
+
+            AnvilEnchantItemEvent enchantEvent = new AnvilEnchantItemEvent(p, anvilInventory);
+            Nucleus.getEventManager().callBukkit(this, enchantEvent);
+
+            if (enchantEvent.isCancelled()) {
+                cancelAnvilEvent(p, anvilInventory, slot1Clone, slot2Clone);
+            }
+        }
+        else {
+
+            AnvilRepairItemEvent repairEvent = new AnvilRepairItemEvent(p, anvilInventory, resultItem);
+            Nucleus.getEventManager().callBukkit(this, repairEvent);
+
+            if (repairEvent.isCancelled()) {
+                cancelAnvilEvent(p, anvilInventory, slot1Clone, slot2Clone);
+            }
         }
     }
 
@@ -241,7 +257,8 @@ public final class JCGEventListener implements Listener {
             @Override
             public void run() {
                 inventory.setItem(0, original1);
-                inventory.setItem(2, original2);
+                inventory.setItem(1, original2);
+                inventory.setItem(2, null);
                 player.setItemOnCursor(null);
             }
         });

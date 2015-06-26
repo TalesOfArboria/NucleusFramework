@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Called when an item is repaired on an anvil.
  */
-public class AnvilItemRepairEvent extends Event
+public class AnvilRepairItemEvent extends Event
 		implements Cancellable, ICancellable, IPlayerReference {
 	
 	private static final HandlerList handlers = new HandlerList();
@@ -56,7 +56,7 @@ public class AnvilItemRepairEvent extends Event
 	 * @param anvilInventory  The anvil inventory.
 	 * @param item            The item being repaired.
 	 */
-	public AnvilItemRepairEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
+	public AnvilRepairItemEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
 		_player = player;
 		_anvilInventory = anvilInventory;
 		_item = item;

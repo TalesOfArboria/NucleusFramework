@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.views.anvil;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.anvil.AnvilEnchantEvent;
-import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
-import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilEnchantItemEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilRenameItemEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilRepairItemEvent;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
@@ -120,21 +120,21 @@ public class FilteredAnvilView extends AnvilView {
     static class AnvilEventListener implements Listener {
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onAnvilRepair(AnvilItemRepairEvent event) {
+        private void onAnvilRepair(AnvilRepairItemEvent event) {
             if (!isValid(event.getPlayer(), event.getItem())) {
                 event.setCancelled(true);
             }
         }
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onAnvilEnchant(AnvilEnchantEvent event) {
+        private void onAnvilEnchant(AnvilEnchantItemEvent event) {
             if (!isValid(event.getPlayer(), event.getItem())) {
                 event.setCancelled(true);
             }
         }
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onAnvilItemRename(AnvilItemRenameEvent event) {
+        private void onAnvilItemRename(AnvilRenameItemEvent event) {
             if (!isValid(event.getPlayer(), event.getItem())) {
                 event.setCancelled(true);
             }
