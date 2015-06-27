@@ -24,6 +24,13 @@
 
 package com.jcwhatever.nucleus.utils.potions;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
+import com.jcwhatever.nucleus.utils.nms.INmsPotionHandler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -35,6 +42,8 @@ import javax.annotation.Nullable;
 public final class PotionUtils {
 
     private PotionUtils() {}
+
+    private static final INmsPotionHandler _handler = NmsUtils.getPotionHandler();
 
     /**
      * Get a {@link org.bukkit.potion.PotionEffectType} from an object.
@@ -68,5 +77,54 @@ public final class PotionUtils {
         else {
             return null;
         }
+    }
+
+    /**
+     * Determine if an item stack can potentially be used as a potion ingredient.
+     *
+     * @param itemStack  The item stack to check.
+     */
+    public static boolean isPotionIngredient(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
+        Material material = itemStack.getType();
+
+        return Materials.isPotionIngredient(material)
+                && (material != Material.RAW_FISH || itemStack.getData().getData() == 3);
+    }
+
+    /**
+     * Get {@link Potion} for the result of the specified potion recipe.
+     *
+     * @param ingredient  The potion ingredient.
+     * @param bottle      The potion target.
+     *
+     * @return  The potion or null if not a valid recipe.
+     */
+    @Nullable
+    public static Potion getPotionFromRecipe(ItemStack ingredient, ItemStack bottle) {
+        int potionId = getPotionIdFromRecipe(ingredient, bottle);
+        if (potionId == -1)
+            return null;
+
+        return new Potion(potionId);
+    }
+
+    /**
+     * Get the potion ID for the result of the specified potion recipe.
+     *
+     * @param ingredient  The potion ingredient.
+     * @param bottle      The potion target.
+     *
+     * @return  The potion Id or -1 if not a valid recipe.
+     */
+    public static int getPotionIdFromRecipe(ItemStack ingredient, ItemStack bottle) {
+        PreCon.notNull(ingredient);
+        PreCon.notNull(bottle);
+
+        if (_handler != null)
+            return _handler.getPotionIdFromRecipe(ingredient, bottle);
+
+        return -1;
     }
 }
