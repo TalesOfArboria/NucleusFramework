@@ -28,7 +28,7 @@ ext.jcBuildSettings = [
                 'net.milkbowl.vault:Vault:1.5.2',
                 'com.google.code.findbugs:jsr305:3.0.0',
                 'org.spigotmc:remapped-spigot:1.8.7-R0.1-SNAPSHOT',
-                'org.spigotmc:remapped-spigot:1.8.3-R0.1-SNAPSHOT'
+                'org.spigotmc:remapped-spigot:1.8.3-R0.1'
         ],
 
 // compile dependencies (compiled into output jar)
