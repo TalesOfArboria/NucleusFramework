@@ -184,6 +184,16 @@ public final class NmsUtils {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.ANVIL_VIEW);
     }
 
+    /**
+     * Get NucleusFramework's internal potion handler.
+     *
+     * @return  The potion handler or null if a handler for the current version
+     * of Minecraft does not exist.
+     */
+    public static INmsPotionHandler getPotionHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.POTIONS);
+    }
+
     // load the the craft package version from NucleusFramework's config
     // or detect the version.
     private static void loadPackageVersion() {

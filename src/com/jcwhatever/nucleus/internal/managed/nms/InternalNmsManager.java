@@ -63,6 +63,11 @@ public final class InternalNmsManager extends NmsManager {
      */
     public static final String ANVIL_VIEW = "ANVIL_VIEW";
 
+    /**
+     * The name of the internal potion handler.
+     */
+    public static final String POTIONS = "POTIONS";
+
     private static INms _nms;
 
     /**
@@ -104,5 +109,7 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R3", SOUND_EFFECT, NmsSoundEffectHandler.class);
         registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
         registerHandler("v1_8_R3", ANVIL_VIEW, NmsAnvilViewHandler.class);
+
+        registerHandler(NmsUtils.getNmsVersion(), POTIONS, NmsPotionHandler.class);
     }
 }

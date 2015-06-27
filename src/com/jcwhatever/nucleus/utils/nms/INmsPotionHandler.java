@@ -24,41 +24,22 @@
 
 package com.jcwhatever.nucleus.utils.nms;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-import org.bukkit.entity.Player;
-
-import java.util.Collection;
+import org.bukkit.inventory.ItemStack;
 
 /**
- * Interface for NucleusFramework's Minecraft Particle Effect handler.
+ * Interface for NucleusFramework's Minecraft Potion handler.
  *
  * @see NmsUtils
  */
-public interface INmsParticleEffectHandler extends INmsHandler {
+public interface INmsPotionHandler extends INmsHandler {
 
     /**
-     * Send a particle effect to a collection of players.
+     * Get the potion ID for the result of the specified potion recipe.
      *
-     * @param players   The players.
-     * @param force     True to force particle, otherwise false.
-     * @param particle  The particle effect to send.
-     * @param x         The X coordinates to display the effect.
-     * @param y         The Y coordinates to display the effect.
-     * @param z         The Z coordinates to display the effect.
-     * @param dataX     The offset from the X coordinates.
-     * @param dataY     The offset from the Y coordinates.
-     * @param dataZ     The offset from the Z coordinates.
-     * @param data      Particle effect data.
-     * @param count     The number of particles to display.
+     * @param ingredient  The potion ingredient.
+     * @param bottle      The potion target.
+     *
+     * @return  The potion Id or -1 if not a valid recipe.
      */
-    void send(Collection<? extends Player> players, INmsParticleType particle,
-              boolean force,
-              double x, double y, double z,
-              double dataX, double dataY, double dataZ,
-              float data, int count);
-
-    interface INmsParticleType extends INamed {
-
-        int[] getPacketInts();
-    }
+    int getPotionIdFromRecipe(ItemStack ingredient, ItemStack bottle);
 }
