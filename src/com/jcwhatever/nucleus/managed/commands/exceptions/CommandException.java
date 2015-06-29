@@ -217,14 +217,14 @@ public class CommandException extends Exception {
                 if (!(sender instanceof Player))
                     return;
                 throw new InvalidCommandSenderException(
-                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Console")
+                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
                 );
 
             case PLAYER:
                 if (sender instanceof Player)
                     return;
                 throw new InvalidCommandSenderException(
-                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
+                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Console")
                 );
         }
     }
