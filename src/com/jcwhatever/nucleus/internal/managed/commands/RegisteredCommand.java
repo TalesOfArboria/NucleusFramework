@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.internal.managed.commands.CommandCollection.IComma
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.ICommand;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
+import com.jcwhatever.nucleus.managed.commands.IRegisteredCommandInfo;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.mixins.IInitializableCommand;
@@ -45,20 +46,19 @@ import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.providers.permissions.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Base implementation of a command
@@ -270,23 +270,60 @@ class RegisteredCommand implements IRegisteredCommand {
         // lazy loaded
         if (_permission == null) {
 
-            List<String> permissions = new ArrayList<String>(20);
+            List<IRegisteredCommandInfo> permissions = new ArrayList<>(20);
 
             RegisteredCommand parent = this;
 
-            permissions.add(getInfo().getName());
+            permissions.add(getInfo());
 
             while((parent = parent.getParent()) != null) {
-                permissions.add(parent.getInfo().getName());
+                permissions.add(parent.getInfo());
             }
 
             Collections.reverse(permissions);
 
-            String permissionName = getPlugin().getName().toLowerCase() + ".commands." +
-                    TextUtils.concat(permissions, ".");
+            StringBuilder permBuffer = new StringBuilder(40);
 
-            _permission = Permissions.register(permissionName, getInfo().getPermissionDefault());
-            _permission.setDescription(getInfo().getDescription());
+            // get parent plugin permission
+            String rootPermName = getPlugin().getName().toLowerCase();
+            IPermission rootPermission = Permissions.get(rootPermName);
+            if (rootPermission == null) {
+                rootPermission = Permissions.register(rootPermName, PermissionDefault.TRUE);
+            }
+
+            // get all command permission
+            String commandPermName = getPlugin().getName().toLowerCase() + ".commands";
+            IPermission commandPermission = Permissions.get(commandPermName);
+            if (commandPermission == null) {
+                commandPermission = Permissions.register(commandPermName, PermissionDefault.TRUE);
+                commandPermission.addParent(rootPermission, true);
+            }
+
+            permBuffer.append(commandPermName);
+            permBuffer.append('.');
+
+            IPermission currentPerm = commandPermission;
+
+            // register permission tree branch
+            for (IRegisteredCommandInfo commandInfo : permissions) {
+
+                permBuffer.append(commandInfo.getName().toLowerCase());
+
+                String permissionName = permBuffer.toString();
+
+                IPermission permission = Permissions.get(permissionName);
+                if (permission == null) {
+                    permission = Permissions.register(permissionName, commandInfo.getPermissionDefault());
+                    permission.addParent(currentPerm, true);
+                    permission.setDescription(commandInfo.getDescription());
+                }
+
+                permBuffer.append('.');
+
+                currentPerm = permission;
+            }
+
+            _permission = currentPerm;
         }
 
         return _permission;
