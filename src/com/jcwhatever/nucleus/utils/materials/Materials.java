@@ -694,6 +694,18 @@ public class Materials {
     }
 
     /**
+     * Determine if a material is a crop block that can be harvested or
+     * a crop item.
+     *
+     * The {@link org.bukkit.Material} to check.
+     *
+     * @see  MaterialProperty#CROP
+     */
+    public static boolean isCrop(Material material) {
+        return hasProperty(material, MaterialProperty.CROP);
+    }
+
+    /**
      * Register custom {@link MaterialProperty}'s for the specified
      * {@link org.bukkit.Material}.
      *
@@ -905,6 +917,7 @@ public class Materials {
                 MaterialProperty.PLACEABLE);
 
         add(Material.BRICK,
+                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BRICK_STAIRS,
@@ -918,7 +931,8 @@ public class Materials {
         add(Material.BROWN_MUSHROOM,
                 MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.BUCKET,
                 MaterialProperty.CRAFTABLE);
@@ -950,10 +964,12 @@ public class Materials {
 
         add(Material.CARROT,
                 MaterialProperty.BLOCK,
-                MaterialProperty.TRANSPARENT);
+                MaterialProperty.TRANSPARENT,
+                MaterialProperty.CROP);
 
         add(Material.CARROT_ITEM,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.CARROT_STICK,
                 MaterialProperty.REPAIRABLE,
@@ -1088,7 +1104,8 @@ public class Materials {
 
         add(Material.CROPS,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.CROP);
 
         add(Material.DARK_OAK_DOOR,
                 MaterialProperty.BLOCK,
@@ -1910,12 +1927,14 @@ public class Materials {
 
         add(Material.MAP);
 
-        add(Material.MELON);
+        add(Material.MELON,
+                MaterialProperty.CROP);
 
         add(Material.MELON_BLOCK,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.MELON_SEEDS);
 
@@ -1973,14 +1992,16 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.NETHER_STALK,
-                MaterialProperty.POTION_INGREDIENT); // Nether wart item
+                MaterialProperty.POTION_INGREDIENT,
+                MaterialProperty.CROP); // Nether wart item
 
         add(Material.NETHER_STAR);
 
         add(Material.NETHER_WARTS,
                 MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.NETHERRACK,
                 MaterialProperty.BLOCK,
@@ -2035,10 +2056,12 @@ public class Materials {
 
         add(Material.POTATO,
                 MaterialProperty.BLOCK,
-                MaterialProperty.TRANSPARENT);
+                MaterialProperty.TRANSPARENT,
+                MaterialProperty.CROP);
 
         add(Material.POTATO_ITEM,
-                MaterialProperty.FOOD);
+                MaterialProperty.FOOD,
+                MaterialProperty.CROP);
 
         add(Material.POTION,
                 MaterialProperty.THROWABLE,
@@ -2509,12 +2532,14 @@ public class Materials {
                 MaterialProperty.POTION_INGREDIENT);
 
         add(Material.SUGAR_CANE,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.SUGAR_CANE_BLOCK,
                 MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.CROP);
 
         add(Material.SULPHUR,
                 MaterialProperty.POTION_INGREDIENT); // gunpowder
@@ -2601,7 +2626,8 @@ public class Materials {
         add(Material.WHEAT,
                 MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
-                MaterialProperty.PLACEABLE);
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CROP);
 
         add(Material.WOOD,
                 MaterialProperty.BLOCK,
