@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -33,6 +34,18 @@ import org.bukkit.inventory.ItemStack;
  * can be changed after instantiation.
  */
 public class MutableMatchableItem extends MatchableItem {
+
+    /**
+     * Create a new {@link ThreadSingletons} of {@link MutableMatchableItem}'s
+     */
+    public static ThreadSingletons<MutableMatchableItem> createThreadSingletons() {
+        return new ThreadSingletons<>(new ThreadSingletons.ISingletonFactory<MutableMatchableItem>() {
+            @Override
+            public MutableMatchableItem create(Thread thread) {
+                return new MutableMatchableItem();
+            }
+        });
+    }
 
     /**
      * Constructor.
