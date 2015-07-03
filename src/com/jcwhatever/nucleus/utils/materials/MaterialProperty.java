@@ -247,6 +247,10 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      */
     public static final MaterialProperty LOG = new MaterialProperty("Log");
     /**
+     * The material is a crop that can be harvested or crop item.
+     */
+    public static final MaterialProperty CROP = new MaterialProperty("Crop");
+    /**
      * The material can potentially be used as a potion ingredient.
      */
     public static final MaterialProperty POTION_INGREDIENT = new MaterialProperty("Potion_Ingredient");
