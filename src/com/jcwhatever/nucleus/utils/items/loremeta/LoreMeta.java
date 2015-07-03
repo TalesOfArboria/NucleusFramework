@@ -43,12 +43,12 @@ public final class LoreMeta {
 
     private LoreMeta() {}
 
-    public static LoreMetaCollection get(ItemStack itemStack) {
-        return new LoreMetaCollection(itemStack);
+    public static LoreMetaMap get(ItemStack itemStack) {
+        return new LoreMetaMap(itemStack);
     }
 
-    public static LoreMetaCollection get(ItemStack itemStack, ILoreMetaParser parser) {
-        return new LoreMetaCollection(itemStack, parser);
+    public static LoreMetaMap get(ItemStack itemStack, ILoreMetaParser parser) {
+        return new LoreMetaMap(itemStack, parser);
     }
 
     public static void prepend(ItemStack itemStack, LoreMetaItem... items) {

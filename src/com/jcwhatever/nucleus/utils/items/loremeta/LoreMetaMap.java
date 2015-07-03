@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.items.loremeta;
 
-import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
+import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import org.bukkit.inventory.ItemStack;
@@ -38,14 +38,14 @@ import java.util.Map;
 /**
  * A collection of {@link LoreMetaItem}.
  */
-public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
+public class LoreMetaMap extends MapWrapper<String, LoreMetaItem> {
 
     private final Map<String, LoreMetaItem> _map;
 
     /**
      * Constructor.
      */
-    public LoreMetaCollection() {
+    public LoreMetaMap() {
         _map = new HashMap<>(7);
     }
 
@@ -54,7 +54,7 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
      *
      * @param items  The collection of meta items to initialize with.
      */
-    public LoreMetaCollection(Collection<? extends LoreMetaItem> items) {
+    public LoreMetaMap(Collection<? extends LoreMetaItem> items) {
         PreCon.notNull(items);
 
         _map = new HashMap<>(items.size() + (int)(items.size() * 0.25D));
@@ -68,7 +68,7 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
      *
      * @param itemStack  The item stack to parse meta from.
      */
-    public LoreMetaCollection(ItemStack itemStack) {
+    public LoreMetaMap(ItemStack itemStack) {
         this(itemStack, LoreMetaParser.get());
     }
 
@@ -78,7 +78,7 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
      * @param itemStack  The item stack to parse meta from.
      * @param parser     The parser to use.
      */
-    public LoreMetaCollection(ItemStack itemStack, ILoreMetaParser parser) {
+    public LoreMetaMap(ItemStack itemStack, ILoreMetaParser parser) {
         PreCon.notNull(itemStack);
         PreCon.notNull(parser);
 
@@ -102,7 +102,7 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
      *
      * @return  The newly created {@link LoreMetaItem} instance.
      */
-    public LoreMetaItem add(String name, String value) {
+    public LoreMetaItem put(String name, String value) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(value);
 
@@ -110,6 +110,22 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
         _map.put(name, item);
 
         return item;
+    }
+
+    /**
+     * Add a new meta item to the collection.
+     *
+     * <p>Replaces existing value.</p>
+     *
+     * @param item  The item to put.
+     *
+     * @return  The previously stored {@link LoreMetaItem} instance.
+     */
+    @Nullable
+    public LoreMetaItem put(LoreMetaItem item) {
+        PreCon.notNull(item);
+
+        return _map.put(item.getName(), item);
     }
 
     /**
@@ -122,8 +138,8 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
      *
      * @return  Self for chaining.
      */
-    public LoreMetaCollection set(String name, String value) {
-        add(name, value);
+    public LoreMetaMap set(String name, String value) {
+        put(name, value);
         return this;
     }
 
@@ -173,7 +189,7 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
     public void appendTo(ItemStack itemStack, ILoreMetaParser parser) {
         PreCon.notNull(itemStack);
 
-        LoreMeta.append(itemStack, parser, this);
+        LoreMeta.append(itemStack, parser, this.values());
     }
 
     /**
@@ -194,11 +210,11 @@ public class LoreMetaCollection extends CollectionWrapper<LoreMetaItem> {
     public void prependTo(ItemStack itemStack, ILoreMetaParser parser) {
         PreCon.notNull(itemStack);
 
-        LoreMeta.prepend(itemStack, parser, this);
+        LoreMeta.prepend(itemStack, parser, this.values());
     }
 
     @Override
-    protected Collection<LoreMetaItem> collection() {
-        return _map.values();
+    protected Map<String, LoreMetaItem> map() {
+        return _map;
     }
 }
