@@ -52,7 +52,7 @@ class ItemBookTitle implements IItemMetaHandler {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
-        return meta instanceof BookMeta;
+        return meta instanceof BookMeta && ((BookMeta) meta).getTitle() != null;
     }
 
     @Override
@@ -84,6 +84,9 @@ class ItemBookTitle implements IItemMetaHandler {
             return result;
 
         BookMeta bookMeta = (BookMeta)itemMeta;
+
+        if (bookMeta.getTitle() == null)
+            return result;
 
         result.add(new ItemMetaValue(getMetaName(), bookMeta.getTitle()));
 
