@@ -28,9 +28,9 @@ package com.jcwhatever.nucleus.utils.entity;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -41,10 +41,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * {@link org.bukkit.entity.Entity} helper utilities
@@ -53,9 +53,9 @@ public final class EntityUtils {
 
     private EntityUtils() {}
 
-    private static final Location SOURCE_ENTITY_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location TARGET_ENTITY_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location NEARBY_ENTITY_LOCATION = new Location(null, 0, 0, 0);
+    private static final ThreadSingletons<Location> SOURCE_ENTITY_LOCATIONS = LocationUtils.createThreadSingleton();
+    private static final ThreadSingletons<Location> TARGET_ENTITY_LOCATIONS = LocationUtils.createThreadSingleton();
+    private static final ThreadSingletons<Location> NEARBY_ENTITY_LOCATIONS = LocationUtils.createThreadSingleton();
 
     /**
      * Find an {@link org.bukkit.entity.Entity} in a {@link org.bukkit.World}
@@ -276,7 +276,7 @@ public final class EntityUtils {
         PreCon.positiveNumber(radiusY);
         PreCon.positiveNumber(radiusZ);
 
-        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
+        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATIONS.get());
         List<Entity> entities = sourceEntity.getNearbyEntities(radiusX, radiusY, radiusZ);
 
         return getClosestEntity(sourceLocation, entities, new IValidator<Entity>() {
@@ -310,7 +310,7 @@ public final class EntityUtils {
             if (!entity.getWorld().equals(sourceLocation.getWorld()))
                 continue;
 
-            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
+            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATIONS.get());
 
             double dist = sourceLocation.distanceSquared(targetLocation);
             if (dist < closestDist &&
@@ -389,7 +389,7 @@ public final class EntityUtils {
                                                       @Nullable final IValidator<LivingEntity> validator) {
         PreCon.notNull(sourceEntity);
 
-        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
+        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATIONS.get());
         return getClosestLivingEntity(sourceLocation, radiusX, radiusY, radiusZ,
                 new IValidator<LivingEntity>() {
                     @Override
@@ -502,7 +502,7 @@ public final class EntityUtils {
             if (!entity.getWorld().equals(sourceLocation.getWorld()))
                 continue;
 
-            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
+            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATIONS.get());
 
             double dist = sourceLocation.distanceSquared(targetLocation);
             if (dist < closestDist &&
@@ -601,7 +601,90 @@ public final class EntityUtils {
                     if (!entity.getWorld().equals(world))
                         continue;
 
-                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
+                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATIONS.get());
+
+                    if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
+                        continue;
+
+                    if (validator != null && !validator.isValid(entity))
+                        continue;
+
+                    results.add(entity);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Get entities within a specified radius of a {@link org.bukkit.Location}.
+     *
+     * <p>The radius is spherical.</p>
+     *
+     * <p>The source entity is not included in the result.</p>
+     *
+     * @param sourceEntity  The source entity to check from.
+     * @param radius        The radius entities must be within to be returned.
+     * @param validator     Optional validator used to validate each entity within the radius.
+     */
+    public static List<Entity> getNearbyEntities(Entity sourceEntity, double radius,
+                                                 @Nullable IValidator<Entity> validator) {
+        return getNearbyEntities(sourceEntity, radius, radius, radius, validator);
+    }
+
+    /**
+     * Get entities within a specified radius of a {@link org.bukkit.Location}.
+     *
+     * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * <p>The source entity is not included in the result.</p>
+     *
+     * @param sourceEntity  The source entity to check from.
+     * @param radiusX       The x-axis radius entities must be within to be returned.
+     * @param radiusY       The y-axis radius entities must be within to be returned.
+     * @param radiusZ       The z-axis radius entities must be within to be returned.
+     * @param validator     Optional validator used to validate each entity within the radius.
+     */
+    public static List<Entity> getNearbyEntities(Entity sourceEntity,
+                                                 double radiusX, double radiusY, double radiusZ,
+                                                 @Nullable IValidator<Entity> validator) {
+        PreCon.notNull(sourceEntity);
+        PreCon.positiveNumber(radiusX);
+        PreCon.positiveNumber(radiusY);
+        PreCon.positiveNumber(radiusZ);
+
+        List<Entity> results = new ArrayList<>(15);
+
+        World world = sourceEntity.getWorld();
+        if (world == null)
+            return results;
+
+        Location location = sourceEntity.getLocation(SOURCE_ENTITY_LOCATIONS.get());
+
+        int xStart = getStartChunk(location.getX(), radiusX);
+        int xEnd = getEndChunk(location.getX(), radiusX);
+        int zStart = getStartChunk(location.getZ(), radiusZ);
+        int zEnd = getEndChunk(location.getZ(), radiusZ);
+
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int z = zStart; z <= zEnd; z++) {
+
+                Chunk chunk = world.getChunkAt(x, z);
+                if (!chunk.isLoaded())
+                    chunk.load();
+
+                Entity[] entities = chunk.getEntities();
+
+                for (Entity entity : entities) {
+
+                    if (sourceEntity.getUniqueId().equals(entity.getUniqueId()))
+                        continue;
+
+                    if (!entity.getWorld().equals(world))
+                        continue;
+
+                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATIONS.get());
 
                     if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
                         continue;
@@ -755,7 +838,7 @@ public final class EntityUtils {
                     if (!entity.getWorld().equals(world))
                         continue;
 
-                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
+                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATIONS.get());
 
                     if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
                         continue;
