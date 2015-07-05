@@ -98,22 +98,6 @@ public class SAPI_Msg implements IDisposable {
     }
 
     /**
-     * Tell a player a message without a plugin tag in the message.
-     *
-     * @param player   The player to tell.
-     * @param message  The message to send.
-     */
-    public void tellAnon(Object player, String message) {
-        PreCon.notNull(player);
-        PreCon.notNull(message);
-
-        Player p = PlayerUtils.getPlayer(player);
-        PreCon.notNull(p);
-
-        _msg.tell(p, message);
-    }
-
-    /**
      * Tell a player a message and prevent spamming of the same message.
      *
      * @param player   The player to tell.

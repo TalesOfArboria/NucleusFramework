@@ -511,7 +511,7 @@ public final class InternalScriptManager implements IScriptManager {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
 
-                IMessenger messenger = Nucleus.getMessengerFactory().create(plugin);
+                IMessenger messenger = Nucleus.getMessengerFactory().getAnon(plugin);
                 return new SAPI_Msg(messenger);
             }
         }));
