@@ -132,7 +132,7 @@ abstract class AbstractVectorParticle extends AbstractParticle implements IVecto
 
             Location playerLocation = player.getLocation(LOCATIONS.get());
 
-            if (playerLocation.distanceSquared(location) > getRadius())
+            if (playerLocation.distanceSquared(location) > radiusSquared())
                 continue;
 
             visible.add(player);
