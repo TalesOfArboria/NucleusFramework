@@ -26,18 +26,18 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.language.Localized;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -49,7 +49,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 /**
  * Static methods to aid in string related tasks
@@ -81,8 +80,8 @@ public final class TextUtils {
     public static final Pattern PATTERN_EQUALS = Pattern.compile("=");
     public static final Pattern PATTERN_PERCENT = Pattern.compile("%");
     public static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
-    public static final Pattern PATTERN_NUMBERS = Pattern.compile("\\d+");
-    public static final Pattern PATTERN_DECIMAL_NUMBERS = Pattern.compile("\\d+(\\.\\d+)");
+    public static final Pattern PATTERN_NUMBERS = Pattern.compile("-?\\d+");
+    public static final Pattern PATTERN_DECIMAL_NUMBERS = Pattern.compile("-?\\d+(\\.\\d+)?");
     public static final Pattern PATTERN_NAMES = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*$");
     public static final Pattern PATTERN_NODE_NAMES = Pattern.compile("^[a-zA-Z0-9_-]*$");
     public static final Pattern PATTERN_NODE_PATHS = Pattern.compile("^[a-zA-Z0-9_.-]*$");
