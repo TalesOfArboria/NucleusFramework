@@ -211,13 +211,13 @@ public final class InternalSoundManager implements ISoundManager {
 
             if (nmsHandler != null) {
                 // send sound packet to player
-                nmsHandler.send(ArrayUtils.asList(player), sound.getName(),
+                nmsHandler.send(ArrayUtils.asList(player), sound.getClientName(),
                         location.getX(), location.getY(), location.getZ(),
                         settings.getVolume(), settings.getPitch());
             }
             else {
                 // fallback to using console commands if NMS is unavailable
-                String cmd = getPlaySoundCommand(event.getResourceSound().getName(), event.getPlayer(),
+                String cmd = getPlaySoundCommand(event.getResourceSound().getClientName(), event.getPlayer(),
                         location, settings.getVolume(), settings.getPitch());
 
                 Utils.executeAsConsole(cmd);

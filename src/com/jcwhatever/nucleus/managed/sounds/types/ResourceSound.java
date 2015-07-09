@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public abstract class ResourceSound implements INamed {
 
     private final String _soundName;
+    private final String _clientName;
     private final String _title;
     private final String _credit;
     private final int _durationSeconds;
@@ -56,6 +57,7 @@ public abstract class ResourceSound implements INamed {
         if (_durationSeconds < 0)
             throw new RuntimeException("Resource sounds file is missing required duration parameter for sound: " + _soundName);
 
+        _clientName = dataNode.getString("client-name", _soundName);
         _title = dataNode.getString("title", _soundName);
         _credit = dataNode.getString("credit", "");
         _durationTicks = _durationSeconds * 20;
@@ -67,6 +69,14 @@ public abstract class ResourceSound implements INamed {
     @Override
     public final String getName() {
         return _soundName;
+    }
+
+    /**
+     * Get the name of the sound as recognized by the client.
+     * @return
+     */
+    public final String getClientName() {
+        return _clientName;
     }
 
     /**
