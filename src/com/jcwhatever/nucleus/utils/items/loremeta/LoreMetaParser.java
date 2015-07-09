@@ -115,7 +115,7 @@ public class LoreMetaParser implements ILoreMetaParser {
             }
         }
 
-        return new LoreMetaItem(name, value.toString());
+        return new LoreMetaItem(name, value.toString().trim());
     }
 
     @Override
