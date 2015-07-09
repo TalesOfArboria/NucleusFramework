@@ -167,7 +167,7 @@ public final class LoreMeta {
             if (metaItem != null) {
 
                 for (LoreMetaItem item : items) {
-                    if (item.getName().equals(loreLine)) {
+                    if (item.getName().equals(metaItem.getName())) {
                         iterator.remove();
                         break;
                     }
