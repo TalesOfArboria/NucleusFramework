@@ -123,4 +123,36 @@ public class NamedLocation extends Location implements INamedInsensitive {
 
         return output;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof NamedLocation) {
+            NamedLocation other = (NamedLocation)obj;
+
+            if (!other.getSearchName().equals(getSearchName()))
+                return false;
+
+            if (other.getWorld() != getWorld())
+                return false;
+
+            if (other.getX() != getX())
+                return false;
+
+            if (other.getY() != getY())
+                return false;
+
+            if (other.getZ() != getZ())
+                return false;
+
+            if (other.getYaw() != getYaw())
+                return false;
+
+            if (other.getPitch() != getPitch())
+                return false;
+
+            return true;
+        }
+
+        return false;
+    }
 }
