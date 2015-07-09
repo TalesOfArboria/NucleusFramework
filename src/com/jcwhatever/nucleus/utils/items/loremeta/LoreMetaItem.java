@@ -123,8 +123,9 @@ public class LoreMetaItem implements INamed {
             return _numberValue;
 
         Matcher matcher = TextUtils.PATTERN_DECIMAL_NUMBERS.matcher(_value);
-        if (!matcher.find())
-            _numberValue = 0;
+        if (!matcher.find()) {
+            return _numberValue = 0;
+        }
 
         String number = matcher.group();
         return _numberValue = TextUtils.parseDouble(number, 0.0D);
