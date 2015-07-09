@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.utils.potions.PotionUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.potion.PotionType;
 
 /**
  * Minecraft Potions handler.
@@ -55,14 +56,39 @@ class NmsPotionHandler implements INmsPotionHandler {
         return true;
     }
 
-    /**
-     * Get the potion ID for the result of the specified potion recipe.
-     *
-     * @param ingredient  The potion ingredient.
-     * @param bottle      The potion target.
-     *
-     * @return  The potion Id or -1 if not a valid recipe.
-     */
+    @Override
+    public int getPotionId(PotionType type, int level, boolean isSplash, boolean isExtended) {
+        PreCon.notNull(type);
+
+        if (type == PotionType.WATER)
+            return 0;
+
+        int id = type.getDamageValue();
+
+        if (level > 1) {
+            id |= 32;
+        }
+
+        if (isExtended) {
+            id |= 64;
+        }
+
+        id |= isSplash ? 16384 : 8192;
+
+        return id;
+    }
+
+    @Override
+    public ItemStack getPotionStack(PotionType type, int level, boolean isSplash, boolean isExtended) {
+        PreCon.notNull(type);
+
+        int id = getPotionId(type, level, isSplash, isExtended);
+        ItemStack itemStack = new ItemStack(Material.POTION);
+        itemStack.setDurability((short)id);
+
+        return itemStack;
+    }
+
     @Override
     public int getPotionIdFromRecipe(ItemStack ingredient, ItemStack bottle) {
         PreCon.notNull(ingredient);
@@ -131,22 +157,20 @@ class NmsPotionHandler implements INmsPotionHandler {
 
     // method from net.minecraft.server.PotionBrewer
     private static int getPotionData(int data, String potionString) {
-        byte b0 = 0;
-        int j = potionString.length();
         boolean flag = false;
         boolean flag1 = false;
         boolean flag2 = false;
         boolean flag3 = false;
         int k = 0;
 
-        for (int l = b0; l < j; ++l) {
-            char ch = potionString.charAt(l);
+        for (int i = 0; i < potionString.length(); i++) {
+            char ch = potionString.charAt(i);
 
-            if (ch >= 48 && ch <= 57) {
+            if (ch >= 48 && ch <= 57) { // 0-9
                 k *= 10;
                 k += ch - 48;
                 flag = true;
-            } else if (ch == 33) {
+            } else if (ch == 33) { // !
                 if (flag) {
                     data = getPotionData(data, k, flag2, flag1, flag3);
                     flag3 = false;
@@ -157,7 +181,7 @@ class NmsPotionHandler implements INmsPotionHandler {
                 }
 
                 flag1 = true;
-            } else if (ch == 45) {
+            } else if (ch == 45) { // -
                 if (flag) {
                     data = getPotionData(data, k, flag2, flag1, flag3);
                     flag3 = false;
@@ -168,7 +192,7 @@ class NmsPotionHandler implements INmsPotionHandler {
                 }
 
                 flag2 = true;
-            } else if (ch == 43) {
+            } else if (ch == 43) { // +
                 if (flag) {
                     data = getPotionData(data, k, flag2, flag1, flag3);
                     flag3 = false;
@@ -177,7 +201,7 @@ class NmsPotionHandler implements INmsPotionHandler {
                     flag = false;
                     k = 0;
                 }
-            } else if (ch == 38) {
+            } else if (ch == 38) { // &
                 if (flag) {
                     data = getPotionData(data, k, flag2, flag1, flag3);
                     flag3 = false;

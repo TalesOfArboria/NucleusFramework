@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.utils.nms;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionType;
 
 /**
  * Interface for NucleusFramework's Minecraft Potion handler.
@@ -32,6 +33,26 @@ import org.bukkit.inventory.ItemStack;
  * @see NmsUtils
  */
 public interface INmsPotionHandler extends INmsHandler {
+
+    /**
+     * Get the potion ID for the specified potion parameters.
+     *
+     * @param type        The potion type.
+     * @param level       The potion level.
+     * @param isSplash    True for splash potions, otherwise false.
+     * @param isExtended  True for extended duration potions, otherwise false.
+     */
+    int getPotionId(PotionType type, int level, boolean isSplash, boolean isExtended);
+
+    /**
+     * Get an ItemStack using the specified potion parameters.
+     *
+     * @param type        The potion type.
+     * @param level       The potion level.
+     * @param isSplash    True for splash potions, otherwise false.
+     * @param isExtended  True for extended duration potions, otherwise false.
+     */
+    ItemStack getPotionStack(PotionType type, int level, boolean isSplash, boolean isExtended);
 
     /**
      * Get the potion ID for the result of the specified potion recipe.

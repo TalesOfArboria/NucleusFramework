@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nullable;
 
@@ -77,6 +78,23 @@ public final class PotionUtils {
         else {
             return null;
         }
+    }
+
+    public static ItemStack getPotionStack(PotionType type) {
+        return getPotionStack(type, 1, false, false);
+    }
+
+    public static ItemStack getPotionStack(PotionType type, int level) {
+        return getPotionStack(type, level, false, false);
+    }
+
+    public static ItemStack getPotionStack(PotionType type, int level, boolean isSplash, boolean isExtended) {
+        PreCon.notNull(type);
+
+        if (_handler == null)
+            throw new UnsupportedOperationException("A potion NMS handler was not found.");
+
+        return _handler.getPotionStack(type, level, isSplash, isExtended);
     }
 
     /**
