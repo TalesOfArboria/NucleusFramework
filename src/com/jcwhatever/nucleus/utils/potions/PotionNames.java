@@ -105,6 +105,8 @@ public class PotionNames {
         if (type == null) {
 
             switch (potion.getNameId()) {
+                case 0:
+                    return NucLang.get(_WATER);
                 case 16:
                     return NucLang.get(_AWKWARD);
                 case 32:
@@ -112,7 +114,8 @@ public class PotionNames {
                 case 64:
                     return NucLang.get(_MUNDANE);
                 default:
-                    throw new AssertionError();
+                    throw new IllegalArgumentException(
+                            "Failed to get PotionType for Potion name Id: " +  potion.getNameId());
             }
         }
 
