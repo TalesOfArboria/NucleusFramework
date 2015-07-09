@@ -32,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class LoreMetaMap extends MapWrapper<String, LoreMetaItem> {
      * Constructor.
      */
     public LoreMetaMap() {
-        _map = new HashMap<>(7);
+        _map = new LinkedHashMap<>(7);
     }
 
     /**
