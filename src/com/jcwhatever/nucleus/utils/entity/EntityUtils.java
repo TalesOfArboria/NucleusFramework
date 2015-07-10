@@ -34,11 +34,13 @@ import com.jcwhatever.nucleus.utils.validate.IValidator;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 import javax.annotation.Nullable;
@@ -852,6 +854,54 @@ public final class EntityUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Get a monster spawn egg from an entity type.
+     *
+     * @param type  The entity type.
+     *
+     * @return  The spawn egg as an item stack or null if the type does not
+     * have an equivalent spawn egg.
+     */
+    @Nullable
+    public static ItemStack getEgg(EntityType type) {
+        PreCon.notNull(type);
+
+        switch (type) {
+            case CREEPER:
+            case SKELETON:
+            case SPIDER:
+            case GIANT:
+            case ZOMBIE:
+            case SLIME:
+            case GHAST:
+            case PIG_ZOMBIE:
+            case ENDERMAN:
+            case CAVE_SPIDER:
+            case SILVERFISH:
+            case BLAZE:
+            case MAGMA_CUBE:
+            case ENDER_DRAGON:
+            case WITHER:
+            case ENDERMITE:
+            case GUARDIAN:
+            case PIG:
+            case SHEEP:
+            case COW:
+            case CHICKEN:
+            case SQUID:
+            case WOLF:
+            case MUSHROOM_COW:
+            case SNOWMAN:
+            case OCELOT:
+            case IRON_GOLEM:
+            case HORSE:
+            case RABBIT:
+                return new ItemStack(Material.MONSTER_EGG, 1, (byte)type.getTypeId());
+            default:
+                return null;
+        }
     }
 
     /**
