@@ -25,9 +25,12 @@
 package com.jcwhatever.nucleus.utils.items.loremeta;
 
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
 import java.util.regex.Matcher;
 
 /**
@@ -64,6 +67,32 @@ public class LoreMetaItem implements INamed {
      */
     public String getValue() {
         return _value;
+    }
+
+    /**
+     * Get the value as an enum constant.
+     *
+     * @param enumClass  The enum class.
+     *
+     * @param <T>  The enum type.
+     *
+     * @return  The enum constant or null if value is not a valid enum.
+     */
+    @Nullable
+    public <T extends Enum<T>> T enumValue(Class<T> enumClass) {
+        PreCon.notNull(enumClass);
+
+        return EnumUtils.searchEnum(_value, enumClass);
+    }
+
+    /**
+     * Get the value as a UUID.
+     *
+     * @return  The UUID value or null if not a valid UUID.
+     */
+    @Nullable
+    public UUID uuidValue() {
+        return TextUtils.parseUUID(_value);
     }
 
     /**
