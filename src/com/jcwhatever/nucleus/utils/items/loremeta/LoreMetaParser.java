@@ -27,10 +27,10 @@ package com.jcwhatever.nucleus.utils.items.loremeta;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
 import com.jcwhatever.nucleus.utils.text.TextColor;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 import net.md_5.bungee.api.ChatColor;
 
 import javax.annotation.Nullable;
+import java.util.regex.Pattern;
 
 /**
  * Default implementation of {@link ILoreMetaParser}.
@@ -39,6 +39,8 @@ public class LoreMetaParser implements ILoreMetaParser {
 
     private static final String META_INDICATOR = TextColor.BLACK.toString()
             + TextColor.DARK_GRAY.toString() + TextColor.DARK_PURPLE.toString();
+
+    private static final Pattern PATTERN_DASH = Pattern.compile(" - ");
 
     private static ThreadSingletons<StringBuilder> STRING_BUILDERS =
             new ThreadSingletons<>(new ThreadSingletons.ISingletonFactory<StringBuilder>() {
@@ -95,7 +97,7 @@ public class LoreMetaParser implements ILoreMetaParser {
 
         loreLine = ChatColor.stripColor(loreLine);
 
-        String[] components = TextUtils.PATTERN_DASH.split(loreLine);
+        String[] components = PATTERN_DASH.split(loreLine);
 
         if (components.length == 0)
             return null;
