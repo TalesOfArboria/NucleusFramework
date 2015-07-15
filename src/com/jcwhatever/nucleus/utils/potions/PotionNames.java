@@ -28,6 +28,8 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.nms.INmsPotionHandler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
@@ -69,6 +71,8 @@ public class PotionNames {
                 }
             });
 
+    private static final INmsPotionHandler _handler = NmsUtils.getPotionHandler();
+
     /**
      * Get a simple potion name.
      *
@@ -96,15 +100,27 @@ public class PotionNames {
     /**
      * Get a full potion name including characteristics.
      *
-     * @param potion  The potion.
+     * @param potion  The potion ID.
      */
     public static String getFull(Potion potion) {
         PreCon.notNull(potion);
 
-        PotionType type = potion.getType();
-        if (type == null) {
+        int potionId = _handler.getPotionId(
+                potion.getType(), potion.getLevel(), potion.isSplash(), potion.hasExtendedDuration());
 
-            switch (potion.getNameId()) {
+        return getFull(potionId);
+    }
+
+    /**
+     * Get a full potion name including characteristics.
+     *
+     * @param potionId  The potion ID.
+     */
+    public static String getFull(int potionId) {
+
+        if (potionId <= 64) {
+
+            switch (potionId) {
                 case 0:
                     return NucLang.get(_WATER);
                 case 16:
@@ -115,25 +131,27 @@ public class PotionNames {
                     return NucLang.get(_MUNDANE);
                 default:
                     throw new IllegalArgumentException(
-                            "Failed to get PotionType for Potion name Id: " +  potion.getNameId());
+                            "Failed to get PotionType for Potion name Id: " +  potionId);
             }
         }
 
+        PotionType type = PotionType.getByDamageValue(potionId & 15);
+
         StringBuilder buffer = buffer();
 
-        if (potion.isSplash()) {
+        if ((potionId & 16384) == 16384) {
             append(buffer, _SPLASH);
             buffer.append(' ');
         }
 
         appendSimple(buffer, type);
 
-        if (potion.getLevel() == 2) {
+        if ((potionId & 32) == 32) {
             buffer.append(' ');
             append(buffer, _LEVEL2);
         }
 
-        if (potion.hasExtendedDuration()) {
+        if ((potionId & 64) == 64) {
             buffer.append(' ');
             append(buffer, _EXTENDED_DURATION);
         }
