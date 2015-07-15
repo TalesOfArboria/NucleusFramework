@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.commands.ICommandManager;
 import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
+import com.jcwhatever.nucleus.managed.entity.mob.IMobSerializer;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandlers;
@@ -240,6 +241,15 @@ public final class Nucleus {
             _plugin._messengerFactory = new InternalMessengerFactory();
 
         return _plugin._messengerFactory;
+    }
+
+    /**
+     * Get the global Mob serializer.
+     */
+    public static IMobSerializer getMobSerializer() {
+        PreCon.isValid(_plugin._mobSerializer != null, ERROR_NOT_READY);
+
+        return _plugin._mobSerializer;
     }
 
     /**

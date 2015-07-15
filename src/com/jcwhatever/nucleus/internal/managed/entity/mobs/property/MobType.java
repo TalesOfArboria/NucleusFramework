@@ -1,0 +1,69 @@
+/*
+ * This file is part of NucleusFramework for Bukkit, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) JCThePants (www.jcwhatever.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package com.jcwhatever.nucleus.internal.managed.entity.mobs.property;
+
+import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.items.loremeta.LoreMetaMap;
+import org.bukkit.entity.Entity;
+
+/*
+ * 
+ */
+public abstract class MobType implements INamed, Comparable<MobType> {
+
+    private String _name;
+    private Class<?> _clazz;
+
+    public MobType(String name, Class<?> clazz) {
+        _name = name;
+        _clazz = clazz;
+    }
+
+    public abstract MobSpecificity getSpecificity();
+
+    public abstract IMobProperties getProperties(Entity entity);
+
+    public abstract IMobProperties getProperties(IDataNode dataNode);
+
+    public abstract IMobProperties getProperties(LoreMetaMap metaMap);
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    public Class<?> getEntityClass() {
+        return _clazz;
+    }
+
+    @Override
+    public int compareTo(MobType o) {
+        return Integer.compare(
+                getSpecificity().getSortOrder(),
+                o.getSpecificity().getSortOrder()
+        );
+    }
+}

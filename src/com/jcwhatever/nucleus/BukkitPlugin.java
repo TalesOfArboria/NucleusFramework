@@ -40,10 +40,12 @@ import com.jcwhatever.nucleus.internal.commands.signs.SignsCommand;
 import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
 import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
+import com.jcwhatever.nucleus.internal.listeners.SpawnEggListener;
 import com.jcwhatever.nucleus.internal.listeners.StartupListener;
 import com.jcwhatever.nucleus.internal.managed.commands.InternalCommandManager;
 import com.jcwhatever.nucleus.internal.managed.commands.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.managed.entity.InternalEntityTracker;
+import com.jcwhatever.nucleus.internal.managed.entity.mobs.InternalMobSerializer;
 import com.jcwhatever.nucleus.internal.managed.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.managed.items.floating.InternalFloatingItemManager;
 import com.jcwhatever.nucleus.internal.managed.items.meta.InternalItemMetaHandlers;
@@ -88,6 +90,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalScriptManager _scriptManager;
     InternalScriptApiRepo _scriptApiRepo;
     InternalSoundManager _soundManager;
+    InternalMobSerializer _mobSerializer;
     InternalNmsManager _nmsManager;
     InternalSignManager _signManager;
     InternalEntityTracker _entityTracker;
@@ -171,6 +174,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _scheduler = new InternalTaskScheduler();
         _teleportManager = new InternalTeleportManager();
         _leashTracker = new InternalLeashTracker();
+        _mobSerializer = new InternalMobSerializer();
 
         _providerManager = new InternalProviderManager(isTesting());
         InternalProviderLoader providerLoader = new InternalProviderLoader(_providerManager);
@@ -205,7 +209,9 @@ public final class BukkitPlugin extends NucleusPlugin {
     @Override
     protected void onEnablePlugin() {
 
-        registerEventListeners(new JCGEventListener(_regionManager));
+        registerEventListeners(
+                new JCGEventListener(_regionManager),
+                new SpawnEggListener());
 
         registerCommand(NEconomyCommand.class);
         registerCommand(NFriendsCommand.class);
