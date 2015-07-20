@@ -43,6 +43,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +72,14 @@ public final class TextUtils {
     @Localizable static final String _LOCATION_FORMAT =
             "X:{0: x}, Y:{1: y}, Z:{2: x}, W:{3: world}";
 
+    @Localizable static final String _TITLE_CASE_EXCLUSIONS =
+            "above, about, across, against, along, among, around, at, before, behind, below, beneath, " +
+                    "beside, between, beyond, by, down, during, except, for, from, in, inside, into, like, " +
+                    "near, of, off, on, since, to, toward, through, under, until, up, upon, with, within," +
+                    "the, a, an, and, but, or, for, either, be";
+
+            //"a,an,the,and,but,or,on,in,with,upon,of,to,at,under,near,upon,by";
+
     public static final Pattern PATTERN_DOT = Pattern.compile("\\.");
     public static final Pattern PATTERN_COMMA = Pattern.compile(",");
     public static final Pattern PATTERN_COLON = Pattern.compile(":");
@@ -95,6 +104,7 @@ public final class TextUtils {
     public static final TextFormatter TEXT_FORMATTER = new TextFormatter(TEXT_FORMATTER_SETTINGS);
 
     private static final Map<Plugin, TextFormatterSettings> _pluginFormatters = new WeakHashMap<>(10);
+    private static Set<String> _titleCaseExclusions;
 
     public enum FormatTemplate {
         /**
@@ -156,17 +166,14 @@ public final class TextUtils {
      * Specify optional title case parsing options.
      */
     public enum TitleCaseOption {
-
         /**
-         * Forces casing. All letters are lower cased unless they are the
-         * first letter of a word larger than 3 characters.
+         * Forces lower case in all letters of a word except the first letter.
          */
         FORCE_CASING,
         /**
-         * Forces words whose length is less than or equal to 3 characters
-         * to start with an upper case letter.
+         * Forces title casing on words that are excluded from title casing.
          */
-        CASE_SMALL_WORDS,
+        IGNORE_EXCLUDED_WORDS,
         /**
          * Remove underscores and replace them with spaces.
          */
@@ -500,23 +507,23 @@ public final class TextUtils {
 
         boolean forceCasing = false;
         boolean removeUnderscores = false;
-        boolean caseSmallWords = false;
+        boolean ignoreExcluded = false;
 
         for (TitleCaseOption option : options) {
             switch (option) {
                 case ALL:
-                    forceCasing = true;
                     removeUnderscores = true;
-                    caseSmallWords = true;
-                    break;
-                case FORCE_CASING:
+                    ignoreExcluded = true;
                     forceCasing = true;
                     break;
                 case REMOVE_UNDERSCORE:
                     removeUnderscores = true;
                     break;
-                case CASE_SMALL_WORDS:
-                    caseSmallWords = true;
+                case IGNORE_EXCLUDED_WORDS:
+                    ignoreExcluded = true;
+                    break;
+                case FORCE_CASING:
+                    forceCasing = true;
                     break;
             }
         }
@@ -534,20 +541,20 @@ public final class TextUtils {
                 resultSB.append(' ');
 
             String word = words[i];
-            String firstLetter = word.substring(0, 1);
 
-            if (caseSmallWords || word.length() > 3) {
+            String firstLetter = word.substring(0, 1);
+            String wordEnd = word.substring(1, word.length());
+
+            if (i == 0 || ignoreExcluded || !isTitleCaseExcluded(word)) {
                 firstLetter = firstLetter.toUpperCase();
-            } else if (forceCasing) {
-                firstLetter = firstLetter.toLowerCase();
+            }
+
+            if (forceCasing) {
+                wordEnd = wordEnd.toLowerCase();
             }
 
             resultSB.append(firstLetter);
-            if (forceCasing) {
-                resultSB.append(word.substring(1, word.length()).toLowerCase());
-            } else {
-                resultSB.append(word.subSequence(1, word.length()));
-            }
+            resultSB.append(wordEnd);
         }
 
         return resultSB.toString();
@@ -1270,6 +1277,20 @@ public final class TextUtils {
             appendable.append(String.valueOf(element.getLineNumber()));
             appendable.append(")\n");
         }
+    }
+
+    private static boolean isTitleCaseExcluded(String word) {
+        if (_titleCaseExclusions == null) {
+            String exclusionString = NucLang.get(_TITLE_CASE_EXCLUSIONS);
+
+            String[] excl = PATTERN_COMMA.split(exclusionString);
+            _titleCaseExclusions = new HashSet<>(excl.length + 10);
+            for (String excluded : excl) {
+                _titleCaseExclusions.add(excluded.trim().toLowerCase());
+            }
+        }
+
+        return _titleCaseExclusions.contains(word.toLowerCase());
     }
 }
 
