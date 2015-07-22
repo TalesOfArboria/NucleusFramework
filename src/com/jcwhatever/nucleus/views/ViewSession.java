@@ -327,6 +327,11 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
             Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
+                    if (_current == null || _current.view == null) {
+                        agent.cancel();
+                        return;
+                    }
+
                     if (_current.view.open(ViewOpenReason.FIRST)) {
                         agent.success();
                     }
@@ -343,6 +348,10 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
             Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
+                    if (_current == null) {
+                        agent.cancel();
+                        return;
+                    }
 
                     ViewContainer prev = _current;
                     ViewContainer origNext = prev.next;
