@@ -62,7 +62,7 @@ class GiveSubCommand extends AbstractCommand implements IExecutableCommand {
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String playerName = args.getName("playerName");
+        String playerName = args.getString("playerName");
         double amount = args.getDouble("amount");
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);

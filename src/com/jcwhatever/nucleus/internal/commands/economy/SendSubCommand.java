@@ -81,7 +81,7 @@ class SendSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Player player = (Player)sender;
 
-        final String receiverName = args.getName("playerName");
+        final String receiverName = args.getString("playerName");
         final double amount = args.getDouble("amount");
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);

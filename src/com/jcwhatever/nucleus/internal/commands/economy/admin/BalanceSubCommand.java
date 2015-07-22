@@ -73,7 +73,7 @@ class BalanceSubCommand extends AbstractCommand implements IExecutableCommand {
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String playerName = args.getName("playerName");
+        String playerName = args.getString("playerName");
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null)

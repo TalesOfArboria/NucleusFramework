@@ -96,7 +96,7 @@ class SendBankSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Player player = (Player)sender;
 
-        final String receiverName = args.getName("playerName");
+        final String receiverName = args.getString("playerName");
         final double amount = args.getDouble("amount");
         final String myBankName = args.isDefaultValue("myBank") ? "" : args.getString("mybank");
         final String bankName = args.getString("bank");
