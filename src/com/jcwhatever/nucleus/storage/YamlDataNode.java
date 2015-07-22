@@ -37,7 +37,6 @@ import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -46,6 +45,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -57,7 +57,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * A YAML based data node.
@@ -561,12 +560,6 @@ public class YamlDataNode extends AbstractDataNode {
                 value = ItemStackUtils.serialize((ItemStack) value);
             }
             else if (value instanceof ItemStack[]) {
-                ItemStack[] stored = ((ItemStack[]) value).clone();
-                for (int i = 0; i < stored.length; i++) {
-                    if (stored[i] != null) {
-                        stored[i] = stored[i].clone();
-                    }
-                }
                 value = ItemStackUtils.serialize((ItemStack[]) value);
             }
             else if (value instanceof Enum<?>) {
