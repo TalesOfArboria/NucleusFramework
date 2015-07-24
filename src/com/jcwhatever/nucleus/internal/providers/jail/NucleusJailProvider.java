@@ -306,7 +306,13 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
                     if (p == null) {
 
                         // register player to be released at next login
-                        registerLateRelease(session.getPlayerId(), session.getReleaseLocation());
+                        Location releaseLocation = getReleaseLocation(session);
+                        if (releaseLocation == null) {
+                            NucMsg.warning("Failed to find a jail release location");
+                            continue;
+                        }
+
+                        registerLateRelease(session.getPlayerId(), releaseLocation);
                         continue;
                     }
 
@@ -314,14 +320,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
 
                     Location releaseLoc = unregisterLateRelease(session.getPlayerId());
                     if (releaseLoc == null)
-                        releaseLoc = session.getReleaseLocation();
-
-                    if (releaseLoc == null) {
-                        World world = session.getJail().getRegion().getWorld();
-
-                        if (world != null)
-                            releaseLoc = world.getSpawnLocation();
-                    }
+                        releaseLoc = getReleaseLocation(session);
 
                     if (!session.isReleased())
                         session.release();
@@ -349,6 +348,21 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
                     }
                 }
             }
+        }
+
+        @Nullable
+        private Location getReleaseLocation(IJailSession session) {
+
+            Location releaseLoc = session.getReleaseLocation();
+
+            if (releaseLoc == null) {
+                World world = session.getJail().getRegion().getWorld();
+
+                if (world != null)
+                    releaseLoc = world.getSpawnLocation();
+            }
+
+            return releaseLoc;
         }
     }
 
