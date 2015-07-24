@@ -55,9 +55,17 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      */
     public static final MaterialProperty DIRECTIONAL_DATA = new MaterialProperty("Directional_Data");
     /**
-     * The material is a redstone component.
+     * The material is produces or consumes a redstone current.
      */
-    public static final MaterialProperty REDSTONE = new MaterialProperty("Redstone");
+    public static final MaterialProperty REDSTONE_COMPONENT = new MaterialProperty("Redstone_Component");
+    /**
+     * The material accepts an input redstone current.
+     */
+    public static final MaterialProperty REDSTONE_INPUT = new MaterialProperty("Redstone_Input");
+    /**
+     * The material can produce a redstone redstone current.
+     */
+    public static final MaterialProperty REDSTONE_OUTPUT = new MaterialProperty("Redstone_Output");
     /**
      * The material can be interacted with by a player to create a redstone current (i.e. button or lever)
      */
@@ -254,6 +262,10 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
      * The material can potentially be used as a potion ingredient.
      */
     public static final MaterialProperty POTION_INGREDIENT = new MaterialProperty("Potion_Ingredient");
+    /**
+     * The material, as a block, stores additional information. (i.e. chests, dispensers, etc)
+     */
+    public static final MaterialProperty BLOCK_ENTITY = new MaterialProperty("Block_Entity");
 
     /**
      * Get a temporary {@link MaterialProperty} used to lookup a property from a map.
