@@ -98,6 +98,22 @@ public final class PotionUtils {
     }
 
     /**
+     * Get an ItemStack using the specified potion ID.
+     *
+     * @param potionId  The potion ID.
+     *
+     * @return  The potion ItemStack or null if the potion ID is not valid.
+     */
+    @Nullable
+    ItemStack getPotionStack(int potionId) {
+
+        if (_handler == null)
+            throw new UnsupportedOperationException("A potion NMS handler was not found.");
+
+        return _handler.getPotionStack(potionId);
+    }
+
+    /**
      * Determine if an item stack can potentially be used as a potion ingredient.
      *
      * @param itemStack  The item stack to check.

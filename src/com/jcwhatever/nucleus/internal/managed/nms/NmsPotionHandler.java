@@ -32,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionType;
 
+import javax.annotation.Nullable;
+
 /**
  * Minecraft Potions handler.
  */
@@ -87,6 +89,21 @@ class NmsPotionHandler implements INmsPotionHandler {
         itemStack.setDurability((short)id);
 
         return itemStack;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPotionStack(int potionId) {
+
+        PotionType type = PotionType.getByDamageValue(potionId & 15);
+        if (type == null)
+            return null;
+
+        int level = (potionId & 32) == 32 ? 2 : 1;
+        boolean isSplash = (potionId & 16384) == 16384;
+        boolean isExtended = (potionId & 64) == 64;
+
+        return getPotionStack(type, level, isSplash, isExtended);
     }
 
     @Override
