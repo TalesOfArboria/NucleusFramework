@@ -25,10 +25,11 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
-import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.annotation.Nullable;
 
 /**
  * File handling utilities.
@@ -481,6 +481,53 @@ public final class FileUtils {
                 }
             }
         }
+        return written;
+    }
+
+    /**
+     * Writes a text file.
+     *
+     * @param file     The file to write.
+     * @param charset  The encoding to use.
+     * @param text     The text to write to the file.
+     *
+     * @return  The number of lines written or -1 if failed to write.
+     */
+    public static int writeTextFile(File file, Charset charset, String text) {
+        PreCon.notNull(file);
+        PreCon.notNull(charset);
+        PreCon.notNull(text);
+
+        OutputStreamWriter writer = null;
+
+        String[] lines = TextUtils.PATTERN_NEW_LINE.split(text);
+        int written = -1;
+
+        try {
+            FileOutputStream fileStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(fileStream, charset.name());
+
+            int i = 0;
+            for (; i < lines.length; i++) {
+                writer.write(lines[i]);
+                writer.write('\n');
+            }
+
+            written = i;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return written;
     }
 
