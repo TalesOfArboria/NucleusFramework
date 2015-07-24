@@ -2423,7 +2423,14 @@ public class Materials {
                 MaterialProperty.WEARABLE,
                 MaterialProperty.BLOCK_ENTITY);
 
-        add(Material.SLIME_BALL);
+        add(Material.SLIME_BLOCK,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.SURFACE,
+                MaterialProperty.BLOCK);
+
+        add(Material.SLIME_BALL,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SMOOTH_BRICK,
                 MaterialProperty.BLOCK,
