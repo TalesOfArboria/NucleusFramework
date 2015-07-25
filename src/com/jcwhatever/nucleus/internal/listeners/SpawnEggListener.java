@@ -29,9 +29,11 @@ import com.jcwhatever.nucleus.events.spawnegg.PreSpawnEggEvent;
 import com.jcwhatever.nucleus.events.spawnegg.SpawnEggEvent;
 import com.jcwhatever.nucleus.managed.entity.mob.ISerializableMob;
 import com.jcwhatever.nucleus.managed.entity.mob.Mobs;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -54,7 +56,9 @@ public class SpawnEggListener implements Listener {
         if (inHand == null || inHand.getType() != Material.MONSTER_EGG)
             return;
 
-        PreSpawnEggEvent preSpawnEggEvent = new PreSpawnEggEvent(event.getPlayer(), inHand);
+        Player player = event.getPlayer();
+
+        PreSpawnEggEvent preSpawnEggEvent = new PreSpawnEggEvent(player, inHand);
         Nucleus.getEventManager().callBukkit(this, preSpawnEggEvent);
 
         if (preSpawnEggEvent.isCancelled()) {
@@ -73,7 +77,17 @@ public class SpawnEggListener implements Listener {
         event.setUseItemInHand(Event.Result.DENY);
         event.setCancelled(true);
 
-        SpawnEggEvent spawnEggEvent = new SpawnEggEvent(event.getPlayer(), inHand, entity);
+        SpawnEggEvent spawnEggEvent = new SpawnEggEvent(player, inHand, entity);
         Nucleus.getEventManager().callBukkit(this, spawnEggEvent);
+
+        if (player.getGameMode() == GameMode.SURVIVAL) {
+            if (inHand.getAmount() <= 1) {
+                inHand = null;
+            }
+            else {
+                inHand.setAmount(inHand.getAmount() - 1);
+            }
+            player.getInventory().setItemInHand(inHand);
+        }
     }
 }
