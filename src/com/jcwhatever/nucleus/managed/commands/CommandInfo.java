@@ -173,7 +173,9 @@ public @interface CommandInfo {
      * <p>The permission name is generated using the owning plugins name and
      * the commands path.</p>
      *
-     * <p>i.e. mypluginname.commands.mycommand.mysubcommand</p>
+     * <p>i.e. mypluginname.mycommand.mysubcommand</p>
+     *
+     * <p>Wildcards can be used to enable or disable a command and its sub commands.</p>
      */
     PermissionDefault permissionDefault() default PermissionDefault.OP;
 }

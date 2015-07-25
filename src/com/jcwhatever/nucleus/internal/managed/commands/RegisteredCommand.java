@@ -282,48 +282,69 @@ class RegisteredCommand implements IRegisteredCommand {
 
             Collections.reverse(permissions);
 
+            if (permissions.get(0).getName().equals("about"))
+                permissions.remove(0);
+
             StringBuilder permBuffer = new StringBuilder(40);
 
             // get parent plugin permission
             String rootPermName = getPlugin().getName().toLowerCase();
-            IPermission rootPermission = Permissions.get(rootPermName);
+            IPermission rootPermission = Permissions.get(rootPermName + ".*");
             if (rootPermission == null) {
-                rootPermission = Permissions.register(rootPermName, PermissionDefault.TRUE);
+                rootPermission = Permissions.register(rootPermName + ".*", PermissionDefault.FALSE);
             }
 
-            // get all command permission
-            String commandPermName = getPlugin().getName().toLowerCase() + ".commands";
-            IPermission commandPermission = Permissions.get(commandPermName);
-            if (commandPermission == null) {
-                commandPermission = Permissions.register(commandPermName, PermissionDefault.TRUE);
-                commandPermission.addParent(rootPermission, true);
-            }
+            permBuffer.append(rootPermName);
 
-            permBuffer.append(commandPermName);
-            permBuffer.append('.');
+            if (!permissions.isEmpty())
+                permBuffer.append('.');
 
-            IPermission currentPerm = commandPermission;
+            List<IPermission> permParents = new ArrayList<>(permissions.size());
 
             // register permission tree branch
-            for (IRegisteredCommandInfo commandInfo : permissions) {
+            for (int i=0; i < permissions.size(); i++) {
+
+                IRegisteredCommandInfo commandInfo = permissions.get(i);
 
                 permBuffer.append(commandInfo.getName().toLowerCase());
 
-                String permissionName = permBuffer.toString();
+                if (i < permissions.size() - 1) {
 
-                IPermission permission = Permissions.get(permissionName);
-                if (permission == null) {
-                    permission = Permissions.register(permissionName, commandInfo.getPermissionDefault());
-                    permission.addParent(currentPerm, true);
-                    permission.setDescription(commandInfo.getDescription());
+                    String permissionName = permBuffer.toString();
+
+                    IPermission permission = Permissions.get(permissionName + ".*");
+                    if (permission == null) {
+                        permission = Permissions.register(permissionName + ".*", PermissionDefault.FALSE);
+                        permission.setDescription(commandInfo.getDescription());
+                    }
+
+                    for (IPermission permParent : permParents) {
+                        permission.addParent(permParent, true);
+                    }
+                    permission.addParent(rootPermission, true);
+
+                    permParents.add(permission);
+
+                    permBuffer.append('.');
                 }
-
-                permBuffer.append('.');
-
-                currentPerm = permission;
             }
 
-            _permission = currentPerm;
+            String permissionName = permBuffer.toString();
+            _permission = Permissions.get(permissionName);
+            if (_permission == null) {
+                _permission = Permissions.register(permissionName, getInfo().getPermissionDefault());
+            }
+
+            for (IPermission permParent : permParents) {
+                _permission.addParent(permParent, true);
+            }
+            _permission.addParent(rootPermission, true);
+
+            IPermission allPermission = Permissions.get(permissionName + ".*");
+            if (allPermission == null) {
+                allPermission = Permissions.register(permissionName + ".*", PermissionDefault.FALSE);
+            }
+            _permission.addParent(allPermission, true);
         }
 
         return _permission;
