@@ -1154,7 +1154,7 @@ public class Materials {
 
         add(Material.CROPS,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.CROP);
 
         add(Material.DARK_OAK_DOOR,
@@ -2748,7 +2748,6 @@ public class Materials {
                 MaterialProperty.PLACEABLE);
 
         add(Material.WHEAT,
-                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CROP);
