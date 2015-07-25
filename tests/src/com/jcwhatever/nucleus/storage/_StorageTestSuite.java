@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         MemoryDataNodeTest.class,
         YamlDataNodeTest.class,
+        JsonDataNodeTest.class,
         DataFieldSerializerTest.class
 })
 public class _StorageTestSuite {

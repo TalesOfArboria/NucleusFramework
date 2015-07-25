@@ -212,7 +212,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public boolean getBoolean(String keyPath, boolean def) {
 
-        Object value = get(keyPath);
+        Object value = getBooleanObject(keyPath);
 
         if (value instanceof Boolean) {
             return (Boolean) value;
@@ -235,7 +235,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public int getInteger(String keyPath, int def) {
 
-        Object value = get(keyPath);
+        Object value = getNumberObject(keyPath);
 
         if (value instanceof Number) {
             return ((Number) value).intValue();
@@ -258,7 +258,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public long getLong(String keyPath, long def) {
 
-        Object value = get(keyPath);
+        Object value = getNumberObject(keyPath);
 
         if (value instanceof Number) {
             return ((Number) value).longValue();
@@ -281,7 +281,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public double getDouble(String keyPath, double def) {
 
-        Object value = get(keyPath);
+        Object value = getNumberObject(keyPath);
 
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
@@ -306,7 +306,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public String getString(String keyPath, @Nullable String def) {
 
-        Object value = get(keyPath);
+        Object value = getStringObject(keyPath);
 
         if (value instanceof MemorySection)
             return def;
@@ -330,7 +330,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public UUID getUUID(String keyPath, @Nullable UUID def) {
 
-        Object value = get(keyPath);
+        Object value = getStringObject(keyPath);
 
         if (value instanceof UUID) {
             return (UUID) value;
@@ -357,7 +357,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public Date getDate(String keyPath, @Nullable Date def) {
 
-        Object value = get(keyPath);
+        Object value = getNumberObject(keyPath);
 
         if (value instanceof Date) {
             return (Date) value;
@@ -381,7 +381,8 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public SyncLocation getLocation(String keyPath, @Nullable Location def) {
-        Object value = get(keyPath);
+
+        Object value = getStringObject(keyPath);
         if (value instanceof Location) {
             return new SyncLocation((Location) value);
         }
@@ -412,14 +413,14 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack def) {
-        return getItemStacks(keyPath, def != null ? new ItemStack[] { def } : null);
+        return getItemStacks(keyPath, def != null ? new ItemStack[]{def} : null);
     }
 
     @Nullable
     @Override
     public ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack[] def) {
 
-        Object value = get(keyPath);
+        Object value = getStringObject(keyPath);
 
         if (value instanceof ItemStack) {
             return new ItemStack[]{(ItemStack) value};
@@ -456,7 +457,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public <T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass) {
 
-        Object value = get(keyPath);
+        Object value = getStringObject(keyPath);
 
         if (enumClass.isInstance(value)) {
 
@@ -481,7 +482,7 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass) {
 
-        Object value = get(keyPath);
+        Object value = getStringObject(keyPath);
 
         if (enumClass.isInstance(value)) {
 
@@ -491,7 +492,7 @@ public abstract class AbstractDataNode implements IDataNode {
             return result;
         }
         else if (value instanceof String) {
-            return EnumUtils.searchGenericEnum((String)value, enumClass, def);
+            return EnumUtils.searchGenericEnum((String) value, enumClass, def);
         }
 
         if (def != null && isDefaultsSaved())
@@ -503,7 +504,8 @@ public abstract class AbstractDataNode implements IDataNode {
     @Nullable
     @Override
     public List<String> getStringList(String keyPath, @Nullable List<String> def) {
-        Object value = get(keyPath);
+
+        Object value = getCollectionObject(keyPath);
         if (value instanceof Collection) {
             Collection collection = (Collection)value;
             List<String> result = new ArrayList<>(collection.size());
@@ -601,6 +603,50 @@ public abstract class AbstractDataNode implements IDataNode {
                 }
             }
         };
+    }
+
+    /**
+     * Retrieve the value of key path where the value is
+     * expected to be a boolean.
+     *
+     * @param keyPath  The key path.
+     */
+    @Nullable
+    protected Object getBooleanObject(String keyPath) {
+        return get(keyPath);
+    }
+
+    /**
+     * Retrieve the value of a key path where the value is
+     * expected to be a number.
+     *
+     * @param keyPath  The key path.
+     */
+    @Nullable
+    protected Object getNumberObject(String keyPath) {
+        return get(keyPath);
+    }
+
+    /**
+     * Retrieve the value of a key path where the value is
+     * expected to be a string.
+     *
+     * @param keyPath  The key path.
+     */
+    @Nullable
+    protected Object getStringObject(String keyPath) {
+        return get(keyPath);
+    }
+
+    /**
+     * Retrieve the value of a key path where the value is
+     * expected to be a collection.
+     *
+     * @param keyPath  The key path.
+     */
+    @Nullable
+    protected Object getCollectionObject(String keyPath) {
+        return get(keyPath);
     }
 
     /**

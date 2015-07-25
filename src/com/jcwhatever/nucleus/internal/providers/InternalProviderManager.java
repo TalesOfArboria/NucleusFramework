@@ -38,6 +38,7 @@ import com.jcwhatever.nucleus.internal.providers.permissions.bukkit.BukkitProvid
 import com.jcwhatever.nucleus.internal.providers.permissions.vault.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
+import com.jcwhatever.nucleus.internal.providers.storage.JsonStorageProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.IProvider;
@@ -129,12 +130,15 @@ public final class InternalProviderManager implements IProviderManager {
         addName(NucleusSelectionProvider.NAME, ProviderType.REGION_SELECT);
         addName(WorldEditSelectionProvider.NAME, ProviderType.REGION_SELECT);
         addName(YamlStorageProvider.NAME, ProviderType.STORAGE);
+        addName(JsonStorageProvider.NAME, ProviderType.STORAGE);
 
         _dataNode = isTest
                 ? new MemoryDataNode(Nucleus.getPlugin())
                 : new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
 
         _dataNode.load();
+
+        registerStorageProvider(new JsonStorageProvider());
 
         // setup preferred internal bank items
         String prefBankItems = getPreferred(ProviderType.BANK_ITEMS);
