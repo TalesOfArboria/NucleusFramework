@@ -105,7 +105,7 @@ public final class PotionUtils {
      * @return  The potion ItemStack or null if the potion ID is not valid.
      */
     @Nullable
-    ItemStack getPotionStack(int potionId) {
+    public static ItemStack getPotionStack(int potionId) {
 
         if (_handler == null)
             throw new UnsupportedOperationException("A potion NMS handler was not found.");
