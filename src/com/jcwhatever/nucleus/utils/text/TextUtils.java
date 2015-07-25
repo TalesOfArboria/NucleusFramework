@@ -76,7 +76,7 @@ public final class TextUtils {
             "above, about, across, against, along, among, around, at, before, behind, below, beneath, " +
                     "beside, between, beyond, by, down, during, except, for, from, in, inside, into, like, " +
                     "near, of, off, on, since, to, toward, through, under, until, up, upon, with, within," +
-                    "the, a, an, and, but, or, for, either, be";
+                    "the, a, an, and, but, or, for, either, be, is";
 
             //"a,an,the,and,but,or,on,in,with,upon,of,to,at,under,near,upon,by";
 
