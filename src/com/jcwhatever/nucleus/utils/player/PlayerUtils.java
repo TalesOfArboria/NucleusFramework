@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 import org.bukkit.Bukkit;
@@ -44,6 +45,7 @@ import org.bukkit.util.BlockIterator;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -274,6 +276,19 @@ public final class PlayerUtils {
      */
     public static int getLoginCount(UUID playerId) {
         return Nucleus.getProviders().getPlayerLookup().getLoginCount(playerId);
+    }
+
+    /**
+     * Search stored players for players whose name contains the specified search
+     * text.
+     *
+     * @param searchText  The search text.
+     * @param maxResults  The max number of results to return.
+     *
+     * @return  A collection of IDs of matched players.
+     */
+    public static IFutureResult<Collection<UUID>> searchNames(String searchText, int maxResults) {
+        return Nucleus.getProviders().getPlayerLookup().searchNames(searchText, maxResults);
     }
 
     /**

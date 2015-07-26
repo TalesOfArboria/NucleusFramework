@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.internal.commands.economy.NEconomyCommand;
 import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
 import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
 import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
+import com.jcwhatever.nucleus.internal.commands.players.PlayersCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
 import com.jcwhatever.nucleus.internal.commands.providers.ProvidersCommand;
 import com.jcwhatever.nucleus.internal.commands.regions.RegionsCommand;
@@ -217,6 +218,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         registerCommand(NFriendsCommand.class);
         registerCommand(JailCommand.class);
         registerCommand(KitsCommand.class);
+        registerCommand(PlayersCommand.class);
         registerCommand(PluginsCommand.class);
         registerCommand(ProvidersCommand.class);
         registerCommand(RegionsCommand.class);

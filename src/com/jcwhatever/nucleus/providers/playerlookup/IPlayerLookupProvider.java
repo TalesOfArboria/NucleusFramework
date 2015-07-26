@@ -26,8 +26,10 @@ package com.jcwhatever.nucleus.providers.playerlookup;
 
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.Provider;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -97,4 +99,15 @@ public interface IPlayerLookupProvider extends IProvider {
      * was not found.
      */
     int getLoginCount(UUID playerId);
+
+    /**
+     * Search stored players for players whose name contains the specified search
+     * text.
+     *
+     * @param searchText  The search text.
+     * @param maxResults  The max number of results to return.
+     *
+     * @return  A collection of IDs of matched players.
+     */
+    IFutureResult<Collection<UUID>> searchNames(String searchText, int maxResults);
 }

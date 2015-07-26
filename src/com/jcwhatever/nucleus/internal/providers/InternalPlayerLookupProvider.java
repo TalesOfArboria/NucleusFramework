@@ -30,7 +30,11 @@ import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +44,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -145,6 +153,43 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
         }
     }
 
+    @Override
+    public IFutureResult<Collection<UUID>> searchNames(String searchText, int maxResults) {
+        LinkedList<PlayerData> unsorted = new LinkedList<>();
+
+        String lower = searchText.toLowerCase();
+
+        IDataNode playersNode = getPlayerData();
+        for (IDataNode node : playersNode) {
+            String name = node.getString("name");
+            if (name == null)
+                continue;
+
+            if (name.toLowerCase().contains(lower))
+                unsorted.add(new PlayerData(name, TextUtils.parseUUID(node.getName())));
+        }
+
+        Collection<PlayerData> sorted = CollectionUtils.textSearch(
+                unsorted, searchText, new CollectionUtils.ISearchTextGetter<PlayerData>() {
+                    @Override
+                    public String getText(PlayerData element) {
+                        return element.name;
+                    }
+                });
+
+        List<UUID> result = new ArrayList<>(Math.min(sorted.size(), maxResults));
+
+        int count = 0;
+        for (PlayerData data : sorted) {
+            if (count >= maxResults)
+                break;
+            result.add(data.id);
+            count++;
+        }
+
+        return new FutureResultAgent<Collection<UUID>>().success(result);
+    }
+
     /*
      * Update the NucleusFramework player name/player id map.
      */
@@ -222,6 +267,16 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
 
             // update player name in id lookup
             setPlayerName(p.getUniqueId(), p.getName());
+        }
+    }
+
+    private static class PlayerData {
+        String name;
+        UUID id;
+
+        PlayerData(String name, UUID id) {
+            this.name = name;
+            this.id = id;
         }
     }
 }
