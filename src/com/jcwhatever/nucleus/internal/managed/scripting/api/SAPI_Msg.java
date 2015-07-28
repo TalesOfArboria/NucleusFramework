@@ -82,6 +82,19 @@ public class SAPI_Msg implements IDisposable {
     }
 
     /**
+     * Broadcast a message to all players on the server.
+     *
+     * @param message  The message to broadcast.
+     * @param args     Message formatting arguments.
+     */
+    public void broadcast(String message, Object[] args) {
+        PreCon.notNull(message);
+        PreCon.notNull(args);
+
+        _msg.broadcast(_chatPrefix + message, args);
+    }
+
+    /**
      * Tell a player a message.
      *
      * @param player   The player to tell.
@@ -95,6 +108,24 @@ public class SAPI_Msg implements IDisposable {
         PreCon.notNull(p);
 
         _msg.tell(p, _chatPrefix + message);
+    }
+
+    /**
+     * Tell a player a message.
+     *
+     * @param player   The player to tell.
+     * @param message  The message to send.
+     * @param args     Message formatting arguments.
+     */
+    public void tell(Object player, String message, Object[] args) {
+        PreCon.notNull(player);
+        PreCon.notNull(message);
+        PreCon.notNull(args);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.notNull(p);
+
+        _msg.tell(p, _chatPrefix + message, args);
     }
 
     /**
@@ -113,6 +144,26 @@ public class SAPI_Msg implements IDisposable {
         PreCon.notNull(p);
 
         _msg.tellNoSpam(p, timeout, _chatPrefix + message);
+    }
+
+    /**
+     * Tell a player a message and prevent spamming of the same message.
+     *
+     * @param player   The player to tell.
+     * @param timeout  The spam timeout, the amount of time to wait before the message can be seen again.
+     * @param message  The message to send.
+     * @param args     Message formatting arguments.
+     */
+    public void tellNoSpam(Object player, int timeout, String message, Object[] args) {
+        PreCon.notNull(player);
+        PreCon.greaterThanZero(timeout);
+        PreCon.notNull(message);
+        PreCon.notNull(args);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.notNull(p);
+
+        _msg.tellNoSpam(p, timeout, _chatPrefix + message, args);
     }
 
     /**
@@ -143,5 +194,18 @@ public class SAPI_Msg implements IDisposable {
         PreCon.notNull(message);
 
         _msg.warning(_chatPrefix + " [SCRIPT DEBUG] " + message);
+    }
+
+    /**
+     * Send scripting debug message to console.
+     *
+     * @param message  The message to send.
+     * @param args     Message formatting arguments.
+     */
+    public void debug(String message, Object[] args) {
+        PreCon.notNull(message);
+        PreCon.notNull(args);
+
+        _msg.warning(_chatPrefix + " [SCRIPT DEBUG] " + message, args);
     }
 }
