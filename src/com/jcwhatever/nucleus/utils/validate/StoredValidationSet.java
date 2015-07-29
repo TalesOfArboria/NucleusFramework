@@ -27,10 +27,10 @@ package com.jcwhatever.nucleus.utils.validate;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Used for validation using a set of stored elements.
@@ -98,17 +98,19 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
     }
 
     @Override
-    public boolean remove(Object element) {
-        PreCon.notNull(element);
+    public boolean remove(Object obj) {
+        PreCon.notNull(obj);
 
-        String name = getElementNodeName(element);
+        String name = getElementNodeName(obj);
         if (name == null)
             return false;
 
-        if (super.remove(element)) {
-            IDataNode dataNode = _dataNode.getNode("elements." + name);
-            dataNode.remove();
-            dataNode.save();
+        if (super.remove(obj)) {
+
+            @SuppressWarnings("unchecked")
+            E element = (E)obj;
+
+            saveElement(element, _dataNode.getNode("elements." + name));
             return true;
         }
 
@@ -128,12 +130,15 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
                 continue;
 
             if (super.remove(obj)) {
-                IDataNode dataNode = _dataNode.getNode("elements." + name);
-                dataNode.remove();
-                dataNode.save();
+
+                @SuppressWarnings("unchecked")
+                E element = (E)obj;
+
+                saveElement(element, _dataNode.getNode("elements." + name));
                 isChanged = true;
             }
         }
+
 
         return isChanged;
     }
@@ -155,9 +160,7 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
                 continue;
 
             if (super.remove(element)) {
-                IDataNode dataNode = _dataNode.getNode("elements." + name);
-                dataNode.remove();
-                dataNode.save();
+                saveElement(element, _dataNode.getNode("elements." + name));
                 isChanged = true;
             }
         }
