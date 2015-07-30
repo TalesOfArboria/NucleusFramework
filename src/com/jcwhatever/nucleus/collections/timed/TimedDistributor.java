@@ -29,10 +29,10 @@ import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import javax.annotation.Nullable;
 
 /**
  * An element distributor that must be polled for the current element. The current element
@@ -140,6 +140,30 @@ public class TimedDistributor<E> implements Collection<E> {
             element = _queue.element();
             assert element != null;
         }
+
+        @SuppressWarnings("unchecked")
+        E value = (E)element.value;
+
+        return value;
+    }
+
+    /**
+     * Manually move to the next element in the queue.
+     *
+     * <p>The time to next automatic rotation is reset using the
+     * next elements time values.</p>
+     *
+     * @return  The next element.
+     */
+    @Nullable
+    public E next() {
+        if (_queue.isEmpty())
+            return null;
+
+        Element<E> element = _queue.next();
+        assert element != null;
+
+        _nextRotation = System.currentTimeMillis() + element.timeSpan;
 
         @SuppressWarnings("unchecked")
         E value = (E)element.value;
