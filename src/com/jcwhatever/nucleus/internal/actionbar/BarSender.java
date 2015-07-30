@@ -62,7 +62,7 @@ import java.util.UUID;
  */
 class BarSender implements Runnable {
 
-    static final int MAX_REFRESH_RATE = 40 * 50;
+    static final int MAX_REFRESH_RATE = 10 * 50;
     static final int MIN_REFRESH_RATE = 50;
 
     private static final Map<UUID, BarDistributor> _playerMap = new PlayerMap<>(Nucleus.getPlugin());
@@ -135,20 +135,6 @@ class BarSender implements Runnable {
             // ensure distributor does not already contain the playerBar
             if (distributor.contains(playerBar))
                 return;
-
-            switch (priority) {
-                case DEFAULT:
-                    if (distributor.priority.contains(ActionBarPriority.HIGH)) {
-                        return;
-                    }
-                    break;
-                case LOW:
-                    if (distributor.priority.contains(ActionBarPriority.HIGH) ||
-                            distributor.priority.contains(ActionBarPriority.DEFAULT)) {
-                        return;
-                    }
-                    break;
-            }
 
             // add playerBar to distributor
             distributor.add(playerBar, duration, timeScale);
@@ -309,6 +295,27 @@ class BarSender implements Runnable {
         return ActionBarPriority.LOW;
     }
 
+    /**
+     * Determine if the specified priority is the highest priority in the
+     * specified {@link BarDistributor}.
+     *
+     * @param distributor  The distributor.
+     * @param priority     The priority to check.
+     */
+    static boolean isHighestPriority(BarDistributor distributor, ActionBarPriority priority) {
+
+        switch (priority) {
+            case HIGH:
+                return true;
+            case DEFAULT:
+                return !distributor.priority.contains(ActionBarPriority.HIGH);
+            case LOW:
+                return !distributor.priority.contains(ActionBarPriority.LOW) &&
+                        !distributor.priority.contains(ActionBarPriority.DEFAULT);
+            default:
+                throw new AssertionError("Unknown ActionBarPriority enum constant: " + priority.name());
+        }
+    }
 
     @Override
     public void run() {
@@ -334,6 +341,12 @@ class BarSender implements Runnable {
                 playerBar = distributor.current();
                 if (playerBar == null)
                     continue;
+
+                while (!isHighestPriority(distributor, playerBar.priority())) {
+                    playerBar = distributor.next();
+                    if (playerBar == null)
+                        throw new AssertionError("Null player bar in bar distributor.");
+                }
             }
 
             // remove expired action bars
