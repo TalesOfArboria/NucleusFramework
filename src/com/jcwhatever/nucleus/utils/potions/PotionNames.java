@@ -71,6 +71,15 @@ public class PotionNames {
                 }
             });
 
+    private static final int[] NAMED_POTION_IDS = new int[] { 0, 16, 32, 64,
+            8193, 8194, 8196, 8201,
+            8225, 8226, 8227, 8228, 8229, 8230, 8232, 8233, 8234, 8235, 8236, 8237, 8238,
+            8257, 8258, 8259, 8260, 8261, 8262, 8264, 8265, 8266, 8267, 8268, 8269, 8270,
+            16385, 16386, 16388, 16393,
+            16417, 16418, 16419, 16420, 16421, 16422, 16424, 16425, 16426, 16427, 16428, 16429, 16430,
+            16449, 16450, 16451, 16452, 16453, 16454, 16456, 16457, 16458, 16459, 16460, 16461, 16462 };
+
+
     private static final INmsPotionHandler _handler = NmsUtils.getPotionHandler();
 
     /**
@@ -147,8 +156,13 @@ public class PotionNames {
         appendSimple(buffer, type);
 
         if ((potionId & 32) == 32) {
-            buffer.append(' ');
-            append(buffer, _LEVEL2);
+
+            // see if a level one potion is valid, if not, consider
+            // this the level 1 potion
+            if (isValidPotionId(potionId & ~32)) {
+                buffer.append(' ');
+                append(buffer, _LEVEL2);
+            }
         }
 
         if ((potionId & 64) == 64) {
@@ -214,5 +228,17 @@ public class PotionNames {
         StringBuilder buffer = BUFFERS.get();
         buffer.setLength(0);
         return buffer;
+    }
+
+    private static boolean isValidPotionId(int potionId) {
+
+        for (int validId : NAMED_POTION_IDS) {
+            if (validId > potionId)
+                return false;
+
+            if (validId == potionId)
+                return true;
+        }
+        return false;
     }
 }
