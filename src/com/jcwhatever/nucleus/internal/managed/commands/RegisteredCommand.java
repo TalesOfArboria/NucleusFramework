@@ -31,7 +31,6 @@ import com.jcwhatever.nucleus.internal.managed.commands.CommandCollection.IComma
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.ICommand;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
-import com.jcwhatever.nucleus.managed.commands.IRegisteredCommandInfo;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.mixins.IInitializableCommand;
@@ -46,10 +45,10 @@ import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.providers.permissions.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -270,81 +269,26 @@ class RegisteredCommand implements IRegisteredCommand {
         // lazy loaded
         if (_permission == null) {
 
-            List<IRegisteredCommandInfo> permissions = new ArrayList<>(20);
+            List<String> permissions = new ArrayList<>(20);
 
             RegisteredCommand parent = this;
 
-            permissions.add(getInfo());
+            permissions.add(getInfo().getName().toLowerCase());
 
             while((parent = parent.getParent()) != null) {
-                permissions.add(parent.getInfo());
+                permissions.add(parent.getInfo().getName().toLowerCase());
             }
+
+            if (permissions.get(permissions.size() - 1).equals("about"))
+                permissions.remove(permissions.size() - 1);
+
+            permissions.add(getPlugin().getName().toLowerCase());
 
             Collections.reverse(permissions);
 
-            if (permissions.get(0).getName().equals("about"))
-                permissions.remove(0);
+            String permissionName = TextUtils.concat(permissions, ".");
 
-            StringBuilder permBuffer = new StringBuilder(40);
-
-            // get parent plugin permission
-            String rootPermName = getPlugin().getName().toLowerCase();
-            IPermission rootPermission = Permissions.get(rootPermName + ".*");
-            if (rootPermission == null) {
-                rootPermission = Permissions.register(rootPermName + ".*", PermissionDefault.FALSE);
-            }
-
-            permBuffer.append(rootPermName);
-
-            if (!permissions.isEmpty())
-                permBuffer.append('.');
-
-            List<IPermission> permParents = new ArrayList<>(permissions.size());
-
-            // register permission tree branch
-            for (int i=0; i < permissions.size(); i++) {
-
-                IRegisteredCommandInfo commandInfo = permissions.get(i);
-
-                permBuffer.append(commandInfo.getName().toLowerCase());
-
-                if (i < permissions.size() - 1) {
-
-                    String permissionName = permBuffer.toString();
-
-                    IPermission permission = Permissions.get(permissionName + ".*");
-                    if (permission == null) {
-                        permission = Permissions.register(permissionName + ".*", PermissionDefault.FALSE);
-                        permission.setDescription(commandInfo.getDescription());
-                    }
-
-                    for (IPermission permParent : permParents) {
-                        permission.addParent(permParent, true);
-                    }
-                    permission.addParent(rootPermission, true);
-
-                    permParents.add(permission);
-
-                    permBuffer.append('.');
-                }
-            }
-
-            String permissionName = permBuffer.toString();
-            _permission = Permissions.get(permissionName);
-            if (_permission == null) {
-                _permission = Permissions.register(permissionName, getInfo().getPermissionDefault());
-            }
-
-            for (IPermission permParent : permParents) {
-                _permission.addParent(permParent, true);
-            }
-            _permission.addParent(rootPermission, true);
-
-            IPermission allPermission = Permissions.get(permissionName + ".*");
-            if (allPermission == null) {
-                allPermission = Permissions.register(permissionName + ".*", PermissionDefault.FALSE);
-            }
-            _permission.addParent(allPermission, true);
+            _permission = Permissions.register(permissionName, getInfo().getPermissionDefault(), true);
         }
 
         return _permission;

@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -35,7 +36,9 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Static convenience methods for accessing the permissions provider.
@@ -76,7 +79,74 @@ public final class Permissions {
      * @return  The permission.
      */
     public static IPermission register(String permissionName, PermissionDefault value) {
-        return getProvider().register(permissionName, value);
+        return register(permissionName, value, false);
+    }
+
+    /**
+     * Register a permission.
+     *
+     * <p>Can automatically register all parent permissions detected in the
+     * name with wildcard suffix and child permissions.</p>
+     *
+     * @param permissionName  The name of the permission.
+     * @param value           The default permission value.
+     * @param registerParents  True to register parent permissions with wild card suffix.
+     *
+     * @return  The permission.
+     */
+    public static IPermission register(final String permissionName,
+                                       final PermissionDefault value, boolean registerParents) {
+        PreCon.notNullOrEmpty(permissionName);
+        PreCon.notNull(value);
+
+        if (permissionName.endsWith(".*") || !registerParents)
+            return getProvider().register(permissionName, value);
+
+        final IPermission result = getProvider().register(permissionName, value);
+
+        runBatchOperation(new Runnable() {
+            @Override
+            public void run() {
+
+                String[] components = TextUtils.PATTERN_DOT.split(permissionName);
+
+                StringBuilder buffer = new StringBuilder(permissionName.length() + 2);
+                List<IPermission> permParents = new ArrayList<>(components.length);
+
+                for (int i=0; i < components.length; i++) {
+
+                    buffer.append(components[i]);
+
+                    if (i < components.length - 1) {
+                        String name = buffer.toString();
+                        IPermission permission = get(name + ".*");
+                        if (permission == null) {
+                            permission = register(name + ".*", PermissionDefault.FALSE, false);
+                        }
+
+                        for (IPermission permParent : permParents) {
+                            permission.addParent(permParent, true);
+                        }
+                        permParents.add(permission);
+
+                        buffer.append('.');
+                    }
+                }
+
+                for (IPermission permParent : permParents) {
+                    result.addParent(permParent, true);
+                }
+
+
+                IPermission allPermission = Permissions.get(permissionName + ".*");
+                if (allPermission == null) {
+                    allPermission = Permissions.register(permissionName + ".*", PermissionDefault.FALSE);
+                }
+                result.addParent(allPermission, true);
+            }
+        });
+
+        return result;
     }
 
     /**
