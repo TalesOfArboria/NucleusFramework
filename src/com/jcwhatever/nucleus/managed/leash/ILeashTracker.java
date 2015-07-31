@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.managed.leash;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for the global leash tracker.
@@ -62,4 +62,18 @@ public interface ILeashTracker {
      */
     @Nullable
     Player getLeashedTo(Entity entity);
+
+    /**
+     * Allows manually registering a leashed entity to a player.
+     *
+     * <p>The entity must already be leashed to the player.</p>
+     *
+     * <p>Use when setting leashes in a manner that does not call Bukkit leash events.</p>
+     *
+     * @param player   The player that holds the leash.
+     * @param leashed  The leashed entity.
+     *
+     * @return  True if registered, false if the entity is not leashed to the player.
+     */
+    boolean registerLeash(Player player, Entity leashed);
 }

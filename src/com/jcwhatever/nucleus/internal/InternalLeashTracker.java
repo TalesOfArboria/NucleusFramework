@@ -29,9 +29,10 @@ import com.jcwhatever.nucleus.collections.WeakHashSet;
 import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,15 +43,16 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Internal implementation of {@link ILeashTracker}.
@@ -76,15 +78,34 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
 
         synchronized (_playerMap) {
             Set<Entity> entities = _playerMap.get(player.getUniqueId());
-            if (entities == null)
-                return output;
+            if (entities == null) {
+
+                Chunk chunk = player.getLocation().getChunk();
+                Entity[] entityArray = chunk.getEntities();
+                entities = new HashSet<>(7);
+                for (Entity entity : entityArray) {
+                    if (!(entity instanceof LivingEntity) || entity instanceof Player)
+                        continue;
+
+                    if (entity.isDead() || !entity.isValid())
+                        continue;
+
+                    LivingEntity living = (LivingEntity)entity;
+                    if (living.isLeashed() && living.getLeashHolder().equals(player)) {
+                        entities.add(living);
+                    }
+                }
+
+                _playerMap.put(player.getUniqueId(), entities);
+            }
 
             Iterator<Entity> iterator = entities.iterator();
             while (iterator.hasNext()) {
 
-                Entity entity = iterator.next();
+                LivingEntity entity = (LivingEntity)iterator.next();
 
-                if (entity.isDead() || !entity.isValid()) {
+
+                if (entity.isDead() || !entity.isValid() || !player.equals(entity.getLeashHolder())) {
                     iterator.remove();
                 }
                 else {
@@ -102,6 +123,27 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
         UUID playerId = _entityMap.get(entity);
 
         return PlayerUtils.getPlayer(playerId);
+    }
+
+    @Override
+    public boolean registerLeash(Player player, Entity leashed) {
+
+        if (!(leashed instanceof LivingEntity))
+            return false;
+
+        if (!player.equals(((LivingEntity) leashed).getLeashHolder()))
+            return false;
+
+        Set<Entity> set = _playerMap.get(player.getUniqueId());
+        if (set == null) {
+            set = new HashSet<>(10);
+            _playerMap.put(player.getUniqueId(), set);
+        }
+
+        set.add(leashed);
+        _entityMap.put(leashed, player.getUniqueId());
+
+        return true;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
