@@ -904,6 +904,16 @@ public final class EntityUtils {
         }
     }
 
+    /*
+    * Get the root entity in a passenger/vehicle entity relationship
+    */
+    public static Entity getRootVehicle(Entity entity) {
+        while (entity.getVehicle() != null) {
+            entity = entity.getVehicle();
+        }
+        return entity;
+    }
+
     /**
      * Get the entities location. If the method is invoked from the primary thread, the result
      * is returned in the provided output location, otherwise a new location object is returned.
