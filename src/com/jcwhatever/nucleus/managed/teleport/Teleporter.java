@@ -55,6 +55,8 @@ public final class Teleporter {
     /**
      * Teleport a player to the specified location after a specified delay.
      *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
      * @param plugin     The invoking plugin.
      * @param player     The player to teleport.
      * @param location   The location to teleport the player to.
@@ -68,9 +70,27 @@ public final class Teleporter {
     }
 
     /**
+     * Teleport a player to the specified location after a specified delay.
+     *
+     * @param plugin     The invoking plugin.
+     * @param player     The player to teleport.
+     * @param location   The location to teleport the player to.
+     * @param tickDelay  The delay in ticks.
+     * @param mode       The teleport mode.
+     *
+     * @return  The scheduled teleport future.
+     */
+    public static IScheduledTeleport teleport(Plugin plugin, Player player,
+                                Location location, int tickDelay, TeleportMode mode) {
+        return manager().teleport(plugin, player, location, tickDelay, mode);
+    }
+
+    /**
      * Teleports a player to the specified location.
      *
      * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
      *
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
@@ -88,6 +108,23 @@ public final class Teleporter {
      *
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    public static boolean teleport(Player player, Location location, TeleportMode mode) {
+        return manager().teleport(player, location, mode);
+    }
+
+    /**
+     * Teleports a player to the specified location.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param player    The player to teleport.
+     * @param location  The location to teleport the player to.
      * @param cause     The cause of the player teleport.
      *
      * @return  True if the player was teleported, otherwise false.
@@ -98,9 +135,28 @@ public final class Teleporter {
     }
 
     /**
+     * Teleports a player to the specified location.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * @param player    The player to teleport.
+     * @param location  The location to teleport the player to.
+     * @param cause     The cause of the player teleport.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    public static boolean teleport(Player player, Location location,
+                     PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+        return manager().teleport(player, location, cause, mode);
+    }
+
+    /**
      * Teleports a player to the specified entity.
      *
      * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
      *
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
@@ -118,6 +174,23 @@ public final class Teleporter {
      *
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
+     * @param mode    The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    public static boolean teleport(Player player, Entity entity, TeleportMode mode) {
+        return manager().teleport(player, entity, mode);
+    }
+
+    /**
+     * Teleports a player to the specified entity.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param player  The player to teleport.
+     * @param entity  The entity to teleport to.
      * @param cause   The cause of the player teleport.
      *
      * @return  True if the player was teleported, otherwise false.
@@ -125,6 +198,50 @@ public final class Teleporter {
     public static boolean teleport(Player player, Entity entity,
                                    PlayerTeleportEvent.TeleportCause cause) {
         return manager().teleport(player, entity, cause);
+    }
+
+    /**
+     * Teleports a player to the specified entity.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * @param player  The player to teleport.
+     * @param entity  The entity to teleport to.
+     * @param cause   The cause of the player teleport.
+     * @param mode    The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    public static boolean teleport(Player player, Entity entity,
+                     PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+        return manager().teleport(player, entity, cause, mode);
+    }
+
+    /**
+     * Teleports an entity to the specified location.
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param entity    The entity to teleport.
+     * @param location  The location to teleport to.
+     *
+     * @return  True if the entity was teleported, otherwise false.
+     */
+    public static boolean teleport(Entity entity, Location location) {
+        return manager().teleport(entity, location);
+    }
+
+    /**
+     * Teleports an entity to the specified location.
+     *
+     * @param entity    The entity to teleport.
+     * @param location  The location to teleport to.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the entity was teleported, otherwise false.
+     */
+    public static boolean teleport(Entity entity, Location location, TeleportMode mode) {
+        return manager().teleport(entity, location, mode);
     }
 
     private static ITeleportManager manager() {

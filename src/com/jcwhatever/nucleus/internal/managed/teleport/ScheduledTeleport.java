@@ -26,12 +26,14 @@ package com.jcwhatever.nucleus.internal.managed.teleport;
 
 import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
+import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * Implementation of {@link IScheduledTeleport}.
@@ -43,6 +45,8 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     private final Location _location;
     private final FutureAgent _agent;
     private final IFuture _future;
+    private final PlayerTeleportEvent.TeleportCause _cause;
+    private final TeleportMode _mode;
 
     private boolean _isFinished;
 
@@ -52,17 +56,23 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
      * @param manager   The owning manager instance.
      * @param player    The player.
      * @param location  The location to teleport the player.
+     * @param cause     The teleport cause.
      */
-    ScheduledTeleport(InternalTeleportManager manager, Player player, Location location) {
+    ScheduledTeleport(InternalTeleportManager manager, Player player,
+                      Location location, PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
         PreCon.notNull(manager);
         PreCon.notNull(player);
         PreCon.notNull(location);
+        PreCon.notNull(cause);
+        PreCon.notNull(mode);
 
         _manager = manager;
         _player = player;
         _location = location;
         _agent = new FutureAgent();
         _future = _agent.getFuture();
+        _cause = cause;
+        _mode = mode;
     }
 
     @Override
@@ -120,7 +130,12 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
 
     @Override
     public void run() {
-        if (_player.teleport(_location)) {
+
+        boolean isSuccess = InternalTeleportManager.isSingleTeleport(_player)
+                ? _player.teleport(_location)
+                : InternalTeleportManager.mountedTeleport(_player, _location, _cause, _mode);
+
+        if (isSuccess) {
             _agent.success();
         }
         else {

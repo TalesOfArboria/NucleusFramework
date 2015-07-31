@@ -29,7 +29,10 @@ import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
 import com.jcwhatever.nucleus.managed.teleport.ITeleportManager;
+import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
+import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -57,16 +60,25 @@ public final class InternalTeleportManager implements ITeleportManager {
 
     @Override
     public IScheduledTeleport teleport(Plugin plugin, Player player, Location location, int tickDelay) {
+        return teleport(plugin, player, location, tickDelay, TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public IScheduledTeleport teleport(Plugin plugin, Player player,
+                                       Location location, int tickDelay, TeleportMode mode) {
         PreCon.notNull(plugin);
         PreCon.notNull(player);
         PreCon.notNull(location);
         PreCon.positiveNumber(tickDelay);
+        PreCon.notNull(mode);
 
         ScheduledTeleport scheduled = _scheduled.get(player.getUniqueId());
         if (scheduled != null)
             scheduled.cancel();
 
-        scheduled = new ScheduledTeleport(this, player, location);
+        scheduled = new ScheduledTeleport(this, player, location,
+                PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
+
         _scheduled.put(player.getUniqueId(), scheduled);
 
         Scheduler.runTaskLater(plugin, tickDelay, scheduled);
@@ -76,43 +88,108 @@ public final class InternalTeleportManager implements ITeleportManager {
 
     @Override
     public boolean teleport(Player player, Location location) {
-        return teleport(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        return teleport(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN,
+                TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public boolean teleport(Player player, Location location, TeleportMode mode) {
+        return teleport(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN,
+                TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
     public boolean teleport(Player player, Location location,
                             PlayerTeleportEvent.TeleportCause cause) {
+        return teleport(player, location, cause, TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public boolean teleport(Player player, Location location,
+                            PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
         PreCon.notNull(player);
         PreCon.notNull(location);
         PreCon.notNull(cause);
+        PreCon.notNull(mode);
 
         ScheduledTeleport scheduled = _scheduled.remove(player.getUniqueId());
         if (scheduled != null)
             scheduled.cancel();
 
-        return player.teleport(location, cause);
+        return isSingleTeleport(player)
+                ? player.teleport(location, cause)
+                : mountedTeleport(player, location, cause, mode);
     }
 
     @Override
     public boolean teleport(Player player, Entity entity) {
-        return teleport(player, entity, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        return teleport(player, entity.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN,
+                TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public boolean teleport(Player player, Entity entity, TeleportMode mode) {
+        return teleport(player, entity.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN,
+                TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
     public boolean teleport(Player player, Entity entity,
                             PlayerTeleportEvent.TeleportCause cause) {
-        PreCon.notNull(player);
+        return teleport(player, entity.getLocation(), cause, TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public boolean teleport(Player player, Entity entity,
+                            PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+        return teleport(player, entity.getLocation(), cause, mode);
+    }
+
+    @Override
+    public boolean teleport(Entity entity, Location location) {
+        return teleport(entity, location, TeleportMode.MOUNTS_AND_LEASHED);
+    }
+
+    @Override
+    public boolean teleport(Entity entity, Location location, TeleportMode mode) {
         PreCon.notNull(entity);
-        PreCon.notNull(cause);
+        PreCon.notNull(location);
 
-        ScheduledTeleport scheduled = _scheduled.remove(player.getUniqueId());
-        if (scheduled != null)
-            scheduled.cancel();
+        if (entity instanceof Player) {
+            return teleport((Player)entity, location);
+        }
 
-        return player.teleport(entity, cause);
+        return isSingleTeleport(entity)
+                ? entity.teleport(location)
+                : mountedTeleport(entity, location, PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
     }
 
     void removeTask(UUID playerId) {
         _scheduled.remove(playerId);
+    }
+
+    static boolean mountedTeleport(Entity entity, Location destination,
+                                   PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+
+        Entity rootVehicle = EntityUtils.getRootVehicle(entity);
+
+        if (!mode.isLeashTeleport() && !mode.isMountsTeleport()) {
+            entity.eject();
+            Entity vehicle = entity.getVehicle();
+            if (vehicle != null)
+                vehicle.eject();
+
+            entity.teleport(destination, cause);
+        }
+
+        return new MountTeleporter(rootVehicle, mode)
+                .teleport(destination, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    static boolean isSingleTeleport(Entity entity) {
+
+        return !(entity instanceof Player &&
+                !LeashUtils.getLeashed((Player) entity).isEmpty())
+                && entity.getVehicle() == null && entity.getPassenger() == null;
     }
 }

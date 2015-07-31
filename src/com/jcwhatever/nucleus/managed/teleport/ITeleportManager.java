@@ -50,6 +50,8 @@ public interface ITeleportManager {
     /**
      * Teleport a player to the specified location after a specified delay.
      *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
      * @param plugin     The invoking plugin.
      * @param player     The player to teleport.
      * @param location   The location to teleport the player to.
@@ -60,9 +62,25 @@ public interface ITeleportManager {
     IScheduledTeleport teleport(Plugin plugin, Player player, Location location, int tickDelay);
 
     /**
+     * Teleport a player to the specified location after a specified delay.
+     *
+     * @param plugin     The invoking plugin.
+     * @param player     The player to teleport.
+     * @param location   The location to teleport the player to.
+     * @param tickDelay  The delay in ticks.
+     * @param mode       The teleport mode.
+     *
+     * @return  The scheduled teleport future.
+     */
+    IScheduledTeleport teleport(Plugin plugin, Player player,
+                                Location location, int tickDelay, TeleportMode mode);
+
+    /**
      * Teleports a player to the specified location.
      *
      * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
      *
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
@@ -78,6 +96,21 @@ public interface ITeleportManager {
      *
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    boolean teleport(Player player, Location location, TeleportMode mode);
+
+    /**
+     * Teleports a player to the specified location.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param player    The player to teleport.
+     * @param location  The location to teleport the player to.
      * @param cause     The cause of the player teleport.
      *
      * @return  True if the player was teleported, otherwise false.
@@ -85,9 +118,26 @@ public interface ITeleportManager {
     boolean teleport(Player player, Location location, PlayerTeleportEvent.TeleportCause cause);
 
     /**
+     * Teleports a player to the specified location.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * @param player    The player to teleport.
+     * @param location  The location to teleport the player to.
+     * @param cause     The cause of the player teleport.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    boolean teleport(Player player, Location location,
+                     PlayerTeleportEvent.TeleportCause cause, TeleportMode mode);
+
+    /**
      * Teleports a player to the specified entity.
      *
      * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
      *
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
@@ -103,9 +153,62 @@ public interface ITeleportManager {
      *
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
+     * @param mode    The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    boolean teleport(Player player, Entity entity, TeleportMode mode);
+
+    /**
+     * Teleports a player to the specified entity.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param player  The player to teleport.
+     * @param entity  The entity to teleport to.
      * @param cause   The cause of the player teleport.
      *
      * @return  True if the player was teleported, otherwise false.
      */
     boolean teleport(Player player, Entity entity, PlayerTeleportEvent.TeleportCause cause);
+
+    /**
+     * Teleports a player to the specified entity.
+     *
+     * <p>Cancels delayed teleport for player, if any.</p>
+     *
+     * @param player  The player to teleport.
+     * @param entity  The entity to teleport to.
+     * @param cause   The cause of the player teleport.
+     * @param mode    The teleport mode.
+     *
+     * @return  True if the player was teleported, otherwise false.
+     */
+    boolean teleport(Player player, Entity entity,
+                     PlayerTeleportEvent.TeleportCause cause, TeleportMode mode);
+
+    /**
+     * Teleports an entity to the specified location.
+     *
+     * <p>Teleport mode is {@link TeleportMode#MOUNTS_AND_LEASHED}.</p>
+     *
+     * @param entity    The entity to teleport.
+     * @param location  The location to teleport to.
+     *
+     * @return  True if the entity was teleported, otherwise false.
+     */
+    boolean teleport(Entity entity, Location location);
+
+    /**
+     * Teleports an entity to the specified location.
+     *
+     * @param entity    The entity to teleport.
+     * @param location  The location to teleport to.
+     * @param mode      The teleport mode.
+     *
+     * @return  True if the entity was teleported, otherwise false.
+     */
+    boolean teleport(Entity entity, Location location, TeleportMode mode);
 }
