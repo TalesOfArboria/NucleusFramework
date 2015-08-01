@@ -36,7 +36,6 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -52,6 +51,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of a region.
@@ -91,6 +90,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
     private boolean _isEventListener;
     private boolean _isDisposed;
     private UUID _ownerId;
+    private int _priority = 0;
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
     /**
@@ -143,7 +143,28 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
 
     @Override
     public int getPriority() {
-        return 0;
+        return _priority;
+    }
+
+    /**
+     * Set the regions priority.
+     *
+     * @param priority  The priority value. Higher numbers have higher priority.
+     */
+    protected void setPriority(int priority) {
+
+        if (_priority == priority)
+            return;
+
+        _priority = priority;
+
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("priority", priority);
+            dataNode.save();
+        }
+
+        regionManager().register(this);
     }
 
     @Override
@@ -474,6 +495,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
+        _priority = dataNode.getInteger("priority");
 
         _enterPriority = dataNode.getEnum(
                 "region-enter-priority", _enterPriority, RegionEventPriority.class);

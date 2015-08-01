@@ -330,7 +330,7 @@ class RegionTypeManager<R extends IRegion> {
                     // add to all regions map
                     Set<R> regions = _allRegionsMap.get(key);
                     if (regions == null) {
-                        regions = new RegionSet<>(5, false);
+                        regions = new RegionSet<>(5, true);
                         _allRegionsMap.put(key, regions);
                     }
                     regions.add(region);
