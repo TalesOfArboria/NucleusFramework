@@ -64,10 +64,10 @@ abstract class AbstractVectorParticle extends AbstractParticle implements IVecto
         PreCon.notNull(player);
         PreCon.notNull(location);
         PreCon.notNull(vector);
-        PreCon.isValid(player.getWorld().equals(location.getWorld()), "Location must be in same world as player.");
 
-        return showTo(ArrayUtils.asList(player),
-                location.getX(), location.getY(), location.getZ(), vector);
+        return player.getWorld().equals(location.getWorld()) &&
+                showTo(ArrayUtils.asList(player),
+                    location.getX(), location.getY(), location.getZ(), vector);
     }
 
     @Override
@@ -96,7 +96,16 @@ abstract class AbstractVectorParticle extends AbstractParticle implements IVecto
         PreCon.notNull(location);
         PreCon.notNull(vector);
 
-        return showTo(players, location.getX(), location.getY(), location.getZ(), vector);
+        List<Player> list = new ArrayList<>(players.size());
+
+        for (Player player : players) {
+            if (!player.getWorld().equals(location.getWorld()))
+                continue;
+
+            list.add(player);
+        }
+
+        return showTo(list, location.getX(), location.getY(), location.getZ(), vector);
     }
 
     @Override

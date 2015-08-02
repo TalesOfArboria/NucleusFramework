@@ -87,11 +87,9 @@ abstract class AbstractParticle implements IParticleEffect {
     public boolean showTo(Player player, Location location, int count) {
         PreCon.notNull(player);
         PreCon.notNull(location);
-        PreCon.isValid(player.getWorld().equals(location.getWorld()),
-                "Location must be in same world as player.");
 
-        return showTo(ArrayUtils.asList(player),
-                location.getX(), location.getY(), location.getZ(), count);
+        return player.getWorld().equals(location.getWorld()) &&
+                showTo(ArrayUtils.asList(player), location.getX(), location.getY(), location.getZ(), count);
     }
 
     @Override
@@ -119,7 +117,16 @@ abstract class AbstractParticle implements IParticleEffect {
         PreCon.notNull(players);
         PreCon.notNull(location);
 
-        return showTo(players,
+        List<Player> list = new ArrayList<>(players.size());
+
+        for (Player player : players) {
+            if (!player.getWorld().equals(location.getWorld()))
+                continue;
+
+            list.add(player);
+        }
+
+        return showTo(list,
                 location.getX(), location.getY(), location.getZ(), count);
     }
 
