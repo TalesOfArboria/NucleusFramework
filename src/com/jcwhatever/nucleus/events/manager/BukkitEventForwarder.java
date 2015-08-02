@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.events.manager;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -237,7 +236,7 @@ public abstract class BukkitEventForwarder implements IPluginOwned, IDisposable 
             return;
 
         _registered.add(event);
-        Bukkit.getPluginManager().registerEvent(event, _dummyListener, _priority, _executor, _plugin);
+        Bukkit.getPluginManager().registerEvent(event, _dummyListener, _priority, _executor, _plugin, false);
     }
 
     @Override
