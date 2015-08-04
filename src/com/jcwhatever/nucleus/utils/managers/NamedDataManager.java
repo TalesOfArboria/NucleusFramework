@@ -124,7 +124,6 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
                 continue;
 
             _map.put(getName(item), item);
-            onAdd(item);
         }
 
         onLoad();
