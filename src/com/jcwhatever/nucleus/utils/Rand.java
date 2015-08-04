@@ -229,7 +229,7 @@ public final class Rand {
      * @param chance  The chance of getting a result of true.
      */
     public static boolean chance(int chance) {
-        return chance >= 100 || chance < Rand.getInt(100);
+        return chance(chance / 100.0D);
     }
 
     /**
@@ -240,7 +240,7 @@ public final class Rand {
      * @param chance  The chance of getting a result of true.
      */
     public static boolean chance(double chance) {
-        return chance >= 1.0D || chance < Rand.getDouble(1);
+        return chance > Rand.getDouble(1);
     }
 
     /**
