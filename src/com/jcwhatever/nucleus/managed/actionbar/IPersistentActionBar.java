@@ -108,4 +108,28 @@ public interface IPersistentActionBar extends IActionBar {
      * Hide the action bar from all players.
      */
     void hideAll();
+
+    /**
+     * Determine if a player is current viewing the action bar.
+     *
+     * @param player  The player.
+     */
+    boolean isViewing(Player player);
+
+    /**
+     * Get all players the action bar is being sent to.
+     */
+    Collection<Player> getViewers();
+
+    /**
+     * Get all players the action bar is being sent to and add
+     * them to the output collection.
+     *
+     * @param output  The output collection.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<Player>> T getViewers(T output);
+
+
 }

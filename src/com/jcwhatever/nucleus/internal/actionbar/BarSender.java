@@ -30,20 +30,20 @@ import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
 import com.jcwhatever.nucleus.collections.SetMap;
 import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
-import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
-import com.jcwhatever.nucleus.utils.ArrayUtils;
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
+import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,13 +80,29 @@ class BarSender implements Runnable {
     }
 
     /**
-     * Determine if the player is currently viewing a persistent action bar.
+     * Determine if the player is currently viewing any persistent action bar.
      *
      * @param player  The player to check.
      */
     static boolean isViewing(Player player) {
         synchronized (_sync) {
             return _playerMap.containsKey(player.getUniqueId());
+        }
+    }
+
+    /**
+     * Determine if the player is currently viewing a persistent action bar.
+     *
+     * @param player     The player to check.
+     * @param actionBar  The action bar to check.
+     */
+    static boolean isViewing(Player player, PersistentActionBar actionBar) {
+        synchronized (_sync) {
+
+            BarDistributor distributor = _playerMap.get(player.getUniqueId());
+            return distributor != null &&
+                    distributor.contains(
+                            new PlayerBar(player, actionBar, 0, null, ActionBarPriority.DEFAULT));
         }
     }
 
@@ -198,6 +214,26 @@ class BarSender implements Runnable {
         for (PlayerBar bar : playerBars) {
             removeBar(bar);
         }
+    }
+
+    static <T extends Collection<Player>> T getViewers(PersistentActionBar actionBar, T output) {
+        if (_nmsHandler == null)
+            return output;
+
+        Set<PlayerBar> playerBars;
+
+        synchronized (_sync) {
+            playerBars = _barMap.getAll(actionBar);
+        }
+
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity(playerBars.size());
+
+        for (PlayerBar bar : playerBars) {
+            output.add(bar.player());
+        }
+
+        return output;
     }
 
     /**

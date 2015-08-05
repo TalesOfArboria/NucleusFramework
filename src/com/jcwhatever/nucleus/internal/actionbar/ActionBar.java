@@ -86,7 +86,7 @@ class ActionBar implements IActionBar {
 
         // make sure the player isn't looking at 1 or more
         // persistent action bars.
-        if (PersistentActionBar.isViewing(player)) {
+        if (PersistentActionBar.isViewingAny(player)) {
 
             // need to show as a persistent action bar
             // or it wont get very much screen time, if any.

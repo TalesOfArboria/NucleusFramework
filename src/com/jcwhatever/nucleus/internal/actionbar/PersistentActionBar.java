@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -46,7 +47,7 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
      *
      * @param player  The player to check.
      */
-    public static boolean isViewing(Player player) {
+    public static boolean isViewingAny(Player player) {
         return BarSender.isViewing(player);
     }
 
@@ -173,11 +174,25 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
         }
     }
 
-    /**
-     * Hide the {@link PersistentActionBar} from all players.
-     */
     @Override
     public void hideAll() {
         BarSender.removeBar(this);
+    }
+
+    @Override
+    public boolean isViewing(Player player) {
+        return BarSender.isViewing(player, this);
+    }
+
+    @Override
+    public Collection<Player> getViewers() {
+        return getViewers(new ArrayList<Player>(0));
+    }
+
+    @Override
+    public <T extends Collection<Player>> T getViewers(T output) {
+        PreCon.notNull(output);
+
+        return BarSender.getViewers(this, output);
     }
 }
