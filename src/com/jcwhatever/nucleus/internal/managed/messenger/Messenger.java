@@ -35,7 +35,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -43,12 +42,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
 
 /**
  * Provide chat and console message utilities.
@@ -165,7 +164,7 @@ class Messenger implements IMessenger {
         PreCon.notNull(messageObject);
         PreCon.notNull(params);
 
-        boolean cutLines = lineWrapping == LineWrapping.ENABLED;
+        boolean cutLines = lineWrapping == LineWrapping.ENABLED && sender instanceof Player;
         String message = TextUtils.format(messageObject, params);
 
         // if lines don't need to be cut, simply send the raw message
