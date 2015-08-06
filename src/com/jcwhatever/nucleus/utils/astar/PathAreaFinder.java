@@ -25,18 +25,17 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
-import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
 import com.jcwhatever.nucleus.utils.materials.Materials;
-
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 /**
@@ -73,6 +72,15 @@ public class PathAreaFinder {
         // Add valid adjacent nodes to open list
         searchAdjacent(context, start);
 
+        Iterator<Location> iterator = context.validNodes.iterator();
+        while (iterator.hasNext()) {
+            Location location = iterator.next();
+            if (context.search(location).getStatus() != AStarResult.AStarResultStatus.RESOLVED) {
+                iterator.remove();
+                context.invalidNodes.add(location);
+            }
+        }
+
         return new PathAreaResults(context);
     }
 
@@ -81,88 +89,121 @@ public class PathAreaFinder {
      */
     private void searchAdjacent(FinderContext context, Location node) {
 
+        LinkedList<StackItem> stack = new LinkedList<>();
+        stack.push(new StackItem(node));
+        StackItem curr = stack.peek();
+
         byte dropHeight = (byte)(-context.astar.getMaxDropHeight());
 
-        // column validations, work from top down, skip columns that are false
-        boolean[][] columns = new boolean[][] {
-                { true, true,  true },
-                { true, false, true },
-                { true, true,  true }
-        };
+        while (!stack.isEmpty()) {
 
-        for (byte y = 1; y >= dropHeight; y--) {
-            for (byte x = -1; x <= 1; x++) {
-                for (byte z = -1; z <= 1; z++) {
+            start:
+            {
+                for (; curr.y >= dropHeight; curr.y--) {
+                    for (; curr.x <= 1; curr.x++) {
+                        for (; curr.z <= 1; curr.z++) {
 
-                    if (!columns[x + 1][z + 1])
-                        continue;
+                            if (!curr.columns[curr.x + 1][curr.z + 1])
+                                continue;
 
-                    // get instance of candidate node
-                    Location candidate = node.clone().add(x, y, z);
+                            // get instance of candidate node
+                            Location candidate = curr.node.clone().add(curr.x, curr.y, curr.z);
 
-                    // check if candidate is already checked
-                    if (context.invalidNodes.contains(candidate) || context.validNodes.contains(candidate)) {
-                        continue;
-                    }
+                            // check if candidate is already checked
+                            if (context.invalidNodes.contains(candidate)) {
+                                continue;
+                            }
 
-                    int xRange = Math.abs(context.start.getBlockX() - node.getBlockX());
-                    int yRange = Math.abs(context.start.getBlockY() - node.getBlockY());
-                    int zRange = Math.abs(context.start.getBlockZ() - node.getBlockZ());
+                            if (context.validNodes.contains(candidate)) {
+                                curr.columns[curr.x + 1][curr.z + 1] = false;
+                                continue;
+                            }
 
-                    // check x & z range
-                    if ((context.astar.getRange() - xRange < 0) ||
-                            (context.astar.getRange() - zRange < 0)) {
+                            int xRange = Math.abs(context.start.getBlockX() - candidate.getBlockX());
+                            int yRange = Math.abs(context.start.getBlockY() - candidate.getBlockY());
+                            int zRange = Math.abs(context.start.getBlockZ() - candidate.getBlockZ());
 
-                        columns[x + 1][z + 1] = false;
-                        continue;
-                    }
+                            // check x & z range
+                            if ((context.astar.getRange() - xRange < 0) ||
+                                    (context.astar.getRange() - zRange < 0)) {
 
-                    // check y range
-                    if ((context.astar.getRange() - yRange < 0)) {
-                        continue;
-                    }
+                                curr.columns[curr.x + 1][curr.z + 1] = false;
+                                continue;
+                            }
 
-                    // Check for diagonal obstruction
-                    if (x != 0 && z != 0 && y >= 0) {
-                        Location diagX = node.clone().add(x, y, (short)0),
-                                diagZ = node.clone().add((short)0, y, z);
+                            // check y range
+                            if ((context.astar.getRange() - yRange < 0)) {
+                                continue;
+                            }
 
-                        if(!isValid(context, diagX) && !isValid(context, diagZ)) {
-                            columns[x + 1][z + 1] = false;
-                            continue;
+                            // Check for diagonal obstruction
+                            if (curr.x != 0 && curr.z != 0 && curr.y >= 0) {
+                                Location diagX = curr.node.clone().add(curr.x, curr.y, (short) 0),
+                                        diagZ = curr.node.clone().add((short) 0, curr.y, curr.z);
+
+                                if (!isValid(diagX) && !isValid(diagZ)) {
+                                    curr.columns[curr.x + 1][curr.z + 1] = false;
+                                    continue;
+                                }
+                            }
+
+                            // check candidate to see if its valid
+                            if (!isValid(candidate)) {
+
+                                // invalidate column if material is NOT transparent
+                                if (!Materials.isTransparent(candidate.getBlock().getType())) {
+                                    curr.columns[curr.x + 1][curr.z + 1] = false;
+                                }
+
+                                context.invalidNodes.add(candidate);
+                                continue;
+                            }
+
+                            context.validNodes.add(candidate);
+
+                            //searchAdjacent(context, candidate);
+                            curr.z++;
+                            stack.push(new StackItem(candidate));
+                            curr = stack.peek();
+
+
+                            break start;
                         }
+                        curr.z = -1;
                     }
+                    curr.x = -1;
+                }
 
-                    // check candidate to see if its valid
-                    if (!isValid(context, candidate)) {
-
-                        // invalidate column if material is NOT transparent
-                        if (!Materials.isTransparent(candidate.getBlock().getType())) {
-                            columns[x + 1][z + 1] = false;
-                        }
-
-                        continue;
-                    }
-
-                    context.validNodes.add(candidate);
-
-                    searchAdjacent(context, candidate);
-
+                stack.pop();
+                if (stack.isEmpty()) {
+                    return;
+                }
+                else {
+                    curr = stack.peek();
                 }
             }
+
+            // "start" break location
         }
     }
 
     /*
      *  Determine if a node is a valid location.
      */
-    private boolean isValid(FinderContext context, Location loc) {
+    private boolean isValid(Location loc) {
 
         Block block = loc.getBlock();
-        Material material = block.getType();
 
         // check if block is a surface
-        return Materials.isSurface(material) && context.search(loc).getStatus() == AStarResultStatus.RESOLVED;
+        if (!Materials.isSurface(block.getType()))
+            return false;
+
+        Block above = block.getRelative(0, 1, 0);
+        if (!Materials.isTransparent(above.getType()))
+            return false;
+
+        Block above1 = block.getRelative(0, 2, 0);
+        return Materials.isTransparent(above1.getType());
     }
 
     /**
@@ -219,4 +260,20 @@ public class PathAreaFinder {
         }
     }
 
+    private static class StackItem {
+        final Location node;
+        byte x = -1;
+        byte y = 1;
+        byte z = -1;
+        // column validations, work from top down, skip columns that are false
+        boolean[][] columns = new boolean[][] {
+                { true, true,  true },
+                { true, false, true },
+                { true, true,  true }
+        };
+
+        StackItem(Location node) {
+            this.node = node;
+        }
+    }
 }
