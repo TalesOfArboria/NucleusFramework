@@ -28,9 +28,9 @@ import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.annotation.Nullable;
 
 /**
  * Represents Text formatting codes and provides related utilities.
@@ -583,6 +582,7 @@ public class TextFormat {
             _characterMap.put(TextFormat.STRIKETHROUGH.getFormatChar(), TextFormat.STRIKETHROUGH);
             _characterMap.put(TextFormat.UNDERLINE.getFormatChar(), TextFormat.UNDERLINE);
             _characterMap.put(TextFormat.RESET.getFormatChar(), TextFormat.RESET);
+            _characterMap.put(TextFormat.MAGIC.getFormatChar(), TextFormat.MAGIC);
         }
 
         return _characterMap;
