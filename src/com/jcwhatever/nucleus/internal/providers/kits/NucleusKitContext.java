@@ -82,6 +82,8 @@ public final class NucleusKitContext extends NamedInsensitiveDataManager<IKit>
         PreCon.notNullOrEmpty(name);
         PreCon.validNodeName(name);
 
+        name = getName(name);
+
         if (contains(name))
             return null;
 
@@ -106,7 +108,7 @@ public final class NucleusKitContext extends NamedInsensitiveDataManager<IKit>
     @Nullable
     @Override
     protected IKit load(String name, IDataNode kitNode) {
-        IKit kit = new NucleusKit(this, name);
+        IKit kit = new NucleusKit(this, getName(name));
         IModifiableKit modKit = getModifiableKit(kit);
         assert modKit != null;
 
