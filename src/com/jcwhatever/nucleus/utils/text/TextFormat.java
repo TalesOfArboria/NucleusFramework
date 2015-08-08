@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import org.bukkit.Bukkit;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -44,10 +44,9 @@ import java.util.TreeMap;
  */
 public class TextFormat {
 
-    private static final StringBuilder _largeBuffer = new StringBuilder(30);
-    private static final StringBuilder _smallBuffer = new StringBuilder(6);
     private static Map<String, TextFormat> _nameMap;
     private static Map<Character, TextFormat> _characterMap;
+    private static String _formatChars = "";
 
     public static final char CHAR = '\u00A7';
 
@@ -57,6 +56,23 @@ public class TextFormat {
     public static final TextFormat STRIKETHROUGH = new TextFormat('m',"STRIKETHROUGH", "strikethrough");
     public static final TextFormat UNDERLINE = new TextFormat('n', "UNDERLINE", "underlined");
     public static final TextFormat RESET = new TextFormat('r', "RESET", "reset");
+
+
+    private static final ThreadSingletons<StringBuilder> SMALL_BUFFERS = new ThreadSingletons<>(
+            new ThreadSingletons.ISingletonFactory<StringBuilder>() {
+                @Override
+                public StringBuilder create(Thread thread) {
+                    return new StringBuilder(6);
+                }
+            });
+
+    private static final ThreadSingletons<StringBuilder> LARGE_BUFFERS = new ThreadSingletons<>(
+            new ThreadSingletons.ISingletonFactory<StringBuilder>() {
+                @Override
+                public StringBuilder create(Thread thread) {
+                    return new StringBuilder(0);
+                }
+            });
 
     private final char _formatChar;
     private final String _formatCode;
@@ -176,19 +192,10 @@ public class TextFormat {
     public static String remove(CharSequence charSequence) {
         PreCon.notNull(charSequence);
 
-        StringBuilder sb;
-
-        if (Bukkit.getServer() != null && Bukkit.isPrimaryThread()) {
-            sb = _largeBuffer;
-            sb.setLength(0);
-        }
-        else {
-            sb = new StringBuilder(charSequence.length());
-        }
-
         int len = charSequence.length();
+        StringBuilder sb = getLargeBuffer(len);
 
-        Map<Character, TextFormat> characterMap = getCharacterMap();
+        loadCharacterMap();
 
         for (int i = 0, last = len - 1; i < len; i++) {
 
@@ -198,7 +205,7 @@ public class TextFormat {
 
                 char next = charSequence.charAt(i + 1);
 
-                if (characterMap.containsKey(next)) {
+                if (_formatChars.indexOf(next) != -1) {
                     i += 1;
                     continue;
                 }
@@ -239,25 +246,12 @@ public class TextFormat {
     public static TextFormatMap separate(CharSequence charSequence) {
         PreCon.notNull(charSequence);
 
-        StringBuilder sb;
-        StringBuilder formatBuffer;
         int len = charSequence.length();
-
-        if (Bukkit.getServer() != null && Bukkit.isPrimaryThread()) {
-            sb = _largeBuffer;
-            sb.setLength(0);
-            sb.ensureCapacity(len);
-
-            formatBuffer = _smallBuffer;
-            formatBuffer.setLength(0);
-        }
-        else {
-            sb = new StringBuilder(len);
-            formatBuffer = new StringBuilder(6);
-        }
+        StringBuilder sb = getLargeBuffer(len);
+        StringBuilder formatBuffer = getSmallBuffer();
 
         TextFormatMap formatMap = new TextFormatMap();
-        Map<Character, TextFormat> characterMap = getCharacterMap();
+        loadCharacterMap();
 
         int virtualIndex = 0;
 
@@ -269,7 +263,7 @@ public class TextFormat {
                 char next;
 
                 if ((ch = charSequence.charAt(i)) == CHAR
-                        && characterMap.containsKey(next = charSequence.charAt(i + 1))) {
+                        && _formatChars.indexOf(next = charSequence.charAt(i + 1)) != -1) {
 
                     formatBuffer.append(CHAR);
                     formatBuffer.append(next);
@@ -305,7 +299,8 @@ public class TextFormat {
      * @param ch  The character to check.
      */
     public static boolean isFormatChar(char ch) {
-        return getCharacterMap().containsKey(ch);
+        loadCharacterMap();
+        return _formatChars.indexOf(ch) != -1;
     }
 
     /**
@@ -319,7 +314,7 @@ public class TextFormat {
      */
     @Nullable
     public static TextFormat fromFormatChar(char ch) {
-        return getCharacterMap().get(ch);
+        return loadCharacterMap().get(ch);
     }
 
     /**
@@ -387,14 +382,10 @@ public class TextFormat {
         if (len == 0)
             return new TextFormats("", null);
 
-        StringBuilder sb = Bukkit.getServer() != null && Bukkit.isPrimaryThread()
-                ? _smallBuffer
-                : new StringBuilder(6);
+        StringBuilder sb = getSmallBuffer();
 
         List<TextFormat> formats = new ArrayList<>(2);
-        sb.setLength(0);
-
-        Map<Character, TextFormat> characterMap = getCharacterMap();
+        Map<Character, TextFormat> characterMap = loadCharacterMap();
 
         for (int i = len - 1; i > -1; i--) {
 
@@ -419,12 +410,119 @@ public class TextFormat {
     }
 
     /**
+     * Translate all format characters in a character sequence that are followed
+     * by valid format characters into '&' character.
+     *
+     * @param charSequence  The character sequence.
+     *
+     * @return  The translated text.
+     */
+    public static String translateFormatChars(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        if (charSequence.length() == 0)
+            return "";
+
+        int len = charSequence.length();
+        StringBuilder sb = getLargeBuffer(charSequence.length());
+        loadCharacterMap();
+
+        for (int i=0, last = len - 1; i < len; i++) {
+
+            char ch = charSequence.charAt(i);
+
+            if (i < last && ch == CHAR &&
+                    _formatChars.indexOf(charSequence.charAt(i + 1)) != -1) {
+                sb.append('&');
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Translate all format characters in a character sequence that are followed
+     * by valid format characters into '&' character.
+     *
+     * @param charSequence  The character sequence.
+     *
+     * @return  The translated text.
+     */
+    public static String untranslateFormatChars(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        if (charSequence.length() == 0)
+            return "";
+
+        int len = charSequence.length();
+        StringBuilder sb = getLargeBuffer(len);
+        loadCharacterMap();
+
+        for (int i=0, last = len - 1; i < len; i++) {
+
+            char ch = charSequence.charAt(i);
+
+            if (i < last && ch == '&' &&
+                    _formatChars.indexOf(charSequence.charAt(i + 1)) != -1) {
+                sb.append(CHAR);
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Translate all format codes into format tags (i.e. '{RED}').
+     *
+     * @param charSequence  The character sequence.
+     *
+     * @return  The translated text.
+     */
+    public static String translateCodes(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        if (charSequence.length() == 0)
+            return "";
+
+        int len = charSequence.length();
+        StringBuilder sb = getLargeBuffer(len + 100);
+
+        for (int i=0, last = len - 1; i < len; i++) {
+
+            char ch = charSequence.charAt(i);
+
+            if (ch == CHAR && i < last) {
+
+                TextFormat format = loadCharacterMap().get(charSequence.charAt(i + 1));
+                if (format != null) {
+
+                    sb.append('{');
+                    sb.append(format._tagName);
+                    sb.append('}');
+                    i++;
+                    continue;
+                }
+            }
+
+            sb.append(ch);
+        }
+
+        return sb.toString();
+    }
+
+    /**
      * Get an iterator for the {@link TextFormat}'s with a format code.
      */
     public static Iterator<TextFormat> formatIterator() {
         return new IteratorWrapper<TextFormat>() {
 
-            Iterator<TextFormat> iterator = getCharacterMap().values().iterator();
+            Iterator<TextFormat> iterator = loadCharacterMap().values().iterator();
 
             @Override
             public void remove() {
@@ -436,6 +534,27 @@ public class TextFormat {
                 return iterator;
             }
         };
+    }
+
+    // get small string builder buffer
+    private static StringBuilder getSmallBuffer() {
+        StringBuilder sb = SMALL_BUFFERS.get();
+        sb.setLength(0);
+        return sb;
+    }
+
+    // get large string builder buffer
+    private static StringBuilder getLargeBuffer(int length) {
+
+        if (length > 1024)
+            return new StringBuilder(length);
+
+        StringBuilder sb = LARGE_BUFFERS.get();
+
+        sb.setLength(0);
+        sb.ensureCapacity(length);
+
+        return sb;
     }
 
     /**
@@ -517,8 +636,10 @@ public class TextFormat {
 
             for (int i=0; i < formatChars.length; i++) {
                 formats[i] = fromFormatChar(formatChars[i]);
-                if (formats[i] == null)
-                    throw new IllegalArgumentException("'" + formatChars[i] + "' is not a recognized format character.");
+                if (formats[i] == null) {
+                    throw new IllegalArgumentException("'" + formatChars[i] +
+                            "' is not a recognized format character.");
+                }
 
                 buffer.append(CHAR);
                 buffer.append(formatChars[i]);
@@ -556,35 +677,48 @@ public class TextFormat {
         }
     }
 
-    private static Map<Character, TextFormat> getCharacterMap() {
+    private static Map<Character, TextFormat> loadCharacterMap() {
 
         if (_characterMap == null) {
             _characterMap = new HashMap<>(25);
-            _characterMap.put(TextColor.AQUA.getFormatChar(), TextColor.AQUA);
-            _characterMap.put(TextColor.BLACK.getFormatChar(), TextColor.BLACK);
-            _characterMap.put(TextColor.BLUE.getFormatChar(), TextColor.BLUE);
-            _characterMap.put(TextColor.DARK_AQUA.getFormatChar(), TextColor.DARK_AQUA);
-            _characterMap.put(TextColor.DARK_BLUE.getFormatChar(), TextColor.DARK_BLUE);
-            _characterMap.put(TextColor.DARK_GRAY.getFormatChar(), TextColor.DARK_GRAY);
-            _characterMap.put(TextColor.DARK_GREEN.getFormatChar(), TextColor.DARK_GREEN);
-            _characterMap.put(TextColor.DARK_PURPLE.getFormatChar(), TextColor.DARK_PURPLE);
-            _characterMap.put(TextColor.DARK_RED.getFormatChar(), TextColor.DARK_RED);
-            _characterMap.put(TextColor.GOLD.getFormatChar(), TextColor.GOLD);
-            _characterMap.put(TextColor.GRAY.getFormatChar(), TextColor.GRAY);
-            _characterMap.put(TextColor.GREEN.getFormatChar(), TextColor.GREEN);
-            _characterMap.put(TextColor.LIGHT_PURPLE.getFormatChar(), TextColor.LIGHT_PURPLE);
-            _characterMap.put(TextColor.RED.getFormatChar(), TextColor.RED);
-            _characterMap.put(TextColor.WHITE.getFormatChar(), TextColor.WHITE);
-            _characterMap.put(TextColor.YELLOW.getFormatChar(), TextColor.YELLOW);
 
-            _characterMap.put(TextFormat.BOLD.getFormatChar(), TextFormat.BOLD);
-            _characterMap.put(TextFormat.ITALIC.getFormatChar(), TextFormat.ITALIC);
-            _characterMap.put(TextFormat.STRIKETHROUGH.getFormatChar(), TextFormat.STRIKETHROUGH);
-            _characterMap.put(TextFormat.UNDERLINE.getFormatChar(), TextFormat.UNDERLINE);
-            _characterMap.put(TextFormat.RESET.getFormatChar(), TextFormat.RESET);
-            _characterMap.put(TextFormat.MAGIC.getFormatChar(), TextFormat.MAGIC);
+            register(TextColor.AQUA);
+            register(TextColor.BLACK);
+            register(TextColor.BLUE);
+            register(TextColor.DARK_AQUA);
+            register(TextColor.DARK_BLUE);
+            register(TextColor.DARK_GRAY);
+            register(TextColor.DARK_GREEN);
+            register(TextColor.DARK_PURPLE);
+            register(TextColor.DARK_RED);
+            register(TextColor.GOLD);
+            register(TextColor.GRAY);
+            register(TextColor.GREEN);
+            register(TextColor.LIGHT_PURPLE);
+            register(TextColor.RED);
+            register(TextColor.WHITE);
+            register(TextColor.YELLOW);
+
+            register(TextFormat.BOLD);
+            register(TextFormat.ITALIC);
+            register(TextFormat.STRIKETHROUGH);
+            register(TextFormat.UNDERLINE);
+            register(TextFormat.RESET);
+            register(TextFormat.MAGIC);
         }
 
         return _characterMap;
+    }
+
+    private static void register(TextFormat format) {
+
+        if (!format.hasFormatCode())
+            return;
+
+        if (_characterMap == null)
+            _characterMap = new HashMap<>(30);
+
+        _characterMap.put(format.getFormatChar(), format);
+        _formatChars += format.getFormatChar();
     }
 }
