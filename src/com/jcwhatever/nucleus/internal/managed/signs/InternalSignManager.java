@@ -14,10 +14,10 @@ import com.jcwhatever.nucleus.managed.signs.SignHandler.SignHandlerRegistration;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.SignUtils;
+import com.jcwhatever.nucleus.utils.text.TextColor;
+import com.jcwhatever.nucleus.utils.text.TextFormat;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -27,6 +27,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +36,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 /**
  * Manages handled signs.
@@ -241,7 +241,7 @@ public final class InternalSignManager implements ISignManager {
             return false;
         }
 
-        final String line0 = signNode.getString("line0");
+        final String line0 = handler.getHeaderPrefix() + handler.getDisplayName();
         final String line1 = signNode.getString("line1");
         final String line2 = signNode.getString("line2");
         final String line3 = signNode.getString("line3");
@@ -357,10 +357,10 @@ public final class InternalSignManager implements ISignManager {
         if (handler == null)
             return false;
 
-        event.setLine(0, ChatColor.translateAlternateColorCodes('&', event.getLine(0)));
-        event.setLine(1, ChatColor.translateAlternateColorCodes('&', event.getLine(1)));
-        event.setLine(2, ChatColor.translateAlternateColorCodes('&', event.getLine(2)));
-        event.setLine(3, ChatColor.translateAlternateColorCodes('&', event.getLine(3)));
+        event.setLine(0, TextFormat.translateFormatChars(event.getLine(0)));
+        event.setLine(1, TextFormat.translateFormatChars(event.getLine(1)));
+        event.setLine(2, TextFormat.translateFormatChars(event.getLine(2)));
+        event.setLine(3, TextFormat.translateFormatChars(event.getLine(3)));
 
         IDataNode signNode = getSignNode(handler, sign.getLocation());
 
@@ -374,7 +374,7 @@ public final class InternalSignManager implements ISignManager {
 
         boolean isAllowed = result == SignChangeResult.VALID;
 
-        String prefix = isAllowed ? handler.getHeaderPrefix() : "#" + ChatColor.RED;
+        String prefix = isAllowed ? handler.getHeaderPrefix() : "#" + TextColor.RED;
         String header = prefix + handler.getDisplayName();
 
         event.setLine(0, header);
@@ -382,7 +382,7 @@ public final class InternalSignManager implements ISignManager {
         if (isAllowed) {
             Location loc = sign.getLocation();
             signNode.set("location", loc);
-            signNode.set("line0", header);
+            signNode.set("line0", header.trim());
             signNode.set("line1", event.getLine(1));
             signNode.set("line2", event.getLine(2));
             signNode.set("line3", event.getLine(3));
@@ -500,7 +500,7 @@ public final class InternalSignManager implements ISignManager {
     @Nullable
     private String getSignHandlerName(String line0) {
 
-        String header = ChatColor.stripColor(line0);
+        String header = TextFormat.remove(line0);
 
         if (header.isEmpty())
             return null;
