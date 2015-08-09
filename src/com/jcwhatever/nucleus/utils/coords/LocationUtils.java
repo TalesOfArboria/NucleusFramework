@@ -611,7 +611,7 @@ public final class LocationUtils {
             return output;
 
         output.add(0, -1, 0);
-        Block current = source.getBlock();
+        Block current = output.getBlock();
 
         while (!Materials.isSurface(current.getType())) {
             output.add(0, -1, 0);
