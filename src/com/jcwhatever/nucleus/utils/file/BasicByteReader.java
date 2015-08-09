@@ -31,12 +31,13 @@ import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -48,7 +49,6 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Read bytes from a stream. Bytes from the stream need to have been
@@ -548,6 +548,10 @@ public class BasicByteReader extends InputStream implements IByteReader {
         output.setZ(getDouble());
         output.setYaw(getFloat());
         output.setPitch(getFloat());
+
+        if (output.getWorldName() != null && Bukkit.isPrimaryThread()) {
+            output.setWorld(Bukkit.getWorld(output.getWorldName()));
+        }
 
         return output;
     }
