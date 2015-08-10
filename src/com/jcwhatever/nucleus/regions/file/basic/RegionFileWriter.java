@@ -75,7 +75,7 @@ public class RegionFileWriter extends AbstractRegionFileAccess implements IRegio
         if (isSaving != null && isSaving)
             return project.cancel("Cannot save region while it is already saving.");
 
-        region.getMeta().set(META_IS_SAVING, true);
+        region.getMeta().setKey(META_IS_SAVING, true);
 
         for (IChunkCoords chunk : chunks) {
             RegionChunkFileWriter writer = new RegionChunkFileWriter(region, chunk);
@@ -87,7 +87,7 @@ public class RegionFileWriter extends AbstractRegionFileAccess implements IRegio
         return project.getResult().onStatus(new FutureSubscriber() {
             @Override
             public void on(FutureStatus status, @Nullable String message) {
-                region.getMeta().set(META_IS_SAVING, null);
+                region.getMeta().setKey(META_IS_SAVING, null);
             }
         });
     }

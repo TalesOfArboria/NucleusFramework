@@ -26,10 +26,10 @@ package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.mixins.IMeta;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Nullable;
 
 /**
  * A meta data storage container.
@@ -106,7 +106,7 @@ public class MetaStore {
      *
      * @return  Self for chaining.
      */
-    public <T> MetaStore set(MetaKey<T> key, @Nullable T value) {
+    public <T> MetaStore setKey(MetaKey<T> key, @Nullable T value) {
         PreCon.notNull(key);
 
         setValue(key, value);

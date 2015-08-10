@@ -344,7 +344,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
                             NucMsg.tellAnon(p, NucLang.get(_RELEASE_TIME, releaseMinutes));
                         }
 
-                        session.getMeta().set(RELEASE_MESSAGE_META, releaseMinutes);
+                        session.getMeta().setKey(RELEASE_MESSAGE_META, releaseMinutes);
                     }
                 }
             }

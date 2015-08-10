@@ -100,7 +100,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
 
-        _meta.set(InternalRegionManager.REGION_HANDLE, this);
+        _meta.setKey(InternalRegionManager.REGION_HANDLE, this);
         _eventListener = new RegionListener();
 
         _name = name;

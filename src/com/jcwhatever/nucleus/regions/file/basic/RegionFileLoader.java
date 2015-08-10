@@ -103,7 +103,7 @@ public class RegionFileLoader extends AbstractRegionFileAccess implements IRegio
         if (!canRead())
             return restoreProject.cancel("Region files not found.");
 
-        region.getMeta().set(META_IS_READING, true);
+        region.getMeta().setKey(META_IS_READING, true);
 
         for (IChunkCoords chunk : chunks) {
 
@@ -147,7 +147,7 @@ public class RegionFileLoader extends AbstractRegionFileAccess implements IRegio
         return agent.getFuture().onStatus(new FutureSubscriber() {
             @Override
             public void on(FutureStatus status, @Nullable String message) {
-                region.getMeta().set(META_IS_READING, null);
+                region.getMeta().setKey(META_IS_READING, null);
             }
         });
     }
