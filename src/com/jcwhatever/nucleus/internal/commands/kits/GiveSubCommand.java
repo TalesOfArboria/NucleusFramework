@@ -30,7 +30,6 @@ import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.mixins.ITabCompletable;
-import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
@@ -51,7 +50,7 @@ import java.util.Collection;
                 "playerName= Optional. The name of the player to give the kit to. " +
                         "If omitted, the kit is given to self."})
 
-class GiveSubCommand extends AbstractCommand implements IExecutableCommand, ITabCompletable{
+class GiveSubCommand extends AbstractKitCommand implements IExecutableCommand, ITabCompletable{
 
     @Localizable static final String _KIT_NOT_FOUND = "A kit named '{0: kit name}' was not found.";
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: player name}' was not found.";
@@ -94,10 +93,8 @@ class GiveSubCommand extends AbstractCommand implements IExecutableCommand, ITab
         if (arguments.length == 2) {
             tabCompletePlayerName(arguments, completions);
         }
-        else if (arguments.length == 1) {
-            for (IKit kit : Kits.getAll()) {
-                completions.add(kit.getName());
-            }
+        else {
+            super.onTabComplete(sender, arguments, completions);
         }
     }
 }

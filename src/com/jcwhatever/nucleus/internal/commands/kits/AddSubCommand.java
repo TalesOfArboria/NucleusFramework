@@ -30,11 +30,9 @@ import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
-import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
-
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
@@ -46,7 +44,7 @@ import org.bukkit.command.CommandSender;
         paramDescriptions = {
                 "kitName= The name of the kit items will be added to. {NAME16}"})
 
-class AddSubCommand extends AbstractCommand implements IExecutableCommand {
+class AddSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
     @Localizable static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
     @Localizable static final String _FAILED = "Failed to create chest kit.";

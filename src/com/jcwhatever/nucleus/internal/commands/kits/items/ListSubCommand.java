@@ -27,18 +27,17 @@ package com.jcwhatever.nucleus.internal.commands.kits.items;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.commands.kits.AbstractKitCommand;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
-import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,7 +51,7 @@ import org.bukkit.inventory.ItemStack;
                 "kitName= The name of the kit items will be added to. {NAME16}",
                 "page= {PAGE}"})
 
-class ListSubCommand extends AbstractCommand implements IExecutableCommand {
+class ListSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Kit Items";
     @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";

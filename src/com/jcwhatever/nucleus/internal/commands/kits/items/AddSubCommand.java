@@ -26,18 +26,19 @@
 package com.jcwhatever.nucleus.internal.commands.kits.items;
 
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.commands.kits.AbstractKitCommand;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
-import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
 
 @CommandInfo(
         parent="items",
@@ -48,7 +49,7 @@ import org.bukkit.inventory.ItemStack;
         paramDescriptions = { "kitName= The name of the kit items will be added to. {NAME16}",
                               "items= The items to add. {ITEM_STACK}"})
 
-class AddSubCommand extends AbstractCommand implements IExecutableCommand {
+class AddSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
     @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _SUCCESS = "Added items to chest kit '{0}'.";
@@ -68,5 +69,19 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
         modKit.save();
 
         tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
+    }
+
+    @Override
+    public void onTabComplete(CommandSender sender, String[] arguments,
+                              Collection<String> completions) {
+
+        if (arguments.length == 2) {
+            completions.add("inhand");
+            completions.add("inventory");
+            completions.add("hotbar");
+        }
+        else {
+            super.onTabComplete(sender, arguments, completions);
+        }
     }
 }

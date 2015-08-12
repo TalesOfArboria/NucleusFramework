@@ -22,46 +22,31 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.internal.commands.kits;
 
-import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.managed.commands.CommandInfo;
-import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
-import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
-import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.commands.mixins.ITabCompletable;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
 import org.bukkit.command.CommandSender;
 
-@CommandInfo(
-        parent="kits",
-        command="del",
-        staticParams={ "kitName" },
-        description="Remove an chest kit.",
+import java.util.Collection;
 
-        paramDescriptions = {
-                "kitName= The name of the kit items will be added to. {NAME16}"})
-
-class DelSubCommand extends AbstractKitCommand implements IExecutableCommand {
-
-    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
-    @Localizable static final String _FAILED = "Failed to remove chest kit.";
-    @Localizable static final String _SUCCESS = "Inventory kit '{0}' removed.";
+/**
+ * Abstract implementation of a kit command with tab completion for kit names.
+ *
+ * <p>The kit name argument is expected to be the first static argument of the command.</p>
+ */
+public abstract class AbstractKitCommand extends AbstractCommand implements ITabCompletable {
 
     @Override
-    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
-
-        String kitName = args.getName("kitName");
-
-        IKit kit = Kits.get(kitName);
-        if (kit == null)
-            throw new CommandException(NucLang.get(_KIT_NOT_FOUND, kitName));
-
-        if (!Kits.remove(kitName))
-            throw new CommandException(NucLang.get(_FAILED));
-
-        tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
+    public void onTabComplete(CommandSender sender,
+                              String[] arguments,
+                              Collection<String> completions) {
+        if (arguments.length == 1) {
+            for (IKit kit : Kits.getAll()) {
+                completions.add(kit.getName());
+            }
+        }
     }
 }
