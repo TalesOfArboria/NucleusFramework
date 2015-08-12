@@ -27,12 +27,14 @@ package com.jcwhatever.nucleus.internal.managed.scripting.api.views;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.anvil.FilteredAnvilView;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
 
 /**
  * A {@link FilteredAnvilView} implementation for scripts.
@@ -41,6 +43,7 @@ public class ScriptAnvilView extends FilteredAnvilView implements IDisposable {
 
     private final Player _player;
 
+    private String _denyMsg;
     private boolean _isDisposed;
 
     /**
@@ -106,6 +109,19 @@ public class ScriptAnvilView extends FilteredAnvilView implements IDisposable {
     @Override
     public void dispose() {
         _isDisposed = true;
+    }
+
+    @Override
+    public String getDenyMessage() {
+        return _denyMsg == null ? super.getDenyMessage() : _denyMsg;
+    }
+
+    public void setDenyMessage(@Nullable String message) {
+
+        if (message != null)
+            message = TextUtils.format(message);
+
+        _denyMsg = message;
     }
 }
 

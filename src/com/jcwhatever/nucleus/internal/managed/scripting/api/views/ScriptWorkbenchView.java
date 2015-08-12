@@ -27,12 +27,14 @@ package com.jcwhatever.nucleus.internal.managed.scripting.api.views;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.workbench.FilteredWorkbenchView;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
 
 /**
  * A {@link FilteredWorkbenchView} implementation for scripts.
@@ -41,6 +43,8 @@ public class ScriptWorkbenchView extends FilteredWorkbenchView implements IDispo
 
     private final Player _player;
 
+    private String _denyLore;
+    private String _denyChat;
     private boolean _isDisposed;
 
     /**
@@ -106,5 +110,34 @@ public class ScriptWorkbenchView extends FilteredWorkbenchView implements IDispo
     @Override
     public void dispose() {
         _isDisposed = true;
+    }
+
+    @Override
+    public String getDenyLore() {
+        return _denyLore == null ? super.getDenyLore() : _denyLore;
+    }
+
+    public void setDenyLore(@Nullable String lore) {
+
+        if (lore != null)
+            lore = TextUtils.format(lore);
+
+        _denyLore = lore;
+    }
+
+    @Override
+    @Nullable
+    public String getDenyChat() {
+        if (_denyChat == null) {
+            return super.getDenyChat();
+        } else return _denyChat.isEmpty() ? null : _denyChat;
+    }
+
+    public void setDenyChat(@Nullable String chat) {
+
+        if (chat != null)
+            chat = TextUtils.format(chat);
+
+        _denyChat = chat;
     }
 }
