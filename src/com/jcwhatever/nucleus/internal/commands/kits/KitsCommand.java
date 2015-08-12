@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.internal.commands.kits.items.ItemsCommand;
 
 @CommandInfo(
-        command="kits",
+        command = { "kits", "kit" },
         description="Manage chest kits.")
 
 public final class KitsCommand extends AbstractCommand {
@@ -42,6 +42,7 @@ public final class KitsCommand extends AbstractCommand {
 
         registerCommand(AddSubCommand.class);
         registerCommand(DelSubCommand.class);
+        registerCommand(GiveSubCommand.class);
         registerCommand(ListSubCommand.class);
     }
 }
