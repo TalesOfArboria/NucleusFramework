@@ -31,10 +31,10 @@ import com.jcwhatever.nucleus.managed.messaging.IMessenger.LineWrapping;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Provide scripts with api access to a NucleusFramework messenger.
@@ -170,7 +170,7 @@ public class SAPI_Msg implements IDisposable {
      * Tell a player a message and prevent spamming of the same message
      * without a plugin tag in the message.
      *
-     * @param player        The player to tell.
+     * @param player   The player to tell.
      * @param timeout  The spam timeout, the amount of time to wait before the message can be seen again.
      * @param message  The message to send.
      */
@@ -183,6 +183,23 @@ public class SAPI_Msg implements IDisposable {
         PreCon.notNull(p);
 
         _msg.tellNoSpam(p, timeout, message);
+    }
+
+    /**
+     * Tell a player an important message.
+     *
+     * <p>If the player is not online, the message is saved until the player logs on.</p>
+     *
+     * @param player   The player or player Id.
+     * @param context  The message context.
+     * @param message  The message.
+     */
+    public void tellImportant(Object player, String context, String message) {
+
+        UUID playerId = PlayerUtils.getPlayerId(player);
+        PreCon.notNull(playerId);
+
+        _msg.tellImportant(playerId, context, message);
     }
 
     /**
