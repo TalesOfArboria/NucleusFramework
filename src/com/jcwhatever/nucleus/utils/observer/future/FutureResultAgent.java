@@ -29,9 +29,9 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Used for returning asynchronous results from a method.
@@ -173,7 +173,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
 
     @Override
     public boolean hasSubscribers() {
-        return super.hasSubscribers() || _hasFutureSubscribers;
+        return _hasFutureSubscribers || super.hasSubscribers();
     }
 
     /**
@@ -184,9 +184,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
     public void sendResult(Result<R> result) {
         PreCon.notNull(result);
 
-        if (result.isComplete()) {
-            _finalResult = result;
-        }
+        _finalResult = result;
 
         if (!hasSubscribers())
             return;
@@ -203,8 +201,6 @@ public class FutureResultAgent<R> extends SubscriberAgent {
                 sendError(result);
             }
         }
-
-        sendResultOnly(result);
     }
 
     /**
@@ -374,20 +370,6 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         return _future;
     }
 
-    protected void sendResultOnly(Result<R> result) {
-
-        List<ISubscriber> list = new ArrayList<>(subscribers());
-
-        for (ISubscriber subscriber : list) {
-            if (subscriber instanceof FutureResultSubscriber) {
-                //noinspection unchecked
-                ((FutureResultSubscriber<R>) subscriber).on(result);
-            }
-        }
-
-        _updateAgents.update("onResult", result);
-    }
-
     protected void sendSuccess(Result<R> result) {
 
         List<ISubscriber> list = new ArrayList<>(subscribers());
@@ -395,7 +377,10 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
                 //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
+                //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onSuccess(result);
+
             }
         }
 
@@ -408,6 +393,8 @@ public class FutureResultAgent<R> extends SubscriberAgent {
 
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
                 //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onError(result);
             }
@@ -422,6 +409,8 @@ public class FutureResultAgent<R> extends SubscriberAgent {
 
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
                 //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onCancel(result);
             }
@@ -442,7 +431,11 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         public FutureResult<R> onResult(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
-            addSubscriber("onResult", subscriber, parent._finalResult != null);
+            if (parent._finalResult != null)
+                subscriber.on(parent._finalResult);
+
+            parent.addSubscriber(subscriber);
+            parent._hasFutureSubscribers = true;
 
             return this;
         }
@@ -451,8 +444,14 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         public FutureResult<R> onSuccess(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
-            addSubscriber("onSuccess", subscriber, parent._finalResult != null &&
-                    parent._finalResult.isSuccess());
+            addSubscriber("onSuccess", subscriber);
+
+            if (parent._finalResult != null &&
+                    parent._finalResult.isSuccess()) {
+
+                subscriber.on(parent._finalResult);
+                subscriber.onSuccess(parent._finalResult);
+            }
 
             return this;
         }
@@ -461,8 +460,14 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         public FutureResult<R> onCancel(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
-            addSubscriber("onCancel", subscriber, parent._finalResult != null &&
-                    parent._finalResult.isCancelled());
+            addSubscriber("onCancel", subscriber);
+
+            if (parent._finalResult != null &&
+                    parent._finalResult.isCancelled()) {
+
+                subscriber.on(parent._finalResult);
+                subscriber.onCancel(parent._finalResult);
+            }
 
             return this;
         }
@@ -471,19 +476,20 @@ public class FutureResultAgent<R> extends SubscriberAgent {
         public FutureResult<R> onError(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
-            addSubscriber("onError", subscriber, parent._finalResult != null &&
-                    !parent._finalResult.isSuccess() && !parent._finalResult.isCancelled());
+            addSubscriber("onError", subscriber);
+
+            if (parent._finalResult != null &&
+                    !parent._finalResult.isSuccess() && !parent._finalResult.isCancelled()) {
+
+                subscriber.on(parent._finalResult);
+                subscriber.onError(parent._finalResult);
+            }
 
             return this;
         }
 
         private void addSubscriber(String agentName,
-                                   FutureResultSubscriber<R> subscriber, boolean updateNow) {
-
-            if (updateNow) {
-                subscriber.on(parent._finalResult);
-            }
-
+                                   FutureResultSubscriber<R> subscriber) {
             parent._updateAgents.getAgent(agentName).addSubscriber(subscriber);
             parent._hasFutureSubscribers = true;
         }
