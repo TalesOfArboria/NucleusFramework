@@ -201,6 +201,19 @@ public class FutureResultAgent<R> extends SubscriberAgent {
                 sendError(result);
             }
         }
+        else {
+
+            List<ISubscriber> list = new ArrayList<>(subscribers());
+
+            for (ISubscriber subscriber : list) {
+                if (subscriber instanceof FutureResultSubscriber) {
+                    //noinspection unchecked
+                    ((FutureResultSubscriber<R>) subscriber).on(result);
+                }
+            }
+
+            _updateAgents.update("onResult", result);
+        }
     }
 
     /**
@@ -372,51 +385,50 @@ public class FutureResultAgent<R> extends SubscriberAgent {
 
     protected void sendSuccess(Result<R> result) {
 
+        _updateAgents.update("onSuccess", result);
+
         List<ISubscriber> list = new ArrayList<>(subscribers());
 
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
                 //noinspection unchecked
-                ((FutureResultSubscriber<R>) subscriber).on(result);
-                //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onSuccess(result);
-
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
             }
         }
-
-        _updateAgents.update("onSuccess", result);
     }
 
     protected void sendError(Result<R> result) {
 
+        _updateAgents.update("onError", result);
+
         List<ISubscriber> list = new ArrayList<>(subscribers());
 
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
                 //noinspection unchecked
-                ((FutureResultSubscriber<R>) subscriber).on(result);
-                //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onError(result);
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
             }
         }
-
-        _updateAgents.update("onError", result);
     }
 
     protected void sendCancel(Result<R> result) {
 
+        _updateAgents.update("onCancel", result);
+
         List<ISubscriber> list = new ArrayList<>(subscribers());
 
         for (ISubscriber subscriber : list) {
             if (subscriber instanceof FutureResultSubscriber) {
                 //noinspection unchecked
-                ((FutureResultSubscriber<R>) subscriber).on(result);
-                //noinspection unchecked
                 ((FutureResultSubscriber<R>) subscriber).onCancel(result);
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
             }
         }
-
-        _updateAgents.update("onCancel", result);
     }
 
     private static class FutureResult<R> implements IFutureResult<R> {
@@ -449,8 +461,8 @@ public class FutureResultAgent<R> extends SubscriberAgent {
             if (parent._finalResult != null &&
                     parent._finalResult.isSuccess()) {
 
-                subscriber.on(parent._finalResult);
                 subscriber.onSuccess(parent._finalResult);
+                subscriber.on(parent._finalResult);
             }
 
             return this;
@@ -465,8 +477,8 @@ public class FutureResultAgent<R> extends SubscriberAgent {
             if (parent._finalResult != null &&
                     parent._finalResult.isCancelled()) {
 
-                subscriber.on(parent._finalResult);
                 subscriber.onCancel(parent._finalResult);
+                subscriber.on(parent._finalResult);
             }
 
             return this;
@@ -481,8 +493,8 @@ public class FutureResultAgent<R> extends SubscriberAgent {
             if (parent._finalResult != null &&
                     !parent._finalResult.isSuccess() && !parent._finalResult.isCancelled()) {
 
-                subscriber.on(parent._finalResult);
                 subscriber.onError(parent._finalResult);
+                subscriber.on(parent._finalResult);
             }
 
             return this;
