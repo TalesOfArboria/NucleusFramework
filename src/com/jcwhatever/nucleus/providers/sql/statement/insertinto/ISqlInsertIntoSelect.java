@@ -22,13 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.insertinto;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.statement.generators.IColumnNameGenerator;
 
 /**
- * Executable Update statement.
+ * Insert into select clause.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlInsertIntoSelect {
+
+    /**
+     * Select columns from the source table to insert.
+     *
+     * @param columnNames  The names of the columns, by order.
+     */
+    ISqlInsertIntoWhere select(String... columnNames);
+
+    /**
+     * Select columns from the source table to insert.
+     *
+     * @param nameGenerator  The generator that will supply the column names.
+     */
+    ISqlInsertIntoWhere select(IColumnNameGenerator nameGenerator);
+
+    /**
+     * Select a column from the specified table to insert.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column.
+     */
+    ISqlInsertIntoReselect select(ISqlTable table, String columnName);
 }

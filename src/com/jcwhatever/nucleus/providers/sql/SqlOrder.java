@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.select;
+package com.jcwhatever.nucleus.providers.sql;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimitOffset;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
-
-/*
- * 
+/**
+ * Specifies how sql query results should be ordered.
  */
-public interface ISqlSelectClause extends
-        ISqlExecutable, ISqlClauseLimit<ISqlSelectClause>,
-        ISqlClauseLimitOffset<ISqlSelectClause>,
-        ISqlClauseOrder<ISqlSelectClause> {
+public enum SqlOrder {
+    /**
+     * Order results in ascending order.
+     */
+    ASCENDING,
+    /**
+     * Order results in descending order.
+     */
+    DESCENDING
 }

@@ -24,6 +24,10 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.SqlOrder;
+import com.jcwhatever.nucleus.providers.sql.statement.generators.IOrderGenerator;
+
 /**
  * Sql statement sort order clause mixin.
  */
@@ -39,6 +43,16 @@ public interface ISqlClauseOrder<T> {
     T orderByAscend(String columnName);
 
     /**
+     * Order rows in ascending order using the specified column.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column to order by.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T orderByAscend(ISqlTable table, String columnName);
+
+    /**
      * Order rows in descending order using the specified column.
      *
      * @param columnName  The name of the column to order by.
@@ -46,4 +60,44 @@ public interface ISqlClauseOrder<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T orderByDescend(String columnName);
+
+    /**
+     * Order rows in descending order using the specified column.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column to order by.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T orderByDescend(ISqlTable table, String columnName);
+
+    /**
+     * Order rows in the specified order using the specified column.
+     *
+     * @param columnName  The name of the column to order by.
+     * @param order       The order to use.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T orderBy(String columnName, SqlOrder order);
+
+    /**
+     * Order rows in the specified order using the specified column.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column to order by.
+     * @param order       The order to use.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T orderBy(ISqlTable table, String columnName, SqlOrder order);
+
+    /**
+     * Order rows in the specified order using the specified columns.
+     *
+     * @param orderGenerator  The generator used to create column orders.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T orderBy(IOrderGenerator orderGenerator);
 }

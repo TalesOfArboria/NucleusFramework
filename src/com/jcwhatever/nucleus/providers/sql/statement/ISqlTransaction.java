@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.providers.sql.statement;
 
 import com.jcwhatever.nucleus.providers.sql.ISqlDatabase;
 import com.jcwhatever.nucleus.providers.sql.ISqlResult;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTableDefinition;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.util.Collection;
@@ -65,6 +67,20 @@ public interface ISqlTransaction {
      * as the transaction or the {@link ISqlStatement} implementations are not supported.
      */
     IFutureResult<ISqlResult> append(Collection<? extends ISqlStatement> statements);
+
+    /**
+     * Create a temporary table for use within the transaction.
+     *
+     * <p>The table is removed after the transaction is complete.</p>
+     *
+     * @param name        The name of the table.
+     * @param definition  The table definition. Must be a temporary table definition.
+     *
+     * @return  The table object.
+     *
+     * @throws IllegalArgumentException  if the table definition is for a non-temporary table.
+     */
+    ISqlTable createTempTable(String name, ISqlTableDefinition definition);
 
     /**
      * Execute the statements in the transaction.

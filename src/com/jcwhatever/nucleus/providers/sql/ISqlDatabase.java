@@ -58,8 +58,12 @@ public interface ISqlDatabase extends INamed, ILoadable {
      * <p>If the table already exists, the table is returned an no action
      * is taken.</p>
      *
+     * <p>Only non-temporary tables can be generated using this method.</p>
+     *
      * @param name        The name of the table.
      * @param definition  The table definition.
+     *
+     * @throws IllegalArgumentException  if the table definition is for a temporary table.
      */
     IFutureResult<ISqlTable> createTable(String name, ISqlTableDefinition definition);
 

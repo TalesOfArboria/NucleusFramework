@@ -24,33 +24,29 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 
 /**
  * Statement data setter.
  */
-public interface ISqlDataSetter<T> {
+public interface ISqlDataSetter<T extends ISqlDataSetterOperator> {
 
     /**
      * Set the value of a column.
      *
      * @param columnName  The name of the column.
-     * @param value       The value to set. If the value is null and the column does not
-     *                    accept null values, the columns default value is used.
      *
      * @throws IllegalStateException if the statement is finalized.
      */
-    T set(String columnName, @Nullable Object value);
+    T set(String columnName);
 
     /**
-     * Set the value of the specified column to the value of another column.
+     * Set the value of a column.
      *
-     * <p>Useful for joins.</p>
-     *
-     * @param columnName       The column to set.
-     * @param otherColumnName  The other column to get a value from.
+     * @param table       The table the specified column is in.
+     * @param columnName  The name of the column.
      *
      * @throws IllegalStateException if the statement is finalized.
      */
-    T setColumn(String columnName, String otherColumnName);
+    T set(ISqlTable table, String columnName);
 }

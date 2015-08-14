@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+
 /**
  * Sql statement boolean operator mixin.
  */
@@ -32,18 +34,38 @@ public interface ISqlLogicalOperator<T> {
     /**
      * "And" operator.
      *
-     * @param column  The name of the next column in the statement.
+     * @param columnName  The name of the next column in the statement.
      *
      * @throws IllegalStateException if the statement is finalized.
      */
-    T and(String column);
+    T and(String columnName);
+
+    /**
+     * "And" operator.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the next column in the statement.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T and(ISqlTable table, String columnName);
 
     /**
      * "Or" operator.
      *
-     * @param column  The name of the next column in the statement.
+     * @param columnName  The name of the next column in the statement.
      *
      * @throws IllegalStateException if the statement is finalized.
      */
-    T or(String column);
+    T or(String columnName);
+
+    /**
+     * "Or" operator.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the next column in the statement.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T or(ISqlTable table, String columnName);
 }

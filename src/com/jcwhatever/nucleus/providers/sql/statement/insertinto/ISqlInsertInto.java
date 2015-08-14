@@ -22,13 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
-
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+package com.jcwhatever.nucleus.providers.sql.statement.insertinto;
 
 /**
- * Executable Update statement.
+ * ISql table based "select" clause.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlInsertInto {
+
+    /**
+     * The names of the columns that will receive column values.
+     *
+     * @param columnNames  The column names, by order.
+     */
+    ISqlInsertIntoSelect columns(String... columnNames);
 }

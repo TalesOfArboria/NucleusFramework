@@ -27,7 +27,11 @@ package com.jcwhatever.nucleus.providers.sql.statement.insert;
 /**
  * Sql table insert based executable.
  */
-public interface ISqlInsertFinal extends ISqlInsert, ISqlInsertExecutable {
+public interface ISqlInsertFinal extends ISqlInsertExecutable {
 
+    /**
+     * Begin constructing statement for use if the primary key
+     * of the current insert statement already exists.
+     */
     ISqlInsertExists ifExists();
 }

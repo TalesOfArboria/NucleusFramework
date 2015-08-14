@@ -24,8 +24,11 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement;
 
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 import com.jcwhatever.nucleus.providers.sql.statement.delete.ISqlDelete;
+import com.jcwhatever.nucleus.providers.sql.statement.generators.IColumnNameGenerator;
 import com.jcwhatever.nucleus.providers.sql.statement.insert.ISqlInsert;
+import com.jcwhatever.nucleus.providers.sql.statement.insertinto.ISqlInsertInto;
 import com.jcwhatever.nucleus.providers.sql.statement.select.ISqlSelect;
 import com.jcwhatever.nucleus.providers.sql.statement.update.ISqlUpdate;
 
@@ -56,6 +59,13 @@ public interface ISqlStatementBuilder {
      * @param columns  The columns to select. Leave empty to select all.
      */
     ISqlSelect selectRows(String... columns);
+
+    /**
+     * Construct a Select query
+     *
+     * @param nameGenerator  The generator that will supply the column names.
+     */
+    ISqlSelect selectRows(IColumnNameGenerator nameGenerator);
 
     /**
      * Construct an Update statement.
@@ -90,6 +100,21 @@ public interface ISqlStatementBuilder {
      *                 insert all.
      */
     ISqlInsert insertRows(String... columns);
+
+    /**
+     * Construct a Select query
+     *
+     * @param nameGenerator  The generator that will supply the column names.
+     */
+    ISqlInsert insertRows(IColumnNameGenerator nameGenerator);
+
+    /**
+     * Construct an Insert statement.
+     *
+     * @param table  The table to insert rows into from the
+     *               current table.
+     */
+    ISqlInsertInto insertInto(ISqlTable table);
 
     /**
      * Construct a Delete statement.

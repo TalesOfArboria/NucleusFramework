@@ -24,11 +24,10 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.update;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
 
 /**
- * Executable Update statement.
+ * Update statement data setters.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlUpdateSetter extends ISqlDataSetter<ISqlUpdateSetterOperator> {
 }

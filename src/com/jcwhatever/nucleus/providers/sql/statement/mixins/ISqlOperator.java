@@ -24,10 +24,11 @@
 
 package com.jcwhatever.nucleus.providers.sql.statement.mixins;
 
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 import com.jcwhatever.nucleus.utils.converters.IConverter;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Sql statement conditional operators mixin.
@@ -75,6 +76,17 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is equal to the specified
+     * column.
+     *
+     * @param table       The table the specified column is in.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isEqualToColumn(ISqlTable table, String columnName);
 
     /**
      * Determine if the previously specified column is equal to 1 or more of the
@@ -127,6 +139,17 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isNotEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is NOT equal to the specified
+     * column.
+     *
+     * @param table       The table the specified column is in.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isNotEqualToColumn(ISqlTable table, String columnName);
 
     /**
      * Determine if the previously specified column is NOT equal to all of the
@@ -201,6 +224,17 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isGreaterThanColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is greater than the
+     * specified column.
+     *
+     * @param table       The table the specified column is in.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isGreaterThanColumn(ISqlTable table, String columnName);
 
     /**
      * Determine if the previously specified column is greater than 1 or more
@@ -288,6 +322,17 @@ public interface ISqlOperator<T> {
 
     /**
      * Determine if the previously specified column is greater than or
+     * equal to the specified column.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isGreaterOrEqualToColumn(ISqlTable table, String columnName);
+
+    /**
+     * Determine if the previously specified column is greater than or
      * equal to 1 or more of the specified columns.
      *
      * @param columnNames  The columns to compare.
@@ -369,6 +414,17 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isLessThanColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is less than the
+     * specified column.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isLessThanColumn(ISqlTable table, String columnName);
 
     /**
      * Determine if the previously specified column is less than 1 or
@@ -453,6 +509,17 @@ public interface ISqlOperator<T> {
      * @throws IllegalStateException if the statement is finalized.
      */
     T isLessOrEqualToColumn(String columnName);
+
+    /**
+     * Determine if the previously specified column is less than or
+     * equal to the specified column.
+     *
+     * @parma table       The table the specified column is from.
+     * @param columnName  The column to compare.
+     *
+     * @throws IllegalStateException if the statement is finalized.
+     */
+    T isLessOrEqualToColumn(ISqlTable table, String columnName);
 
     /**
      * Determine if the previously specified column is less than or

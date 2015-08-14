@@ -43,6 +43,12 @@ public interface ISqlTableBuilder {
     ISqlTableBuilderTransact usageReadInsertUpdate();
 
     /**
+     * Specify that the table is a temporary working table that will be
+     * automatically removed after transactions/sessions.
+     */
+    ISqlTableBuilderColumns usageTemporary();
+
+    /**
      * Skip table engine specification and set the explicit name
      * of the table engine to use.
      *

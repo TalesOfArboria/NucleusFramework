@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.providers.sql.statement.select;
 
 import com.jcwhatever.nucleus.providers.sql.ISqlTable;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator;
 
 /**
@@ -33,7 +32,7 @@ import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlLogicalOperator
  */
 public interface ISqlSelectLogicalOperator extends
         ISqlLogicalOperator<ISqlSelectOperator>,
-        ISqlSelectClause, ISqlExecutable {
+        ISqlSelectFinal {
 
     /**
      * End the current query and add a union select.

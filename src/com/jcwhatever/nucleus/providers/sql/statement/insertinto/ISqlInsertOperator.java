@@ -22,13 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.insertinto;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlOperator;
 
 /**
- * Executable Update statement.
+ * Operator for insert into statement.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlInsertOperator extends
+        ISqlOperator<ISqlInsertLogicalOperator>,
+        ISqlInsertIntoFinal {
 }

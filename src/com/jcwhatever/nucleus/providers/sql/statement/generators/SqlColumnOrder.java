@@ -22,39 +22,56 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.mixins;
+package com.jcwhatever.nucleus.providers.sql.statement.generators;
 
 import com.jcwhatever.nucleus.providers.sql.ISqlTable;
+import com.jcwhatever.nucleus.providers.sql.SqlOrder;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
- * Sql Join mixin.
+ * Specifies the desired order of a table column.
  */
-public interface ISqlJoin<T> {
+public class SqlColumnOrder {
+
+    private final ISqlTable _table;
+    private final String _columnName;
+    private final SqlOrder _order;
 
     /**
-     * Inner join a table.
+     * Constructor.
      *
-     * @param table  The table to join.
-     *
-     * @throws IllegalStateException if the statement is finalized.
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column.
+     * @param order       The column order.
      */
-    T innerJoin(ISqlTable table);
+    public SqlColumnOrder(ISqlTable table, String columnName, SqlOrder order) {
+        PreCon.notNull(table);
+        PreCon.notNullOrEmpty(columnName);
+        PreCon.notNull(order);
+
+        _table = table;
+        _columnName = columnName;
+        _order = order;
+    }
 
     /**
-     * Left join a table.
-     *
-     * @param table  The table to join.
-     *
-     * @throws IllegalStateException if the statement is finalized.
+     * Get the table the specified column is from.
      */
-    T leftJoin(ISqlTable table);
+    public ISqlTable getTable() {
+        return _table;
+    }
 
     /**
-     * Right join a table.
-     *
-     * @param table  The table to join.
-     *
-     * @throws IllegalStateException if the statement is finalized.
+     * Get the name of the column to sort by.
      */
-    T rightJoin(ISqlTable table);
+    public String getColumnName() {
+        return _columnName;
+    }
+
+    /**
+     * Get the sort ordering of the column.
+     */
+    public SqlOrder getOrder() {
+        return _order;
+    }
 }

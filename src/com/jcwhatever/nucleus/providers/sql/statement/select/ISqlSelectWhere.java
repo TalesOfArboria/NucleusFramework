@@ -25,11 +25,10 @@
 package com.jcwhatever.nucleus.providers.sql.statement.select;
 
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseWhere;
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
  * ISql table based "where" executable.
  */
 public interface ISqlSelectWhere extends
-        ISqlClauseWhere<ISqlSelectOperator>, ISqlExecutable {
+        ISqlClauseWhere<ISqlSelectOperator>, ISqlSelectFinal {
 }

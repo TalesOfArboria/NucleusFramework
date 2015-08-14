@@ -29,5 +29,5 @@ import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
 /**
  * Table based {@link ISqlDataSetter}.
  */
-public interface ISqlUpdate extends ISqlDataSetter<ISqlUpdateFinal> {
+public interface ISqlUpdate extends ISqlUpdateSetter, ISqlUpdateJoin {
 }

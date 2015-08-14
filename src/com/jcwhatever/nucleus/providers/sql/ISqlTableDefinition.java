@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.providers.sql;
 
 import com.jcwhatever.nucleus.mixins.INamed;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for a table definition.
@@ -98,6 +98,11 @@ public interface ISqlTableDefinition {
      */
     @Nullable
     String getEngineName();
+
+    /**
+     * Determine if the table is a temporary table used in transactions.
+     */
+    boolean isTemp();
 
     /**
      * Interface for a table column definition.

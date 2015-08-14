@@ -22,13 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.insertinto;
 
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
- * Executable Update statement.
+ * Executable for insert into.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlInsertIntoFinal extends
+        ISqlExecutable,
+        ISqlClauseOrder<ISqlInsertIntoFinal>,
+        ISqlClauseLimit<ISqlInsertIntoFinal>{
+
+    /**
+     * Begin constructing statement for use if the primary key
+     * of the current insert statement already exists.
+     */
+    ISqlInsertIntoExists ifExists();
 }

@@ -22,13 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.insertinto;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 
 /**
- * Executable Update statement.
+ * Multi-table select.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlInsertIntoReselect extends ISqlInsertIntoWhere {
+
+    /**
+     * Select a column from the specified table to insert.
+     *
+     * @param table       The table the specified column is from.
+     * @param columnName  The name of the column.
+     */
+    ISqlInsertIntoReselect select(ISqlTable table, String columnName);
 }

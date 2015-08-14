@@ -22,13 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.generators;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 
 /**
- * Executable Update statement.
+ * Interface for generating column names.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface IColumnNameGenerator {
+
+    /**
+     * Generate column names.
+     *
+     * @param table  The table the columns are for.
+     */
+    String[] getColumnNames(ISqlTable table);
 }

@@ -22,13 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.generators;
 
-import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
+import com.jcwhatever.nucleus.providers.sql.ISqlTable;
 
 /**
- * Executable Update statement.
+ * Generate column orders.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface IOrderGenerator {
+
+    /**
+     * Get column ordering.
+     *
+     * @param table  The source table of the statement.
+     */
+    SqlColumnOrder[] getOrder(ISqlTable table);
 }

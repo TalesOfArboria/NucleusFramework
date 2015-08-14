@@ -22,13 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.sql.statement.update;
+package com.jcwhatever.nucleus.providers.sql.statement.select;
 
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimit;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseLimitOffset;
+import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlClauseOrder;
 import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlExecutable;
 
 /**
- * Executable Update statement.
+ * Final clauses for select statement.
  */
-public interface ISqlUpdateFinal extends
-        ISqlUpdateSetter, ISqlUpdateWhere, ISqlExecutable {
+public interface ISqlSelectFinal extends ISqlExecutable,
+        ISqlClauseOrder<ISqlSelectFinal>,
+        ISqlClauseLimit<ISqlSelectFinal>,
+        ISqlClauseLimitOffset<ISqlSelectFinal> {
 }

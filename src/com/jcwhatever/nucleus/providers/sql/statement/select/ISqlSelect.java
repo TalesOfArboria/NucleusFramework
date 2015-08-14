@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.providers.sql.statement.select;
  * Sql table select.
  */
 public interface ISqlSelect extends
-        ISqlSelectJoin, ISqlSelectWhere, ISqlSelectClause {
+        ISqlSelectJoin, ISqlSelectWhere, ISqlSelectFinal {
 
     ISqlSelectWhere into(String tableName);
 }

@@ -30,5 +30,5 @@ import com.jcwhatever.nucleus.providers.sql.statement.mixins.ISqlDataSetter;
  * Sql table insert based {@link ISqlDataSetter}.
  */
 public interface ISqlInsertExists extends
-        ISqlDataSetter<ISqlInsertExists>, ISqlInsertExecutable {
+        ISqlDataSetter<ISqlInsertSetterOperator>, ISqlInsertExecutable {
 }
