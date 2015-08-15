@@ -112,4 +112,44 @@ public interface ISqlDataSetterOperator<T> {
      * @param columnName  The name of the column.
      */
     T subtractColumn(ISqlTable table, String columnName);
+
+    /**
+     * Set the value of a column to the value of the larger of the
+     * column or the specified column.
+     *
+     * @param table       Table of the specified column.
+     * @param columnName  The name of the column.
+     */
+    T largerColumn(ISqlTable table, String columnName);
+
+    /**
+     * Set the value of a column to the value of the larger of 2
+     * specified columns.
+     *
+     * @param table1       Table of the first column.
+     * @param columnName1  The name of the first column.
+     * @param table2       Table of the seconds column.
+     * @param columnName2  The name of the seconds column.
+     */
+    T largerColumn(ISqlTable table1, String columnName1, ISqlTable table2, String columnName2);
+
+    /**
+     * Set the value of a column to the value of the smaller of the
+     * column or the specified columns.
+     *
+     * @param table       Table of the specified column.
+     * @param columnName  The name of the column.
+     */
+    T smallerColumn(ISqlTable table, String columnName);
+
+    /**
+     * Set the value of a column to the value of the smaller of 2
+     * specified columns.
+     *
+     * @param table1       Table of the first column.
+     * @param columnName1  The name of the first column.
+     * @param table2       Table of the second column.
+     * @param columnName2  The name of the seconds column.
+     */
+    T smallerColumn(ISqlTable table1, String columnName1, ISqlTable table2, String columnName2);
 }
