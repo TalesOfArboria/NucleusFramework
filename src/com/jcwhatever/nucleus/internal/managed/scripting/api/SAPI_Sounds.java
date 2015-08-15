@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.sounds.Sounds;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
@@ -67,7 +68,7 @@ public class SAPI_Sounds implements IDisposable {
     public ResourceSound get(String soundName) {
         PreCon.notNullOrEmpty(soundName, "soundName");
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
+        ResourceSound sound = Sounds.getSound(soundName);
         PreCon.isValid(sound != null, "Sound not found.");
 
         return sound;
@@ -79,7 +80,7 @@ public class SAPI_Sounds implements IDisposable {
      * @param player     The player.
      * @param soundName  The name of the resource sound.
      */
-    public boolean play(Object player, String soundName) {
+    public void play(Object player, String soundName) {
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(soundName);
 
@@ -87,11 +88,12 @@ public class SAPI_Sounds implements IDisposable {
         PreCon.notNull(p);
 
         ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
-        if (sound == null)
-            return false;
+        if (sound == null) {
+            Sounds.playEffect(soundName, p);
+            return;
+        }
 
-        Nucleus.getSoundManager().playSound(_plugin, p, sound, new SoundSettings(500.0f, p.getLocation()));
-        return true;
+        Sounds.playSound(_plugin, p, sound, new SoundSettings(500.0f, p.getLocation()));
     }
 
     /**
@@ -105,7 +107,7 @@ public class SAPI_Sounds implements IDisposable {
      * @param z          The Z coordinates.
      * @param volume     The volume.
      */
-    public boolean playAt(Object player, String soundName, int x, int y, int z, double volume) {
+    public void playAt(Object player, String soundName, int x, int y, int z, double volume) {
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(soundName);
 
@@ -115,11 +117,12 @@ public class SAPI_Sounds implements IDisposable {
         Location location = new Location(p.getWorld(), x, y, z);
 
         ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
-        if (sound == null)
-            return false;
+        if (sound == null) {
+            Sounds.playEffect(soundName, p, location, (float)volume, 1.0f);
+            return;
+        }
 
-        Nucleus.getSoundManager().playSound(_plugin, p, sound, new SoundSettings((float) volume, location));
-        return false;
+        Sounds.playSound(_plugin, p, sound, new SoundSettings((float) volume, location));
     }
 
     /**
@@ -131,7 +134,7 @@ public class SAPI_Sounds implements IDisposable {
      * @param location   The location to play at.
      * @param volume     The volume.
      */
-    public boolean playLocation(Object player, String soundName, Location location, double volume) {
+    public void playLocation(Object player, String soundName, Location location, double volume) {
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(soundName);
         PreCon.notNull(location);
@@ -140,11 +143,12 @@ public class SAPI_Sounds implements IDisposable {
         PreCon.notNull(p);
 
         ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
-        if (sound == null)
-            return false;
+        if (sound == null) {
+            Sounds.playEffect(soundName, p, location, (float)volume, 1.0f);
+            return;
+        }
 
-        Nucleus.getSoundManager().playSound(_plugin, p, sound, new SoundSettings((float) volume, location));
-        return false;
+        Sounds.playSound(_plugin, p, sound, new SoundSettings((float) volume, location));
     }
 
     /**

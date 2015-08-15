@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.managed.sounds;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import org.bukkit.Location;
@@ -34,9 +35,11 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Interface for the global resource sound manager.
+ * Static convenience methods for accessing the global sound manager.
  */
-public interface ISoundManager {
+public final class Sounds {
+
+    private Sounds() {}
 
     /**
      * Get a resource sound by name.
@@ -44,12 +47,16 @@ public interface ISoundManager {
      * @param name  The name of the sound.
      */
     @Nullable
-    ResourceSound getSound(String name);
+    public static ResourceSound getSound(String name) {
+        return manager().getSound(name);
+    }
 
     /**
      * Get all resource sounds.
      */
-    Collection<ResourceSound> getSounds();
+    public static Collection<ResourceSound> getSounds() {
+        return manager().getSounds();
+    }
 
     /**
      * Get all resource sounds.
@@ -58,14 +65,18 @@ public interface ISoundManager {
      *
      * @return  The output collection.
      */
-    <T extends Collection<ResourceSound>> T getSounds(T output);
+    public static <T extends Collection<ResourceSound>> T getSounds(T output) {
+        return manager().getSounds(output);
+    }
 
     /**
      * Get resource sounds by type.
      *
      * @param type  The type to look for.
      */
-    <T extends ResourceSound> Collection<T> getSounds(Class<T> type);
+    public static <T extends ResourceSound> Collection<T> getSounds(Class<T> type) {
+        return manager().getSounds(type);
+    }
 
     /**
      * Get resource sounds by type.
@@ -75,14 +86,18 @@ public interface ISoundManager {
      *
      * @return  The output collection.
      */
-    <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output);
+    public static <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output) {
+        return manager().getSounds(type, output);
+    }
 
     /**
      * Get the resource sounds being played to the specified player.
      *
      * @param player  The player to check.
      */
-    Collection<ResourceSound> getSounds(Player player);
+    public static Collection<ResourceSound> getSounds(Player player) {
+        return manager().getSounds(player);
+    }
 
     /**
      * Get the resource sounds being played to the specified player.
@@ -92,7 +107,9 @@ public interface ISoundManager {
      *
      * @return  The output collection.
      */
-    <T extends Collection<ResourceSound>> T getSounds(Player player, T output);
+    public static <T extends Collection<ResourceSound>> T getSounds(Player player, T output) {
+        return manager().getSounds(player, output);
+    }
 
     /**
      * Get information about the resource sounds being played
@@ -100,7 +117,9 @@ public interface ISoundManager {
      *
      * @param player  The player to check.
      */
-    Collection<ISoundContext> getContexts(Player player);
+    public static Collection<ISoundContext> getContexts(Player player) {
+        return manager().getContexts(player);
+    }
 
     /**
      * Get information about the resource sounds being played
@@ -111,7 +130,9 @@ public interface ISoundManager {
      *
      * @return  The output collection.
      */
-    <T extends Collection<ISoundContext>> T getContexts(Player player, T output);
+    public static <T extends Collection<ISoundContext>> T getContexts(Player player, T output) {
+        return manager().getContexts(player, output);
+    }
 
     /**
      * Play a resource sound to a player at the players location.
@@ -122,7 +143,9 @@ public interface ISoundManager {
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound);
+    public static IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound) {
+        return manager().playSound(plugin, player, sound);
+    }
 
     /**
      * Play a resource sound to a player.
@@ -134,8 +157,10 @@ public interface ISoundManager {
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
-                                    ResourceSound sound, SoundSettings settings);
+    public static IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
+                                           ResourceSound sound, SoundSettings settings) {
+        return manager().playSound(plugin, player, sound, settings);
+    }
 
     /**
      * Play a resource sound to a player.
@@ -150,66 +175,76 @@ public interface ISoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
-                                    ResourceSound sound, SoundSettings settings,
-                                    @Nullable Collection<Player> transcriptViewers);
+    public static IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
+                                           ResourceSound sound, SoundSettings settings,
+                                           @Nullable Collection<Player> transcriptViewers) {
+        return manager().playSound(plugin, player, sound, settings, transcriptViewers);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
      * <p>The sound is played at the players location.</p>
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
      * @param player           The player to play the sound to.
      */
-    void playEffect(String clientSoundName, Player player);
+    public static void playEffect(String clientSoundName, Player player) {
+        manager().playEffect(clientSoundName, player);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
      * <p>The sound is played at the players location.</p>
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
      * @param players          The collection of players to play the sound to.
      */
-    void playEffect(String clientSoundName, Collection<Player> players);
+    public static void playEffect(String clientSoundName, Collection<Player> players) {
+        manager().playEffect(clientSoundName, players);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
      * @param player           The player to play the sound to.
      * @param location         The location the sound is played at.
      */
-    void playEffect(String clientSoundName, Player player, Location location);
+    public static void playEffect(String clientSoundName, Player player, Location location) {
+        manager().playEffect(clientSoundName, player, location);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
      * @param players          The collection of players to play the sound to.
      * @param location         The location the sound is played at.
      */
-    void playEffect(String clientSoundName, Collection<Player> players, Location location);
+    public static void playEffect(String clientSoundName, Collection<Player> players, Location location) {
+        manager().playEffect(clientSoundName, players, location);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
      * <p>The sound is played at the players location.</p>
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
@@ -217,14 +252,16 @@ public interface ISoundManager {
      * @param volume           The volume of the sound.
      * @param pitch            The sound pitch.
      */
-    void playEffect(String clientSoundName, Player player, float volume, float pitch);
+    public static void playEffect(String clientSoundName, Player player, float volume, float pitch) {
+        manager().playEffect(clientSoundName, player, volume, pitch);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
      * <p>The sound is played at the players location.</p>
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
@@ -232,13 +269,15 @@ public interface ISoundManager {
      * @param volume           The volume of the sound.
      * @param pitch            The sound pitch.
      */
-    void playEffect(String clientSoundName, Collection<Player> players,
-                    float volume, float pitch);
+    public static void playEffect(String clientSoundName, Collection<Player> players,
+                    float volume, float pitch) {
+        manager().playEffect(clientSoundName, players, volume, pitch);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
@@ -247,13 +286,15 @@ public interface ISoundManager {
      * @param volume           The volume of the sound.
      * @param pitch            The sound pitch.
      */
-    void playEffect(String clientSoundName, Player player, Location location,
-                    float volume, float pitch);
+    public static void playEffect(String clientSoundName, Player player, Location location,
+                    float volume, float pitch) {
+        manager().playEffect(clientSoundName, player, location, volume, pitch);
+    }
 
     /**
      * Play a sound effect by client side sound name.
      *
-     * <p>The sound does not have to be a resource pack sound. The sound name is
+     * <p>The sound does not have to be pre-defined. The sound name is
      * sent directly to the client.</p>
      *
      * @param clientSoundName  The client side sound name.
@@ -262,6 +303,12 @@ public interface ISoundManager {
      * @param volume           The volume of the sound.
      * @param pitch            The sound pitch.
      */
-    void playEffect(String clientSoundName, Collection<Player> players,
-                    Location location, float volume, float pitch);
+    public static void playEffect(String clientSoundName, Collection<Player> players,
+                    Location location, float volume, float pitch) {
+        manager().playEffect(clientSoundName, players, location, volume, pitch);
+    }
+
+    private static ISoundManager manager() {
+        return Nucleus.getSoundManager();
+    }
 }

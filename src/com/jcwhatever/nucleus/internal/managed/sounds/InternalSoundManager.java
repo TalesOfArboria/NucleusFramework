@@ -44,8 +44,10 @@ import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
@@ -66,6 +68,8 @@ import java.util.UUID;
  * Nucleus implementation of {@link ISoundManager}.
  */
 public final class InternalSoundManager implements ISoundManager {
+
+    private ThreadSingletons<Location> EFFECT_LOCATIONS = LocationUtils.createThreadSingleton();
 
     private final Map<UUID, TimedArrayList<ISoundContext>> _playing = new HashMap<>(100);
     private Map<String, ResourceSound> _sounds;
@@ -201,27 +205,15 @@ public final class InternalSoundManager implements ISoundManager {
         if (event.isCancelled())
             return context.setFinished();
 
-        INmsSoundEffectHandler nmsHandler = NmsUtils.getSoundEffectHandler();
+        Collection<Player> target = ArrayUtils.asList(player);
 
-        // run play sound command
         for (Location location : settings.getLocations()) {
 
             if (location.getWorld() == null || !location.getWorld().equals(player.getWorld()))
                 continue;
 
-            if (nmsHandler != null) {
-                // send sound packet to player
-                nmsHandler.send(ArrayUtils.asList(player), sound.getClientName(),
-                        location.getX(), location.getY(), location.getZ(),
-                        settings.getVolume(), settings.getPitch());
-            }
-            else {
-                // fallback to using console commands if NMS is unavailable
-                String cmd = getPlaySoundCommand(event.getResourceSound().getClientName(), event.getPlayer(),
-                        location, settings.getVolume(), settings.getPitch());
-
-                Utils.executeAsConsole(cmd);
-            }
+            sendSound(target, location, event.getResourceSound().getClientName(),
+                    settings.getVolume(), settings.getPitch());
         }
 
         // get timed list to store playing object in.
@@ -275,10 +267,113 @@ public final class InternalSoundManager implements ISoundManager {
         return context.getFuture();
     }
 
+    @Override
+    public void playEffect(String clientSoundName, Player player) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(player);
+
+        sendSound(ArrayUtils.asList(player),
+                player.getLocation(EFFECT_LOCATIONS.get()), clientSoundName, 1.0f, 1.0f);
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Collection<Player> players) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(players);
+
+        for (Player player : players) {
+            playEffect(clientSoundName, player);
+        }
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Player player, Location location) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(player);
+        PreCon.notNull(location);
+
+        sendSound(ArrayUtils.asList(player),
+                location, clientSoundName, 1.0f, 1.0f);
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Collection<Player> players, Location location) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(players);
+        PreCon.notNull(location);
+
+        sendSound(players,
+                location, clientSoundName, 1.0f, 1.0f);
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Player player, float volume, float pitch) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(player);
+
+        sendSound(ArrayUtils.asList(player),
+                player.getLocation(EFFECT_LOCATIONS.get()), clientSoundName, volume, pitch);
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Collection<Player> players, float volume, float pitch) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(players);
+
+        for (Player player : players) {
+            playEffect(clientSoundName, player, volume, pitch);
+        }
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Player player, Location location,
+                           float volume, float pitch) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(player);
+        PreCon.notNull(location);
+
+        sendSound(ArrayUtils.asList(player),
+                location, clientSoundName, volume, pitch);
+    }
+
+    @Override
+    public void playEffect(String clientSoundName, Collection<Player> players, Location location,
+                           float volume, float pitch) {
+        PreCon.notNullOrEmpty(clientSoundName);
+        PreCon.notNull(players);
+        PreCon.notNull(location);
+
+        sendSound(players, location, clientSoundName, volume, pitch);
+    }
+
+    private static void sendSound(Collection<Player> players, Location location, String soundName,
+                                  float volume, float pitch) {
+
+        INmsSoundEffectHandler nmsHandler = NmsUtils.getSoundEffectHandler();
+
+        if (nmsHandler != null) {
+            // send sound packet to player
+            nmsHandler.send(players, soundName,
+                    location.getX(), location.getY(), location.getZ(),
+                    volume, pitch);
+        }
+        else {
+            // fallback to using console commands if NMS is unavailable
+
+            for (Player player : players) {
+                String cmd = getPlaySoundCommand(soundName, player,
+                        location, volume, pitch);
+
+                Utils.executeAsConsole(cmd);
+            }
+        }
+    }
+
     /*
      * Get the command to run to make a player hear a sound.
      */
-    private static String getPlaySoundCommand(String soundName, Player p, Location loc, float volume, float pitch) {
+    private static String getPlaySoundCommand(String soundName, Player p, Location loc,
+                                              float volume, float pitch) {
 
         return "playsound " + soundName + ' ' + p.getName() + ' ' +
                 loc.getBlockX() + ' ' + loc.getBlockY() + ' ' + loc.getBlockZ() + ' '
