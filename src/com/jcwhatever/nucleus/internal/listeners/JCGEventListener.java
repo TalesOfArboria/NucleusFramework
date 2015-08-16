@@ -38,6 +38,7 @@ import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -246,6 +247,32 @@ public final class JCGEventListener implements Listener {
                 cancelAnvilEvent(p, anvilInventory, slot1Clone, slot2Clone);
             }
         }
+    }
+
+    // detect cancelled thrown item and re-insert into inventory
+    // so that it does not become invisible in the players inventory.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    private void onItemThrow(PlayerInteractEvent event) {
+
+        if (!event.isCancelled())
+            return;
+
+        Player player = event.getPlayer();
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK &&
+                event.getAction() != Action.RIGHT_CLICK_AIR) {
+            return;
+        }
+
+        ItemStack thrown = player.getItemInHand();
+        Material material = thrown.getType();
+
+        if (!Materials.isThrowable(material))
+            return;
+
+        // set same item in hand, causes packets to be sent to client
+        // "reminding" it that there is still an item in the players hand.
+        player.setItemInHand(thrown);
     }
 
     private void cancelAnvilEvent(final Player player, final Inventory inventory,
