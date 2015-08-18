@@ -44,6 +44,14 @@ public final class PotionUtils {
 
     private PotionUtils() {}
 
+    private static final int[] VALID_POTION_IDS = new int[] { 0, 16, 32, 64,
+            8193, 8194, 8196, 8197, 8201,
+            8225, 8226, 8227, 8228, 8229, 8230, 8232, 8233, 8234, 8235, 8236, 8237, 8238,
+            8257, 8258, 8259, 8260, 8261, 8262, 8264, 8265, 8266, 8267, 8268, 8269, 8270,
+            16385, 16386, 16388, 16393,
+            16417, 16418, 16419, 16420, 16421, 16422, 16424, 16425, 16426, 16427, 16428, 16429, 16430,
+            16449, 16450, 16451, 16452, 16453, 16454, 16456, 16457, 16458, 16459, 16460, 16461, 16462 };
+
     private static final INmsPotionHandler _handler = NmsUtils.getPotionHandler();
 
     /**
@@ -160,5 +168,22 @@ public final class PotionUtils {
             return _handler.getPotionIdFromRecipe(ingredient, bottle);
 
         return -1;
+    }
+
+    /**
+     * Determine if a potion ID is valid.
+     *
+     * @param potionId  The ID of the potion.
+     */
+    public static boolean isValidPotionId(int potionId) {
+
+        for (int validId : VALID_POTION_IDS) {
+            if (validId > potionId)
+                return false;
+
+            if (validId == potionId)
+                return true;
+        }
+        return false;
     }
 }

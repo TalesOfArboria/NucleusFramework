@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.nms.INmsPotionHandler;
+import com.jcwhatever.nucleus.utils.potions.PotionNames;
 import com.jcwhatever.nucleus.utils.potions.PotionUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -120,7 +121,7 @@ class NmsPotionHandler implements INmsPotionHandler {
         String potionString = getPotionString(ingredient.getData());
         if (potionString == null) {
 
-            if (bottle.getData().getData() != 0)
+            if (bottle.getDurability() != 0)
                 return -1;
 
             if (ingredient.getType() == Material.NETHER_STALK)
@@ -135,8 +136,18 @@ class NmsPotionHandler implements INmsPotionHandler {
             return -1;
         }
 
-        int bottleData = bottle.getData().getData();
-        return getPotionData(bottleData, potionString);
+        int bottleData = bottle.getDurability();
+        int potionId = getPotionData(bottleData, potionString);
+
+        if ((potionId & 32) == 0) {
+
+            // see if a level one potion is valid, if not, make this a level 2 potion
+            if (!PotionUtils.isValidPotionId(potionId)) {
+                potionId |= 32;
+            }
+        }
+
+        return potionId;
     }
 
     private static String getPotionString(MaterialData data) {
