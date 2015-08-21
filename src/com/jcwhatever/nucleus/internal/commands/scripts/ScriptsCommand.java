@@ -41,6 +41,7 @@ public final class ScriptsCommand extends AbstractCommand {
 
         registerCommand(ListSubCommand.class);
         registerCommand(ReloadSubCommand.class);
+        registerCommand(UnloadSubCommand.class);
 
         registerCommand(ItemsCommand.class);
         registerCommand(LocationsCommand.class);

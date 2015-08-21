@@ -33,42 +33,40 @@ import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
         parent="scripts",
-        command = "reload",
-        staticParams = {"scriptName="},
-        description = "Reload scripts.",
+        command = "unload",
+        staticParams = {"scriptName"},
+        description = "Unload a script.",
 
         paramDescriptions = {
-                "scriptName= Optional. The name of the script to reload. Omit to reload all scripts."
+                "scriptName= The name of the script to unload."
         })
 
-class ReloadSubCommand extends AbstractCommand implements IExecutableCommand {
+class UnloadSubCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable static final String _RELOAD_ALL = "Scripts reloaded.";
-    @Localizable static final String _RELOAD_ONE = "Script '{0: script name}' reloaded.";
     @Localizable static final String _SCRIPT_NOT_FOUND = "A script named '{0: script name}' was not found.";
+    @Localizable static final String _FAILED = "Failed to reload script named '{0: script name}'.";
+    @Localizable static final String _SUCCESS = "Script '{0: script name}' unloaded.";
 
     @Override
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
-        if (args.isDefaultValue("scriptName")) {
-            Nucleus.getScriptManager().reload();
+        String scriptName = args.getString("scriptName");
 
-            tellSuccess(sender, NucLang.get(_RELOAD_ALL));
-        }
-        else {
+        InternalScriptManager manager = (InternalScriptManager)Nucleus.getScriptManager();
 
-            String scriptName = args.getString("scriptName");
+        IScript script = manager.getScript(scriptName);
+        if (script == null)
+            throw new CommandException(NucLang.get(_SCRIPT_NOT_FOUND, scriptName));
 
-            InternalScriptManager manager = (InternalScriptManager)Nucleus.getScriptManager();
+        if (!manager.unload(scriptName))
+            throw new CommandException(NucLang.get(_FAILED, scriptName));
 
-            if (!manager.reload(scriptName))
-                throw new CommandException(NucLang.get(_SCRIPT_NOT_FOUND, scriptName));
-
-            tellSuccess(sender, NucLang.get(_RELOAD_ONE, scriptName));
-        }
+        tellSuccess(sender, NucLang.get(_SUCCESS, scriptName));
     }
 }
+

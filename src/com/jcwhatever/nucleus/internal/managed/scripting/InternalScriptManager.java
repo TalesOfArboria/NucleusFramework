@@ -351,21 +351,44 @@ public final class InternalScriptManager implements IScriptManager {
         PreCon.notNullOrEmpty(scriptName);
 
         IScript script = getScript(scriptName);
+        if (script == null) {
+
+            script = ScriptUtils.loadScript(Nucleus.getPlugin(),
+                    _scriptFolder,
+                    new File(_scriptFolder, scriptName + ".js"),
+                    getScriptFactory());
+        }
+        else if (script.getFile() != null) {
+
+            script = ScriptUtils.loadScript(Nucleus.getPlugin(),
+                    _scriptFolder, script.getFile(), getScriptFactory());
+        }
+
         if (script == null)
             return false;
 
-        if (script.getFile() != null) {
-            script = ScriptUtils.loadScript(Nucleus.getPlugin(),
-                    _scriptFolder, script.getFile(), getScriptFactory());
-            if (script == null)
-                return false;
-
-            _scripts.put(script.getName().toLowerCase(), script);
-        }
+        _scripts.put(script.getName().toLowerCase(), script);
 
         evaluate(script);
         return true;
     }
+
+    public boolean unload(String scriptName) {
+        PreCon.notNullOrEmpty(scriptName);
+
+        IScript script = getScript(scriptName);
+        if (script == null)
+            return false;
+
+        _scripts.remove(script.getName().toLowerCase());
+
+        IEvaluatedScript evaluated = _evaluated.remove(script.getName().toLowerCase());
+        if (evaluated != null)
+            evaluated.dispose();
+
+        return true;
+    }
+
 
     @Override
     public void reload() {
