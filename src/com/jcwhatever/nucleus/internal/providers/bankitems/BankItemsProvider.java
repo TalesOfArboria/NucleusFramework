@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import org.bukkit.Bukkit;
@@ -56,7 +57,7 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
             new TimedHashMap<>(Nucleus.getPlugin(), 25, 10, TimeScale.MINUTES);
 
     private final Map<String, BankItemsBank> _banks = new HashMap<>(25);
-    private final IDataNode _bankNode;
+    private IDataNode _bankNode;
 
     /**
      * Constructor.
@@ -68,7 +69,7 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
         setInfo(new InternalProviderInfo(this.getClass(),
                 NAME, "Default bank items provider."));
 
-        _bankNode = DataStorage.get(Nucleus.getPlugin(), getDataPath("banks"));
+        _bankNode = new YamlDataNode(Nucleus.getPlugin(), getDataPath("banks"));
         _bankNode.load();
         load();
     }

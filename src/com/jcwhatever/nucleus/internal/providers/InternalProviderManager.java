@@ -160,38 +160,38 @@ public final class InternalProviderManager implements IProviderManager {
 
         // setup preferred internal friends
         String prefFriends = getPreferred(ProviderType.FRIENDS);
-        if (NucleusFriendsProvider.NAME.equalsIgnoreCase(prefFriends) || prefFriends == null) {
+        if (NucleusFriendsProvider.NAME.equalsIgnoreCase(prefFriends)) {
             _friends = add(new NucleusFriendsProvider());
         }
 
         // setup preferred internal jail
         String prefJail = getPreferred(ProviderType.JAIL);
-        if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail) || prefJail == null) {
+        if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail)) {
             _jail = add(new NucleusJailProvider());
         }
 
         String prefKit = getPreferred(ProviderType.KITS);
-        if (NucleusKitProvider.NAME.equalsIgnoreCase(prefKit) || prefKit == null) {
+        if (NucleusKitProvider.NAME.equalsIgnoreCase(prefKit)) {
             _kits = add(new NucleusKitProvider());
         }
 
         // setup preferred internal permissions
         String prefPerm = getPreferred(ProviderType.PERMISSIONS);
-        if ((VaultProvider.NAME.equalsIgnoreCase(prefPerm) || prefPerm == null) &&
+        if ((VaultProvider.NAME.equalsIgnoreCase(prefPerm)) &&
                 VaultProvider.hasVaultPermissions()) {
-            _permissions = add(new VaultProvider());
+            _permissions = add(VaultProvider.getVaultProvider());
         }
-        else if (BukkitProvider.NAME.equalsIgnoreCase(prefPerm) || prefPerm == null) {
+        else if (BukkitProvider.NAME.equalsIgnoreCase(prefPerm)) {
             _permissions = add(new BukkitProvider());
         }
 
         // setup preferred internal region selection
         String prefSelect = getPreferred(ProviderType.REGION_SELECT);
-        if ((NucleusSelectionProvider.NAME.equalsIgnoreCase(prefSelect) || prefSelect == null) &&
+        if (NucleusSelectionProvider.NAME.equalsIgnoreCase(prefSelect) &&
                 !WorldEditSelectionProvider.isWorldEditInstalled()) {
             _regionSelect = add(new NucleusSelectionProvider());
         }
-        else if ((WorldEditSelectionProvider.NAME.equalsIgnoreCase(prefSelect) || prefSelect == null) &&
+        else if (WorldEditSelectionProvider.NAME.equalsIgnoreCase(prefSelect) &&
                 WorldEditSelectionProvider.isWorldEditInstalled()) {
             _regionSelect = add(new WorldEditSelectionProvider());
         }
@@ -450,6 +450,16 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IPlayerLookupProvider getPlayerLookup() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_playerLookup == null) {
+            _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
+            _playerLookup.registerTypes();
+            _playerLookup.enable();
+        }
+
         return _playerLookup;
     }
 
@@ -487,6 +497,16 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IRegionSelectProvider getRegionSelection() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_regionSelect == null) {
+            _regionSelect = new NucleusSelectionProvider();
+            _regionSelect.registerTypes();
+            _regionSelect.enable();
+        }
+
         return _regionSelect;
     }
 
