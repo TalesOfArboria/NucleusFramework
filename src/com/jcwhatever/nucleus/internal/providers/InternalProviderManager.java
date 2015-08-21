@@ -142,13 +142,13 @@ public final class InternalProviderManager implements IProviderManager {
 
         // setup preferred internal bank items
         String prefBankItems = getPreferred(ProviderType.BANK_ITEMS);
-        if (BankItemsProvider.NAME.equalsIgnoreCase(prefBankItems)) {
+        if (BankItemsProvider.NAME.equalsIgnoreCase(prefBankItems) || prefBankItems == null) {
             _bankItems = add(new BankItemsProvider());
         }
 
         // setup preferred internal economy
         String prefEcon = getPreferred(ProviderType.ECONOMY);
-        if (NucleusEconomyProvider.NAME.equalsIgnoreCase(prefEcon)) {
+        if (NucleusEconomyProvider.NAME.equalsIgnoreCase(prefEcon) || prefEcon == null) {
             _economy = add(new NucleusEconomyProvider(Nucleus.getPlugin()));
         }
         else if (VaultEconomyProvider.NAME.equalsIgnoreCase(prefEcon) &&
@@ -160,37 +160,38 @@ public final class InternalProviderManager implements IProviderManager {
 
         // setup preferred internal friends
         String prefFriends = getPreferred(ProviderType.FRIENDS);
-        if (NucleusFriendsProvider.NAME.equalsIgnoreCase(prefFriends)) {
+        if (NucleusFriendsProvider.NAME.equalsIgnoreCase(prefFriends) || prefFriends == null) {
             _friends = add(new NucleusFriendsProvider());
         }
 
         // setup preferred internal jail
         String prefJail = getPreferred(ProviderType.JAIL);
-        if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail)) {
+        if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail) || prefJail == null) {
             _jail = add(new NucleusJailProvider());
         }
 
         String prefKit = getPreferred(ProviderType.KITS);
-        if (NucleusKitProvider.NAME.equalsIgnoreCase(prefKit)) {
+        if (NucleusKitProvider.NAME.equalsIgnoreCase(prefKit) || prefKit == null) {
             _kits = add(new NucleusKitProvider());
         }
 
         // setup preferred internal permissions
         String prefPerm = getPreferred(ProviderType.PERMISSIONS);
-        if (BukkitProvider.NAME.equalsIgnoreCase(prefPerm)) {
-            _permissions = add(new BukkitProvider());
-        }
-        else if (VaultProvider.NAME.equalsIgnoreCase(prefPerm)) {
+        if ((VaultProvider.NAME.equalsIgnoreCase(prefPerm) || prefPerm == null) &&
+                VaultProvider.hasVaultPermissions()) {
             _permissions = add(new VaultProvider());
+        }
+        else if (BukkitProvider.NAME.equalsIgnoreCase(prefPerm) || prefPerm == null) {
+            _permissions = add(new BukkitProvider());
         }
 
         // setup preferred internal region selection
         String prefSelect = getPreferred(ProviderType.REGION_SELECT);
-        if (NucleusSelectionProvider.NAME.equalsIgnoreCase(prefSelect) &&
+        if ((NucleusSelectionProvider.NAME.equalsIgnoreCase(prefSelect) || prefSelect == null) &&
                 !WorldEditSelectionProvider.isWorldEditInstalled()) {
             _regionSelect = add(new NucleusSelectionProvider());
         }
-        else if (WorldEditSelectionProvider.NAME.equalsIgnoreCase(prefSelect) &&
+        else if ((WorldEditSelectionProvider.NAME.equalsIgnoreCase(prefSelect) || prefSelect == null) &&
                 WorldEditSelectionProvider.isWorldEditInstalled()) {
             _regionSelect = add(new WorldEditSelectionProvider());
         }
