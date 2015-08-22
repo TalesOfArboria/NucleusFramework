@@ -29,14 +29,14 @@ import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
-import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.Provider;
+import com.jcwhatever.nucleus.providers.permissions.Permissions;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-import com.jcwhatever.nucleus.managed.language.Localizable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,10 +48,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionDefault;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * NucleusFramework's default selection provider when no other
@@ -60,6 +61,7 @@ import javax.annotation.Nullable;
 public final class NucleusSelectionProvider extends Provider implements IRegionSelectProvider {
 
     public static final String NAME = "NucleusRegionSelector";
+    public static final String PERMISSION = "nucleusframework.providers.nucleusselection.wand";
 
     @Localizable static final String _P1_SELECTED =
             "{DARK_PURPLE}P1 region point selected:\n{DARK_PURPLE}{0: location}";
@@ -79,6 +81,9 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
     @Override
     public void onEnable() {
+
+        Permissions.register(PERMISSION, PermissionDefault.OP, true);
+
         Bukkit.getPluginManager().registerEvents(new BukkitEventListener(), Nucleus.getPlugin());
     }
 
@@ -108,6 +113,9 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
         if (!selection.isDefined())
             return false;
+
+        assert selection.getP1() != null;
+        assert selection.getP2() != null;
 
         synchronized (_sync) {
             _p1Selections.put(player.getUniqueId(), selection.getP1().clone());
@@ -170,7 +178,10 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
         @EventHandler
         private void onCommand(PlayerCommandPreprocessEvent event) {
-            if (event.getMessage().equals("//wand")) {
+
+            Player player = event.getPlayer();
+
+            if (event.getMessage().equals("//wand") && hasPermission(player)) {
                 event.getPlayer().getInventory().addItem(new ItemStack(Material.WOOD_AXE));
                 event.setCancelled(true);
             }
@@ -178,6 +189,7 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
     }
 
     private boolean hasPermission(Player player) {
-        return player.isOp();
+        return player.isOp() ||
+                Permissions.has(player, PERMISSION);
     }
 }
