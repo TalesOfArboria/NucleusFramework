@@ -27,22 +27,22 @@ package com.jcwhatever.nucleus.managed.sounds.playlist;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
 import com.jcwhatever.nucleus.events.sounds.PlayListTrackChangeEvent;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
+import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.Result;
-
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of a play list that plays a collection of
@@ -437,7 +436,9 @@ public abstract class PlayList implements IPluginOwned {
             if (player == null)
                 return;
 
-            _queue.clear();
+            if (_queue != null)
+                _queue.clear();
+
             _playerQueues.remove(player);
 
             Set<PlayList> playLists = _instances.get(player);
