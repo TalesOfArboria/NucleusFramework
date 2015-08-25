@@ -282,7 +282,7 @@ public final class Rand {
             if (max <= 1)
                 return 0;
 
-            return nextInt() % (max - 1);
+            return nextInt() % max;
         }
     }
 }
