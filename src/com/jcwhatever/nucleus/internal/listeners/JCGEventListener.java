@@ -39,6 +39,7 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
 import com.jcwhatever.nucleus.utils.materials.Materials;
+import com.jcwhatever.nucleus.utils.potions.PotionUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -268,6 +269,9 @@ public final class JCGEventListener implements Listener {
         Material material = thrown.getType();
 
         if (!Materials.isThrowable(material))
+            return;
+
+        if (material == Material.POTION && !PotionUtils.isSplash(thrown.getDurability()))
             return;
 
         // set same item in hand, causes packets to be sent to client
