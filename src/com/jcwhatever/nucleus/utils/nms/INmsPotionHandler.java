@@ -75,4 +75,25 @@ public interface INmsPotionHandler extends INmsHandler {
      * @return  The potion Id or -1 if not a valid recipe.
      */
     int getPotionIdFromRecipe(ItemStack ingredient, ItemStack bottle);
+
+    /**
+     * Determine if a potion ID specifies a splash potion.
+     *
+     * @param potionId  The ID of the potion.
+     */
+    boolean isSplash(int potionId);
+
+    /**
+     * Get the level of a potion specified by the potion ID.
+     *
+     * @param potionId   The ID of the potion.
+     */
+    int getLevel(int potionId);
+
+    /**
+     * Determine if a potion ID specifies an extended duration.
+     *
+     * @param potionId  The ID of the potion.
+     */
+    boolean isExtendedDuration(int potionId);
 }

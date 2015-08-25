@@ -186,4 +186,31 @@ public final class PotionUtils {
         }
         return false;
     }
+
+    /**
+     * Determine if a potion ID specifies a splash potion.
+     *
+     * @param potionId  The ID of the potion.
+     */
+    public static boolean isSplash(int potionId) {
+        return _handler != null && _handler.isSplash(potionId);
+    }
+
+    /**
+     * Get the level of a potion specified by the potion ID.
+     *
+     * @param potionId   The ID of the potion.
+     */
+    public static int getLevel(int potionId) {
+        return _handler != null ? _handler.getLevel(potionId) : -1;
+    }
+
+    /**
+     * Determine if a potion ID specifies an extended duration.
+     *
+     * @param potionId  The ID of the potion.
+     */
+    public static boolean isExtendedDuration(int potionId) {
+        return _handler != null && _handler.isExtendedDuration(potionId);
+    }
 }

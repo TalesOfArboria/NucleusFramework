@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.nms.INmsPotionHandler;
-import com.jcwhatever.nucleus.utils.potions.PotionNames;
 import com.jcwhatever.nucleus.utils.potions.PotionUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -148,6 +147,21 @@ class NmsPotionHandler implements INmsPotionHandler {
         }
 
         return potionId;
+    }
+
+    @Override
+    public boolean isSplash(int potionId) {
+        return (potionId & 16384) == 16384;
+    }
+
+    @Override
+    public int getLevel(int potionId) {
+        return (potionId & 32) == 32 ? 2 : 1;
+    }
+
+    @Override
+    public boolean isExtendedDuration(int potionId) {
+        return (potionId & 64) == 64;
     }
 
     private static String getPotionString(MaterialData data) {
