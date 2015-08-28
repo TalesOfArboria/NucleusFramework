@@ -76,6 +76,15 @@ public final class PotionUtils {
 
             return type;
         }
+        else if (object instanceof Number) {
+            int id = ((Number)object).intValue();
+
+            PotionType type = PotionType.getByDamageValue(id & 15);
+            if (type == null)
+                return null;
+
+            return type.getEffectType();
+        }
         else if (object instanceof PotionEffectType) {
             return (PotionEffectType)object;
         }
