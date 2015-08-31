@@ -57,11 +57,7 @@ public final class BlockUtils {
                 ? block.getLocation(BLOCK_LOCATION)
                 : block.getLocation();
 
-        block.setType(Material.AIR);
-
-        // spawn a falling block
-        return block.getWorld().spawnFallingBlock(
-                location, block.getType(), block.getData());
+        return dropBlock(location);
     }
 
     /**
@@ -74,11 +70,14 @@ public final class BlockUtils {
 
         Block block = location.getBlock();
 
+        Material material = block.getType();
+        byte data = block.getData();
+
         block.setType(Material.AIR);
 
         // spawn a falling block
         return block.getWorld().spawnFallingBlock(
-                location, block.getType(), block.getData());
+                location, material, data);
     }
 
     /**

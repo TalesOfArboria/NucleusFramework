@@ -27,12 +27,12 @@ package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
-
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.Iterator;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 
 /**
  * Iterates through all blocks in a region.
@@ -59,6 +59,16 @@ public class RegionBlockIterator implements Iterator<Block> {
         _currentY = region.getYStart();
         _currentX = region.getXStart();
         _currentZ = region.getZStart();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param p1  The first region coordinates.
+     * @param p2  The second region coordinates.
+     */
+    public RegionBlockIterator (Location p1, Location p2) {
+        this(new SimpleRegionSelection(p1, p2));
     }
 
     /**
