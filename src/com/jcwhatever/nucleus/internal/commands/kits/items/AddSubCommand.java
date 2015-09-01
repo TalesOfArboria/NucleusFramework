@@ -44,20 +44,20 @@ import java.util.Collection;
         parent="items",
         command="add",
         staticParams={ "kitName", "items" },
-        description="Add items to the specified NPC kit.",
+        description="Add items to the specified inventory kit.",
 
-        paramDescriptions = { "kitName= The name of the kit items will be added to. {NAME16}",
+        paramDescriptions = { "kitName= The name of the kit items will be added to.",
                               "items= The items to add. {ITEM_STACK}"})
 
 class AddSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
-    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
-    @Localizable static final String _SUCCESS = "Added items to chest kit '{0}'.";
+    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
+    @Localizable static final String _SUCCESS = "Added items to inventory kit '{0}'.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String kitName = args.getName("kitName");
+        String kitName = args.getString("kitName");
         ItemStack[] items = args.getItemStack(sender, "items");
 
         IKit kit = Kits.get(kitName);

@@ -45,7 +45,7 @@ import org.bukkit.inventory.ItemStack;
         parent="items",
         command="list",
         staticParams={ "kitName", "page=1" },
-        description="List items in an chest kit.",
+        description="List items in an inventory kit.",
 
         paramDescriptions = {
                 "kitName= The name of the kit items will be added to. {NAME16}",
@@ -54,7 +54,7 @@ import org.bukkit.inventory.ItemStack;
 class ListSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Kit Items";
-    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
     @Localizable static final String _LABEL_ARMOR = "ARMOR";
     @Localizable static final String _LABEL_ITEMS = "ITEMS";
     @Localizable static final String _LABEL_NONE = "<none>";
@@ -62,7 +62,7 @@ class ListSubCommand extends AbstractKitCommand implements IExecutableCommand {
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String kitName = args.getName("kitName");
+        String kitName = args.getString("kitName");
         int	page = args.getInteger("page");
 
         IKit kit = Kits.get(kitName);

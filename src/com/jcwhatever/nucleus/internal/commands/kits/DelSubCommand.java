@@ -42,7 +42,7 @@ import org.bukkit.command.CommandSender;
         description="Remove an chest kit.",
 
         paramDescriptions = {
-                "kitName= The name of the kit items will be added to. {NAME16}"})
+                "kitName= The name of the kit to remove."})
 
 class DelSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
@@ -53,7 +53,7 @@ class DelSubCommand extends AbstractKitCommand implements IExecutableCommand {
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String kitName = args.getName("kitName");
+        String kitName = args.getString("kitName");
 
         IKit kit = Kits.get(kitName);
         if (kit == null)

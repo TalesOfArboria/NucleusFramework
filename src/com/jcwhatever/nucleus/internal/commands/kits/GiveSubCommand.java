@@ -59,7 +59,7 @@ class GiveSubCommand extends AbstractKitCommand implements IExecutableCommand, I
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String kitName = args.getName("kitName");
+        String kitName = args.getString("kitName");
 
         Player player;
 

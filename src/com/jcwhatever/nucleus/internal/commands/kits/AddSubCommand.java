@@ -39,15 +39,15 @@ import org.bukkit.command.CommandSender;
         parent="kits",
         command="add",
         staticParams={ "kitName" },
-        description="Add a new chest kit.",
+        description="Add a new inventory kit.",
 
         paramDescriptions = {
                 "kitName= The name of the kit items will be added to. {NAME16}"})
 
 class AddSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
-    @Localizable static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
-    @Localizable static final String _FAILED = "Failed to create chest kit.";
+    @Localizable static final String _KIT_ALREADY_EXISTS = "An inventory kit named '{0}' already exists.";
+    @Localizable static final String _FAILED = "Failed to create inventory kit.";
     @Localizable static final String _SUCCESS = "Inventory kit '{0}' created.";
 
     @Override

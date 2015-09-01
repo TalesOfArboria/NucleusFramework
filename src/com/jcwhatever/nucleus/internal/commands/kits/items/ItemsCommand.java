@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 @CommandInfo(
         parent="kits",
         command="items",
-        description="Manage chest kit items.")
+        description="Manage inventory kit items.")
 
 public final class ItemsCommand extends AbstractCommand {
 

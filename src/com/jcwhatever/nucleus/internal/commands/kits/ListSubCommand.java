@@ -45,7 +45,7 @@ import java.util.Collection;
         parent="kits",
         command="list",
         staticParams={ "page=1" },
-        description="List chest kits.",
+        description="List inventory kits.",
 
         paramDescriptions = {
                 "page= {PAGE}"})
