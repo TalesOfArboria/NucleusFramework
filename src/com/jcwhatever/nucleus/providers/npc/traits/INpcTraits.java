@@ -26,11 +26,10 @@ package com.jcwhatever.nucleus.providers.npc.traits;
 
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.npc.INpc;
-
 import org.bukkit.entity.EntityType;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for a trait manager whose instances are paired
@@ -90,6 +89,20 @@ public interface INpcTraits {
      * @return  Self for chaining.
      */
     INpcTraits setSkinName(@Nullable String skinName);
+
+    /**
+     * Set the skin name of the NPC. This has no effect if the NPC is not capable
+     * of having its skin changed.
+     *
+     * @param skinName  The name of the skin to use.
+     * @param fileName  The name of the file to import from or export to. If the file exists,
+     *                  the skin data is imported, otherwise the skin data for the specified
+     *                  skinName is exported. The implementation is responsible for the location
+     *                  of the file.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits setSkinName(String skinName, String fileName);
 
     /**
      * Get the kit the NPC is spawned with.

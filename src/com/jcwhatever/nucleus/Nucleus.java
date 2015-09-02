@@ -42,6 +42,7 @@ import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.particles.IParticleEffectFactory;
 import com.jcwhatever.nucleus.managed.reflection.IReflectionManager;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePackManager;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardManager;
 import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
@@ -295,6 +296,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
 
         return _plugin._regionManager;
+    }
+
+    /**
+     * Get the global resource pack manager.
+     */
+    public static IResourcePackManager getResourcePacks() {
+        PreCon.isValid(_plugin._resourcePacks != null, ERROR_NOT_READY);
+
+        return _plugin._resourcePacks;
     }
 
     /**

@@ -32,15 +32,14 @@ import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardManager;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.LinkedList;
+import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Internal implementation of {@link IScoreboardManager}.
@@ -190,5 +189,5 @@ public final class InternalScoreboardManager implements IScoreboardManager {
         }
     }
 
-    private static class PlayerScoreboards extends LinkedList<ManagedScoreboard> {}
+    private static class PlayerScoreboards extends ArrayDeque<ManagedScoreboard> {}
 }

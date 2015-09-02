@@ -36,6 +36,7 @@ import com.jcwhatever.nucleus.internal.commands.players.PlayersCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
 import com.jcwhatever.nucleus.internal.commands.providers.ProvidersCommand;
 import com.jcwhatever.nucleus.internal.commands.regions.RegionsCommand;
+import com.jcwhatever.nucleus.internal.commands.respacks.ResPacksCommand;
 import com.jcwhatever.nucleus.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.nucleus.internal.commands.signs.SignsCommand;
 import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
@@ -55,6 +56,7 @@ import com.jcwhatever.nucleus.internal.managed.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.managed.particles.InternalParticleEffectFactory;
 import com.jcwhatever.nucleus.internal.managed.reflection.InternalReflectionManager;
+import com.jcwhatever.nucleus.internal.managed.resourcepacks.InternalResourcePackManager;
 import com.jcwhatever.nucleus.internal.managed.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.managed.scoreboards.InternalScoreboardManager;
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptApiRepo;
@@ -70,6 +72,9 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -110,6 +115,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalReflectionManager _reflectionManager;
     InternalCommandManager _commandManager;
     InternalParticleEffectFactory _particleFactory;
+    InternalResourcePackManager _resourcePacks;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -205,6 +211,10 @@ public final class BukkitPlugin extends NucleusPlugin {
         _scriptEngineLoader.loadModules();
 
         _floatingItemManager = new InternalFloatingItemManager();
+
+        IDataNode resPackNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("resource-packs"));
+        resPackNode.load();
+        _resourcePacks = new InternalResourcePackManager(resPackNode);
     }
 
     @Override
@@ -222,6 +232,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         registerCommand(PluginsCommand.class);
         registerCommand(ProvidersCommand.class);
         registerCommand(RegionsCommand.class);
+        registerCommand(ResPacksCommand.class);
         registerCommand(ScriptsCommand.class);
         registerCommand(SignsCommand.class);
         registerCommand(StorageCommand.class);

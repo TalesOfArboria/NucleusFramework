@@ -27,6 +27,9 @@ package com.jcwhatever.nucleus.managed.sounds.playlist;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
 import com.jcwhatever.nucleus.events.sounds.PlayListTrackChangeEvent;
+import com.jcwhatever.nucleus.managed.resourcepacks.IPlayerResourcePacks;
+import com.jcwhatever.nucleus.managed.resourcepacks.ResourcePackStatus;
+import com.jcwhatever.nucleus.managed.resourcepacks.ResourcePacks;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
@@ -180,6 +183,33 @@ public abstract class PlayList implements IPluginOwned {
         playLists.add(this);
         _playerQueues.put(player, queue);
 
+        IPlayerResourcePacks packs = ResourcePacks.get(player);
+        if (packs.getStatus() == ResourcePackStatus.SUCCESS) {
+            play(player, queue, settings);
+        }
+        else {
+            packs.getFinalStatus()
+                    .onSuccess(new FutureResultSubscriber<IPlayerResourcePacks>() {
+                        @Override
+                        public void on(Result<IPlayerResourcePacks> result) {
+                            assert result.getResult() != null;
+
+                            if (result.getResult().getStatus() == ResourcePackStatus.SUCCESS) {
+                                play(player, queue, settings);
+                            }
+                            else {
+                                removePlayer(player, true);
+                            }
+                        }
+                    });
+        }
+
+        return queue;
+    }
+
+    private void play(final Player player,
+                      final PlayerSoundQueue queue, final SoundSettings settings) {
+
         // play later to give a chance to attach meta to PlayerSoundQueue
         // before any events are fired.
         Scheduler.runTaskLater(getPlugin(), new Runnable() {
@@ -196,8 +226,6 @@ public abstract class PlayList implements IPluginOwned {
                         .onSuccess(new TrackChanger(player, queue));
             }
         });
-
-        return queue;
     }
 
     /**
