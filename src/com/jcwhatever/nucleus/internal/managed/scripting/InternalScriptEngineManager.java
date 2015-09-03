@@ -137,6 +137,29 @@ public final class InternalScriptEngineManager extends ScriptEngineManager {
         super.registerEngineExtension(extension, factory);
     }
 
+    void reload() {
+
+        Map<String, ScriptEngine> named = new HashMap<>(_namedEngines);
+        Map<String, ScriptEngine> ext = new HashMap<>(_extEngines);
+        Map<String, ScriptEngine> mime = new HashMap<>(_mimeEngines);
+
+        _namedEngines.clear();
+        _extEngines.clear();
+        _mimeEngines.clear();
+
+        for (Map.Entry<String, ScriptEngine> entry : named.entrySet()) {
+            registerEngineName(entry.getKey(), entry.getValue().getFactory());
+        }
+
+        for (Map.Entry<String, ScriptEngine> entry : ext.entrySet()) {
+            registerEngineExtension(entry.getKey(), entry.getValue().getFactory());
+        }
+
+        for (Map.Entry<String, ScriptEngine> entry : mime.entrySet()) {
+            registerEngineMimeType(entry.getKey(), entry.getValue().getFactory());
+        }
+    }
+
     private void storeEngine(ScriptEngine engine) {
         String engineName = engine.getFactory().getEngineName();
         List<String> extensions = engine.getFactory().getExtensions();

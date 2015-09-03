@@ -53,7 +53,7 @@ import java.util.Collection;
 class DelSubCommand extends AbstractKitCommand implements IExecutableCommand {
 
     @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
-    @Localizable static final String _SUCCESS = "Removed items from inventory kit '{1}'.";
+    @Localizable static final String _SUCCESS = "Removed items from inventory kit '{0}'.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {

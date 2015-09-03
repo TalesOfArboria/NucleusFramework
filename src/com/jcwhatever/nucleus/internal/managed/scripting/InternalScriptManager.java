@@ -40,6 +40,7 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_NpcProvider;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Permissions;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Rand;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Regions;
+import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_ResourcePacks;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scheduler;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scoreboard;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Sounds;
@@ -393,6 +394,8 @@ public final class InternalScriptManager implements IScriptManager {
     @Override
     public void reload() {
         loadScripts();
+        GlobalMeta.reset();
+        ((InternalScriptEngineManager)Nucleus.getScriptEngineManager()).reload();
         evaluate();
 
         Scheduler.runTaskLater(Nucleus.getPlugin(), 20, new ScriptReloadGC());
@@ -608,6 +611,18 @@ public final class InternalScriptManager implements IScriptManager {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_Regions();
+            }
+        }));
+        _api.add(new SimpleScriptApi(plugin, "respacks", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new SAPI_ResourcePacks();
+            }
+        }));
+        _api.add(new SimpleScriptApi(plugin, "gmeta", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new GlobalMeta();
             }
         }));
     }

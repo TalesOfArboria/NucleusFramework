@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
+import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.menu.MenuItemBuilder;
 
 import org.bukkit.entity.Player;
@@ -140,5 +141,22 @@ public class SAPI_Views implements IDisposable {
         _views.add(view);
 
         return view;
+    }
+
+    /**
+     * Determine if a player is currently viewing an artificial inventory view.
+     *
+     * @param player  The {@link org.bukkit.entity.Player} to check. Argument can also be
+     *                the player name, the players UUID or an
+     *                {@link com.jcwhatever.nucleus.mixins.IPlayerReference} instance.
+     */
+    public boolean isViewing(Object player) {
+        PreCon.notNull(player);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.isValid(p != null, "Invalid player object.");
+
+        ViewSession session = ViewSession.getCurrent(p);
+        return session != null && session.getCurrent() != null;
     }
 }
