@@ -352,8 +352,8 @@ public final class PlayerUtils {
 
         World world = loc.getWorld();
 
-        int chunkX = (int)Math.floor(loc.getX() / 16);
-        int chunkZ = (int)Math.floor(loc.getZ() / 16);
+        int chunkX = (int)loc.getX() >> 4;
+        int chunkZ = (int)loc.getZ() >> 4;
 
         if (!world.isChunkLoaded(chunkX, chunkZ))
             return new ArrayList<>(0);
@@ -372,7 +372,7 @@ public final class PlayerUtils {
                     if (!(entity instanceof Player))
                         continue;
 
-                    if (validator != null && validator.isValid((Player) entity))
+                    if (validator != null && !validator.isValid((Player) entity))
                         continue;
 
                     players.add((Player) entity);

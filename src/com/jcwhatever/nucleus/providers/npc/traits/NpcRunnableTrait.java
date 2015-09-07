@@ -70,6 +70,10 @@ public abstract class NpcRunnableTrait extends NpcTrait implements Runnable {
 
     @Override
     public final void run() {
+
+        if (!isEnabled() || isDisposed())
+            return;
+
         if (_currentInterval <= 1) {
             onRun();
             _currentInterval = _interval;

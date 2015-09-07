@@ -172,7 +172,9 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
             PreCon.notNull(trait);
 
             checkRegistration(trait);
+            trait.disable();
             trait.onDetach();
+            trait.setDisposeFlag();
         }
 
         /**

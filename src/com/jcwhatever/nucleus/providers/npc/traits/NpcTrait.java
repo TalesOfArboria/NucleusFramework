@@ -141,8 +141,10 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @return  Self for chaining.
      */
     public NpcTrait enable() {
-        _isEnabled = true;
-        onEnable();
+        if (!_isDisposed && !_isEnabled) {
+            _isEnabled = true;
+            onEnable();
+        }
         return this;
     }
 
@@ -152,8 +154,10 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @return  Self for chaining.
      */
     public NpcTrait disable() {
-        _isEnabled = false;
-        onDisable();
+        if (!_isDisposed && _isEnabled) {
+            _isEnabled = false;
+            onDisable();
+        }
         return this;
     }
 
@@ -168,7 +172,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * {@link java.lang.Runnable}.</p>
      */
     public boolean canRun() {
-        return this instanceof Runnable;
+        return this instanceof Runnable && _isEnabled;
     }
 
     /**
@@ -215,6 +219,10 @@ public abstract class NpcTrait implements INamed, IDisposable {
         INpc npc = getNpc();
         if (npc != null) {
             getNpc().getTraits().remove(getName());
+        }
+
+        if (_isEnabled) {
+            disable();
         }
 
         _isDisposed = true;
@@ -271,6 +279,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @param npc  The NPC the trait is added to.
      */
     void init(INpc npc) {
+        PreCon.notNull(npc);
 
         if (!isReusable() && _npc != null)
             throw new IllegalStateException("Trait  is not reusable.");
@@ -278,5 +287,12 @@ public abstract class NpcTrait implements INamed, IDisposable {
         _isDisposed = false;
         _npc = npc;
         onAttach(npc);
+    }
+
+    /**
+     * Set the traits dispose flag to true.
+     */
+    void setDisposeFlag() {
+        _isDisposed = true;
     }
 }
