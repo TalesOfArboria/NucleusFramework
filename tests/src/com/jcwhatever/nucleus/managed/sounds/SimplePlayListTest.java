@@ -1,10 +1,5 @@
 package com.jcwhatever.nucleus.managed.sounds;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
-import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList.PlayerSoundQueue;
@@ -13,8 +8,10 @@ import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
-
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.plugin.Plugin;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +19,10 @@ import org.junit.Test;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SimplePlayListTest {
 
@@ -40,6 +41,20 @@ public class SimplePlayListTest {
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
         dataNode.load();
+
+        Player player = BukkitTester.login("dummy");
+
+        PlayerResourcePackStatusEvent event1 = new PlayerResourcePackStatusEvent(
+                player, PlayerResourcePackStatusEvent.Status.ACCEPTED);
+        Bukkit.getPluginManager().callEvent(event1);
+
+        BukkitTester.pause(20);
+
+        PlayerResourcePackStatusEvent event2 = new PlayerResourcePackStatusEvent(
+                player, PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED);
+        Bukkit.getPluginManager().callEvent(event2);
+
+        BukkitTester.pause(20);
     }
 
     @Test

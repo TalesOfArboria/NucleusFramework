@@ -2,8 +2,8 @@ package com.jcwhatever.nucleus.views;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
-import com.jcwhatever.v1_8_R2.blocks.MockBlock;
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import com.jcwhatever.v1_8_R3.blocks.MockBlock;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.views.workbench.WorkbenchView;
 

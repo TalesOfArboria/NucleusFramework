@@ -1,10 +1,5 @@
 package com.jcwhatever.nucleus.managed.sounds;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.internal.managed.sounds.InternalSoundManager;
@@ -14,7 +9,7 @@ import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
-
+import com.jcwhatever.v1_8_R3.BukkitTester;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.BeforeClass;
@@ -22,6 +17,10 @@ import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link ISoundManager}.

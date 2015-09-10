@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.views.chest;
 
-import com.jcwhatever.v1_8_R2.MockInventory;
+import com.jcwhatever.v1_8_R3.MockInventory;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 

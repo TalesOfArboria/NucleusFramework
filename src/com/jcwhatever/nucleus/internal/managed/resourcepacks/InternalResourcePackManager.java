@@ -218,7 +218,12 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
     }
 
     private void loadDefault() {
+
+        if (Nucleus.getPlugin().isTesting())
+            return;
+
         File file = new File("server.properties");
+
         String resourcePack = FileUtils.scanTextFile(file, StandardCharsets.UTF_8, new IValidator<String>() {
             @Override
             public boolean isValid(String element) {

@@ -81,8 +81,9 @@ public interface INpcTraits {
     String getSkinName();
 
     /**
-     * Set the skin name of the NPC. This has no effect if the NPC is not capable
-     * of having its skin changed.
+     * Set the skin name of the NPC.
+     *
+     * <p>This has no effect if the NPC is not capable of having its skin changed.</p>
      *
      * @param skinName  The name of the skin to use. Null to remove custom skin.
      *
@@ -91,8 +92,9 @@ public interface INpcTraits {
     INpcTraits setSkinName(@Nullable String skinName);
 
     /**
-     * Set the skin name of the NPC. This has no effect if the NPC is not capable
-     * of having its skin changed.
+     * Set the skin name of the NPC.
+     *
+     * <p>This has no effect if the NPC is not capable of having its skin changed.</p>
      *
      * @param skinName  The name of the skin to use.
      * @param fileName  The name of the file to import from or export to. If the file exists,
@@ -105,6 +107,24 @@ public interface INpcTraits {
     INpcTraits setSkinName(String skinName, String fileName);
 
     /**
+     * Determine if the NPC is shown in the player tab list.
+     *
+     * <p>If the NPC is not a player entity, this always returns false.</p>
+     */
+    boolean isShownInTabList();
+
+    /**
+     * Set the NPC shown in player tab list flag.
+     *
+     * <p>This has no effect if te NPC is not capable of being shown in the player tab list.</p>
+     *
+     * @param isShownInList  True to show in tab list, otherwise false.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits setShownInTabList(boolean isShownInList);
+
+    /**
      * Get the kit the NPC is spawned with.
      *
      * @return The {@link IKit} or null if one is not set.
@@ -113,8 +133,9 @@ public interface INpcTraits {
     IKit getKit();
 
     /**
-     * Set the kit the NPC is spawned with. If the NPC is already spawned, the kit
-     * is also applied to the spawned entity.
+     * Set the kit the NPC is spawned with.
+     *
+     * <p>If the NPC is already spawned, the kit is also applied to the spawned entity.</p>
      *
      * @param kit  The {@link IKit} or null to remove kit.
      *

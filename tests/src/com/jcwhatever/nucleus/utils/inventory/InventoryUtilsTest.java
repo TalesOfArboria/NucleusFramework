@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.utils.inventory;
 
-import com.jcwhatever.v1_8_R2.MockInventory;
+import com.jcwhatever.v1_8_R3.MockInventory;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;

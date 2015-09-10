@@ -44,6 +44,11 @@ public final class InternalNmsManager extends NmsManager {
     public static final String LIST_HEADER_FOOTER = "LIST_HEADER_FOOTER";
 
     /**
+     * The name of the internal misc. effect handler.
+     */
+    public static final String EFFECT = "EFFECT";
+
+    /**
      * The name of the internal particle effect handler.
      */
     public static final String PARTICLE_EFFECT = "PARTICLE_EFFECT";
@@ -68,6 +73,11 @@ public final class InternalNmsManager extends NmsManager {
      */
     public static final String POTIONS = "POTIONS";
 
+    /**
+     * The name of the internal entity visibility handler.
+     */
+    public static final String ENTITY_VISIBILITY = "ENTITY_VISIBILITY";
+
     private static INms _nms;
 
     /**
@@ -78,10 +88,6 @@ public final class InternalNmsManager extends NmsManager {
             switch (NmsUtils.getNmsVersion()) {
                 case "v1_8_R3":
                     return _nms = new v1_8_R3_Nms();
-                case "v1_8_R2":
-                    return _nms = new v1_8_R2_Nms();
-                case "v1_8_R1":
-                    return _nms = new v1_8_R1_Nms();
             }
         }
 
@@ -91,24 +97,14 @@ public final class InternalNmsManager extends NmsManager {
     public InternalNmsManager() {
         super(Nucleus.getPlugin());
 
-        registerHandler("v1_8_R1", TITLES, NmsTitleHandler.class);
-        registerHandler("v1_8_R1", ACTION_BAR, NmsActionBarHandler.class);
-        registerHandler("v1_8_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
-        registerHandler("v1_8_R1", SOUND_EFFECT, NmsSoundEffectHandler.class);
-
-        registerHandler("v1_8_R2", TITLES, NmsTitleHandler.class);
-        registerHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler.class);
-        registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
-        registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler.class);
-        registerHandler("v1_8_R2", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
-        registerHandler("v1_8_R2", ANVIL_VIEW, NmsAnvilViewHandler.class);
-
         registerHandler("v1_8_R3", TITLES, NmsTitleHandler.class);
         registerHandler("v1_8_R3", ACTION_BAR, NmsActionBarHandler.class);
         registerHandler("v1_8_R3", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
         registerHandler("v1_8_R3", SOUND_EFFECT, NmsSoundEffectHandler.class);
         registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
         registerHandler("v1_8_R3", ANVIL_VIEW, NmsAnvilViewHandler.class);
+        registerHandler("v1_8_R3", EFFECT, NmsEffectHandler.class);
+        registerHandler("v1_8_R3", ENTITY_VISIBILITY, NmsEntityVisibilityHandler.class);
 
         registerHandler(NmsUtils.getNmsVersion(), POTIONS, NmsPotionHandler.class);
     }

@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.internal.managed.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R3.BukkitTester;
 
 import org.junit.Before;
 import org.junit.Test;

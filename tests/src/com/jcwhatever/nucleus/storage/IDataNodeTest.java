@@ -12,7 +12,7 @@ import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
-import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R3.BukkitTester;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -1,16 +1,14 @@
 package com.jcwhatever.nucleus.internal.managed.reflection;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-
-import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
-
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.minecraft.server.v1_8_R2.EntityLiving;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 
 public class ReflectionTest {
 

@@ -2,8 +2,8 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
-import com.jcwhatever.v1_8_R2.MockPlugin;
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import com.jcwhatever.v1_8_R3.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.DequeRunnable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;

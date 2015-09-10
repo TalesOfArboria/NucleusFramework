@@ -27,7 +27,9 @@ package com.jcwhatever.nucleus.internal.managed.nms;
 import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 
@@ -168,4 +170,27 @@ interface INms {
      */
     @Nullable
     InventoryView openAnvilInventory(Player player, @Nullable Block position);
+
+    /**
+     * Get a lightning packet.
+     *
+     * @param strikeLocation  The location of the lightning strike.
+     */
+    Object getLightningPacket(Location strikeLocation);
+
+
+    /**
+     * Determine if an entity is visible.
+     *
+     * @param entity  The entity.
+     */
+    boolean isEntityVisible(Entity entity);
+
+    /**
+     * Set an entities visibility state.
+     *
+     * @param entity     The entity to set.
+     * @param isVisible  The visibility state.
+     */
+    void setEntityVisible(Entity entity, boolean isVisible);
 }

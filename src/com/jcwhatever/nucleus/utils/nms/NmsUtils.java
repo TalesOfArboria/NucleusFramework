@@ -142,11 +142,23 @@ public final class NmsUtils {
     }
 
     /**
+     * Get NucleusFrameworks internal misc. effect handler.
+     *
+     * @return  The particle effect handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsEffectHandler getEffectHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.EFFECT);
+    }
+
+    /**
      * Get NucleusFrameworks internal particle effect handler.
      *
      * @return  The particle effect handler or null if a handler for the current version of
      * Minecraft does not exist.
      */
+    @Nullable
     public static INmsParticleEffectHandler getParticleEffectHandler() {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.PARTICLE_EFFECT);
     }
@@ -190,8 +202,20 @@ public final class NmsUtils {
      * @return  The potion handler or null if a handler for the current version
      * of Minecraft does not exist.
      */
+    @Nullable
     public static INmsPotionHandler getPotionHandler() {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.POTIONS);
+    }
+
+    /**
+     * Get NucleusFramework's internal entity visibility handler.
+     *
+     * @return  The handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsEntityVisibilityHandler getEntityVisibilityHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.ENTITY_VISIBILITY);
     }
 
     // load the the craft package version from NucleusFramework's config

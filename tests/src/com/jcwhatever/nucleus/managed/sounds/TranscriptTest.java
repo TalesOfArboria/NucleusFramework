@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.managed.sounds;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R3.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.managed.sounds.Transcript.Paragraph;
 import com.jcwhatever.nucleus.storage.YamlDataNode;

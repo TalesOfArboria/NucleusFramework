@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.internal.providers.bankitems;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R3.BukkitTester;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItem;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemTest;
 import com.jcwhatever.nucleus.providers.bankitems.InsufficientItemsException;

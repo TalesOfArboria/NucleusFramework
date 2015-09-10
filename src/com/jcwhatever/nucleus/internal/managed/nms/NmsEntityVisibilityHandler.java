@@ -24,30 +24,26 @@
 
 package com.jcwhatever.nucleus.internal.managed.nms;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.Collection;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.nms.INmsEntityVisibilityHandler;
+import org.bukkit.entity.Entity;
 
 /**
- * Minecraft named sound effect packet handler
+ * Implementation of {@link INmsEntityVisibilityHandler}.
  */
-class NmsSoundEffectHandler extends AbstractNMSHandler
-        implements INmsSoundEffectHandler {
+class NmsEntityVisibilityHandler extends AbstractNMSHandler implements INmsEntityVisibilityHandler {
 
     @Override
-    public void send(final Collection<? extends Player> players,
-                     final String soundName,
-                     final double x, final double y, final double z,
-                     final float volume, final float pitch) {
+    public boolean isVisible(Entity entity) {
+        PreCon.notNull(entity);
 
-        Object packet = nms().getNamedSoundPacket(soundName, x, y, z, volume, pitch);
+        return nms().isEntityVisible(entity);
+    }
 
-        for (Player player : players) {
-            nms().sendPacket(player, packet);
-        }
+    @Override
+    public void setVisible(Entity entity, boolean isVisible) {
+        PreCon.notNull(entity);
+
+        nms().setEntityVisible(entity, isVisible);
     }
 }

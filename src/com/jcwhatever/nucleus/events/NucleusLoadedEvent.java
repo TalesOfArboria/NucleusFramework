@@ -22,32 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms;
+package com.jcwhatever.nucleus.events;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.Collection;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 /**
- * Minecraft named sound effect packet handler
+ * Called once Nucleus is finished loading.
  */
-class NmsSoundEffectHandler extends AbstractNMSHandler
-        implements INmsSoundEffectHandler {
+public class NucleusLoadedEvent extends Event {
+
+    private static final HandlerList handlers = new HandlerList();
+    private static boolean _hasCalled;
+
+    public NucleusLoadedEvent() {
+        if (_hasCalled)
+            throw new IllegalStateException("NucleusLoadedEvent can only be called once.");
+
+        _hasCalled = true;
+    }
 
     @Override
-    public void send(final Collection<? extends Player> players,
-                     final String soundName,
-                     final double x, final double y, final double z,
-                     final float volume, final float pitch) {
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-        Object packet = nms().getNamedSoundPacket(soundName, x, y, z, volume, pitch);
-
-        for (Player player : players) {
-            nms().sendPacket(player, packet);
-        }
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 }

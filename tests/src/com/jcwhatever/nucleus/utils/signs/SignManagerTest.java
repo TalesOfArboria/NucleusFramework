@@ -3,10 +3,10 @@ package com.jcwhatever.nucleus.utils.signs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
-import com.jcwhatever.v1_8_R2.MockWorld;
-import com.jcwhatever.v1_8_R2.blocks.MockBlock;
-import com.jcwhatever.v1_8_R2.blocks.MockSign;
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import com.jcwhatever.v1_8_R3.MockWorld;
+import com.jcwhatever.v1_8_R3.blocks.MockBlock;
+import com.jcwhatever.v1_8_R3.blocks.MockSign;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.managed.signs.ISignContainer;

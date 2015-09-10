@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus;
 
+import com.jcwhatever.nucleus.events.NucleusLoadedEvent;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
@@ -297,6 +298,9 @@ public final class BukkitPlugin extends NucleusPlugin {
                 Bukkit.getPluginManager().disablePlugin(plugin);
             }
         }
+
+        NucleusLoadedEvent event = new NucleusLoadedEvent();
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     /*

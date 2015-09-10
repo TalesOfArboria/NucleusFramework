@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.internal.managed.commands;
 
-import com.jcwhatever.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R3.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.internal.managed.commands.CommandCollection.ICommandContainerFactory;
 import com.jcwhatever.nucleus.internal.managed.commands.DummyRegisteredCommand.CommandInfoBuilder;

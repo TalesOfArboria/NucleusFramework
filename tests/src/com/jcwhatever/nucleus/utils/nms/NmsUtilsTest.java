@@ -1,14 +1,13 @@
 package com.jcwhatever.nucleus.utils.nms;
 
-import static org.junit.Assert.assertEquals;
-
-import com.jcwhatever.v1_8_R2.BukkitTester;
-import com.jcwhatever.v1_8_R2.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
-
+import com.jcwhatever.v1_8_R3.BukkitTester;
+import com.jcwhatever.v1_8_R3.MockPlugin;
 import org.junit.Test;
 
 import java.util.regex.Matcher;
+
+import static org.junit.Assert.assertEquals;
 
 public class NmsUtilsTest {
 
@@ -32,8 +31,8 @@ public class NmsUtilsTest {
     @Test
     public void testIsVersionCompatible() throws Exception {
 
-        assertEquals(true, NmsUtils.isVersionCompatible("v1_8_R2"));
-        assertEquals(false, NmsUtils.isVersionCompatible("v1_8_R3"));
+        assertEquals(true, NmsUtils.isVersionCompatible("v1_8_R3"));
+        assertEquals(false, NmsUtils.isVersionCompatible("v1_8_R4"));
         assertEquals(false, NmsUtils.isVersionCompatible("v1_9_R1"));
         assertEquals(false, NmsUtils.isVersionCompatible("v2_8_R1"));
         assertEquals(false, NmsUtils.isVersionCompatible("1_8_R1"));
