@@ -4,7 +4,7 @@
 ext.jcBuildSettings = [
         projectName : 'NucleusFramework',
         majorVersion : '0',
-        minorVersion : '5',
+        minorVersion : '6',
         buildBy : null, // auto filled
         buildNumber : null, // auto filled when using teamcity
         mainClass : null,
@@ -23,13 +23,10 @@ ext.jcBuildSettings = [
 // provided dependencies (provided by the runtime environment)
         providedDependsFiles : null,
         providedDepends : [
-                'org.spigotmc:spigot-api:1.8.7-R0.1-SNAPSHOT',
+                'org.spigotmc:remapped-spigot:1.8.8-R0.1-SNAPSHOT',
                 'com.sk89q:WorldEdit:SNAPSHOT',
                 'net.milkbowl.vault:Vault:1.5.2',
                 'com.google.code.findbugs:jsr305:3.0.0',
-                'org.spigotmc:spigot-1.8.R3:1.8.7-R0.1-SNAPSHOT',
-                'org.spigotmc:spigot-1.8.R2:1.8.3-R0.1-SNAPSHOT',
-                'org.spigotmc:spigot-1.8.R1:1.8-R0.1-SNAPSHOT',
                 'com.google.code.gson:gson:2.2.4'
         ],
 
@@ -55,17 +52,15 @@ ext.jcBuildSettings = [
         testDepends : [
                 'junit:junit:4.+',
                 'org.easetech:easytest-core:1.3.1',
-                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R2-SNAPSHOT',
-                'org.spigotmc:spigot-1.8.R3:1.8.7-R0.1-SNAPSHOT',
-                'org.spigotmc:spigot-1.8.R2:1.8.3-R0.1-SNAPSHOT',
-                'org.spigotmc:spigot-1.8.R1:1.8-R0.1-SNAPSHOT',
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R3-SNAPSHOT',
+                'org.spigotmc:remapped-spigot:1.8.8-R0.1-SNAPSHOT',
                 'com.google.code.gson:gson:2.2.4'
         ],
         testRuntimeDepends : null,
 
 // dependencies that should always be downloaded (cached for 30 seconds)
         snapshotDepends : [
-                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R2-SNAPSHOT'
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R3-SNAPSHOT'
         ],
 
 // source directory
