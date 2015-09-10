@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 
+import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
@@ -43,7 +44,6 @@ public final class PlayerCollectionTracker implements IPluginOwned {
 
     private final IPlayerCollection _collection;
     private final PlayerCollectionListener _listener;
-    protected final transient Object _sync = new Object();
 
     /**
      * Constructor.
@@ -51,8 +51,10 @@ public final class PlayerCollectionTracker implements IPluginOwned {
      * @param collection  The player collection to track.
      */
     public PlayerCollectionTracker(IPlayerCollection collection) {
+        PreCon.notNull(collection);
         _collection = collection;
         _listener = PlayerCollectionListener.get(collection.getPlugin());
+        _listener.registerTracker(this);
     }
 
     /**

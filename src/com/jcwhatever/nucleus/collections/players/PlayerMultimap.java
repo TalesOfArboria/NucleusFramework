@@ -28,8 +28,6 @@ import com.jcwhatever.nucleus.collections.wrap.MultimapWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -73,13 +71,13 @@ public abstract class PlayerMultimap<V> extends MultimapWrapper<UUID, V> impleme
     }
 
     @Override
-    public void removePlayer(Player p) {
-        PreCon.notNull(p);
+    public void removePlayer(UUID playerId) {
+        PreCon.notNull(playerId);
 
         assert _sync != null;
 
         synchronized (_sync) {
-            map().removeAll(p.getUniqueId());
+            map().removeAll(playerId);
         }
     }
 

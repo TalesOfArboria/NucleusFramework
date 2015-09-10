@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A {@link CircularQueue} for {@link Player} objects that automatically removes
@@ -469,10 +470,12 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
     }
 
     @Override
-    public void removePlayer(Player p) {
+    public void removePlayer(UUID playerId) {
+        PreCon.notNull(playerId);
+
         synchronized (_sync) {
-            //noinspection StatementWithEmptyBody
-            while (_queue.remove(new PlayerElement(p)));
+            //noinspection StatementWithEmptyBody,SuspiciousMethodCalls
+            while (_queue.remove(new PlayerElementMatcher(playerId)));
         }
     }
 

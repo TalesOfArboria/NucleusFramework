@@ -29,7 +29,6 @@ import com.jcwhatever.nucleus.collections.wrap.ConversionQueueWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -118,9 +117,12 @@ public class PlayerQueue extends ConversionQueueWrapper<Player, PlayerElement> i
 	}
 
 	@Override
-	public void removePlayer(Player player) {
+	public void removePlayer(UUID playerId) {
+		PreCon.notNull(playerId);
+
 		synchronized (_sync) {
-			_queue.remove(new PlayerElement(player));
+            //noinspection SuspiciousMethodCalls
+            _queue.remove(new PlayerElement.PlayerElementMatcher(playerId));
 		}
 	}
 }

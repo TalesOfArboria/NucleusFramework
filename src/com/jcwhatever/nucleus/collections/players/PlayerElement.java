@@ -25,11 +25,10 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 
 /**
@@ -135,8 +134,12 @@ public final class PlayerElement {
             if (object == obj)
                 return true;
 
-            if (obj instanceof PlayerElementMatcher)
-                return object.equals(((PlayerElementMatcher) obj).object);
+            if (obj instanceof PlayerElementMatcher) {
+                return id.equals(((PlayerElementMatcher) obj).id);
+            }
+            else if (obj instanceof PlayerElement) {
+                return ((PlayerElement) obj)._player.getUniqueId().equals(id);
+            }
 
             return object.equals(obj);
         }

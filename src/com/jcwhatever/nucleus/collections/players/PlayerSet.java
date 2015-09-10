@@ -83,9 +83,10 @@ public class PlayerSet extends ConversionSetWrapper<Player, PlayerElement> imple
     }
 
     @Override
-    public void removePlayer(Player p) {
+    public void removePlayer(UUID playerId) {
         synchronized (_sync) {
-            _players.remove(new PlayerElement(p));
+            //noinspection SuspiciousMethodCalls
+            _players.remove(new PlayerElement.PlayerElementMatcher(playerId));
         }
     }
 

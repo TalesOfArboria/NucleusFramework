@@ -125,11 +125,11 @@ public class PlayerMap<V> extends MapWrapper<UUID, V> implements IPlayerCollecti
 	}
 
 	@Override
-	public void removePlayer(Player p) {
+	public void removePlayer(UUID playerId) {
 		assert _sync != null;
 
 		synchronized (_sync) {
-			_map.remove(p.getUniqueId());
+			_map.remove(playerId);
 		}
 	}
 

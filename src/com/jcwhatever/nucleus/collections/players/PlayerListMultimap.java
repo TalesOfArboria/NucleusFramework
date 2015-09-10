@@ -27,12 +27,11 @@ package com.jcwhatever.nucleus.collections.players;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder.ListMultimapBuilder;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nonnull;
 
 /**
  * A {@link ListMultimap} wrapper that stores elements using the player ID as key.

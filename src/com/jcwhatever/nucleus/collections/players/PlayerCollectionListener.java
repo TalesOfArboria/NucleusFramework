@@ -26,10 +26,9 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.MultiBiMap;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.events.NucleusLoadedEvent;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,13 +36,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -57,9 +57,6 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
 
     private static Map<Plugin, PlayerCollectionListener> _listeners = new WeakHashMap<>(30);
 
-    // synchronization object
-    private static final Object _sync = new Object();
-
     /**
      * Get the singleton instance of the player collection listener
      */
@@ -68,26 +65,21 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
         PlayerCollectionListener listener = _listeners.get(plugin);
 
         if (listener == null) {
-            synchronized (_sync) {
-                //noinspection ConstantConditions
-                if (listener == null) { // check again in case previous thread already instantiated
-                    listener = new PlayerCollectionListener(plugin);
+            listener = new PlayerCollectionListener(plugin);
 
-                    PluginManager pm = Bukkit.getServer().getPluginManager();
-                    pm.registerEvents(listener, Nucleus.getPlugin());
+            PluginManager pm = Bukkit.getServer().getPluginManager();
+            pm.registerEvents(listener, Nucleus.getPlugin());
 
-                    _listeners.put(plugin, listener);
-                }
-            }
+            _listeners.put(plugin, listener);
         }
 
         return listener;
     }
 
     private final Plugin _plugin;
-
-    // keyed to player id, a map of collections a player is contained in
-    private final MultiBiMap<UUID, PlayerCollectionTracker> _trackerMap = new MultiBiMap<>(100, 25);
+    private final Map<PlayerCollectionTracker, Set<UUID>> _trackers = new WeakHashMap<>(100);
+    private final AsyncPlayerRemover _playerRemover = new AsyncPlayerRemover();
+    private boolean _isRemoverStarted;
 
     /**
      * Private Constructor.
@@ -96,6 +88,7 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
      */
     private PlayerCollectionListener(Plugin plugin) {
         _plugin = plugin;
+        startRemover();
     }
 
     /**
@@ -107,56 +100,53 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
     }
 
     /**
-     * Register a collection as containing the specified player.
+     * Register a collection tracker.
      *
-     * @param p        The player.
-     * @param tracker  The collection tracker.
+     * @param tracker  The tracker.
      */
-    public void addPlayer(Player p, PlayerCollectionTracker tracker) {
-        addPlayer(p.getUniqueId(), tracker);
-    }
-
-    /**
-     * Register a collection as containing the specified player.
-     *
-     * @param playerId  The player Id.
-     * @param tracker   The collection.
-     */
-    public void addPlayer(UUID playerId, PlayerCollectionTracker tracker) {
-        synchronized (_sync) {
-            _trackerMap.put(playerId, tracker);
+    public void registerTracker(PlayerCollectionTracker tracker) {
+        synchronized (_trackers) {
+            _trackers.put(tracker, new HashSet<UUID>(Bukkit.getMaxPlayers() / 2));
         }
     }
 
-    /**
-     * Unregister a collection as containing the specified player.
-     *
-     * @param p        The player.
-     * @param tracker  The collection.
-     */
-    public void removePlayer(Player p, PlayerCollectionTracker tracker) {
-        removePlayer(p.getUniqueId(), tracker);
+    public void addPlayer(UUID playerId, PlayerCollectionTracker tracker) {
+        synchronized (_trackers) {
+            Set<UUID> playerIds = _trackers.get(tracker);
+            if (playerIds == null)
+                throw new IllegalStateException("tracker not registered.");
+
+            playerIds.add(playerId);
+        }
     }
 
-    /**
-     * Unregister a collection as containing the specified player.
-     *
-     * @param playerId  The id of the player.
-     * @param tracker   The collection.
-     */
     public void removePlayer(UUID playerId, PlayerCollectionTracker tracker) {
-        synchronized (_sync) {
-            _trackerMap.removeValue(playerId, tracker);
+        synchronized (_trackers) {
+            Set<UUID> playerIds = _trackers.get(tracker);
+            if (playerIds == null)
+                throw new IllegalStateException("tracker not registered.");
+
+            playerIds.remove(playerId);
         }
     }
 
     // remove a player from all collections
-    private void removePlayer(Player p) {
-        Set<PlayerCollectionTracker> trackers = _trackerMap.get(p.getUniqueId());
-        if (trackers == null || trackers.isEmpty())
+    private void removePlayer(Player player) {
+
+        if (_trackers.isEmpty())
             return;
 
-        Scheduler.runTaskLaterAsync(Nucleus.getPlugin(), 1, new RemovePlayer(p, trackers));
+        synchronized (_playerRemover.queue) {
+            _playerRemover.queue.offer(player.getUniqueId());
+        }
+    }
+
+    private void startRemover() {
+        if (_isRemoverStarted || !Nucleus.getPlugin().isLoaded())
+            return;
+
+        Scheduler.runTaskRepeatAsync(getPlugin(), 1, 1, _playerRemover);
+        _isRemoverStarted = true;
     }
 
     // event handler, Remove player from all collections when logged out
@@ -171,31 +161,52 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
         removePlayer(event.getPlayer());
     }
 
-    // clear collections if the owning plugin is disabled
-    @EventHandler
-    private void onNucleusDisable(PluginDisableEvent event) {
-        if (event.getPlugin() == _plugin) {
-            _trackerMap.clear();
-        }
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onNucleusLoaded(@SuppressWarnings("unused") NucleusLoadedEvent event) {
+        startRemover();
     }
 
-    // Asynchronous removal of player from collections
-    static class RemovePlayer implements Runnable {
-        private Player p;
-        private Collection<PlayerCollectionTracker> trackers;
+    class AsyncPlayerRemover implements Runnable {
 
-        public RemovePlayer(Player p, Collection<PlayerCollectionTracker> trackers) {
-            this.p = p;
-            synchronized (_sync) {
-                this.trackers = new ArrayList<>(trackers);
-            }
-        }
+        final Queue<UUID> queue = new ArrayDeque<>(Bukkit.getMaxPlayers() / 2);
+        final Map<PlayerCollectionTracker, Set<UUID>> trackers = new HashMap<>(100);
 
         @Override
         public void run() {
-            for (PlayerCollectionTracker tracker : trackers) {
-                tracker.getCollection().removePlayer(p);
+
+            synchronized (queue) {
+                if (queue.isEmpty())
+                    return;
             }
+
+            synchronized (_trackers) {
+                if (_trackers.isEmpty())
+                    return;
+
+                trackers.putAll(_trackers);
+            }
+
+            synchronized (queue) {
+                while (!queue.isEmpty()) {
+
+                    UUID playerId = queue.remove();
+
+                    for (Map.Entry<PlayerCollectionTracker, Set<UUID>> entry : trackers.entrySet()) {
+
+                        if (!entry.getValue().contains(playerId))
+                            continue;
+
+                        try {
+                            entry.getKey().getCollection().removePlayer(playerId);
+                        }
+                        catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            trackers.clear();
         }
     }
 }

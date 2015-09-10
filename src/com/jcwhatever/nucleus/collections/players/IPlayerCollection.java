@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 
-import org.bukkit.entity.Player;
+import java.util.UUID;
 
 /**
  * An interface that must be implemented in order to use a collection with a
@@ -51,15 +51,14 @@ import org.bukkit.entity.Player;
 public interface IPlayerCollection extends IPluginOwned {
 
     /**
-     * Called to automatically remove the specified player
-     * from the collection.
+     * Invoked to remove the specified player from the collection.
      *
-     * @param p  The player to remove.
+     * @param playerId  The ID of the player to remove.
      */
-    void removePlayer(Player p);
+    void removePlayer(UUID playerId);
 
     /**
-     * Called to clear all elements from the collection.
+     * Invoked to clear all elements from the collection.
      */
     void clear();
 }
