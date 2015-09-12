@@ -194,12 +194,9 @@ public abstract class PlayList implements IPluginOwned {
                         public void on(Result<IPlayerResourcePacks> result) {
                             assert result.getResult() != null;
 
-                            if (result.getResult().getStatus() == ResourcePackStatus.SUCCESS) {
-                                play(player, queue, settings);
-                            }
-                            else {
-                                removePlayer(player, true);
-                            }
+                            // play regardless of status in case player has a locally
+                            // installed resource pack.
+                            play(player, queue, settings);
                         }
                     });
         }
@@ -311,7 +308,7 @@ public abstract class PlayList implements IPluginOwned {
      */
     @Nullable
     protected ResourceSound onTrackChange(PlayerSoundQueue queue,
-                                                   @Nullable ResourceSound prev, ResourceSound next) {
+                                          @Nullable ResourceSound prev, ResourceSound next) {
 
         PlayListTrackChangeEvent event = new PlayListTrackChangeEvent(this, queue, prev, next);
         Nucleus.getEventManager().callBukkit(this, event);
@@ -343,6 +340,36 @@ public abstract class PlayList implements IPluginOwned {
 
         if (event.isCancelled())
             sounds.clear();
+    }
+
+    /**
+     * Invoked by the track changer to play the next sound in the playlist.
+     *
+     * @param player        The player the sound is to be played to.
+     * @param sound         The sound to play.
+     * @param settings      The sound settings to use.
+     * @param trackChanger  The track changer.
+     */
+    protected void playNextSound(final Player player, final ResourceSound sound,
+                                 final SoundSettings settings,
+                                 final FutureResultSubscriber<ISoundContext> trackChanger) {
+
+        if (settings.getTrackChangeDelay() == 0) {
+            Nucleus.getSoundManager()
+                    .playSound(_plugin, player, sound, settings, null)
+                    .onSuccess(trackChanger);
+        }
+        else {
+            Scheduler.runTaskLater(getPlugin(), (int)settings.getTrackChangeDelay(),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Nucleus.getSoundManager()
+                                    .playSound(_plugin, player, sound, settings, null)
+                                    .onSuccess(trackChanger);
+                        }
+                    });
+        }
     }
 
     /**
@@ -563,9 +590,7 @@ public abstract class PlayList implements IPluginOwned {
                 return;
             }
 
-            Nucleus.getSoundManager()
-                    .playSound(_plugin, player, sound, _soundQueue.getSettings(), null)
-                    .onSuccess(this);
+            playNextSound(player, sound, _soundQueue.getSettings(), this);
         }
 
         private void removeNow(Player player) {

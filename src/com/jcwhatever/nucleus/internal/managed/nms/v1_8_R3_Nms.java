@@ -278,7 +278,7 @@ class v1_8_R3_Nms implements INms {
         World nmsWorld = ((CraftWorld)strikeLocation.getWorld()).getHandle();
 
         EntityLightning lightning = new EntityLightning(nmsWorld,
-                strikeLocation.getX(), strikeLocation.getY(), strikeLocation.getZ());
+                strikeLocation.getX(), strikeLocation.getY(), strikeLocation.getZ(), true);
 
         return new PacketPlayOutSpawnEntityWeather(lightning);
     }

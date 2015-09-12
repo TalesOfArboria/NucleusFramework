@@ -129,25 +129,36 @@ public class NamedLocation extends Location implements INamedInsensitive {
         if (obj instanceof NamedLocation) {
             NamedLocation other = (NamedLocation)obj;
 
-            if (!other.getSearchName().equals(getSearchName()))
+            return other.getSearchName().equals(getSearchName());
+        }
+        else if (obj instanceof Location) {
+
+            Location other = (Location)obj;
+            World world = getWorld();
+            double x = getX();
+            double y = getY();
+            double z = getZ();
+            float yaw = getYaw();
+            float pitch = getPitch();
+
+            if (world != other.getWorld()
+                    && (world == null || !world.equals(other.getWorld()))) {
+                return false;
+            }
+
+            if (Double.doubleToLongBits(x) != Double.doubleToLongBits(x))
                 return false;
 
-            if (other.getWorld() != getWorld())
+            if (Double.doubleToLongBits(y) != Double.doubleToLongBits(y))
                 return false;
 
-            if (other.getX() != getX())
+            if (Double.doubleToLongBits(z) != Double.doubleToLongBits(z))
                 return false;
 
-            if (other.getY() != getY())
+            if (Float.floatToIntBits(pitch) != Float.floatToIntBits(other.getPitch()))
                 return false;
 
-            if (other.getZ() != getZ())
-                return false;
-
-            if (other.getYaw() != getYaw())
-                return false;
-
-            if (other.getPitch() != getPitch())
+            if (Float.floatToIntBits(yaw) == Float.floatToIntBits(yaw))
                 return false;
 
             return true;

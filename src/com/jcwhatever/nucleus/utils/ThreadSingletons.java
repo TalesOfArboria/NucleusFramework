@@ -24,20 +24,12 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import org.bukkit.Bukkit;
-
-import java.util.Map;
-import java.util.WeakHashMap;
-
 /**
  * Retrieve singleton instances per current thread.
  */
-public class ThreadSingletons<S> {
+public class ThreadSingletons<S> extends ThreadLocal<S> {
 
     private final ISingletonFactory<S> _factory;
-    private final Object _sync = new Object();
-    private S _mainSingleton;
-    private Map<Thread, S> _singletons;
 
     /**
      * Constructor.
@@ -47,73 +39,28 @@ public class ThreadSingletons<S> {
     public ThreadSingletons(ISingletonFactory<S> factory) {
         PreCon.notNull(factory);
 
-        if (!Bukkit.isPrimaryThread())
-            throw new IllegalStateException("ThreadSingletons must be instantiated on the main thread.");
-
         _factory = factory;
-        _mainSingleton = getMainSingleton(factory);
     }
 
     /**
-     * Get the singleton instance for the current thread.
+     * @throws UnsupportedOperationException
      */
-    public S get() {
+    @Override
+    public void set(S value) {
+        throw new UnsupportedOperationException("Cannot change singleton value.");
+    }
 
-        if (_mainSingleton != null && Bukkit.isPrimaryThread())
-            return _mainSingleton;
-
-        synchronized (getSync()) {
-            if (singletons() == null)
-                _singletons = new WeakHashMap<>(10);
-
-            Thread thread = Thread.currentThread();
-
-            S singleton = singletons().get(thread);
-
-            if (singleton == null) {
-                singleton = factory().create(thread);
-                singletons().put(thread, singleton);
-            }
-
-            return singleton;
-        }
+    @Override
+    protected S initialValue() {
+        return _factory.create(Thread.currentThread());
     }
 
     /**
-     * Get the singletons map.
+     * Use by extended implementations to set value.
+     * @param value
      */
-    protected Map<Thread, S> singletons() {
-        return _singletons;
-    }
-
-    /**
-     * Get main thread singleton.
-     */
-    protected S mainSingleton() {
-        return _mainSingleton;
-    }
-
-    /**
-     * Set main thread singleton.
-     *
-     * @param factory  The singleton factory to use.
-     */
-    protected S getMainSingleton(ISingletonFactory<S> factory) {
-        return factory.create(Thread.currentThread());
-    }
-
-    /**
-     * Get the singleton factory.
-     */
-    protected ISingletonFactory<S> factory() {
-        return _factory;
-    }
-
-    /**
-     * Get the synchronization object.
-     */
-    protected Object getSync() {
-        return _sync;
+    protected void reset(S value) {
+        super.set(value);
     }
 
     /**

@@ -38,7 +38,6 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Locations;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Msg;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_NpcProvider;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Permissions;
-import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Rand;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Regions;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_ResourcePacks;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scheduler;
@@ -557,12 +556,6 @@ public final class InternalScriptManager implements IScriptManager {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_Depends();
-            }
-        }));
-        _api.add(new SimpleScriptApi(plugin, "rand", new IApiObjectCreator() {
-            @Override
-            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
-                return new SAPI_Rand();
             }
         }));
         _api.add(new SimpleScriptApi(plugin, "scheduler", new IApiObjectCreator() {

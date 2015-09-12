@@ -47,13 +47,14 @@ class PlayerResourcePacks implements IPlayerResourcePacks {
     private final Player _player;
     private final Deque<IResourcePack> _packs = new ArrayDeque<IResourcePack>(3);
 
-
-    private ResourcePackStatus _status = ResourcePackStatus.NO_RESOURCE;
+    private ResourcePackStatus _status;
     private FutureResultAgent<IPlayerResourcePacks> _nextStatusAgent;
     private FutureResultAgent<IPlayerResourcePacks> _finalStatusAgent;
 
     PlayerResourcePacks(Player player, @Nullable IResourcePack current) {
         _player = player;
+
+        _status = current == null ? ResourcePackStatus.NO_RESOURCE : ResourcePackStatus.PENDING;
 
         if (current != null)
             _packs.addLast(current);

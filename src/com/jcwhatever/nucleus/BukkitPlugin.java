@@ -29,6 +29,8 @@ import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
 import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
+import com.jcwhatever.nucleus.internal.commands.DebugAllCommand;
+import com.jcwhatever.nucleus.internal.commands.DebugCommand;
 import com.jcwhatever.nucleus.internal.commands.economy.NEconomyCommand;
 import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
 import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
@@ -225,6 +227,8 @@ public final class BukkitPlugin extends NucleusPlugin {
                 new JCGEventListener(_regionManager),
                 new SpawnEggListener());
 
+        registerCommand(DebugCommand.class);
+        registerCommand(DebugAllCommand.class);
         registerCommand(NEconomyCommand.class);
         registerCommand(NFriendsCommand.class);
         registerCommand(JailCommand.class);

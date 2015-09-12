@@ -37,8 +37,9 @@ import java.util.UUID;
  * Caches locations a player has been until they can be processed by
  * the player watcher in {@link InternalRegionManager}.
  *
- * <p>Keeps a pool of locations for reuse to prevent excessive
- * new object generation.</p>
+ * <p>Keeps a pool of locations for reuse. The purpose of the pool is to prevent the old
+ * generation memory space from filling with temporary objects due to excessive new object
+ * creation.</p>
  */
 class PlayerLocationCache extends SimpleCheckoutPool<CachedLocation> {
 

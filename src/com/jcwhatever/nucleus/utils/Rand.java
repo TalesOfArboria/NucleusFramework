@@ -38,14 +38,7 @@ public final class Rand {
     static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "01234567890`~!@#$%^&*()_+-=";
-
-    private static final ThreadSingletons<XORShiftRandom> RANDOMS = new ThreadSingletons<>(
-            new ThreadSingletons.ISingletonFactory<XORShiftRandom>() {
-                @Override
-                public XORShiftRandom create(Thread thread) {
-                    return new XORShiftRandom();
-                }
-            });
+    static final XORShiftRandom XOR_RANDOM = new XORShiftRandom();
 
     /**
      * Get a random item from a list.
@@ -107,7 +100,7 @@ public final class Rand {
      */
     public static int getInt(int min, int max) {
         int range = max - min + 1;
-        int i = Math.abs(RANDOMS.get().nextInt()) % range;
+        int i = Math.abs(XOR_RANDOM.nextInt()) % range;
         return  min + i;
     }
 
@@ -117,14 +110,14 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static int getInt(int max) {
-        return RANDOMS.get().nextInt(max);
+        return XOR_RANDOM.nextInt(max);
     }
 
     /**
      * Get a random integer.
      */
     public static int getInt() {
-        return RANDOMS.get().nextInt();
+        return XOR_RANDOM.nextInt();
     }
 
     /**
@@ -229,7 +222,7 @@ public final class Rand {
      * @param chance  The chance of getting a result of true.
      */
     public static boolean chance(int chance) {
-        return chance(chance / 100.0D);
+        return chance > getInt(100);
     }
 
     /**
@@ -240,7 +233,7 @@ public final class Rand {
      * @param chance  The chance of getting a result of true.
      */
     public static boolean chance(double chance) {
-        return chance > Rand.getDouble(1);
+        return chance > getDouble(1);
     }
 
     /**
@@ -264,18 +257,19 @@ public final class Rand {
     }
 
     private static class XORShiftRandom {
-        long x = System.currentTimeMillis();
+        volatile long x = System.currentTimeMillis();
 
         long next() {
-            x ^= (x << 21);
-            x ^= (x >>> 35);
-            x ^= (x << 4);
-            return x;
+            long w = x;
+            w ^= (w << 21);
+            w ^= (w >>> 35);
+            w ^= (w << 4);
+            return x = w;
         }
 
         int nextInt() {
-            next();
-            return Math.abs((int)((x >> 32) ^ ((int)x)));
+            long l = next();
+            return Math.abs((int) ((l >> 32) ^ ((int) l)));
         }
 
         int nextInt(int max) {

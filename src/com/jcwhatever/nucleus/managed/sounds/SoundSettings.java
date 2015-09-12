@@ -24,8 +24,12 @@
 
 package com.jcwhatever.nucleus.managed.sounds;
 
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
 import org.bukkit.Location;
 
@@ -38,11 +42,12 @@ import java.util.Set;
 /**
  * Sound playback settings.
  */
-public class SoundSettings {
+public class SoundSettings implements IDataNodeSerializable {
 
     private final Set<Location> _locations = new HashSet<>(3);
     private float _volume = 1.0F;
     private float _pitch = 1.0F;
+    private long _trackChangeDelay = 0;
 
     /**
      * Constructor.
@@ -61,6 +66,7 @@ public class SoundSettings {
     public SoundSettings(SoundSettings original) {
         _locations.addAll(original._locations);
         _volume = original._volume;
+        _trackChangeDelay = original._trackChangeDelay;
     }
 
     /**
@@ -70,9 +76,21 @@ public class SoundSettings {
      * @param locations  The locations to play the sound at.
      */
     public SoundSettings(float volume, Location... locations) {
-
         _locations.addAll(ArrayUtils.asList(locations));
         _volume = volume;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param volume            The volume of the sound.
+     * @param locations         The locations to play the sound at.
+     * @param trackChangeDelay  The delay in ticks before playing the next sound.
+     */
+    public SoundSettings(float volume, long trackChangeDelay, Location... locations) {
+        _locations.addAll(ArrayUtils.asList(locations));
+        _volume = volume;
+        _trackChangeDelay = trackChangeDelay;
     }
 
     /**
@@ -206,7 +224,57 @@ public class SoundSettings {
      */
     public SoundSettings setPitch(float pitch) {
         _pitch = pitch;
-
         return this;
+    }
+
+    /**
+     * Get the track change delay in ticks.
+     */
+    public long getTrackChangeDelay() {
+        return _trackChangeDelay;
+    }
+
+    /**
+     * Set the track change delay.
+     *
+     * @param ticks  The delay in ticks.
+     *
+     * @return  Self for chaining.
+     */
+    public SoundSettings setTrackChangeDelay(long ticks) {
+        _trackChangeDelay = ticks;
+        return this;
+    }
+
+    @Override
+    public void serialize(IDataNode dataNode) {
+        dataNode.set("volume", _volume);
+        dataNode.set("pitch", _pitch);
+        dataNode.set("track-change-delay", _trackChangeDelay);
+
+        IDataNode locNode = dataNode.getNode("locations");
+
+        int i=0;
+        for (Location location : _locations) {
+            locNode.set("loc" + i, location);
+            i++;
+        }
+    }
+
+    @Override
+    public void deserialize(IDataNode dataNode) throws DeserializeException {
+        _volume = (float)dataNode.getDouble("volume", _volume);
+        _pitch = (float)dataNode.getDouble("pitch", _pitch);
+        _trackChangeDelay = dataNode.getLong("track-change-delay", _trackChangeDelay);
+
+        _locations.clear();
+        IDataNode locNode = dataNode.getNode("locations");
+        for (IDataNode node : locNode) {
+            SyncLocation syncLocation = node.getLocation("");
+            if (syncLocation == null)
+                continue;
+
+            _locations.add(syncLocation.getBukkitLocation());
+        }
     }
 }

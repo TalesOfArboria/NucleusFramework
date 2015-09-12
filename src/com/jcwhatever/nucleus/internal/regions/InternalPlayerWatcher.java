@@ -24,8 +24,18 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import javax.annotation.Nullable;
+
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.ArrayQueue;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
@@ -40,19 +50,10 @@ import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
 import com.jcwhatever.nucleus.utils.performance.pool.SimpleCheckoutPool.CheckedOutElements;
 import com.jcwhatever.nucleus.utils.performance.pool.SimplePool;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Watches and tracks players for the purpose of detecting
@@ -118,7 +119,7 @@ public final class InternalPlayerWatcher {
         PreCon.notNull(player);
         PreCon.notNull(reason);
 
-        if (player.isDead())
+        if (player.isDead() && reason != RegionEventReason.RESPAWN)
             return;
 
         // ignore NPC's
@@ -145,7 +146,7 @@ public final class InternalPlayerWatcher {
         PreCon.notNull(player);
         PreCon.notNull(reason);
 
-        if (player.isDead())
+        if (player.isDead() && reason != RegionEventReason.RESPAWN)
             return;
 
         // ignore NPC's
@@ -168,12 +169,17 @@ public final class InternalPlayerWatcher {
      * @param reason  The reason the player is leaving the regions.
      */
     public void updatePlayerLocation(Player player, LeaveRegionReason reason) {
+        PreCon.notNull(player);
+        PreCon.notNull(reason);
 
         // ignore NPC's
         if (Npcs.isNpc(player))
             return;
 
-        EventOrderedRegions<IRegion> regions = forgetPlayer(player.getUniqueId());
+        UUID playerId = player.getUniqueId();
+
+
+        EventOrderedRegions<IRegion> regions = forgetPlayer(playerId);
         if (regions == null)
             return;
 
@@ -245,7 +251,7 @@ public final class InternalPlayerWatcher {
     @Nullable
     EventOrderedRegions<IRegion> forgetPlayer(UUID playerId) {
         synchronized (this) {
-            return _playerRegionCache.get(playerId);
+            return _playerRegionCache.remove(playerId);
         }
     }
 
@@ -324,7 +330,14 @@ public final class InternalPlayerWatcher {
      */
     private class PlayerWatcherAsync implements Runnable {
 
-        final Queue<WorldPlayer> queue = new ArrayQueue<>(100);
+        final Queue<WorldPlayer> queue = new ArrayDeque<>(Bukkit.getMaxPlayers());
+        // Temporary queue to hold regions a player has possibly entered.
+        // Because "enter" is processed before "leave", the new "enter" event
+        // will not be processed unless regions in question are processed after
+        // the "leave" event has removed the region from the players region cache.
+        // The enter queue is used to hold regions that need to be checked again
+        // after "leave" events have been processed.
+        final Queue<IRegion> enter = new ArrayDeque<>(20);
 
         @Override
         public void run() {
@@ -354,15 +367,13 @@ public final class InternalPlayerWatcher {
                     }
                 }
 
-                // iterate the players cached locations
+                // iterate locations the player has been since the last check
                 for (CachedLocation location : worldPlayer.locations) {
 
                     if (location.getReason() == RegionEventReason.JOIN_SERVER) {
-                        // add player to _join set.
-                        _joined.add(playerId);
-
                         // do not notify regions until player has moved.
-                        // allows time for player to load resource packs.
+                        // Allows time for player to load resource packs.
+                        _joined.add(playerId);
                         continue;
                     }
 
@@ -376,23 +387,23 @@ public final class InternalPlayerWatcher {
                     // get regions the player location is in
                     List<IRegion> locationRegions = _manager.getListenerRegions(location, PriorityType.ENTER);
 
-                    // check if the player entered regions
+                    RegionEventReason reason = null;
+
+                    // check ENTER regions
                     if (!locationRegions.isEmpty()) {
 
-                        // get enter reason
-                        RegionEventReason reason = isJoining && _joined.remove(playerId)
+                        reason = isJoining && _joined.remove(playerId)
                                 ? RegionEventReason.JOIN_SERVER
                                 : location.getReason();
 
-                        // call onPlayerEnter event on each of the regions the player entered
                         for (IRegion region : locationRegions) {
-
                             synchronized (InternalPlayerWatcher.this) {
                                 // check if player was not previously in region
-                                if (!cachedRegions.contains(region)) {
-
+                                if (cachedRegions.contains(region)) {
+                                    // add to "enter" queue to verify later
+                                    enter.offer(region);
+                                } else {
                                     cachedRegions.add(region);
-
                                     _eventCaller.queue.addLast(new EventInfo(
                                             region, worldPlayer.player, reason, true
                                     ));
@@ -401,28 +412,40 @@ public final class InternalPlayerWatcher {
                         }
                     }
 
-
+                    // check LEAVE regions
                     synchronized (InternalPlayerWatcher.this) {
 
-                        // check if the player has left any regions
                         if (!cachedRegions.isEmpty()) {
 
                             // get iterator for regions the player is currently in.
                             Iterator<IRegion> iterator = cachedRegions.iterator(PriorityType.LEAVE);
 
-                            // call onPlayerLeave event on each of the regions the player is no longer in.
                             while (iterator.hasNext()) {
                                 IRegion region = iterator.next();
 
                                 // check if player was previously in region
-                                if (!locationRegions.contains(region)) {
-
+                                if (!locationRegions.contains(region) || reason == RegionEventReason.DEAD) {
+                                    //remove from players cached regions
                                     iterator.remove();
-
                                     _eventCaller.queue.addLast(new EventInfo(
                                             region, worldPlayer.player, location.getReason(), false
                                     ));
                                 }
+                            }
+                        }
+                    }
+
+                    // verify "enter" queue
+                    while (reason != null && !enter.isEmpty()) {
+                        IRegion region = enter.poll();
+
+                        synchronized (InternalPlayerWatcher.this) {
+                            // check if player was not previously in region
+                            if (!cachedRegions.contains(region)) {
+                                cachedRegions.add(region);
+                                _eventCaller.queue.addLast(new EventInfo(
+                                        region, worldPlayer.player, reason, true
+                                ));
                             }
                         }
                     }
@@ -476,31 +499,39 @@ public final class InternalPlayerWatcher {
      */
     private static class EventCaller implements Runnable {
 
-        final LinkedList<EventInfo> queue = new LinkedList<EventInfo>();
+        final Deque<EventInfo> queue = new ArrayDeque<EventInfo>(Bukkit.getMaxPlayers());
 
         @Override
         public void run() {
 
             while (!queue.isEmpty()) {
-                EventInfo info = queue.removeFirst();
 
+                EventInfo info = queue.removeFirst();
                 if (info.region.isDisposed())
                     continue;
 
-                IRegionEventListener listener = info.region.getEventListener();
-                if (listener == null) {
-                    try {
+                IRegionEventListener listener;
+
+                try {
+                    listener = info.region.getEventListener();
+                    if (listener == null) {
+                        // print null pointer exception message to console.
                         throw new NullPointerException("Region event listener cannot be null.");
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                        continue;
                     }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    continue;
                 }
 
-                if (info.isEntering)
-                    listener.onPlayerEnter(info.player, info.reason.getEnterReason());
-                else
-                    listener.onPlayerLeave(info.player, info.reason.getLeaveReason());
+                try {
+                    if (info.isEntering)
+                        listener.onPlayerEnter(info.player, info.reason.getEnterReason());
+                    else
+                        listener.onPlayerLeave(info.player, info.reason.getLeaveReason());
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

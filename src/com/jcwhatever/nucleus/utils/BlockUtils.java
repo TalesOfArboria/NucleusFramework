@@ -28,13 +28,21 @@ package com.jcwhatever.nucleus.utils;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-
+import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.FallingBlock;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * {@link org.bukkit.block.Block} related utilities.
@@ -42,8 +50,237 @@ import org.bukkit.entity.FallingBlock;
 public final class BlockUtils {
 
     private static Location BLOCK_LOCATION = new Location(null, 0, 0, 0);
+    private static BlockFace[] CARDINAL_DIRECTIONS = new BlockFace[] {
+            BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
+    };
+    private static BlockFace[] DIRECTIONS_3D = new BlockFace[] {
+            BlockFace.UP, BlockFace.DOWN,
+            BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
+    };
 
     private BlockUtils() {}
+
+    /**
+     * Get an immutable list of block faces representing the 4
+     * cardinal directions.
+     */
+    public static List<BlockFace> getCardinalFaces() {
+        return Arrays.asList(CARDINAL_DIRECTIONS);
+    }
+
+    /**
+     * Get an immutable list of block faces representing the 4
+     * cardinal directions as well as up and down.
+     */
+    public static List<BlockFace> get3DFaces() {
+        return Arrays.asList(DIRECTIONS_3D);
+    }
+
+    /**
+     * Get all adjacent blocks that match all of the specified properties.
+     *
+     * <p>If no properties are specified, all adjacent blocks are returned.</p>
+     *
+     * @param block       The block to check.
+     * @param properties  The properties to match.
+     */
+    public static List<Block> getAdjacent(Block block, MaterialProperty... properties) {
+        return getAdjacent(block, new ArrayList<Block>(6), properties);
+    }
+
+    /**
+     * Get all adjacent blocks that match all of the specified properties and add them
+     * to the specified output collection.
+     *
+     * <p>If no properties are specified, all adjacent blocks are returned.</p>
+     *
+     * @param block       The block to check.
+     * @param output      The output collection.
+     * @param properties  The properties to match.
+     *
+     * @return  The output collection.
+     */
+    public static <T extends Collection<Block>> T getAdjacent(Block block, T output,
+                                                              MaterialProperty... properties) {
+        PreCon.notNull(block);
+
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity(output.size() + 6);
+
+        for (BlockFace face : DIRECTIONS_3D) {
+            if (block.getY() == 254 && face == BlockFace.UP)
+                continue;
+
+            if (block.getY() == 0 && face == BlockFace.DOWN)
+                continue;
+
+            Block adjacent = block.getRelative(face);
+
+            if (properties.length > 0) {
+                boolean isValid = true;
+                for (MaterialProperty property : properties) {
+                    if (!Materials.hasProperty(adjacent.getType(), property)) {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (!isValid)
+                    continue;
+            }
+
+            output.add(adjacent);
+        }
+        return output;
+    }
+
+    /**
+     * Get all adjacent blocks that match one of the specified materials.
+     *
+     * <p>If no properties are specified, all adjacent blocks are returned.</p>
+     *
+     * @param block      The block to check.
+     * @param materials  The materials to match.
+     */
+    public static List<Block> getAdjacent(Block block, Material... materials) {
+        return getAdjacent(block, new ArrayList<Block>(6), materials);
+    }
+
+    /**
+     * Get all adjacent blocks that match one of the specified materials and add them
+     * to the specified output collection.
+     *
+     * <p>If no properties are specified, all adjacent blocks are returned.</p>
+     *
+     * @param block      The block to check.
+     * @param output     The output collection.
+     * @param materials  The materials to match.
+     *
+     * @return  The output collection.
+     */
+    public static <T extends Collection<Block>> T getAdjacent(Block block, T output,
+                                                              Material... materials) {
+        PreCon.notNull(block);
+
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity(output.size() + 6);
+
+        for (BlockFace face : DIRECTIONS_3D) {
+            if (block.getY() == 254 && face == BlockFace.UP)
+                continue;
+
+            if (block.getY() == 0 && face == BlockFace.DOWN)
+                continue;
+
+            Block adjacent = block.getRelative(face);
+
+            if (materials.length > 0) {
+                boolean isValid = false;
+                for (Material material : materials) {
+                    if (adjacent.getType() == material) {
+                        isValid = true;
+                        break;
+                    }
+                }
+
+                if (!isValid)
+                    continue;
+            }
+
+            output.add(adjacent);
+        }
+        return output;
+    }
+
+    /**
+     * Get the first adjacent block that matches the specified properties.
+     *
+     * <p>Checks block in the order that block faces are returned from {@link #get3DFaces()}.</p>
+     *
+     * <p>If no properties are specified, all adjacent blocks are considered.</p>
+     *
+     * @param block       The block to check.
+     * @param properties  The properties to match.
+     *
+     * @return  The matching adjacent block or null if none found.
+     */
+    @Nullable
+    public static Block getFirstAdjacent(Block block, MaterialProperty... properties) {
+        PreCon.notNull(block);
+
+        for (BlockFace face : DIRECTIONS_3D) {
+            if (block.getY() == 254 && face == BlockFace.UP)
+                continue;
+
+            if (block.getY() == 0 && face == BlockFace.DOWN)
+                continue;
+
+            Block adjacent = block.getRelative(face);
+
+            if (properties.length > 0) {
+
+                boolean isValid = true;
+                for (MaterialProperty property : properties) {
+                    if (!Materials.hasProperty(adjacent.getType(), property)) {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (!isValid)
+                    continue;
+            }
+
+            return adjacent;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the first adjacent block that matches one of the specified materials.
+     *
+     * <p>Checks block in the order that block faces are returned from {@link #get3DFaces()}.</p>
+     *
+     * <p>If no properties are specified, all adjacent blocks are considered.</p>
+     *
+     * @param block      The block to check.
+     * @param materials  The properties to match.
+     *
+     * @return  The matching adjacent block or null if none found.
+     */
+    @Nullable
+    public static Block getFirstAdjacent(Block block, Material... materials) {
+        PreCon.notNull(block);
+
+        for (BlockFace face : DIRECTIONS_3D) {
+            if (block.getY() == 254 && face == BlockFace.UP)
+                continue;
+
+            if (block.getY() == 0 && face == BlockFace.DOWN)
+                continue;
+
+            Block adjacent = block.getRelative(face);
+
+            if (materials.length > 0) {
+
+                boolean isValid = false;
+                for (Material material : materials) {
+                    if (adjacent.getType() == material) {
+                        isValid = true;
+                        break;
+                    }
+                }
+
+                if (!isValid)
+                    continue;
+            }
+
+            return adjacent;
+        }
+
+        return null;
+    }
 
     /**
      * Converts the specified block to a falling block.

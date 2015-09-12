@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils.player;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
@@ -39,7 +40,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
@@ -56,6 +56,8 @@ import java.util.UUID;
 public final class PlayerUtils {
 
     private PlayerUtils() {}
+
+    private static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
 
     /**
      * Get the time the {@link Player} logged in for the current session.
@@ -325,62 +327,125 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get a list of {@link Player}'s that are near the specified {@link Location}.
+     * Get a collection of {@link Player}'s that are near the specified {@link Location}.
+     *
+     * <p>Does not include NPC players in result.</p>
      *
      * @param loc          The {@link Location} to check.
-     * @param chunkRadius  The chunk radius to check in.
+     * @param maxDistance  The radius that players must be within to be included in results.
      */
-    public static List<Player> getNearbyPlayers(Location loc, int chunkRadius) {
-        PreCon.notNull(loc);
-        PreCon.positiveNumber(chunkRadius);
-
-        return getNearbyPlayers(loc, chunkRadius, null);
+    public static Collection<Player> getNearbyPlayers(Location loc, double maxDistance) {
+        return getNearbyPlayers(loc, maxDistance, null, new ArrayList<Player>(0));
     }
 
     /**
-     * Get a list of {@link Player}'s that are near the specified {@link Location}.
+     * Get a collection of {@link Player}'s that are near the specified {@link Location}.
+     *
+     * <p>Does not include NPC players in result.</p>
      *
      * @param loc          The {@link Location} to check.
-     * @param chunkRadius  The chunk radius to check in.
+     * @param maxDistance  The radius that players must be within to be included in results.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
-    public static List<Player> getNearbyPlayers(Location loc, int chunkRadius,
+    public static Collection<Player> getNearbyPlayers(Location loc, double maxDistance,
                                                 @Nullable IValidator<Player> validator) {
+        return getNearbyPlayers(loc, maxDistance, validator, new ArrayList<Player>(0));
+    }
+
+    /**
+     * Get {@link Player}'s that are near the specified {@link Location} and add them
+     * to the specified output collection.
+     *
+     * <p>Does not include NPC players in result.</p>
+     *
+     * @param loc          The {@link Location} to check.
+     * @param maxDistance  The radius that players must be within to be included in results.
+     * @param validator    A validator used to validate if a player is a candidate to return.
+     * @param output       The output collection.
+     *
+     * @return  The output collection.
+     */
+    public static <T extends Collection<Player>> T getNearbyPlayers(Location loc, double maxDistance,
+                                                @Nullable IValidator<Player> validator, T output) {
         PreCon.notNull(loc, "loc");
         PreCon.notNull(loc.getWorld(), "loc world");
-        PreCon.positiveNumber(chunkRadius, "chunkRadius");
+        PreCon.notNull(output);
 
         World world = loc.getWorld();
+        List<Player> players = world.getPlayers();
+        if (players.isEmpty())
+            return output;
 
-        int chunkX = (int)loc.getX() >> 4;
-        int chunkZ = (int)loc.getZ() >> 4;
+        maxDistance *= maxDistance;
 
-        if (!world.isChunkLoaded(chunkX, chunkZ))
-            return new ArrayList<>(0);
+        if (output instanceof ArrayList)
+            ((ArrayList) output).ensureCapacity((int)(players.size() * 0.5D) + output.size());
 
-        List<Player> players = new ArrayList<Player>((chunkRadius + 1) * 7);
+        for (Player player : players) {
+            if (Npcs.isNpc(player))
+                continue;
 
-        for (int x = -chunkRadius; x <= chunkRadius; x++) {
-            for (int z = -chunkRadius; z <= chunkRadius; z++) {
+            Location playerLoc = player.getLocation(PLAYER_LOCATION);
+            if (loc.distanceSquared(playerLoc) > maxDistance)
+                continue;
 
-                if (!world.isChunkLoaded(chunkX + x, chunkZ + z))
-                    continue;
+            if (validator != null && !validator.isValid(player))
+                continue;
 
-                Entity[] entities = world.getChunkAt(chunkX + x, chunkZ + z).getEntities();
-
-                for (Entity entity : entities) {
-                    if (!(entity instanceof Player))
-                        continue;
-
-                    if (validator != null && !validator.isValid((Player) entity))
-                        continue;
-
-                    players.add((Player) entity);
-                }
-            }
+            output.add(player);
         }
 
-        return players;
+        return output;
+    }
+
+    /**
+     * Determine if there is at least 1 {@link Player}'s near the specified {@link Location}.
+     *
+     * <p>Does not include NPC players in result.</p>
+     *
+     * @param loc          The {@link Location} to check.
+     * @param maxDistance  The radius that players must be within from the location.
+     */
+    public static boolean hasNearbyPlayers(Location loc, double maxDistance) {
+        return hasNearbyPlayers(loc, maxDistance, null);
+    }
+
+    /**
+     * Determine if there is at least 1 {@link Player}'s near the specified {@link Location}.
+     *
+     * <p>Does not include NPC players in result.</p>
+     *
+     * @param loc          The {@link Location} to check.
+     * @param maxDistance  The radius that players must be within from the location.
+     * @param validator    A validator used to validate if a player is a candidate to return.
+     */
+    public static boolean hasNearbyPlayers(Location loc, double maxDistance,
+                                           @Nullable IValidator<Player> validator) {
+        PreCon.notNull(loc, "loc");
+        PreCon.notNull(loc.getWorld(), "loc world");
+
+        World world = loc.getWorld();
+        List<Player> players = world.getPlayers();
+        if (players.isEmpty())
+            return false;
+
+        maxDistance *= maxDistance;
+
+        for (Player player : players) {
+            if (Npcs.isNpc(player))
+                continue;
+
+            Location playerLoc = player.getLocation(PLAYER_LOCATION);
+            if (loc.distanceSquared(playerLoc) > maxDistance)
+                continue;
+
+            if (validator != null && !validator.isValid(player))
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

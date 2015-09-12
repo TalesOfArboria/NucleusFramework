@@ -24,36 +24,27 @@
 
 package com.jcwhatever.nucleus.internal.managed.nms;
 
-import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.nms.INmsEffectHandler;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-import com.jcwhatever.nucleus.utils.validate.IValidator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Implementation of {@link INmsEffectHandler}.
  */
 class NmsEffectHandler extends AbstractNMSHandler implements INmsEffectHandler {
 
-    private static final PlayerDistanceValidator PLAYER_VALIDATAOR = new PlayerDistanceValidator();
-
     @Override
     public Collection<Player> lightningStrike(Location location, double radius, boolean sound) {
         PreCon.notNull(location);
         PreCon.greaterThanZero(radius);
 
-        PLAYER_VALIDATAOR.set(location, radius);
-        List<Player> nearby = PlayerUtils.getNearbyPlayers(
-                location, Math.max(1, (int) radius >> 4), PLAYER_VALIDATAOR);
-
+        Collection<Player> nearby = PlayerUtils.getNearbyPlayers(location, radius);
         if (nearby.isEmpty())
             return nearby;
 
@@ -63,14 +54,13 @@ class NmsEffectHandler extends AbstractNMSHandler implements INmsEffectHandler {
 
         for (Player player : nearby) {
             nms().sendPacket(player, packet);
-
             if (ambientPacket != null) {
                 nms().sendPacket(player, ambientPacket);
             }
-
             if (soundPacket != null) {
                 nms().sendPacket(player, soundPacket);
             }
+
         }
 
         return nearby;
@@ -81,35 +71,12 @@ class NmsEffectHandler extends AbstractNMSHandler implements INmsEffectHandler {
         PreCon.notNull(location);
         PreCon.greaterThanZero(radius);
 
-        PLAYER_VALIDATAOR.set(location, radius);
-        List<Player> nearby = PlayerUtils.getNearbyPlayers(
-                location, (int) Math.ceil(radius / 16), PLAYER_VALIDATAOR);
-
-        if (nearby.isEmpty())
-            return output;
+        Collection<Player> players = lightningStrike(location, radius, sound);
 
         if (output instanceof ArrayList) {
-            ((ArrayList) output).ensureCapacity(output.size() + nearby.size());
+            ((ArrayList) output).ensureCapacity(output.size() + players.size());
         }
-
-        Object packet = nms().getLightningPacket(location);
-        Object ambientPacket = sound ? getAmbientSoundPacket(location) : null;
-        Object soundPacket = sound ? getThunderSoundPacket(location) : null;
-
-        for (Player player : nearby) {
-            nms().sendPacket(player, packet);
-
-            if (ambientPacket != null) {
-                nms().sendPacket(player, ambientPacket);
-            }
-
-            if (soundPacket != null) {
-                nms().sendPacket(player, soundPacket);
-            }
-
-            output.add(player);
-        }
-
+        output.addAll(players);
         return output;
     }
 
@@ -154,30 +121,12 @@ class NmsEffectHandler extends AbstractNMSHandler implements INmsEffectHandler {
     private Object getAmbientSoundPacket(Location location) {
         return nms().getNamedSoundPacket("ambient.weather.thunder",
                 location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                10000.0f, 0.8F + (float)Math.round(Rand.getInt() * 0.2D));
+                10000.0f, (float)Rand.getDouble());
     }
 
     private Object getThunderSoundPacket(Location location) {
         return nms().getNamedSoundPacket("random.explode",
                 location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                2.0f, 0.5F + (float)Math.round(Rand.getInt() * 0.2D));
-    }
-
-    private static class PlayerDistanceValidator implements IValidator<Player> {
-
-        static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
-        final Location strikeLocation = new Location(null, 0, 0, 0);
-        double radiusSquared = 0;
-
-        void set(Location strikeLocation, double radius) {
-            LocationUtils.copy(strikeLocation, this.strikeLocation);
-            radiusSquared = radius * radius;
-        }
-
-        @Override
-        public boolean isValid(Player player) {
-            return !Npcs.isNpc(player) &&
-                    player.getLocation(PLAYER_LOCATION).distanceSquared(strikeLocation) <= radiusSquared;
-        }
+                2.0f, (float)Rand.getDouble());
     }
 }
