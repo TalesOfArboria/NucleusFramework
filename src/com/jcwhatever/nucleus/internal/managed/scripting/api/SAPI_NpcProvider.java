@@ -36,13 +36,14 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import javax.annotation.Nullable;
 
 public class SAPI_NpcProvider implements IDisposable {
 
     private final Plugin _plugin;
-    private final LinkedList<INpcRegistry> _registries = new LinkedList<>();
+    private final Deque<INpcRegistry> _registries = new ArrayDeque<>(15);
     private boolean _isDisposed;
 
     /**

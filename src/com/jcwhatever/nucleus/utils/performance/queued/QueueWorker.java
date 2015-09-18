@@ -31,8 +31,9 @@ import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Deque;
 
 /**
  *
@@ -59,7 +60,7 @@ public final class QueueWorker {
         return _globalWorker;
     }
 
-    private final LinkedList<QueueTask> _queue = new LinkedList<>();
+    private final Deque<QueueTask> _queue = new ArrayDeque<>(20);
     private final Worker _worker;
 
     private QueueTask _currentTask;

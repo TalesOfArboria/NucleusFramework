@@ -22,16 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.observer.agent;
+package com.jcwhatever.nucleus.collections.observer.subscriber;
 
-import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
-
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import com.jcwhatever.nucleus.utils.observer.ISubscriber;
+
 /**
- * A linked list of {@link ISubscriberAgent} which automatically removes agents
+ * An array deque of {@link ISubscriber} which automatically removes agents
  * when they are disposed.
  *
  * <p>Thread safe.</p>
@@ -39,28 +40,28 @@ import java.util.LinkedList;
  * <p>The lists iterators must be used inside a synchronized block which locks the
  * list instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
-public class AgentLinkedList<E extends ISubscriberAgent> extends AgentDeque<E> {
+public class SubscriberArrayDeque<E extends ISubscriber> extends SubscriberDeque<E> {
 
-    private final LinkedList<E> _list;
+    private final ArrayDeque<E> _deque;
 
     /**
      * Constructor.
      */
-    public AgentLinkedList() {
-        _list = new LinkedList<>();
+    public SubscriberArrayDeque(int capacity) {
+        _deque = new ArrayDeque<>(capacity);
     }
 
     /**
      * Constructor.
      *
-     * @param collection  The initial collection to start with.
+     * @param collection  The initial collection to add.
      */
-    public AgentLinkedList(Collection<? extends E> collection) {
-        _list = new LinkedList<>(collection);
+    public SubscriberArrayDeque(Collection<? extends E> collection) {
+        _deque = new ArrayDeque<>(collection);
     }
 
     @Override
     protected Deque<E> queue() {
-        return _list;
+        return _deque;
     }
 }

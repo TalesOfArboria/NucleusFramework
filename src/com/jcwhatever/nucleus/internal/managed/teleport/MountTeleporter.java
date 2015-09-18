@@ -47,9 +47,10 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 
@@ -221,10 +222,10 @@ class MountTeleporter {
 
     private static class Mounts {
         Object[] mounts;
-        LinkedList<Player> players = new LinkedList<>();
-        LinkedList<PlayerStateSnapshot> snapshots = new LinkedList<>();
-        LinkedList<LeashPair> leashes = new LinkedList<>();
-        LinkedList<ISerializableMob> mobs = new LinkedList<>();
+        Deque<Player> players = new ArrayDeque<>(3);
+        Deque<PlayerStateSnapshot> snapshots = new ArrayDeque<>(3);
+        Deque<LeashPair> leashes = new ArrayDeque<>(3);
+        Deque<ISerializableMob> mobs = new ArrayDeque<>(3);
     }
 
 
@@ -257,7 +258,7 @@ class MountTeleporter {
     private Mounts dismountAll() {
 
         Mounts result = new Mounts();
-        LinkedList<Object> mounts = new LinkedList<>();
+        Deque<Object> mounts = new ArrayDeque<>(10);
 
         Entity entity = _entity;
 

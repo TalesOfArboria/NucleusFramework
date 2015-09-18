@@ -34,10 +34,11 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -323,8 +324,8 @@ public class MemoryDataNode extends AbstractDataNode {
 
     protected String getPath(TreeEntryNode<String, Object> node) {
         PreCon.notNull(node);
-        LinkedList<String> components = new LinkedList<>();
 
+        Deque<String> components = new ArrayDeque<>(5);
         while (!node.equals(_node)) {
             if (!node.isRoot())
                 components.addFirst(node.getKey());

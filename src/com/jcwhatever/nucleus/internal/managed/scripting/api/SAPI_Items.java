@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberArrayDeque;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 import com.jcwhatever.nucleus.managed.scripting.items.IScriptItem;
@@ -62,7 +63,7 @@ public class SAPI_Items implements IDisposable {
     }
 
     private final Map<IFloatingItem, Void> _floatingItems = new WeakHashMap<>(20);
-    private final SubscriberLinkedList<ISubscriber> _subscribers = new SubscriberLinkedList<>();
+    private final SubscriberArrayDeque<ISubscriber> _subscribers = new SubscriberArrayDeque<>(20);
     private boolean _isDisposed;
 
 

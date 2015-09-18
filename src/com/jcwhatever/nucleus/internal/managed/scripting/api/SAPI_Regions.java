@@ -38,8 +38,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -50,7 +51,7 @@ import javax.annotation.Nullable;
 public class SAPI_Regions implements IDisposable {
 
     private Set<IScriptRegion> _referencedRegions = new HashSet<>(15);
-    private final LinkedList<ScriptRegionEvents> _eventHandlers = new LinkedList<>();
+    private final Deque<ScriptRegionEvents> _eventHandlers = new ArrayDeque<>(15);
     private boolean _isDisposed;
 
     @Override

@@ -31,10 +31,11 @@ import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ public class QueueProject extends QueueTask {
     private final ProjectManager _managerTask;
 
     // tasks to be completed
-    private final LinkedList<QueueTask> _tasks = new LinkedList<>();
+    private final Deque<QueueTask> _tasks = new ArrayDeque<>(10);
 
     // finished tasks
     protected Set<QueueTask> _completed;

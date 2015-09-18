@@ -31,12 +31,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Array;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -2225,8 +2225,7 @@ public final class ArrayUtils {
     public static <T> Deque<T> toDeque(T... array) {
         PreCon.notNull(array);
 
-        LinkedList<T> result = new LinkedList<>();
-
+        Deque<T> result = new ArrayDeque<>(array.length);
         Collections.addAll(result, array);
 
         return result;
@@ -2240,8 +2239,7 @@ public final class ArrayUtils {
     public static Deque<Boolean> toDeque(boolean... array) {
         PreCon.notNull(array);
 
-        LinkedList<Boolean> result = new LinkedList<>();
-
+        Deque<Boolean> result = new ArrayDeque<>(array.length);
         for (boolean b : array) {
             result.add(b);
         }
@@ -2257,8 +2255,7 @@ public final class ArrayUtils {
     public static Deque<Byte> toDeque(byte... array) {
         PreCon.notNull(array);
 
-        LinkedList<Byte> result = new LinkedList<>();
-
+        Deque<Byte> result = new ArrayDeque<>(array.length);
         for (byte b : array) {
             result.add(b);
         }
@@ -2274,8 +2271,7 @@ public final class ArrayUtils {
     public static Deque<Character> toDeque(char... array) {
         PreCon.notNull(array);
 
-        LinkedList<Character> result = new LinkedList<>();
-
+        Deque<Character> result = new ArrayDeque<>(array.length);
         for (char b : array) {
             result.add(b);
         }
@@ -2291,8 +2287,7 @@ public final class ArrayUtils {
     public static Deque<Short> toDeque(short... array) {
         PreCon.notNull(array);
 
-        LinkedList<Short> result = new LinkedList<>();
-
+        Deque<Short> result = new ArrayDeque<>(array.length);
         for (short b : array) {
             result.add(b);
         }
@@ -2308,8 +2303,7 @@ public final class ArrayUtils {
     public static Deque<Integer> toDeque(int... array) {
         PreCon.notNull(array);
 
-        LinkedList<Integer> result = new LinkedList<>();
-
+        Deque<Integer> result = new ArrayDeque<>(array.length);
         for (int b : array) {
             result.add(b);
         }
@@ -2325,8 +2319,7 @@ public final class ArrayUtils {
     public static Deque<Long> toDeque(long... array) {
         PreCon.notNull(array);
 
-        LinkedList<Long> result = new LinkedList<>();
-
+        Deque<Long> result = new ArrayDeque<>(array.length);
         for (long b : array) {
             result.add(b);
         }
@@ -2342,8 +2335,7 @@ public final class ArrayUtils {
     public static Deque<Float> toDeque(float... array) {
         PreCon.notNull(array);
 
-        LinkedList<Float> result = new LinkedList<>();
-
+        Deque<Float> result = new ArrayDeque<>(array.length);
         for (float b : array) {
             result.add(b);
         }
@@ -2359,8 +2351,7 @@ public final class ArrayUtils {
     public static Deque<Double> toDeque(double... array) {
         PreCon.notNull(array);
 
-        LinkedList<Double> result = new LinkedList<>();
-
+        Deque<Double> result = new ArrayDeque<>(array.length);
         for (double b : array) {
             result.add(b);
         }

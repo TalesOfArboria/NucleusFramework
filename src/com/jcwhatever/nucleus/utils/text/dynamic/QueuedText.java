@@ -27,8 +27,9 @@ package com.jcwhatever.nucleus.utils.text.dynamic;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -41,8 +42,8 @@ import java.util.List;
  */
 public class QueuedText implements IDynamicText {
 
-    private final LinkedList<Pause> _pauses = new LinkedList<>();
-    private final LinkedList<Runnable> _onEmpty = new LinkedList<>();
+    private final Deque<Pause> _pauses = new ArrayDeque<>(10);
+    private final Deque<Runnable> _onEmpty = new ArrayDeque<>(10);
     private volatile long _nextUpdate;
     private volatile IDynamicText _currentText;
     private final Object _sync = new Object();

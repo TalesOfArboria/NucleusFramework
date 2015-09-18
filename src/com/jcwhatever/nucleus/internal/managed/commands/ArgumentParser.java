@@ -32,8 +32,8 @@ import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 /**
  * Parses command arguments.
@@ -62,7 +62,7 @@ class ArgumentParser {
         ArgumentParseResults results = new ArgumentParseResults(command);
 
         Deque<String> arguments = ArrayUtils.toDeque(args);
-        Deque<ICommandParameter> staticParameters = new LinkedList<>(
+        Deque<ICommandParameter> staticParameters = new ArrayDeque<>(
                 command.getInfo().getStaticParams());
 
         // parse arguments for static parameters.

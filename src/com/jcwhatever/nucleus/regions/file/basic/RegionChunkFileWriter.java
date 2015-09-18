@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.regions.file.basic;
 
-import com.jcwhatever.nucleus.collections.ArrayQueue;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -51,6 +50,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Queue;
 import javax.annotation.Nullable;
 
@@ -103,7 +103,7 @@ public class RegionChunkFileWriter {
 
         // get tile entities from chunk
         BlockState[] tileEntities = chunk.getTileEntities();
-        _tileEntities = new ArrayQueue<>(tileEntities.length);
+        _tileEntities = new ArrayDeque<>(tileEntities.length);
 
         for (BlockState tile : tileEntities) {
 
@@ -114,7 +114,7 @@ public class RegionChunkFileWriter {
 
         // get entities from chunk
         Entity[] entities = chunk.getEntities();
-        _entities = new ArrayQueue<>(25);
+        _entities = new ArrayDeque<>(25);
 
         Location entityLocation = new Location(null, 0, 0, 0);
 

@@ -40,10 +40,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -143,8 +144,8 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
     private static class Builder extends QueueTask {
 
         World world;
-        Queue<BlockInfo> blockQueue = new LinkedList<>();
-        Queue<IAppliedSerializable> serializables = new LinkedList<>();
+        Queue<BlockInfo> blockQueue = new ArrayDeque<>(512);
+        Queue<IAppliedSerializable> serializables = new ArrayDeque<>(100);
 
         /**
          * Constructor.
@@ -161,7 +162,7 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
         @Override
         protected void onRun() {
 
-            LinkedList<BlockInfo> multiBlocks = new LinkedList<>();
+            Deque<BlockInfo> multiBlocks = new ArrayDeque<>(blockQueue.size());
 
             while (!blockQueue.isEmpty()) {
                 BlockInfo info = blockQueue.remove();

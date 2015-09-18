@@ -27,7 +27,9 @@ package com.jcwhatever.nucleus.utils.text;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormats;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -151,7 +153,7 @@ public class TextComponents implements Iterable<TextComponent> {
 
         StringBuilder buffer = new StringBuilder(text.length());
 
-        LinkedList<TextComponent> result = new LinkedList<>();
+        Deque<TextComponent> result = new ArrayDeque<>(10);
 
         for (int i = 0; i < text.length(); i++) {
 

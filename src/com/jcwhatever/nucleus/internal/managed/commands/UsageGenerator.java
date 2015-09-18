@@ -31,7 +31,8 @@ import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
 import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -85,7 +86,7 @@ class UsageGenerator implements ICommandUsageGenerator {
             rootCommandName = command.getInfo().getCurrentAlias();
         }
 
-        LinkedList<RegisteredCommand> parentCommands = new LinkedList<>();
+        Deque<RegisteredCommand> parentCommands = new ArrayDeque<>(5);
         StringBuilder commandPath = new StringBuilder(30);
 
         if (command.getParent() != null) {

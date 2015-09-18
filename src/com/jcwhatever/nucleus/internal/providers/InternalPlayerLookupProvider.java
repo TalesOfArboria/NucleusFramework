@@ -44,10 +44,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
 
@@ -155,8 +156,8 @@ public final class InternalPlayerLookupProvider extends Provider implements IPla
 
     @Override
     public IFutureResult<Collection<UUID>> searchNames(String searchText, int maxResults) {
-        LinkedList<PlayerData> unsorted = new LinkedList<>();
 
+        Deque<PlayerData> unsorted = new ArrayDeque<>(15);
         String lower = searchText.toLowerCase();
 
         IDataNode playersNode = getPlayerData();

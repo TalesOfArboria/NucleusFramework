@@ -62,9 +62,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
 
@@ -173,7 +174,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
                 }
             };
 
-    private LinkedList<Class<? extends ICommand>> _registerQueue;
+    private Deque<Class<? extends ICommand>> _registerQueue;
     private IRegisteredCommand _command;
     private IMessenger _msg;
 
@@ -558,7 +559,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
         if (_command == null) {
 
             if (_registerQueue == null)
-                _registerQueue = new LinkedList<>();
+                _registerQueue = new ArrayDeque<>(10);
 
             _registerQueue.addLast(subCommandClass);
             return true;

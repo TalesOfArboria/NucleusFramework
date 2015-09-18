@@ -29,8 +29,9 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ class LanguageParser {
 
     private final InputStream _stream;
     private final Set<String> _versions = new HashSet<>(10);
-    private final LinkedList<LocalizedText> _localizedText = new LinkedList<>();
+    private final Deque<LocalizedText> _localizedText = new ArrayDeque<>(25);
 
     /**
      * Constructor.
@@ -63,7 +64,7 @@ class LanguageParser {
     /**
      * Get all parsed localized text.
      */
-    public LinkedList<LocalizedText> getLocalizedText() {
+    public Deque<LocalizedText> getLocalizedText() {
         return _localizedText;
     }
 

@@ -41,11 +41,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -324,8 +325,7 @@ class BankItemsAccount implements IBankItemsAccount {
     public List<IBankItem> getItems() {
 
         updateLastAccess();
-
-        LinkedList<IBankItem> result = new LinkedList<>();
+        Deque<IBankItem> result = new ArrayDeque<>(10);
 
         synchronized (_sync) {
             for (BankItem item : _items.values()) {

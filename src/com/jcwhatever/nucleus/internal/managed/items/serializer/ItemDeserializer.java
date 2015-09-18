@@ -39,7 +39,6 @@ import org.bukkit.potion.Potion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -58,7 +57,7 @@ class ItemDeserializer implements IItemStackDeserializer {
     private final String _itemString;
     private StringBuilder _buffer;
     private int _index = 0;
-    private List<ItemStack> _results = new LinkedList<>();
+    private List<ItemStack> _results = new ArrayList<>(5);
 
     /**
      * Constructor.

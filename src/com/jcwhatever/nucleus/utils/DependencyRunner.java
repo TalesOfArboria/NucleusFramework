@@ -32,11 +32,12 @@ import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
 
     private final Plugin _plugin;
     private final Set<T> _runnables;
-    private final LinkedList<IFinishHandler<T>> _onFinished = new LinkedList<>();
+    private final Deque<IFinishHandler<T>> _onFinished = new ArrayDeque<>(5);
     private final Watcher _watcher = new Watcher();
     private final int _timeoutSeconds;
 
@@ -214,7 +215,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
 
         @Override
         public void run() {
-            LinkedList<T> runners = new LinkedList<>(_runnables);
+            Deque<T> runners = new ArrayDeque<>(_runnables);
 
             while (!runners.isEmpty()) {
 
@@ -246,7 +247,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
         protected void onCancel() {
 
             // run if only optional dependencies are not ready
-            LinkedList<T> runners = new LinkedList<>(_runnables);
+            Deque<T> runners = new ArrayDeque<>(_runnables);
 
             while (!runners.isEmpty()) {
 

@@ -52,11 +52,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,7 +100,7 @@ public class JsonDataNode extends AbstractDataNode {
     private JsonObject _object;
     private boolean _isLoaded;
     private final JsonDataNode _root;
-    private final LinkedList<FutureAgent> _saveAgents;
+    private final Deque<FutureAgent> _saveAgents;
     private IScheduledTask _saveTask;
     private File _file;
     private String _json;
@@ -117,7 +118,7 @@ public class JsonDataNode extends AbstractDataNode {
         _root = this;
         _file = file;
         _object = _gson.fromJson("{}", JsonObject.class);
-        _saveAgents = new LinkedList<>();
+        _saveAgents = new ArrayDeque<>(5);
     }
 
     /**
@@ -133,7 +134,7 @@ public class JsonDataNode extends AbstractDataNode {
         _isLoaded = true;
         _root = this;
         _json = json;
-        _saveAgents = new LinkedList<>();
+        _saveAgents = new ArrayDeque<>(5);
     }
 
     /**

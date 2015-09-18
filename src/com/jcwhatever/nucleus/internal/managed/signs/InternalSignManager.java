@@ -28,11 +28,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -283,7 +284,7 @@ public final class InternalSignManager implements ISignManager {
         }
 
         IDataNode handlerNode = getHandlerNode(handler);
-        final LinkedList<SignInfo> signInfo = new LinkedList<>();
+        final Deque<SignInfo> signInfo = new ArrayDeque<>(10);
 
         for (IDataNode signNode : handlerNode) {
 
