@@ -42,6 +42,7 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -146,7 +147,7 @@ class BarSender implements Runnable {
 
         BarDistributor distributor = BarSender.getDistributor(player);
 
-        synchronized (distributor._sync) {
+        synchronized (distributor.sync) {
 
             // ensure distributor does not already contain the playerBar
             if (distributor.contains(playerBar))
@@ -181,7 +182,7 @@ class BarSender implements Runnable {
 
         boolean isEmpty;
 
-        synchronized (distributor._sync) {
+        synchronized (distributor.sync) {
             distributor.remove(playerBar);
             isEmpty = distributor.isEmpty();
         }
@@ -248,9 +249,8 @@ class BarSender implements Runnable {
         BarDistributor distributor = BarSender.getDistributor(bar.player());
         boolean isEmpty;
 
-        synchronized (distributor._sync) {
+        synchronized (distributor.sync) {
             distributor.remove(bar);
-            distributor.priority.subtract(bar.priority());
             isEmpty = distributor.isEmpty();
         }
 
@@ -320,50 +320,22 @@ class BarSender implements Runnable {
         if (distributor == null)
             return ActionBarPriority.LOW;
 
-        synchronized (distributor._sync) {
-
-            if (distributor.priority.contains(ActionBarPriority.HIGH))
-                return ActionBarPriority.HIGH;
-            else if (distributor.priority.contains(ActionBarPriority.DEFAULT))
-                return ActionBarPriority.DEFAULT;
-        }
-
-        return ActionBarPriority.LOW;
-    }
-
-    /**
-     * Determine if the specified priority is the highest priority in the
-     * specified {@link BarDistributor}.
-     *
-     * @param distributor  The distributor.
-     * @param priority     The priority to check.
-     */
-    static boolean isHighestPriority(BarDistributor distributor, ActionBarPriority priority) {
-
-        switch (priority) {
-            case HIGH:
-                return true;
-            case DEFAULT:
-                return !distributor.priority.contains(ActionBarPriority.HIGH);
-            case LOW:
-                return !distributor.priority.contains(ActionBarPriority.LOW) &&
-                        !distributor.priority.contains(ActionBarPriority.DEFAULT);
-            default:
-                throw new AssertionError("Unknown ActionBarPriority enum constant: " + priority.name());
+        synchronized (distributor.sync) {
+            return distributor.getHighestPriority();
         }
     }
 
     @Override
     public void run() {
 
-        List<BarDistributor> distributors;
+        List<BarDistributor> distributors = new ArrayList<>(10);
 
         synchronized (_sync){
             if (_playerMap.isEmpty())
                 return;
 
-            // copy distributors to a new list to prevent concurrent modification errors.
-            distributors = new ArrayList<>(_playerMap.values());
+            // copy distributors to prevent concurrent modification errors.
+            distributors.addAll(_playerMap.values());
         }
 
         long now = System.currentTimeMillis();
@@ -372,13 +344,13 @@ class BarSender implements Runnable {
 
             PlayerBar playerBar;
 
-            synchronized (distributor._sync) {
+            synchronized (distributor.sync) {
                 // get the current action bar
                 playerBar = distributor.current();
                 if (playerBar == null)
                     continue;
 
-                while (!isHighestPriority(distributor, playerBar.priority())) {
+                while (!distributor.isHighestPriority(playerBar.priority())) {
                     playerBar = distributor.next();
                     if (playerBar == null)
                         throw new AssertionError("Null player bar in bar distributor.");
@@ -399,6 +371,8 @@ class BarSender implements Runnable {
                 playerBar.send();
             }
         }
+
+        distributors.clear();
     }
 
     /**
@@ -445,9 +419,55 @@ class BarSender implements Runnable {
     }
 
     static class BarDistributor extends TimedDistributor<PlayerBar> {
-        final Object _sync = new Object();
-
+        final Object sync = new Object();
         final ElementCounter<ActionBarPriority> priority =
                 new ElementCounter<ActionBarPriority>(RemovalPolicy.REMOVE);
+
+        @Override
+        public boolean add(@Nonnull PlayerBar element, int timeSpan, TimeScale timeScale) {
+            if (super.add(element, timeSpan, timeScale)) {
+                priority.add(element.priority());
+                return true;
+            }
+            return false;
+        }
+
+        public boolean remove(PlayerBar bar) {
+            if (super.remove(bar)) {
+                priority.subtract(bar.priority());
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Determine if the specified priority is the highest priority.
+         *
+         * @param barPriority     The priority to check.
+         */
+        public boolean isHighestPriority(ActionBarPriority barPriority) {
+
+            switch (barPriority) {
+                case HIGH:
+                    return true;
+                case DEFAULT:
+                    return !priority.contains(ActionBarPriority.HIGH);
+                case LOW:
+                    return !priority.contains(ActionBarPriority.HIGH) &&
+                            !priority.contains(ActionBarPriority.DEFAULT);
+                default:
+                    throw new AssertionError("Unknown ActionBarPriority enum constant: " + barPriority.name());
+            }
+        }
+
+        public ActionBarPriority getHighestPriority() {
+            if (priority.contains(ActionBarPriority.HIGH))
+                return ActionBarPriority.HIGH;
+
+            if (priority.contains(ActionBarPriority.DEFAULT))
+                return ActionBarPriority.DEFAULT;
+
+            return ActionBarPriority.LOW;
+        }
     }
 }
