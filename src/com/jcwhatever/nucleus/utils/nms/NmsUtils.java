@@ -208,14 +208,14 @@ public final class NmsUtils {
     }
 
     /**
-     * Get NucleusFramework's internal entity visibility handler.
+     * Get NucleusFramework's internal entity handler.
      *
      * @return  The handler or null if a handler for the current version of
      * Minecraft does not exist.
      */
     @Nullable
-    public static INmsEntityVisibilityHandler getEntityVisibilityHandler() {
-        return Nucleus.getNmsManager().getHandler(InternalNmsManager.ENTITY_VISIBILITY);
+    public static INmsEntityHandler getEntityHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.ENTITY);
     }
 
     // load the the craft package version from NucleusFramework's config

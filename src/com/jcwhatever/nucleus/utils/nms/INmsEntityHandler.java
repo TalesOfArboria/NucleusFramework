@@ -22,28 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.managed.nms;
+package com.jcwhatever.nucleus.utils.nms;
 
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.nms.INmsEntityVisibilityHandler;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
 /**
- * Implementation of {@link INmsEntityVisibilityHandler}.
+ * Interface for NucleusFramework's Minecraft entity handler.
  */
-class NmsEntityVisibilityHandler extends AbstractNMSHandler implements INmsEntityVisibilityHandler {
+public interface INmsEntityHandler extends INmsHandler {
 
-    @Override
-    public boolean isVisible(Entity entity) {
-        PreCon.notNull(entity);
+    /**
+     * Determine if an entity is visible.
+     *
+     * @param entity  The entity to check.
+     */
+    boolean isVisible(Entity entity);
 
-        return nms().isEntityVisible(entity);
-    }
+    /**
+     * Set an entities visibility state.
+     *
+     * @param entity     The entity to set.
+     * @param isVisible  True to make the entity visible to players, otherwise false.
+     */
+    void setVisible(Entity entity, boolean isVisible);
 
-    @Override
-    public void setVisible(Entity entity, boolean isVisible) {
-        PreCon.notNull(entity);
-
-        nms().setEntityVisible(entity, isVisible);
-    }
+    /**
+     * Copy the entity velocity into the specified output vector.
+     *
+     * @param entity  The entity.
+     * @param output  The output vector.
+     */
+    void getVelocity(Entity entity, Vector output);
 }

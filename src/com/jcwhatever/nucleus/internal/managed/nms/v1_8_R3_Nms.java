@@ -59,6 +59,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 
@@ -291,5 +292,13 @@ class v1_8_R3_Nms implements INms {
     @Override
     public void setEntityVisible(Entity entity, boolean isVisible) {
         ((CraftEntity)entity).getHandle().setInvisible(!isVisible);
+    }
+
+    @Override
+    public void getVelocity(Entity entity, Vector output) {
+        net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        output.setX(nmsEntity.motX);
+        output.setY(nmsEntity.motY);
+        output.setZ(nmsEntity.motZ);
     }
 }

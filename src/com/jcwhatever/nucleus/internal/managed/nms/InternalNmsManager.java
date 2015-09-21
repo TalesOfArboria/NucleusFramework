@@ -74,9 +74,9 @@ public final class InternalNmsManager extends NmsManager {
     public static final String POTIONS = "POTIONS";
 
     /**
-     * The name of the internal entity visibility handler.
+     * The name of the internal entity handler.
      */
-    public static final String ENTITY_VISIBILITY = "ENTITY_VISIBILITY";
+    public static final String ENTITY = "ENTITY";
 
     private static INms _nms;
 
@@ -104,7 +104,7 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R3", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
         registerHandler("v1_8_R3", ANVIL_VIEW, NmsAnvilViewHandler.class);
         registerHandler("v1_8_R3", EFFECT, NmsEffectHandler.class);
-        registerHandler("v1_8_R3", ENTITY_VISIBILITY, NmsEntityVisibilityHandler.class);
+        registerHandler("v1_8_R3", ENTITY, NmsEntityHandler.class);
 
         registerHandler(NmsUtils.getNmsVersion(), POTIONS, NmsPotionHandler.class);
     }

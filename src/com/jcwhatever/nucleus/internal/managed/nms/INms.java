@@ -32,6 +32,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 
@@ -193,4 +194,13 @@ interface INms {
      * @param isVisible  The visibility state.
      */
     void setEntityVisible(Entity entity, boolean isVisible);
+
+    /**
+     * Copy an entity velocity to the specified output vector.
+     *
+     * @param entity  The entity.
+     * @param output  The output velocity.
+     */
+    void getVelocity(Entity entity, Vector output);
+
 }
