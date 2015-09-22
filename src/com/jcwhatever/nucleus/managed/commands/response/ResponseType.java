@@ -63,18 +63,7 @@ public class ResponseType {
     public static final ResponseType DENY = new ResponseType(_DENY);
     public static final ResponseType CONFIRM = new ResponseType(_CONFIRM);
 
-    private static Map<String, ResponseType> _typeMap =
-            new ImmutableMap.Builder<String, ResponseType>()
-            .put(YES.getCommandName(), YES)
-            .put(NO.getCommandName(), NO)
-            .put(ACCEPT.getCommandName(), ACCEPT)
-            .put(DECLINE.getCommandName(), DECLINE)
-            .put(OK.getCommandName(), OK)
-            .put(CANCEL.getCommandName(), CANCEL)
-            .put(ALLOW.getCommandName(), ALLOW)
-            .put(DENY.getCommandName(), DENY)
-            .put(CONFIRM.getCommandName(), CONFIRM)
-            .build();
+    private static Map<String, ResponseType> _typeMap;
 
     private String _commandName;
 
@@ -106,11 +95,31 @@ public class ResponseType {
     public static ResponseType from(String commandName) {
         PreCon.notNullOrEmpty(commandName);
 
+        loadMaps();
+
         ResponseType responseType = _typeMap.get(commandName.toLowerCase());
         if (responseType != null)
             return responseType;
 
         return new ResponseType(commandName);
+    }
+
+    private static void loadMaps() {
+        if (_typeMap != null)
+            return;
+
+        _typeMap =
+                new ImmutableMap.Builder<String, ResponseType>()
+                        .put(YES.getCommandName(), YES)
+                        .put(NO.getCommandName(), NO)
+                        .put(ACCEPT.getCommandName(), ACCEPT)
+                        .put(DECLINE.getCommandName(), DECLINE)
+                        .put(OK.getCommandName(), OK)
+                        .put(CANCEL.getCommandName(), CANCEL)
+                        .put(ALLOW.getCommandName(), ALLOW)
+                        .put(DENY.getCommandName(), DENY)
+                        .put(CONFIRM.getCommandName(), CONFIRM)
+                        .build();
     }
 
     @Override

@@ -30,10 +30,10 @@ import com.jcwhatever.nucleus.managed.commands.parameters.IParameterDescription;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
-import com.jcwhatever.nucleus.utils.text.TextFormatterSettings;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import com.jcwhatever.nucleus.utils.text.format.IFormatterAppendable;
+import com.jcwhatever.nucleus.utils.text.format.ITagFormatter;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -68,8 +68,8 @@ class ParameterDescription implements IParameterDescription {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
-            sb.append(NucLang.get(NAME));
+        public void append(IFormatterAppendable output, String rawTag) {
+            output.append(NucLang.get(NAME));
         }
     };
 
@@ -80,8 +80,8 @@ class ParameterDescription implements IParameterDescription {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
-            sb.append(NucLang.get(NAME16));
+        public void append(IFormatterAppendable output, String rawTag) {
+            output.append(NucLang.get(NAME16));
         }
     };
 
@@ -92,8 +92,8 @@ class ParameterDescription implements IParameterDescription {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
-            sb.append(NucLang.get(ITEM_STACK));
+        public void append(IFormatterAppendable output, String rawTag) {
+            output.append(NucLang.get(ITEM_STACK));
         }
     };
 
@@ -104,8 +104,8 @@ class ParameterDescription implements IParameterDescription {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
-            sb.append(NucLang.get(LOCATION));
+        public void append(IFormatterAppendable output, String rawTag) {
+            output.append(NucLang.get(LOCATION));
         }
     };
 
@@ -116,8 +116,8 @@ class ParameterDescription implements IParameterDescription {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
-            sb.append(NucLang.get(PAGE));
+        public void append(IFormatterAppendable output, String rawTag) {
+            output.append(NucLang.get(PAGE));
         }
     };
 

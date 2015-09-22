@@ -31,7 +31,10 @@ import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
+import com.jcwhatever.nucleus.utils.text.format.IFormatterAppendable;
+import com.jcwhatever.nucleus.utils.text.format.ITagFormatter;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatter;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -968,8 +971,8 @@ public final class TextUtils {
             }
 
             @Override
-            public void append(StringBuilder sb, String rawTag) {
-                sb.append(plugin.getDescription().getVersion());
+            public void append(IFormatterAppendable output, String rawTag) {
+                output.append(plugin.getDescription().getVersion());
             }
         });
 
@@ -981,8 +984,8 @@ public final class TextUtils {
             }
 
             @Override
-            public void append(StringBuilder sb, String rawTag) {
-                sb.append(plugin.getDescription().getName());
+            public void append(IFormatterAppendable output, String rawTag) {
+                output.append(plugin.getDescription().getName());
             }
         });
 
@@ -994,8 +997,8 @@ public final class TextUtils {
             }
 
             @Override
-            public void append(StringBuilder sb, String rawTag) {
-                sb.append(plugin.getDescription().getFullName());
+            public void append(IFormatterAppendable output, String rawTag) {
+                output.append(plugin.getDescription().getFullName());
             }
         });
 
@@ -1007,8 +1010,8 @@ public final class TextUtils {
             }
 
             @Override
-            public void append(StringBuilder sb, String rawTag) {
-                sb.append(TextUtils.concat(plugin.getDescription().getAuthors(), ", "));
+            public void append(IFormatterAppendable output, String rawTag) {
+                output.append(TextUtils.concat(plugin.getDescription().getAuthors(), ", "));
             }
         });
 
@@ -1020,7 +1023,7 @@ public final class TextUtils {
             }
 
             @Override
-            public void append(StringBuilder sb, String rawTag) {
+            public void append(IFormatterAppendable output, String rawTag) {
                 Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
                 if (commands != null) {
 
@@ -1029,7 +1032,7 @@ public final class TextUtils {
                     if (!commandKeys.isEmpty()) {
                         String cmd = commandKeys.iterator().next();
 
-                        sb.append(cmd);
+                        output.append(cmd);
                     }
                 }
             }

@@ -218,6 +218,17 @@ public final class NmsUtils {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.ENTITY);
     }
 
+    /**
+     * Get NucleusFramework's internal chat handler.
+     *
+     * @return  The handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsChatHandler getChatHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.CHAT);
+    }
+
     // load the the craft package version from NucleusFramework's config
     // or detect the version.
     private static void loadPackageVersion() {

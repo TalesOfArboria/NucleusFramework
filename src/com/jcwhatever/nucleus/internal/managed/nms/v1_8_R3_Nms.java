@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.Container;
@@ -88,6 +89,7 @@ class v1_8_R3_Nms implements INms {
             .method("getHandle");
 
     private boolean _isAvailable = true;
+    private v1_8_R3_Chat _chat = new v1_8_R3_Chat();
 
     @Override
     public boolean isAvailable() {
@@ -300,5 +302,23 @@ class v1_8_R3_Nms implements INms {
         output.setX(nmsEntity.motX);
         output.setY(nmsEntity.motY);
         output.setZ(nmsEntity.motZ);
+    }
+
+    @Override
+    public IChatMessage getMessage(final String text) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void send(Player player, IChatMessage message) {
+        EntityPlayer nmsPlayer = ((CraftPlayer)player).getHandle();
+        if (nmsPlayer.playerConnection == null)
+            return;
+
+        if (message.totalComponents() == 0)
+            return;
+
+        IChatBaseComponent nmsComponent = _chat.getComponent(message);
+        nmsPlayer.playerConnection.sendPacket(new PacketPlayOutChat(nmsComponent));
     }
 }

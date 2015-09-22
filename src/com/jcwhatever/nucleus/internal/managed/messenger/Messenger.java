@@ -33,8 +33,14 @@ import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatMessage;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatter;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterResult;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -44,7 +50,6 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -58,8 +63,10 @@ class Messenger implements IMessenger {
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
             new PlayerMap<TimedHashSet<String>>(Nucleus.getPlugin());
 
+    private TextFormatterSettings TEXT_SETTING = new TextFormatterSettings();
+    private TextFormatter TEXT_FORMATTER = new TextFormatter(TEXT_SETTING);
+
     private final Plugin _plugin;
-    private final String _chatPrefix;
     private final String _consolePrefix;
     private final IDataNode _importantData;
     private final Logger _logger;
@@ -67,10 +74,12 @@ class Messenger implements IMessenger {
     private int _maxLineLen = 60;
     private int _spamDelay = 140;
     private LineWrapping _lineWrap = LineWrapping.ENABLED;
+    private final Object _prefixSource;
+    private IChatMessage _chatPrefix;
 
     protected Messenger(InternalMessengerFactory factory, Plugin plugin, @Nullable Object prefixSource) {
         _plugin = plugin;
-        _chatPrefix = InternalMessengerFactory.getChatPrefix(prefixSource);
+        _prefixSource = prefixSource;
         _consolePrefix = InternalMessengerFactory.getConsolePrefix(prefixSource);
         _logger = InternalMessengerFactory.LOGGER;
         _importantData = factory.getImportantData(plugin);
@@ -134,14 +143,14 @@ class Messenger implements IMessenger {
             return tell(sender, message, params);
         }
 
-        Player p = (Player)sender;
+        Player player = (Player)sender;
 
         String msg = TextUtils.format(message, params);
 
-        TimedHashSet<String> recent = _noSpamCache.get(p.getUniqueId());
+        TimedHashSet<String> recent = _noSpamCache.get(player.getUniqueId());
         if (recent == null) {
             recent = new TimedHashSet<String>(_plugin, 20, 140);
-            _noSpamCache.put(p.getUniqueId(), recent);
+            _noSpamCache.put(player.getUniqueId(), recent);
         }
 
         if (recent.contains(msg, ticks, TimeScale.TICKS))
@@ -149,7 +158,7 @@ class Messenger implements IMessenger {
 
         recent.add(msg, ticks, TimeScale.TICKS);
 
-        return tell(p, lineWrapping, msg);
+        return tell(player, lineWrapping, msg);
     }
 
     @Override
@@ -164,9 +173,17 @@ class Messenger implements IMessenger {
         PreCon.notNull(messageObject);
         PreCon.notNull(params);
 
-        boolean cutLines = lineWrapping == LineWrapping.ENABLED && sender instanceof Player;
-        String message = TextUtils.format(messageObject, params);
+        loadChatPrefix();
 
+        boolean cutLines = lineWrapping == LineWrapping.ENABLED && sender instanceof Player;
+
+        TEXT_SETTING.setMaxLineLen(cutLines ? _maxLineLen : -1);
+
+        TextFormatterResult result = TEXT_FORMATTER.format(TEXT_SETTING, messageObject.toString(), params);
+
+        sendMessage(sender, result);
+
+        /*
         // if lines don't need to be cut, simply send the raw message
         if (!cutLines) {
             sender.sendMessage(_chatPrefix + message);
@@ -189,7 +206,17 @@ class Messenger implements IMessenger {
                 sender.sendMessage(line);
             }
         }
+        */
         return true;
+    }
+
+    private void sendMessage(CommandSender sender, TextFormatterResult result) {
+        if (sender instanceof Player) {
+            NmsUtils.getChatHandler().send((Player)sender, result);
+        }
+        else {
+            sender.sendMessage(result.toString());
+        }
     }
 
     @Override
@@ -216,7 +243,7 @@ class Messenger implements IMessenger {
         IDataNode data = _importantData;
 
         data.set(playerId.toString() + '.' + context + ".message", TextUtils.format(message, params));
-        data.set(playerId.toString() + '.' + context + ".prefix", _chatPrefix);
+        data.set(playerId.toString() + '.' + context + ".prefix", loadChatPrefix().toString());
         data.set(playerId.toString() + '.' + context + ".lineLen", _maxLineLen);
         data.save();
     }
@@ -302,6 +329,16 @@ class Messenger implements IMessenger {
         PreCon.notNull(params);
 
         _logger.severe(_consolePrefix + TextUtils.format(message, params));
+    }
+
+    private IChatMessage loadChatPrefix() {
+        if (_chatPrefix == null) {
+            _chatPrefix = _prefixSource != null
+                    ? TEXT_FORMATTER.format(InternalMessengerFactory.getChatPrefix(_prefixSource))
+                    : new SimpleChatMessage();
+            TEXT_SETTING.setLinePrepend(_prefixSource == null ? null :_chatPrefix);
+        }
+        return _chatPrefix;
     }
 }
 

@@ -22,19 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.text;
+package com.jcwhatever.nucleus.utils.text.format;
 
 import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Nullable;
 
 /**
  * Settings for {@link TextFormatter}.
@@ -49,6 +49,8 @@ public class TextFormatterSettings {
     private volatile FormatPolicy _colorPolicy = FormatPolicy.FORMAT;
     private volatile FormatPolicy _tagPolicy = FormatPolicy.FORMAT;
     private volatile boolean _isArgsFormatted = true;
+    private volatile int _maxLineLen = -1;
+    private volatile IChatMessage _linePrepend;
 
     private volatile char _escapedCache;
 
@@ -173,6 +175,47 @@ public class TextFormatterSettings {
     }
 
     /**
+     * Get the maximum line length.
+     *
+     * @return  The max line length or -1 to indicate no max len.
+     */
+    public int getMaxLineLen() {
+        return _maxLineLen;
+    }
+
+    /**
+     * Set the max line length.
+     *
+     * @param len  The maximum line length. -1 to indicate no max length.
+     *
+     * @return  Self for chaining.
+     */
+    public TextFormatterSettings setMaxLineLen(int len) {
+        _maxLineLen = len;
+        return this;
+    }
+
+    /**
+     * Get the String prepended before each line.
+     */
+    @Nullable
+    public IChatMessage getLinePrepend() {
+        return _linePrepend;
+    }
+
+    /**
+     * Set the text prepended before each line.
+     *
+     * @param text  The text to prepend.
+     *
+     * @return  Self for chaining.
+     */
+    public TextFormatterSettings setLinePrepend(@Nullable IChatMessage text) {
+        _linePrepend = text;
+        return this;
+    }
+
+    /**
      * Determine if format arguments are formatted before being inserted into the
      * format template.
      */
@@ -189,7 +232,6 @@ public class TextFormatterSettings {
      */
     public TextFormatterSettings setIsArgsFormatted(boolean isFormatted) {
         _isArgsFormatted = isFormatted;
-
         return this;
     }
 
@@ -240,7 +282,6 @@ public class TextFormatterSettings {
         synchronized (_sync) {
             _escaped = Arrays.copyOf(escaped, escaped.length);
         }
-
         return this;
     }
 
@@ -263,7 +304,6 @@ public class TextFormatterSettings {
         PreCon.notNull(policy);
 
         _lineReturnPolicy = policy;
-
         return this;
     }
 
@@ -285,7 +325,6 @@ public class TextFormatterSettings {
         PreCon.notNull(policy);
 
         _unicodePolicy = policy;
-
         return this;
     }
 
@@ -307,7 +346,6 @@ public class TextFormatterSettings {
         PreCon.notNull(policy);
 
         _colorPolicy = policy;
-
         return this;
     }
 
@@ -329,7 +367,6 @@ public class TextFormatterSettings {
         PreCon.notNull(policy);
 
         _tagPolicy = policy;
-
         return this;
     }
 

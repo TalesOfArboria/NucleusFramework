@@ -22,16 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.text;
+package com.jcwhatever.nucleus.utils.text.format;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextFormatterSettings.FormatPolicy;
+import com.jcwhatever.nucleus.utils.text.TextColor;
+import com.jcwhatever.nucleus.utils.text.TextFormat;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatComponent;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatModifier;
+import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
+import com.jcwhatever.nucleus.utils.text.components.IChatModifier;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings.FormatPolicy;
+import com.jcwhatever.nucleus.utils.text.format.args.IFormatterArg;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * Replaces tags and unicode escapes in text.
@@ -62,18 +69,18 @@ public class TextFormatter {
         Iterator<TextFormat> iterator = TextFormat.formatIterator();
         while (iterator.hasNext()) {
 
-            final TextFormat color = iterator.next();
+            final TextFormat format = iterator.next();
 
-            _colors.put(color.getTagName(), new ITagFormatter() {
+            _colors.put(format.getTagName(), new ITagFormatter() {
 
                 @Override
                 public String getTag() {
-                    return color.getTagName();
+                    return format.getTagName();
                 }
 
                 @Override
-                public void append(StringBuilder sb, String tag) {
-                    sb.append(color.getFormatCode());
+                public void append(IFormatterAppendable output, String tag) {
+                    setModifier(format, output.getModifier());
                 }
             });
         }
@@ -86,12 +93,39 @@ public class TextFormatter {
         }
 
         @Override
-        public void append(StringBuilder sb, String rawTag) {
+        public void append(IFormatterAppendable output, String rawTag) {
             // do nothing
         }
     };
 
-    private final StringBuilder _textBuffer = new StringBuilder(100);
+    private static void setModifier(TextFormat format, IChatModifier modifier) {
+        switch (format.getTagName()) {
+            case "BOLD":
+                modifier.setBold(true);
+                return;
+            case "ITALIC":
+                modifier.setItalic(true);
+                return;
+            case "MAGIC":
+                modifier.setMagic(true);
+                return;
+            case "STRIKETHROUGH":
+                modifier.setStrikeThrough(true);
+                return;
+            case "UNDERLINE":
+                modifier.setUnderline(true);
+                return;
+            case "RESET":
+                modifier.reset();
+                return;
+        }
+
+        if (format instanceof TextColor) {
+            modifier.setColor((TextColor)format);
+        }
+    }
+
+    private final FormatContext _context = new FormatContext();
     private final StringBuilder _tagBuffer = new StringBuilder(25);
     private final Object _sync = new Object();
     private final Thread _homeThread;
@@ -134,11 +168,11 @@ public class TextFormatter {
         PreCon.notNull(template);
 
         if (isHomeThread()) {
-            _textBuffer.setLength(0);
-            return format(settings, _textBuffer, _tagBuffer, settings.getFormatMap(), template, params);
+            _context.hardReset();
+            return format(settings, _context, _tagBuffer, false, settings.getFormatMap(), template, params);
         }
         else {
-            return format(settings, null, null, settings.getFormatMap(), template, params);
+            return format(settings, null, null, false, settings.getFormatMap(), template, params);
         }
     }
 
@@ -152,20 +186,27 @@ public class TextFormatter {
      * @return  The formatted string.
      */
     private TextFormatterResult format(TextFormatterSettings settings,
-                          @Nullable StringBuilder textBuffer,
-                          @Nullable StringBuilder tagBuffer,
-                          Map<String, ITagFormatter> formatters, String template, Object... params) {
+                                       @Nullable FormatContext context,
+                                       @Nullable StringBuilder tagBuffer,
+                                       boolean isFormattingArgs,
+                                       Map<String, ITagFormatter> formatters, String template, Object... params) {
 
         if (!shouldFormat(settings, template)) {
 
-            if (textBuffer != null)
-                textBuffer.append(template);
+            if (context != null) {
+                context.append(template);
+            }
 
-            return new TextFormatterResult(template);
+            TextFormatterResult result = new TextFormatterResult(new SimpleChatComponent(template));
+            if (!isFormattingArgs) {
+                result.finishResult(settings);
+            }
+
+            return result;
         }
 
-        if (textBuffer == null)
-            textBuffer = new StringBuilder(template.length());
+        if (context == null)
+            context = new FormatContext(template.length());
 
         if (tagBuffer == null)
             tagBuffer = new StringBuilder(10);
@@ -174,6 +215,26 @@ public class TextFormatter {
 
         for (int i=0; i < template.length(); i++) {
             char ch = template.charAt(i);
+
+            // handle format codes
+            if (ch == TextFormat.CHAR && i < template.length() - 1
+                    && TextFormat.isFormatChar(template.charAt(i + 1))) {
+
+                TextFormat format = TextFormat.fromFormatChar(template.charAt(i + 1));
+                assert format != null;
+
+                if (format instanceof TextColor) {
+                    result.setParsedColor(true);
+                    if (context.getModifier().getColor() != null) {
+                        context.reset();
+                    }
+                }
+
+                setModifier(format, context.getModifier());
+
+                i += 1;
+                continue;
+            }
 
             // check for tag opening
             if (ch == '{') {
@@ -186,31 +247,43 @@ public class TextFormatter {
 
                 // template ended before tag was closed
                 if (tag == null) {
-                    textBuffer.append('{');
-                    textBuffer.append(tagBuffer);
+                    context.append('{');
+                    context.append(tagBuffer);
                 }
                 // tag parsed
                 else {
                     i++; // add 1 for closing brace
-                    appendReplacement(settings, result, textBuffer, tagBuffer, tag, params, formatters);
+                    appendReplacement(settings, result, context, tagBuffer, tag, params, formatters);
                 }
 
             }
+            else if (ch == '\n' || ch == '\r') {
+                if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE) {
+                    context.newLine();
+                }
+            }
             else if (ch == '\\' && i < template.length() - 1) {
-
-                i = processBackslash(settings, textBuffer, tagBuffer, template, i);
+                i = processBackslash(settings, context, tagBuffer, template, i);
             }
             else {
 
                 if (settings.isEscaped(ch))
-                    textBuffer.append('\\');
+                    context.append('\\');
 
                 // append next character
-                textBuffer.append(ch);
+                context.append(ch);
             }
         }
 
-        return result.setResult(textBuffer);
+        if (context.isModified()) {
+            context.reset();
+        }
+
+        result.appendAll(context.results);
+        if (!isFormattingArgs) {
+            result.finishResult(settings);
+        }
+        return result;
     }
 
     /**
@@ -271,7 +344,7 @@ public class TextFormatter {
      */
     private void appendReplacement(TextFormatterSettings settings,
                                    TextFormatterResult result,
-                                   StringBuilder textBuffer,
+                                   FormatContext textBuffer,
                                    StringBuilder tagBuffer,
                                    String tag, Object[] params, Map<String, ITagFormatter> formatters) {
 
@@ -316,31 +389,53 @@ public class TextFormatter {
                 if (param instanceof IDynamicText) {
                     param = ((IDynamicText) param).nextText();
                 }
+                else if (param instanceof IFormatterArg) {
+                    IChatModifier modifier = new SimpleChatModifier(textBuffer.getModifier());
+                    if (textBuffer.isModified()) {
+                        textBuffer.reset();
+                    }
+                    ((IFormatterArg) param).getComponents(textBuffer.results);
+                    textBuffer.reset(modifier);
+                    return;
+                }
+                else if (param instanceof IChatComponent) {
+                    IChatModifier modifier = new SimpleChatModifier(textBuffer.getModifier());
+                    if (textBuffer.isModified()) {
+                        textBuffer.reset();
+                    }
+                    textBuffer.results.add((IChatComponent)param);
+                    textBuffer.reset(modifier);
+                    return;
+                }
 
                 String toAppend = String.valueOf(param);
 
-                // cache length so we know where to look for
-                // colors if needed.
-                int bufferLength = textBuffer.length();
-
-                TextFormatterResult argResult = null;
-
                 // append parameter argument
-                if (settings.isArgsFormatted())
-                    argResult = format(settings, textBuffer, null, formatters, toAppend);
-                else
+                if (settings.isArgsFormatted()) {
+                    IChatModifier modifier = new SimpleChatModifier(textBuffer.getModifier());
+                    TextFormatterResult argResult = format(settings, textBuffer, null, true, formatters, toAppend);
+                    //result.appendAll(argResult);
+
+                    if ((argResult.isParsed() && argResult.parsedColor())
+                            || (!argResult.isParsed() && toAppend.indexOf(TextFormat.CHAR) != -1)) {
+
+                        // make sure colors from inserted text do not continue
+                        // into template text
+                        textBuffer.reset(modifier);
+                    }
+                }
+                else {
+                    boolean hasColorCode = toAppend.indexOf(TextFormat.CHAR) != -1;
+                    IChatModifier modifier = hasColorCode
+                            ? new SimpleChatModifier(textBuffer.getModifier())
+                            : null;
+
                     textBuffer.append(toAppend);
 
-                // make sure colors from inserted text do not continue
-                // into template text
-                if ((argResult != null && argResult.isParsed() && argResult.parsedColor()) ||
-                        ((argResult == null || !argResult.isParsed()) && toAppend.indexOf(TextFormat.CHAR) != -1)) {
-
-                    String lastColors = TextColor.getFormatAt(bufferLength, textBuffer).toString();
-
-                    // append template color
-                    if (!lastColors.isEmpty()) {
-                        textBuffer.append(lastColors);
+                    if (hasColorCode) {
+                        // make sure colors from inserted text do not continue
+                        // into template text
+                        textBuffer.reset(modifier);
                     }
                 }
             }
@@ -374,6 +469,10 @@ public class TextFormatter {
             }
 
             if (formatter != null) {
+
+                if (shouldResetAfterTag(formatter.getTag()))
+                    textBuffer.reset();
+
                 // formatter appends replacement text to format buffer
                 formatter.append(textBuffer, tag);
             }
@@ -384,11 +483,16 @@ public class TextFormatter {
         }
     }
 
+    private boolean shouldResetAfterTag(String tag) {
+        TextFormat format = TextColor.fromName(tag);
+        return format instanceof TextColor;
+    }
+
     /**
      * Process an escape character. Returns the new index location.
      */
     private int processBackslash(TextFormatterSettings settings,
-                                 StringBuilder textBuffer,
+                                 FormatContext textBuffer,
                                  StringBuilder tagBuffer,
                                  String template, int index) {
 
@@ -413,8 +517,9 @@ public class TextFormatter {
         // handle new line character
         if ((next == 'n' || next == 'r') && settings.getLineReturnPolicy() != FormatPolicy.IGNORE) {
 
-            if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE)
-                textBuffer.append('\n');
+            if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE) {
+                textBuffer.newLine();
+            }
             return index + 1;
         }
         // handle unicode
@@ -425,10 +530,13 @@ public class TextFormatter {
             if (unicode == 0) {
                 // append non unicode text
                 textBuffer.append("\\u");
+                textBuffer.incrementCharCount(2);
             }
             else {
-                if (settings.getUnicodePolicy() != FormatPolicy.REMOVE)
+                if (settings.getUnicodePolicy() != FormatPolicy.REMOVE) {
                     textBuffer.append(unicode);
+                    textBuffer.incrementCharCount(1);
+                }
 
                 index+= Math.min(4, template.length() - index);
             }
@@ -455,10 +563,11 @@ public class TextFormatter {
     /*
      * Append raw tag to string builder
      */
-    private void reappendTag(StringBuilder sb, String tag) {
-        sb.append('{');
-        sb.append(tag);
-        sb.append('}');
+    private void reappendTag(FormatContext context, String tag) {
+        context.append('{');
+        context.append(tag);
+        context.append('}');
+        context.incrementCharCount(2 + tag.length());
     }
 
     /*
@@ -476,30 +585,18 @@ public class TextFormatter {
         if (template.isEmpty())
             return false;
 
+        if (template.indexOf(TextFormat.CHAR) != -1)
+            return true;
+
+        if (settings.getLineReturnPolicy() != FormatPolicy.IGNORE) {
+            if (template.indexOf('\n') != -1)
+                return true;
+        }
+
         if (settings.getEscaped().length == 0 && template.indexOf('{') == -1 && template.indexOf('\\') == -1)
             return false;
 
         return true;
-    }
-
-    /**
-     * Defines a format tag.
-     */
-    public static interface ITagFormatter {
-
-        /**
-         * Get the format tag.
-         */
-        String getTag();
-
-        /**
-         * Append replacement text into the provided
-         * string builder. The parsed tag is provided for reference.
-         *
-         * @param sb      The string builder to append to.
-         * @param rawTag  The tag that was parsed.
-         */
-        void append(StringBuilder sb, String rawTag);
     }
 }
 

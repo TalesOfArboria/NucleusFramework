@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.managed.nms;
 import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -203,4 +204,18 @@ interface INms {
      */
     void getVelocity(Entity entity, Vector output);
 
+    /**
+     * Generate chat message from text.
+     *
+     * @param text  The text to convert.
+     */
+    IChatMessage getMessage(String text);
+
+    /**
+     * Send a chat message to a player.
+     *
+     * @param player   The player.
+     * @param message  The chat message.
+     */
+    void send(Player player, IChatMessage message);
 }

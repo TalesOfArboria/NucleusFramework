@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatter;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

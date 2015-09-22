@@ -1,6 +1,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
-import com.jcwhatever.nucleus.utils.text.TextFormatterSettings.FormatPolicy;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings.FormatPolicy;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,6 +39,10 @@ public class TextFormatterTest {
         Assert.assertEquals("ZeroZeroOneZero", TextUtils.format("{0}{0}{1}{0}", "Zero", "One"));
 
         Assert.assertEquals("\"", TextUtils.format("{0}", "\""));
+
+        Assert.assertEquals("§c§czero, §9§9one§9, two", TextUtils.format("{RED}{RED}{0}, {BLUE}{1}, {2}", "zero", "{BLUE}one", "two"));
+
+        Assert.assertEquals("§c§czero, §9§9one§9, two", TextUtils.format("{RED}{RED}{0}, §9{1}, {2}", "zero", "§9one", "two"));
     }
 
     @Test
