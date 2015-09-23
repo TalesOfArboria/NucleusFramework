@@ -81,7 +81,7 @@ public class TextFormatter {
 
                 @Override
                 public void append(IFormatterAppendable output, String tag) {
-                    setModifier(format, output.getModifier());
+                    setModifier(format, output);
                 }
             });
         }
@@ -99,7 +99,10 @@ public class TextFormatter {
         }
     };
 
-    private static void setModifier(TextFormat format, IChatModifier modifier) {
+    private static void setModifier(TextFormat format,IFormatterAppendable appendable) {
+
+        IChatModifier modifier = appendable.getModifier();
+
         switch (format.getTagName()) {
             case "BOLD":
                 modifier.setBold(true);
@@ -117,7 +120,10 @@ public class TextFormatter {
                 modifier.setUnderline(true);
                 return;
             case "RESET":
-                modifier.reset();
+                if (appendable instanceof FormatResultBuffer) {
+                    ((FormatResultBuffer) appendable).reset();
+                }
+                appendable.getModifier().reset();
                 return;
         }
 
@@ -288,7 +294,7 @@ public class TextFormatter {
             }
         }
 
-        setModifier(format, buffer.getModifier());
+        setModifier(format, buffer);
     }
 
     /**

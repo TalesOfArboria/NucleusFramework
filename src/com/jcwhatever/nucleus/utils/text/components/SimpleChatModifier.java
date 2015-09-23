@@ -41,6 +41,7 @@ public class SimpleChatModifier implements IChatModifier {
     private boolean _isStrikeThrough;
     private boolean _isUnderlined;
     private boolean _isMagic;
+    private boolean _isReset;
     private TextColor _color;
     private IChatClickable _clickable;
     private IChatHoverable _hoverable;
@@ -71,7 +72,7 @@ public class SimpleChatModifier implements IChatModifier {
     @Override
     public boolean isModified() {
         return _color != null || _isBold || _isItalic || _isStrikeThrough
-                || _isUnderlined || _isMagic || _clickable != null || _hoverable != null;
+                || _isUnderlined || _isMagic || _clickable != null || _hoverable != null || _isReset;
     }
 
     @Override
@@ -81,6 +82,7 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setBold(boolean isBold) {
+        _isReset = false;
         _isBold = isBold;
     }
 
@@ -91,6 +93,7 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setItalic(boolean isItalic) {
+        _isReset = false;
         _isItalic = isItalic;
     }
 
@@ -101,6 +104,7 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setStrikeThrough(boolean isStrikeThrough) {
+        _isReset = false;
         _isStrikeThrough = isStrikeThrough;
     }
 
@@ -111,6 +115,7 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setUnderline(boolean isUnderlined) {
+        _isReset = false;
         _isUnderlined = isUnderlined;
     }
 
@@ -121,7 +126,24 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setMagic(boolean isRandom) {
+        _isReset = false;
         _isMagic = isRandom;
+    }
+
+    @Override
+    public boolean isReset() {
+        return _isReset;
+    }
+
+    @Override
+    public void reset() {
+        _isBold = false;
+        _isItalic = false;
+        _isStrikeThrough = false;
+        _isUnderlined = false;
+        _isMagic = false;
+        _color = null;
+        _isReset = true;
     }
 
     @Override
@@ -132,6 +154,7 @@ public class SimpleChatModifier implements IChatModifier {
 
     @Override
     public void setColor(@Nullable TextColor color) {
+        _isReset = false;
         _color = color;
     }
 
@@ -158,18 +181,6 @@ public class SimpleChatModifier implements IChatModifier {
     }
 
     @Override
-    public void reset() {
-        _isBold = false;
-        _isItalic = false;
-        _isStrikeThrough = false;
-        _isUnderlined = false;
-        _isMagic = false;
-        _color = null;
-        _clickable = null;
-        _hoverable = null;
-    }
-
-    @Override
     public String getFormatted() {
         StringBuilder sb = new StringBuilder(8);
         getFormatted(sb);
@@ -181,6 +192,10 @@ public class SimpleChatModifier implements IChatModifier {
         PreCon.notNull(output);
 
         try {
+            if (_isReset) {
+                output.append(TextFormat.RESET.getFormatCode());
+                return;
+            }
             if (_color != null) {
                 output.append(_color.getFormatCode());
             }

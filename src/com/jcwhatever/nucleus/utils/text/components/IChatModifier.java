@@ -99,6 +99,22 @@ public interface IChatModifier {
     void setMagic(boolean isRandom);
 
     /**
+     * Determine if the text is reset.
+     *
+     * <p>Reset modifiers should return false or null for all other modifier parameters.
+     * (except click and hover).</p>
+     */
+    boolean isReset();
+
+    /**
+     * Set the reset flag.
+     *
+     * <p>Causes all other modifier parameters (except click and hover) to be false or null.
+     * Changing other parameters causes reset flag to become false.</p>
+     */
+    void reset();
+
+    /**
      * Get the text color.
      */
     @Nullable
@@ -132,11 +148,6 @@ public interface IChatModifier {
      * Set the hoverable data.
      */
     void setHoverable(@Nullable IChatHoverable hoverable);
-
-    /**
-     * Reset all formatting values.
-     */
-    void reset();
 
     /**
      * Get the modifier format text.

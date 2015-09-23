@@ -165,6 +165,21 @@ public class TextFormatterTest {
 
     }
 
+    /**
+     * Test reset
+     */
+    @Test
+    public void testFormat7() throws Exception {
+
+        assertEquals("§ctest§r reset", format("{RED}test{RESET} reset"));
+
+        assertEquals("§ctest§r reset", format("{RED}test§r reset"));
+
+        assertEquals("§ctest§r reset", format("§ctest§r reset"));
+
+        assertEquals("§ctest§r reset", format("§ctest{RESET} reset"));
+    }
+
     private String format(TextFormatterSettings settings, String template, Object... args) {
         return TextUtils.format(settings, template, args).toString();
     }

@@ -229,9 +229,15 @@ public class SimpleChatMessage implements IChatMessage {
             }
 
             boolean hasColor = component.getModifier().getColor() != null;
-            // continue previous color if no new color has been set
-            if (color != null && !hasColor && !component.getText().isEmpty()) {
-                component.getModifier().setColor(color);
+
+            if (component.getModifier().isReset()) {
+                color = null;
+            }
+            else {
+                // continue previous color if no new color has been set
+                if (color != null && !hasColor && !component.getText().isEmpty()) {
+                    component.getModifier().setColor(color);
+                }
             }
 
             current.append(component);
