@@ -29,9 +29,11 @@ import com.jcwhatever.nucleus.managed.language.ILanguageContext;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,7 +41,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * Internal implementation of {@link ILanguageContext}.
@@ -48,6 +49,7 @@ class LanguageContext implements ILanguageContext {
 
     private final Plugin _plugin;
     private final Object _owner;
+    private final TextFormatterSettings _formatSettings;
 
     private Map<String, String> _localizationMap;
     private LanguageKeys _keys;
@@ -74,6 +76,7 @@ class LanguageContext implements ILanguageContext {
 
         _plugin = plugin;
         _owner = context == null ? plugin : context;
+        _formatSettings = TextUtils.getPluginFormatters(plugin, null);
 
         loadInternalLanguage();
     }
@@ -109,17 +112,14 @@ class LanguageContext implements ILanguageContext {
 
     @Override
     @Localized
-    public String get(String text, Object... params) {
+    public IChatMessage get(CharSequence text, Object... params) {
         PreCon.notNull(text);
-
-        if (text.isEmpty())
-            return text;
 
         if (_keys == null) {
             return format(text, params);
         }
 
-        String localizedText = _localizationMap.get(text);
+        String localizedText = _localizationMap.get(text.toString());
         if (localizedText == null) {
             return format(text, params);
         }
@@ -212,10 +212,7 @@ class LanguageContext implements ILanguageContext {
     /*
      * text format helper
      */
-    private String format(String text, Object... params) {
-
-        text = TextUtils.format(text, params);
-
-        return TextUtils.formatPluginInfo(_plugin, text);
+    private IChatMessage format(CharSequence text, Object... params) {
+        return TextUtils.format(_formatSettings, text, params);
     }
 }

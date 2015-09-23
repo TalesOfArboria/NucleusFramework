@@ -31,7 +31,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -51,11 +50,11 @@ public class TextComponents implements Iterable<TextComponent> {
      *
      * @param text  The text.
      */
-    public TextComponents(String text) {
+    public TextComponents(CharSequence text) {
         PreCon.notNull(text);
 
-        _text = text;
-        _components = getTextComponents(text);
+        _text = text.toString();
+        _components = getTextComponents(_text);
     }
 
     /**
@@ -149,7 +148,7 @@ public class TextComponents implements Iterable<TextComponent> {
     private static List<TextComponent> getTextComponents(String text) {
         PreCon.notNull(text);
 
-        text = TextUtils.format(text);
+        text = TextUtils.format(text).toString();
 
         StringBuilder buffer = new StringBuilder(text.length());
 

@@ -22,16 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.text.format;
+package com.jcwhatever.nucleus.utils.text.components;
 
-import com.jcwhatever.nucleus.utils.text.components.SimpleChatComponent;
-
-/*
- * 
+/**
+ * A chat component representing a new line.
  */
-class FormatNewLine extends SimpleChatComponent {
+public class NewLineComponent extends SimpleChatComponent {
 
-    FormatNewLine() {
+    public NewLineComponent() {
         super("\n");
     }
 }

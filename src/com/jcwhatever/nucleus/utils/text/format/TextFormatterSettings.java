@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.text.format;
 import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.components.IChatLineSettings;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ import java.util.Map.Entry;
 /**
  * Settings for {@link TextFormatter}.
  */
-public class TextFormatterSettings {
+public class TextFormatterSettings implements IChatLineSettings {
 
     private final Object _sync = new Object();
     private final Map<String, ITagFormatter> _formatters;
@@ -50,7 +51,7 @@ public class TextFormatterSettings {
     private volatile FormatPolicy _tagPolicy = FormatPolicy.FORMAT;
     private volatile boolean _isArgsFormatted = true;
     private volatile int _maxLineLen = -1;
-    private volatile IChatMessage _linePrepend;
+    private volatile IChatMessage _linePrefix;
 
     private volatile char _escapedCache;
 
@@ -174,44 +175,26 @@ public class TextFormatterSettings {
         _formatters = builder.build();
     }
 
-    /**
-     * Get the maximum line length.
-     *
-     * @return  The max line length or -1 to indicate no max len.
-     */
+    @Override
     public int getMaxLineLen() {
         return _maxLineLen;
     }
 
-    /**
-     * Set the max line length.
-     *
-     * @param len  The maximum line length. -1 to indicate no max length.
-     *
-     * @return  Self for chaining.
-     */
+    @Override
     public TextFormatterSettings setMaxLineLen(int len) {
         _maxLineLen = len;
         return this;
     }
 
-    /**
-     * Get the String prepended before each line.
-     */
+    @Override
     @Nullable
-    public IChatMessage getLinePrepend() {
-        return _linePrepend;
+    public IChatMessage getLinePrefix() {
+        return _linePrefix;
     }
 
-    /**
-     * Set the text prepended before each line.
-     *
-     * @param text  The text to prepend.
-     *
-     * @return  Self for chaining.
-     */
-    public TextFormatterSettings setLinePrepend(@Nullable IChatMessage text) {
-        _linePrepend = text;
+    @Override
+    public TextFormatterSettings setLinePrefix(@Nullable IChatMessage text) {
+        _linePrefix = text;
         return this;
     }
 

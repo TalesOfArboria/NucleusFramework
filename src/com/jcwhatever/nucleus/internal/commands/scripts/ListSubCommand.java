@@ -35,11 +35,10 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.scripting.IScript;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
 import javax.script.ScriptEngine;
+import java.util.List;
 
 @CommandInfo(
         parent="scripts",
@@ -60,7 +59,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         List<IScript> scripts = Nucleus.getScriptManager().getScripts();
 

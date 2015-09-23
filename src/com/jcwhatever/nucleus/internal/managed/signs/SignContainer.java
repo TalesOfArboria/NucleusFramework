@@ -137,16 +137,16 @@ class SignContainer implements ISignContainer {
     }
 
     @Override
-    public void setLine(int index, String line) {
+    public void setLine(int index, CharSequence line) {
         PreCon.positiveNumber(index);
         PreCon.isValid(index < 4);
         PreCon.notNull(line);
 
         if (_changeEvent != null) {
-            _changeEvent.setLine(index, line);
+            _changeEvent.setLine(index, line.toString());
         }
         else if (_sign != null) {
-            _sign.setLine(index, line);
+            _sign.setLine(index, line.toString());
         }
     }
 
@@ -167,7 +167,7 @@ class SignContainer implements ISignContainer {
     }
 
     @Override
-    public boolean setSavedLine(int index, String line) {
+    public boolean setSavedLine(int index, CharSequence line) {
         PreCon.positiveNumber(index);
         PreCon.isValid(index < 4);
         PreCon.notNull(line);

@@ -576,6 +576,9 @@ public class YamlDataNode extends AbstractDataNode {
 
                 return true;
             }
+            else if (value instanceof CharSequence) {
+                value = value.toString();
+            }
 
             _section.set(keyPath, value);
         }

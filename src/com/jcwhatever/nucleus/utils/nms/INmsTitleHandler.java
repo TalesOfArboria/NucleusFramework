@@ -49,7 +49,7 @@ public interface INmsTitleHandler extends INmsHandler {
      * @param stay         The stay time.
      * @param fadeOut      The fade-out time.
      */
-    void send(Player player, String rawTitle, @Nullable String rawSubtitle,
+    void send(Player player, CharSequence rawTitle, @Nullable CharSequence rawSubtitle,
               int fadeIn, int stay, int fadeOut);
 
     /**
@@ -65,7 +65,7 @@ public interface INmsTitleHandler extends INmsHandler {
      * @param stay         The stay time.
      * @param fadeOut      The fade-out time.
      */
-    void send(Collection<? extends Player> players, String rawTitle, @Nullable String rawSubtitle,
+    void send(Collection<? extends Player> players, CharSequence rawTitle, @Nullable CharSequence rawSubtitle,
               int fadeIn, int stay, int fadeOut);
 
     /**
@@ -80,7 +80,7 @@ public interface INmsTitleHandler extends INmsHandler {
      * @param stay          The stay time.
      * @param fadeOut       The fade-out time.
      */
-    void sendJson(Player player, String jsonTitle, @Nullable String jsonSubtitle,
+    void sendJson(Player player, CharSequence jsonTitle, @Nullable CharSequence jsonSubtitle,
                   int fadeIn, int stay, int fadeOut);
 
     /**
@@ -95,6 +95,6 @@ public interface INmsTitleHandler extends INmsHandler {
      * @param stay          The stay time.
      * @param fadeOut       The fade-out time.
      */
-    void sendJson(Collection<? extends Player> players, String jsonTitle, @Nullable String jsonSubtitle,
+    void sendJson(Collection<? extends Player> players, CharSequence jsonTitle, @Nullable CharSequence jsonSubtitle,
                   int fadeIn, int stay, int fadeOut);
 }

@@ -27,6 +27,8 @@ package com.jcwhatever.nucleus.utils.nms;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * Interface for NucleusFramework's Minecraft Chat handler.
  *
@@ -48,4 +50,12 @@ public interface INmsChatHandler extends INmsHandler {
      * @param message  The chat message.
      */
     void send(Player player, IChatMessage message);
+
+    /**
+     * Send a chat message to a collection of players.
+     *
+     * @param players  The players.
+     * @param message  The chat message.
+     */
+    void send(Collection<? extends Player> players, IChatMessage message);
 }

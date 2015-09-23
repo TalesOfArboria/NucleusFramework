@@ -36,6 +36,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for a lower level NMS handler designed for a specific
@@ -103,14 +104,14 @@ interface INms {
      *
      * @param subTitle  The sub title.
      */
-    Object getTitlePacketSub(String subTitle);
+    Object getTitlePacketSub(CharSequence subTitle);
 
     /**
      * Get a new title packet instance for setting the title.
      *
      * @param title  The title.
      */
-    Object getTitlePacket(String title);
+    Object getTitlePacket(CharSequence title);
 
     /**
      * Get a new named sound effect packet instance.
@@ -151,7 +152,7 @@ interface INms {
      * @param headerText  The header text.
      * @param footerText  The footer text.
      */
-    Object getHeaderFooterPacket(@Nullable String headerText, @Nullable String footerText);
+    Object getHeaderFooterPacket(@Nullable CharSequence headerText, @Nullable CharSequence footerText);
 
 
     /**
@@ -159,7 +160,7 @@ interface INms {
      *
      * @param text  The action bar text.
      */
-    Object getActionBarPacket(String text);
+    Object getActionBarPacket(CharSequence text);
 
     /**
      * Open an anvil view.
@@ -218,4 +219,12 @@ interface INms {
      * @param message  The chat message.
      */
     void send(Player player, IChatMessage message);
+
+    /**
+     * Send a chat message to a collection of players.
+     *
+     * @param players  The players.
+     * @param message  The chat message.
+     */
+    void send(Collection<? extends Player> players, IChatMessage message);
 }

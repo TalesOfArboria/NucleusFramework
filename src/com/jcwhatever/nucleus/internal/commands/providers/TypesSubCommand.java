@@ -58,7 +58,7 @@ class TypesSubCommand extends AbstractCommand implements IExecutableCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = createPagin(7, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         for (ProviderType type : ProviderType.values()) {
             pagin.add(type.getName());

@@ -115,8 +115,26 @@ public interface IMessenger extends IPluginOwned {
                        Integer ticks, LineWrapping lineWrapping, Object message, Object...params);
 
     /**
+     * Tell a message to a a collection of players and cache it for the specified spam/tick delay.
+     *
+     * <p>The message will not be displayed again until the delay time has elapsed.</p>
+     *
+     * <p>If the message is displayed before the delay time has elapsed, the delay is reset.</p>
+     *
+     * @param players       The players to display the message to.
+     * @param lineWrapping  Line wrapping option.
+     * @param ticks         The number of ticks before the message can be displayed again.
+     * @param message       The message to display.
+     * @param params        Optional formatting parameters.
+     *
+     * @return  True if the message was displayed.
+     */
+    boolean tellNoSpam(Collection<? extends Player> players,
+                       Integer ticks, LineWrapping lineWrapping, Object message, Object...params);
+
+    /**
      * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
-     * the default spam delay.
+     * the specified spam/tick delay.
      *
      * <p>The message will not be displayed again until the delay time has elapsed.</p>
      *
@@ -130,6 +148,22 @@ public interface IMessenger extends IPluginOwned {
      * @return  True if the message was displayed.
      */
     boolean tellNoSpam(CommandSender sender, Integer ticks, Object message, Object...params);
+
+    /**
+     * Tell a message to a collection of players and cache it for the specified spam/tick delay.
+     *
+     * <p>The message will not be displayed again until the delay time has elapsed.</p>
+     *
+     * <p>If the message is displayed before the delay time has elapsed, the delay is reset.</p>
+     *
+     * @param players  The players to display the message to.
+     * @param ticks    The number of ticks before the message can be displayed again.
+     * @param message  The message to display.
+     * @param params   Optional formatting parameters.
+     *
+     * @return  True if the message was displayed.
+     */
+    boolean tellNoSpam(Collection<? extends Player> players, Integer ticks, Object message, Object...params);
 
     /**
      * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
@@ -148,6 +182,21 @@ public interface IMessenger extends IPluginOwned {
     boolean tellNoSpam(CommandSender sender, Object message, Object...params);
 
     /**
+     * Tell a message to a collection of players and cache it for the default spam delay.
+     *
+     * <p>The message will not be displayed again until the delay time has elapsed.</p>
+     *
+     * <p>If the message is displayed before the delay time has elapsed, the delay is reset.</p>
+     *
+     * @param players  The players to display the message to.
+     * @param message  The message to display.
+     * @param params   Optional formatting parameters.
+     *
+     * @return  True if the message was displayed.
+     */
+    boolean tellNoSpam(Collection<? extends Player> players, Object message, Object...params);
+
+    /**
      * Tell a message to the specified {@link  org.bukkit.command.CommandSender}.
      *
      * @param sender   The sender to display the message to.
@@ -157,6 +206,17 @@ public interface IMessenger extends IPluginOwned {
      * @return  True if the message was displayed.
      */
     boolean tell(CommandSender sender, Object message, Object...params);
+
+    /**
+     * Tell a message to a collection of players.
+     *
+     * @param players  The players to display the message to.
+     * @param message  The message to display.
+     * @param params   Optional formatting parameters.
+     *
+     * @return  True if the message was displayed.
+     */
+    boolean tell(Collection<? extends Player> players, Object message, Object...params);
 
     /**
      * Tell a message to the specified {@link  org.bukkit.command.CommandSender}.
@@ -169,6 +229,19 @@ public interface IMessenger extends IPluginOwned {
      * @return  True if the message was displayed.
      */
     boolean tell(CommandSender sender, LineWrapping lineWrapping, Object message, Object...params);
+
+    /**
+     * Tell a message to a collection of players.
+     *
+     * @param players       The players to display the message to.
+     * @param lineWrapping  Line wrapping option.
+     * @param message       The message to display.
+     * @param params        Optional formatting parameters.
+     *
+     * @return  True if the message was displayed.
+     */
+    boolean tell(Collection<? extends Player> players,
+                        LineWrapping lineWrapping, Object message, Object... params);
 
     /**
      * Tell an important message to the specified player.

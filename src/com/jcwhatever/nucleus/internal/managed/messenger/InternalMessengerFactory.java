@@ -37,16 +37,15 @@ import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
 
 /**
  * Internal messenger factory
@@ -156,13 +155,13 @@ public final class InternalMessengerFactory implements IMessengerFactory {
             Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    player.sendRawMessage(NucLang.get(_MESSAGES_HEADER));
+                    player.sendRawMessage(NucLang.get(_MESSAGES_HEADER).toString());
 
                     for (String msg : messages) {
                         player.sendRawMessage(msg);
                     }
 
-                    player.sendRawMessage(NucLang.get(_MESSAGES_FOOTER));
+                    player.sendRawMessage(NucLang.get(_MESSAGES_FOOTER).toString());
                 }
             });
         }

@@ -110,13 +110,13 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * @param name    The name of the sign (Used in the sign header). Must be a valid name.
      *                Starts with a letter, alphanumerics only. Underscores allowed.
      */
-    public SignHandler(Plugin plugin, String name) {
+    public SignHandler(Plugin plugin, CharSequence name) {
         PreCon.notNull(plugin);
         PreCon.validNodeName(name);
 
         _plugin = plugin;
-        _name = name;
-        _searchName = name.toLowerCase();
+        _name = name.toString();
+        _searchName = _name.toLowerCase();
     }
 
     @Override

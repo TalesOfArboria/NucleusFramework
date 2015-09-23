@@ -43,8 +43,8 @@ public class ScriptWorkbenchView extends FilteredWorkbenchView implements IDispo
 
     private final Player _player;
 
-    private String _denyLore;
-    private String _denyChat;
+    private CharSequence _denyLore;
+    private CharSequence _denyChat;
     private boolean _isDisposed;
 
     /**
@@ -114,10 +114,10 @@ public class ScriptWorkbenchView extends FilteredWorkbenchView implements IDispo
 
     @Override
     public String getDenyLore() {
-        return _denyLore == null ? super.getDenyLore() : _denyLore;
+        return _denyLore == null ? super.getDenyLore() : _denyLore.toString();
     }
 
-    public void setDenyLore(@Nullable String lore) {
+    public void setDenyLore(@Nullable CharSequence lore) {
 
         if (lore != null)
             lore = TextUtils.format(lore);
@@ -130,10 +130,10 @@ public class ScriptWorkbenchView extends FilteredWorkbenchView implements IDispo
     public String getDenyChat() {
         if (_denyChat == null) {
             return super.getDenyChat();
-        } else return _denyChat.isEmpty() ? null : _denyChat;
+        } else return _denyChat.length() == 0 ? null : _denyChat.toString();
     }
 
-    public void setDenyChat(@Nullable String chat) {
+    public void setDenyChat(@Nullable CharSequence chat) {
 
         if (chat != null)
             chat = TextUtils.format(chat);

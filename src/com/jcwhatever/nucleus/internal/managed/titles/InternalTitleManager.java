@@ -26,11 +26,10 @@ package com.jcwhatever.nucleus.internal.managed.titles;
 
 import com.jcwhatever.nucleus.managed.titles.ITitle;
 import com.jcwhatever.nucleus.managed.titles.ITitleManager;
-
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Internal implementation of {@link ITitleManager}.
@@ -38,67 +37,68 @@ import javax.annotation.Nullable;
 public final class InternalTitleManager implements ITitleManager {
 
     @Override
-    public ITitle create(String title) {
+    public ITitle create(CharSequence title) {
         return new Title(title, null);
     }
 
     @Override
-    public ITitle create(String title, @Nullable String subTitle) {
+    public ITitle create(CharSequence title, @Nullable CharSequence subTitle) {
         return new Title(title, subTitle);
     }
 
     @Override
-    public ITitle create(String title, int fadeInTime, int stayTime, int fadeOutTime) {
+    public ITitle create(CharSequence title, int fadeInTime, int stayTime, int fadeOutTime) {
         return new Title(title, null, fadeInTime, stayTime, fadeOutTime);
     }
 
     @Override
-    public ITitle create(String title, @Nullable String subTitle, int fadeInTime, int stayTime, int fadeOutTime) {
+    public ITitle create(CharSequence title, @Nullable CharSequence subTitle,
+                         int fadeInTime, int stayTime, int fadeOutTime) {
         return new Title(title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }
 
     @Override
-    public void showTo(Player player, String title) {
+    public void showTo(Player player, CharSequence title) {
         create(title).showTo(player);
     }
 
     @Override
-    public void showTo(Player player, String title, @Nullable String subTitle) {
+    public void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle) {
         create(title, subTitle).showTo(player);
     }
 
     @Override
-    public void showTo(Player player, String title,
+    public void showTo(Player player, CharSequence title,
                        int fadeInTime, int stayTime, int fadeOutTime) {
         create(title, fadeInTime, stayTime, fadeOutTime).showTo(player);
     }
 
     @Override
-    public void showTo(Player player, String title, @Nullable String subTitle,
+    public void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle,
                        int fadeInTime, int stayTime, int fadeOutTime) {
         create(title, subTitle, fadeInTime, stayTime, fadeOutTime).showTo(player);
     }
 
     @Override
-    public void showTo(Collection<? extends Player> players, String title) {
+    public void showTo(Collection<? extends Player> players, CharSequence title) {
         create(title).showTo(players);
     }
 
     @Override
     public void showTo(Collection<? extends Player> players,
-                       String title, @Nullable String subTitle) {
+                       CharSequence title, @Nullable CharSequence subTitle) {
         create(title, subTitle).showTo(players);
     }
 
     @Override
-    public void showTo(Collection<? extends Player> players, String title,
+    public void showTo(Collection<? extends Player> players, CharSequence title,
                        int fadeInTime, int stayTime, int fadeOutTime) {
         create(title, fadeInTime, stayTime, fadeOutTime).showTo(players);
     }
 
     @Override
     public void showTo(Collection<? extends Player> players,
-                       String title, @Nullable String subTitle,
+                       CharSequence title, @Nullable CharSequence subTitle,
                        int fadeInTime, int stayTime, int fadeOutTime) {
         create(title, fadeInTime, stayTime, fadeOutTime).showTo(players);
     }

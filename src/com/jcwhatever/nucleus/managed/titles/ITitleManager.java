@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.managed.titles;
 
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Interface for the global title manager.
@@ -39,7 +39,7 @@ public interface ITitleManager {
      *
      * @param title  The title text.
      */
-    ITitle create(String title);
+    ITitle create(CharSequence title);
 
     /**
      * Create a new title instance.
@@ -47,7 +47,7 @@ public interface ITitleManager {
      * @param title     The title text.
      * @param subTitle  The sub title text.
      */
-    ITitle create(String title, @Nullable String subTitle);
+    ITitle create(CharSequence title, @Nullable CharSequence subTitle);
 
     /**
      * Create a new title instance.
@@ -57,7 +57,7 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    ITitle create(String title, int fadeInTime, int stayTime, int fadeOutTime);
+    ITitle create(CharSequence title, int fadeInTime, int stayTime, int fadeOutTime);
 
     /**
      * Create a new title instance.
@@ -68,7 +68,7 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    ITitle create(String title, @Nullable String subTitle,
+    ITitle create(CharSequence title, @Nullable CharSequence subTitle,
                   int fadeInTime, int stayTime, int fadeOutTime);
 
     /**
@@ -77,7 +77,7 @@ public interface ITitleManager {
      * @param player  The player to show the title to.
      * @param title   The title text.
      */
-    void showTo(Player player, String title);
+    void showTo(Player player, CharSequence title);
 
     /**
      * Show a title to the specified player.
@@ -86,7 +86,7 @@ public interface ITitleManager {
      * @param title     The title text.
      * @param subTitle  The sub title text.
      */
-    void showTo(Player player, String title, @Nullable String subTitle);
+    void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle);
 
     /**
      * Show a title to the specified player.
@@ -97,7 +97,7 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    void showTo(Player player, String title, int fadeInTime, int stayTime, int fadeOutTime);
+    void showTo(Player player, CharSequence title, int fadeInTime, int stayTime, int fadeOutTime);
 
     /**
      * Show a title to the specified player.
@@ -109,7 +109,7 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    void showTo(Player player, String title, @Nullable String subTitle,
+    void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle,
                 int fadeInTime, int stayTime, int fadeOutTime);
 
     /**
@@ -118,7 +118,7 @@ public interface ITitleManager {
      * @param players      The players to show the title to.
      * @param title        The title text.
      */
-    void showTo(Collection<? extends Player> players, String title);
+    void showTo(Collection<? extends Player> players, CharSequence title);
 
     /**
      * Show a title to a collection of players.
@@ -127,7 +127,7 @@ public interface ITitleManager {
      * @param title        The title text.
      * @param subTitle     The sub title text.
      */
-    void showTo(Collection<? extends Player> players, String title, @Nullable String subTitle);
+    void showTo(Collection<? extends Player> players, CharSequence title, @Nullable CharSequence subTitle);
 
     /**
      * Show a title to a collection of players.
@@ -138,7 +138,7 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    void showTo(Collection<? extends Player> players, String title,
+    void showTo(Collection<? extends Player> players, CharSequence title,
                 int fadeInTime, int stayTime, int fadeOutTime);
 
     /**
@@ -151,6 +151,6 @@ public interface ITitleManager {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    void showTo(Collection<? extends Player> players, String title, @Nullable String subTitle,
+    void showTo(Collection<? extends Player> players, CharSequence title, @Nullable CharSequence subTitle,
                 int fadeInTime, int stayTime, int fadeOutTime);
 }

@@ -115,7 +115,7 @@ public final class NucMsg {
         msg().broadcast(message, params);
     }
 
-    public static void broadcast(Collection<Player> exclude, Object message, Object... params) {
+    public static void broadcast(Collection<? extends Player> exclude, Object message, Object... params) {
         msg().broadcast(exclude, message, params);
     }
 

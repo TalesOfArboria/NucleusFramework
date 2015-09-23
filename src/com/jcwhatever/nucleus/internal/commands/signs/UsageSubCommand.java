@@ -68,7 +68,7 @@ class UsageSubCommand extends AbstractCommand implements IExecutableCommand {
         if (handler == null)
             throw new CommandException(NucLang.get(_HANDLER_NOT_FOUND, typeName));
 
-        ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE, handler.getName()));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE, handler.getName()));
 
         String[] usage = handler.getUsage();
 

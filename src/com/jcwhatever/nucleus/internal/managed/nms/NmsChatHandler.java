@@ -28,6 +28,8 @@ import com.jcwhatever.nucleus.utils.nms.INmsChatHandler;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * Internal implementation of {@link INmsChatHandler}.
  */
@@ -41,6 +43,11 @@ public class NmsChatHandler extends AbstractNMSHandler implements INmsChatHandle
     @Override
     public void send(Player player, IChatMessage message) {
         nms().send(player, message);
+    }
+
+    @Override
+    public void send(Collection<? extends Player> players, IChatMessage message) {
+        nms().send(players, message);
     }
 
     @Override

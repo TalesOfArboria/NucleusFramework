@@ -42,16 +42,15 @@ import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Monster;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 /**
  * Abstract implementation for a region that is savable to and restorable from disk.
@@ -145,7 +144,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         IRegionFileWriter writer = getFileFormat().getWriter(this, getFileFactory());
         return writer.save().onStatus(new FutureSubscriber() {
             @Override
-            public void on(FutureStatus status, @Nullable String message) {
+            public void on(FutureStatus status, @Nullable CharSequence message) {
                 _isSaving = false;
                 onSaveComplete();
             }
@@ -197,7 +196,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 .load(LoadType.MISMATCHED, loadSpeed, fileData)
                 .onStatus(new FutureSubscriber() {
                     @Override
-                    public void on(FutureStatus status, @Nullable String message) {
+                    public void on(FutureStatus status, @Nullable CharSequence message) {
                         _isRestoring = false;
                         onRestoreComplete();
                     }

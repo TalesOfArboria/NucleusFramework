@@ -90,7 +90,7 @@ public interface ISignContainer {
      * @param index  The index of the line. (0-3)
      * @param line   The new text line.
      */
-    void setLine(int index, String line);
+    void setLine(int index, CharSequence line);
 
     /**
      * Get a line from the sign with color formatting removed.
@@ -118,7 +118,7 @@ public interface ISignContainer {
      *
      * @return  True if the data node was updated, false if there is no data node to set.
      */
-    boolean setSavedLine(int index, String line);
+    boolean setSavedLine(int index, CharSequence line);
 
     /**
      * Update changes to the sign in the world.

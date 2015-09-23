@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.players;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
@@ -62,8 +61,7 @@ class SearchSubCommand extends AbstractCommand implements IExecutableCommand {
         final int page = args.getInteger("page");
         String searchText = args.getString("searchText");
 
-        final ChatPaginator pagin = new ChatPaginator(
-                Nucleus.getPlugin(), 6, NucLang.get(_PAGINATOR_TITLE, searchText));
+        final ChatPaginator pagin = createPagin(args, 6, NucLang.get(_PAGINATOR_TITLE, searchText));
 
         PlayerUtils.searchNames(searchText, 50)
                 .onSuccess(new FutureResultSubscriber<Collection<UUID>>() {

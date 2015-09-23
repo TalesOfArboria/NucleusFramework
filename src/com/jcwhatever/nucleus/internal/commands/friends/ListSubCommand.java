@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.friends;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
@@ -37,7 +36,6 @@ import com.jcwhatever.nucleus.providers.friends.Friends;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -67,7 +65,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Collection<IFriend> friends = Friends.getAll(player);
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         for (IFriend friend : friends) {
             IFriendLevel level = friend.getLevel();

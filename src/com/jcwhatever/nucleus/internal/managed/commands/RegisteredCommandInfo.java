@@ -32,16 +32,15 @@ import com.jcwhatever.nucleus.managed.commands.parameters.ICommandParameter;
 import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Container for a commands {@link CommandInfo} annotation.
@@ -218,13 +217,13 @@ class RegisteredCommandInfo implements IRegisteredCommandInfo {
     @Localized
     @Nullable
     public String getDescription() {
-        return NucLang.get(_plugin, _commandInfo.description());
+        return NucLang.get(_plugin, _commandInfo.description()).toString();
     }
 
     @Override
     @Localized
     public String getLongDescription() {
-        return NucLang.get(_plugin, _commandInfo.longDescription());
+        return NucLang.get(_plugin, _commandInfo.longDescription()).toString();
     }
 
     // setup command parameters

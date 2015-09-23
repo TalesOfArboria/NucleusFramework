@@ -42,7 +42,7 @@ class TimedActionBar extends PersistentActionBar implements ITimedActionBar {
      *
      * @param text  The action bar text.
      */
-    public TimedActionBar(String text) {
+    public TimedActionBar(CharSequence text) {
         super(text);
     }
 
@@ -65,7 +65,7 @@ class TimedActionBar extends PersistentActionBar implements ITimedActionBar {
      * @param duration     The default duration the bar is shown for.
      * @param timeScale    The default duration time scale.
      */
-    public TimedActionBar(String text, int duration, TimeScale timeScale) {
+    public TimedActionBar(CharSequence text, int duration, TimeScale timeScale) {
         super(text, duration, timeScale);
     }
 

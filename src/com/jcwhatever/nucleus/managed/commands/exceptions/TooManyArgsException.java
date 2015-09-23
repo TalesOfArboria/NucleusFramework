@@ -36,7 +36,7 @@ public class TooManyArgsException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected TooManyArgsException(String message) {
+    protected TooManyArgsException(CharSequence message) {
         super(message);
     }
 }

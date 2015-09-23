@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.utils.text.dynamic;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextColor;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 /**
  * {@link IDynamicText} implementation that displays a status bar
@@ -35,7 +37,7 @@ public class StatusBarText implements IDynamicText {
 
     private volatile int _width;
     private volatile double _percent = 1.0D;
-    private volatile String _currentText;
+    private volatile IChatMessage _currentText;
 
     private volatile char _fullChar = '\u2587';
     private volatile char _partialChar = '\u2587';
@@ -294,7 +296,7 @@ public class StatusBarText implements IDynamicText {
     }
 
     @Override
-    public String nextText() {
+    public IChatMessage nextText() {
         if (_isUpdateRequired) {
 
             synchronized (_sync) {
@@ -326,7 +328,7 @@ public class StatusBarText implements IDynamicText {
                     }
                 }
 
-                _currentText = buffer.toString();
+                _currentText = TextUtils.format(buffer.toString());
             }
         }
         return _currentText;
@@ -349,6 +351,6 @@ public class StatusBarText implements IDynamicText {
 
     @Override
     public String toString() {
-        return nextText();
+        return nextText().toString();
     }
 }

@@ -40,17 +40,18 @@ import java.util.Collection;
 class NmsActionBarHandler extends AbstractNMSHandler implements INmsActionBarHandler {
 
     @Override
-    public void send(Collection<? extends Player> players, String rawText) {
+    public void send(Collection<? extends Player> players, CharSequence rawText) {
         PreCon.notNull(players);
         PreCon.notNull(rawText);
 
-        String jsonText = "{text:\"" + TextUtils.format(rawText).replace("\"", "\\\"") + "\"}";
+        String jsonText = "{text:\"" + TextUtils.PATTERN_DOUBLE_QUOTE.matcher(
+                TextUtils.format(rawText).toString()).replaceAll("\\\"") + "\"}";
 
         sendJson(players, jsonText);
     }
 
     @Override
-    public void sendJson(final Collection<? extends Player> players, final String jsonText) {
+    public void sendJson(final Collection<? extends Player> players, final CharSequence jsonText) {
         PreCon.notNull(players);
         PreCon.notNull(jsonText);
 
@@ -67,7 +68,7 @@ class NmsActionBarHandler extends AbstractNMSHandler implements INmsActionBarHan
         }
     }
 
-    private void syncSend(Collection<? extends Player> players, String text) {
+    private void syncSend(Collection<? extends Player> players, CharSequence text) {
 
         try {
 

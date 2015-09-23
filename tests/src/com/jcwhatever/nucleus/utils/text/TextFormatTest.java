@@ -2,9 +2,9 @@ package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormatMap;
 import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormats;
-
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class TextFormatTest {
@@ -14,7 +14,7 @@ public class TextFormatTest {
 
         String source = "§l§1Test §2String§3";
 
-        Assert.assertEquals("Test String", TextFormat.remove(source));
+        assertEquals("Test String", TextFormat.remove(source));
     }
 
     @Test
@@ -24,15 +24,15 @@ public class TextFormatTest {
 
         TextFormatMap map = TextFormat.separate(source);
 
-        Assert.assertEquals("Test String", map.getText());
+        assertEquals("Test String", map.getText());
 
-        Assert.assertEquals(3, map.size());
+        assertEquals(3, map.size());
 
-        Assert.assertEquals("§l§1", map.get(0));
+        assertEquals("§l§1", map.get(0));
 
-        Assert.assertEquals("§2", map.get(5));
+        assertEquals("§2", map.get(5));
 
-        Assert.assertEquals("§3", map.get(11));
+        assertEquals("§3", map.get(11));
     }
 
     @Test
@@ -41,25 +41,25 @@ public class TextFormatTest {
 
         TextFormats formats = TextFormat.getFormatAt(11, source);
 
-        Assert.assertEquals("§2", formats.toString());
+        assertEquals("§2", formats.toString());
 
-        Assert.assertEquals(1, formats.getFormats().size());
+        assertEquals(1, formats.getFormats().size());
 
 
 
         formats = TextFormat.getFormatAt(0, source);
 
-        Assert.assertEquals("", formats.toString());
+        assertEquals("", formats.toString());
 
-        Assert.assertEquals(0, formats.getFormats().size());
+        assertEquals(0, formats.getFormats().size());
 
 
 
         formats = TextFormat.getFormatAt(4, source);
 
-        Assert.assertEquals("§1", formats.toString());
+        assertEquals("§1", formats.toString());
 
-        Assert.assertEquals(1, formats.getFormats().size());
+        assertEquals(1, formats.getFormats().size());
     }
 
     @Test
@@ -69,9 +69,28 @@ public class TextFormatTest {
 
         TextFormats formats = TextFormat.getEndFormat(source);
 
-        Assert.assertEquals("§2", formats.toString());
+        assertEquals("§2", formats.toString());
 
-        Assert.assertEquals(1, formats.getFormats().size());
+        assertEquals(1, formats.getFormats().size());
     }
 
+
+    @Test
+    public void testTrim() throws Exception {
+
+        String source = "§1Test String§1";
+        assertEquals("§1Test String", TextFormat.trim(source));
+
+        source = "§1Test String§1§c§1";
+        assertEquals("§1Test String", TextFormat.trim(source));
+
+        source = "§1§1§1§1Test §1§1§1String§1§c§1";
+        assertEquals("§1Test String", TextFormat.trim(source));
+
+        source = "§1§c§1§1Test §1§c§1String§1§c§1";
+        assertEquals("§1Test String", TextFormat.trim(source));
+
+        source = "§1§c§1§1";
+        assertEquals("", TextFormat.trim(source));
+    }
 }

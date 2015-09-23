@@ -175,6 +175,93 @@ public class TextFormat {
     }
 
     /**
+     * Remove extra format codes.
+     *
+     * <p>Removes format codes at end of string as well as redundant codes.</p>
+     *
+     * @param charArray  The text to trim.
+     */
+    public static String trim(char[] charArray) {
+        return trim(new CharArraySequence(charArray));
+    }
+
+    /**
+     * Remove extra format codes.
+     *
+     * <p>Removes format codes at end of string as well as redundant codes.</p>
+     *
+     * @param charSequence  The text to trim.
+     */
+    public static String trim(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        int len = charSequence.length();
+        if (len == 0)
+            return "";
+
+        StringBuilder buffer = getLargeBuffer(len);
+        Map<Character, TextFormat> characterMap = loadCharacterMap();
+        int trimLen = 0;
+
+        for (int p = 0; p < 2; p++) { // 2 passes
+
+            int candidateTrimLen = 0;
+            char prevChar = 0;
+            boolean isPrevColor = false;
+            boolean isModified = false;
+
+            for (int i = 0; i < len; i++) {
+
+                char current = charSequence.charAt(i);
+
+                if (current == CHAR && i < len - 1) {
+
+                    char next = charSequence.charAt(i + 1);
+                    TextFormat format = characterMap.get(next);
+
+                    if (format != null) {
+                        isModified = true;
+                        i++;
+                        if (prevChar == next) {
+                            continue;
+                        }
+                        if (format instanceof TextColor && isPrevColor) {
+                            buffer.setLength(buffer.length() - 2);
+                            buffer.append(CHAR);
+                            buffer.append(next);
+                        } else {
+                            buffer.append(CHAR);
+                            buffer.append(next);
+                            candidateTrimLen += 2;
+                        }
+                        prevChar = next;
+                        isPrevColor = format instanceof TextColor;
+                        continue;
+                    }
+                }
+
+                trimLen++;
+                trimLen += candidateTrimLen;
+                candidateTrimLen = 0;
+                buffer.append(current);
+                isPrevColor = false;
+            }
+
+            if (isModified && p < 1) {
+                charSequence = trimLen == len ? buffer.toString() : buffer.substring(0, trimLen);
+                buffer.setLength(0);
+                len = charSequence.length();
+                trimLen = 0;
+            }
+            else {
+                // no modifications or final pass already run
+                break;
+            }
+        }
+        return trimLen == len ? buffer.toString() : buffer.substring(0, trimLen);
+    }
+
+    /**
      * Remove format codes from a string.
      *
      * @param charArray  The text to remove format codes from.

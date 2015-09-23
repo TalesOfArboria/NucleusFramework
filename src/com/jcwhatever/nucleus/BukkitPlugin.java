@@ -31,6 +31,8 @@ import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
 import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
 import com.jcwhatever.nucleus.internal.commands.DebugAllCommand;
 import com.jcwhatever.nucleus.internal.commands.DebugCommand;
+import com.jcwhatever.nucleus.internal.commands.GiveCommand;
+import com.jcwhatever.nucleus.internal.commands.TPCommand;
 import com.jcwhatever.nucleus.internal.commands.economy.NEconomyCommand;
 import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
 import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
@@ -229,6 +231,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         registerCommand(DebugCommand.class);
         registerCommand(DebugAllCommand.class);
+        registerCommand(GiveCommand.class);
         registerCommand(NEconomyCommand.class);
         registerCommand(NFriendsCommand.class);
         registerCommand(JailCommand.class);
@@ -241,6 +244,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         registerCommand(ScriptsCommand.class);
         registerCommand(SignsCommand.class);
         registerCommand(StorageCommand.class);
+        registerCommand(TPCommand.class);
 
         loadScriptManager();
 

@@ -29,11 +29,18 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.text.components.SimpleChatHoverable;
 import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 
 /**
  * Modifies a formatter argument with hover functionality.
  */
 public class HoverableArgModifier extends SimpleChatHoverable implements IFormatterArgModifier {
+
+    private static final TextFormatterSettings SETTINGS = new TextFormatterSettings();
+
+    static {
+        SETTINGS.setMaxLineLen(45);
+    }
 
     /**
      * Constructor.
@@ -42,8 +49,8 @@ public class HoverableArgModifier extends SimpleChatHoverable implements IFormat
      * @param message  The hover message.
      * @param args     Optional message format arguments.
      */
-    public HoverableArgModifier(HoverAction action, String message, Object... args) {
-        super(action, TextUtils.TEXT_FORMATTER.format(message, args));
+    public HoverableArgModifier(HoverAction action, CharSequence message, Object... args) {
+        super(action, TextUtils.TEXT_FORMATTER.format(SETTINGS, message, args));
     }
 
     /**

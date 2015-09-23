@@ -54,8 +54,8 @@ class NmsTitleHandler extends AbstractNMSHandler implements INmsTitleHandler {
      */
     @Override
     public void send(Player player,
-                     String rawTitle,
-                     @Nullable String rawSubtitle,
+                     CharSequence rawTitle,
+                     @Nullable CharSequence rawSubtitle,
                      int fadeIn, int stay, int fadeOut) {
         PreCon.notNull(player);
 
@@ -64,7 +64,8 @@ class NmsTitleHandler extends AbstractNMSHandler implements INmsTitleHandler {
 
     @Override
     public void send(Collection<? extends Player> players,
-                     String rawTitle, @Nullable String rawSubtitle, int fadeIn, int stay, int fadeOut) {
+                     CharSequence rawTitle, @Nullable CharSequence rawSubtitle,
+                     int fadeIn, int stay, int fadeOut) {
         PreCon.notNull(players);
         PreCon.notNullOrEmpty(rawTitle);
 
@@ -88,16 +89,16 @@ class NmsTitleHandler extends AbstractNMSHandler implements INmsTitleHandler {
      */
     @Override
     public void sendJson(Player player,
-                         String jsonTitle,
-                         @Nullable String jsonSubtitle,
+                         CharSequence jsonTitle,
+                         @Nullable CharSequence jsonSubtitle,
                          int fadeIn, int stay, int fadeOut) {
         sendJson(ArrayUtils.asList(player), jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
     }
 
     @Override
     public void sendJson(final Collection<? extends Player> players,
-                         final String jsonTitle,
-                         final @Nullable String jsonSubtitle,
+                         final CharSequence jsonTitle,
+                         final @Nullable CharSequence jsonSubtitle,
                          final int fadeIn, final int stay, final int fadeOut) {
 
         if (Bukkit.isPrimaryThread()) {
@@ -113,7 +114,7 @@ class NmsTitleHandler extends AbstractNMSHandler implements INmsTitleHandler {
         }
     }
 
-    private void syncSend(Collection<? extends Player> players, String title, @Nullable String subTitle,
+    private void syncSend(Collection<? extends Player> players, CharSequence title, @Nullable CharSequence subTitle,
                           int fadeIn, int stay, int fadeOut) {
 
         try {

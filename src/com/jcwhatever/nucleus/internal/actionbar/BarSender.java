@@ -388,7 +388,7 @@ class BarSender implements Runnable {
             return 0;
 
         IDynamicText dynText = actionBar.getText();
-        final String text = dynText.nextText();
+        final CharSequence text = dynText.nextText();
         if (text != null) {
 
             if (Bukkit.isPrimaryThread()) {

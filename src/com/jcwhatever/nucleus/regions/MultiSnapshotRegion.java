@@ -33,15 +33,14 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
-
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a restorable region
@@ -184,7 +183,7 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
         return super.restoreData(loadSpeed)
                 .onSuccess(new FutureSubscriber() {
                     @Override
-                    public void on(FutureStatus status, @Nullable String message) {
+                    public void on(FutureStatus status, @Nullable CharSequence message) {
                         getFileFactory().snapshotName = currentSnapshot;
                     }
                 });
@@ -205,7 +204,7 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
 
         return super.saveData().onStatus(new FutureSubscriber() {
             @Override
-            public void on(FutureStatus status, @Nullable String message) {
+            public void on(FutureStatus status, @Nullable CharSequence message) {
                 getFileFactory().snapshotName = currentSnapshot;
             }
         });

@@ -35,7 +35,7 @@ import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -267,12 +267,12 @@ public class CommandException extends Exception {
     }
 
     // get inline command help usage
-    private static String getInlineUsage(IRegisteredCommand command) {
+    private static IChatMessage getInlineUsage(IRegisteredCommand command) {
         ICommandUsageGenerator usageGenerator = Nucleus.getCommandManager().getUsageGenerator();
         return usageGenerator.generate(command, ICommandUsageGenerator.INLINE_HELP);
     }
 
-    private String _message;
+    private IChatMessage _message;
 
     /**
      * Constructor.
@@ -284,8 +284,28 @@ public class CommandException extends Exception {
         _message = TextUtils.format(message, args);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param message  Exception message.
+     */
+    public CommandException(IChatMessage message) {
+        _message = message;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param message  Exception message.
+     */
+    public CommandException(CharSequence message) {
+        _message = message instanceof IChatMessage
+                ? (IChatMessage) message
+                : TextUtils.format(message);
+    }
+
     @Override
     public String getMessage() {
-        return _message;
+        return _message.toString();
     }
 }

@@ -150,7 +150,7 @@ class NucleusTransaction implements IEconomyTransaction {
 
         if (account.getBalance() + delta < 0.0D) {
             if (_error != null)
-                _error = NucLang.get(_INSUFFICIENT_FUNDS);
+                _error = NucLang.get(_INSUFFICIENT_FUNDS).toString();
             return false;
         }
 
@@ -311,7 +311,7 @@ class NucleusTransaction implements IEconomyTransaction {
     private String getBankName(IAccount account) {
         return account.getBank() != null
                 ? account.getBank().getName()
-                : NucLang.get(_GLOBAL_BANK);
+                : NucLang.get(_GLOBAL_BANK).toString();
     }
 
     private void checkCommitted() {

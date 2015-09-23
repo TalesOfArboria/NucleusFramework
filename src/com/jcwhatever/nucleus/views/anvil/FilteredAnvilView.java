@@ -111,7 +111,7 @@ public class FilteredAnvilView extends AnvilView {
      * Invoked to get the craft deny message.
      */
     protected String getDenyMessage() {
-        return NucLang.get(getPlugin(), _NOT_REPAIRABLE);
+        return NucLang.get(getPlugin(), _NOT_REPAIRABLE).toString();
     }
 
     /**

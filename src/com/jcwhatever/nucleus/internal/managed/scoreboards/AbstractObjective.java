@@ -56,13 +56,13 @@ public abstract class AbstractObjective implements IObjective {
     }
 
     @Override
-    public void setDisplayName(String displayName, Object... args) {
-        _objective.setDisplayName(TextUtils.format(displayName, args));
+    public void setDisplayName(CharSequence displayName, Object... args) {
+        _objective.setDisplayName(TextUtils.format(displayName, args).toString());
     }
 
     // for script compatibility
-    public void setDisplayName(String displayName) {
-        _objective.setDisplayName(TextUtils.format(displayName));
+    public void setDisplayName(CharSequence displayName) {
+        _objective.setDisplayName(TextUtils.format(displayName).toString());
     }
 
     @Override

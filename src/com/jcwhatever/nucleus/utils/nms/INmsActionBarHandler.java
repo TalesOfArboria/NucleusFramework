@@ -52,7 +52,7 @@ public interface INmsActionBarHandler extends INmsHandler {
      * @param players  The players to send the text to.
      * @param rawText  The raw text.
      */
-    void send(Collection<? extends Player> players, String rawText);
+    void send(Collection<? extends Player> players, CharSequence rawText);
 
     /**
      * Send action bar text to a collection of players.
@@ -62,5 +62,5 @@ public interface INmsActionBarHandler extends INmsHandler {
      * @param players   The player to send the text to.
      * @param jsonText  The Json text.
      */
-    void sendJson(Collection<? extends Player> players, String jsonText);
+    void sendJson(Collection<? extends Player> players, CharSequence jsonText);
 }

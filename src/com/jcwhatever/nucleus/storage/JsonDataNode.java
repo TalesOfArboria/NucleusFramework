@@ -503,6 +503,9 @@ public class JsonDataNode extends AbstractDataNode {
 
                 value = array;
             }
+            else if (value instanceof CharSequence) {
+                value = value.toString();
+            }
 
             if (value instanceof String[]) {
 

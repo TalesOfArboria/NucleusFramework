@@ -31,19 +31,18 @@ import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import com.jcwhatever.nucleus.utils.text.TextComponents;
-
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * NucleusFramework's implementation of {@link ITitle}
  */
 class Title implements ITitle {
 
-    private final String _title;
-    private final String _subTitle;
+    private final CharSequence _title;
+    private final CharSequence _subTitle;
     private final int _fadeInTime;
     private final int _stayTime;
     private final int _fadeOutTime;
@@ -59,7 +58,7 @@ class Title implements ITitle {
      * @param title     The title text.
      * @param subTitle  The sub title text.
      */
-    Title(String title, @Nullable String subTitle) {
+    Title(CharSequence title, @Nullable CharSequence subTitle) {
         this(title, subTitle, -1, -1, -1);
     }
 
@@ -72,7 +71,7 @@ class Title implements ITitle {
      * @param stayTime     The time spent being displayed.
      * @param fadeOutTime  The time spent fading out.
      */
-    Title(String title, @Nullable String subTitle,
+    Title(CharSequence title, @Nullable CharSequence subTitle,
                  int fadeInTime, int stayTime, int fadeOutTime) {
         PreCon.notNull(title);
 
@@ -120,7 +119,7 @@ class Title implements ITitle {
      */
     @Override
     public String getTitle() {
-        return _title;
+        return _title.toString();
     }
 
     /**
@@ -129,7 +128,7 @@ class Title implements ITitle {
     @Override
     @Nullable
     public String getSubTitle() {
-        return _subTitle;
+        return _subTitle != null ? _subTitle.toString() : null;
     }
 
     /**

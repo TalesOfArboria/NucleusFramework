@@ -78,7 +78,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
             return;
         }
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         Collection<IStorageProvider> providers = Nucleus.getProviders().getStorageProviders();
         IStorageProvider defaultProvider = Nucleus.getProviders().getStorage();

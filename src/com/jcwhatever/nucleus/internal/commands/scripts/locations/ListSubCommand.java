@@ -37,7 +37,11 @@ import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.utils.coords.NamedLocation;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatHoverable.HoverAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.args.ClickTeleportArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.HoverableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.TextArg;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collection;
@@ -56,6 +60,7 @@ import java.util.Collection;
 class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Quest Locations";
+    @Localizable static final String _CLICK_MESSAGE = "{YELLOW}Click to teleport to location.";
 
     @Override
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
@@ -64,12 +69,19 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Collection<NamedLocation> locations = Nucleus.getScriptManager().getLocations().getAll();
 
-        ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
         if (!args.isDefaultValue("search"))
             pagin.setSearchTerm(args.getString("search"));
 
+        IChatMessage clickMessage = NucLang.get(_CLICK_MESSAGE);
+
         for (NamedLocation location : locations) {
-            pagin.add(location.getName(), TextUtils.formatLocation(location, true));
+
+            TextArg name = new TextArg(location.getName(),
+                    new ClickTeleportArgModifier(location),
+                    new HoverableArgModifier(HoverAction.SHOW_TEXT, clickMessage));
+
+            pagin.add(name, TextUtils.formatLocation(location, true));
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);

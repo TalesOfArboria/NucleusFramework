@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.players;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
@@ -72,8 +71,7 @@ class InfoSubCommand extends AbstractCommand implements IExecutableCommand {
         // get actual name
         playerName = PlayerUtils.getPlayerName(playerId);
 
-        final ChatPaginator pagin = new ChatPaginator(
-                Nucleus.getPlugin(), 8, NucLang.get(_PAGINATOR_TITLE, playerName));
+        final ChatPaginator pagin = createPagin(args, 8, NucLang.get(_PAGINATOR_TITLE, playerName));
 
         pagin.add("ID", playerId);
 

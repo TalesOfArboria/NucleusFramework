@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.respacks;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
@@ -62,7 +61,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Collection<IResourcePack> packs = ResourcePacks.getAll();
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 3, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 3, NucLang.get(_PAGINATOR_TITLE));
 
         for (IResourcePack pack : packs) {
             pagin.add(pack.getName(), pack.getUrl());

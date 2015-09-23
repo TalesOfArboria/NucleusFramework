@@ -30,8 +30,8 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import java.util.Collection;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Used as an enum with localizable value type descriptions.
@@ -144,10 +144,10 @@ public class ArgumentValueType {
             if (parameterName != null && parameterName.contains("|")) {
 
                 String values = TextUtils.concat(TextUtils.PATTERN_PIPE.split(parameterName), ", ");
-                return NucLang.get(_USE_ONE_OF, values);
+                return NucLang.get(_USE_ONE_OF, values).toString();
             }
             else {
-                return NucLang.get(argumentValueType._description, params);
+                return NucLang.get(argumentValueType._description, params).toString();
             }
         }
         else if (argumentValueType == ENUM) {
@@ -155,11 +155,11 @@ public class ArgumentValueType {
                 return argumentValueType._description;
             else {
                 String values = TextUtils.concat(TextUtils.PATTERN_PIPE.split(parameterName), ", ");
-                return NucLang.get(_USE_ONE_OF, values);
+                return NucLang.get(_USE_ONE_OF, values).toString();
             }
         }
         else {
-            return NucLang.get(argumentValueType._description, params);
+            return NucLang.get(argumentValueType._description, params).toString();
         }
     }
 
@@ -174,7 +174,7 @@ public class ArgumentValueType {
     public static <T extends Enum<T>> String getEnumDescription(Class<T> enumClass) {
         Enum<?>[] constants = enumClass.getEnumConstants();
         String values = TextUtils.concat(constants, ", ");
-        return NucLang.get(_USE_ONE_OF, values);
+        return NucLang.get(_USE_ONE_OF, values).toString();
     }
 
     /**
@@ -187,7 +187,7 @@ public class ArgumentValueType {
     @Localized
     public static <T extends Enum<T>> String getEnumDescription(T[] validValues) {
         String values = TextUtils.concat(validValues, ", ");
-        return NucLang.get(_USE_ONE_OF, values);
+        return NucLang.get(_USE_ONE_OF, values).toString();
     }
 
     /**
@@ -200,6 +200,6 @@ public class ArgumentValueType {
     @Localized
     public static <T extends Enum<T>> String getEnumDescription(Collection<T> validValues) {
         String values = TextUtils.concat(validValues, ", ");
-        return NucLang.get(_USE_ONE_OF, values);
+        return NucLang.get(_USE_ONE_OF, values).toString();
     }
 }

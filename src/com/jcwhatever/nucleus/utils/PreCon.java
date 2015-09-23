@@ -27,9 +27,8 @@ package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Static methods used at the beginning of methods to check method
@@ -103,9 +102,9 @@ public final class PreCon {
      *
      * @throws java.lang.UnsupportedOperationException if isSupported is false.
      */
-    public static void supported(boolean isSupported, String message, Object... args) {
+    public static void supported(boolean isSupported, CharSequence message, Object... args) {
         if (!isSupported)
-            throw new UnsupportedOperationException(TextUtils.format(message, args));
+            throw new UnsupportedOperationException(TextUtils.format(message, args).toString());
     }
 
     /**
@@ -139,7 +138,7 @@ public final class PreCon {
      *
      * @throws RuntimeException if value is null.
      */
-    public static void notNull(@Nullable Object value, String paramName,
+    public static void notNull(Object value, String paramName,
                                Class<? extends RuntimeException> exception) {
         if (value == null) {
             throw exception(exception, "The value of {0} cannot be null.", paramName);
@@ -153,7 +152,7 @@ public final class PreCon {
      *
      * @throws java.lang.IllegalArgumentException  if value is empty or null.
      */
-    public static void notNullOrEmpty(@Nullable String value) {
+    public static void notNullOrEmpty(@Nullable CharSequence value) {
         notNullOrEmpty(value, "a checked argument");
     }
 
@@ -165,7 +164,7 @@ public final class PreCon {
      *
      * @throws java.lang.IllegalArgumentException  if value is empty or null.
      */
-    public static void notNullOrEmpty(@Nullable String value, String paramName) {
+    public static void notNullOrEmpty(@Nullable CharSequence value, String paramName) {
        notNullOrEmpty(value, paramName, IllegalArgumentException.class);
     }
 
@@ -178,11 +177,11 @@ public final class PreCon {
      *
      * @throws RuntimeException  if value is empty or null.
      */
-    public static void notNullOrEmpty(@Nullable String value, String paramName,
+    public static void notNullOrEmpty(@Nullable CharSequence value, String paramName,
                                       Class<? extends RuntimeException> exception) {
         PreCon.notNull(value, paramName, exception);
 
-        if (value.isEmpty()) {
+        if (value.length() == 0) {
             throw exception(exception, "The value of {0} cannot be empty.", paramName);
         }
     }
@@ -197,7 +196,7 @@ public final class PreCon {
      *
      * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
-    public static void validNodeName(@Nullable String nodeName) {
+    public static void validNodeName(@Nullable CharSequence nodeName) {
         validNodeName(nodeName, "a checked argument");
     }
 
@@ -212,7 +211,7 @@ public final class PreCon {
      *
      * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
-    public static void validNodeName(@Nullable String nodeName, String paramName) {
+    public static void validNodeName(@Nullable CharSequence nodeName, String paramName) {
         validNodeName(nodeName, paramName, IllegalArgumentException.class);
     }
 
@@ -228,7 +227,7 @@ public final class PreCon {
      *
      * @throws RuntimeException  if nodeName is not a valid node name.
      */
-    public static void validNodeName(@Nullable String nodeName,
+    public static void validNodeName(CharSequence nodeName,
                                      String paramName, Class<? extends RuntimeException> exception) {
         PreCon.notNullOrEmpty(nodeName, paramName, exception);
 
@@ -724,7 +723,7 @@ public final class PreCon {
     }
 
     private static RuntimeException exception(
-            Class<? extends RuntimeException> clazz, @Nullable String message, Object... args) {
+            Class<? extends RuntimeException> clazz, @Nullable CharSequence message, Object... args) {
 
         if (message != null)
             message = TextUtils.format(message, args);
@@ -732,31 +731,30 @@ public final class PreCon {
         if (clazz == IllegalArgumentException.class) {
             return message == null
                     ? new IllegalArgumentException()
-                    : new IllegalArgumentException(message);
+                    : new IllegalArgumentException(message.toString());
         }
         else if (clazz == NullPointerException.class) {
             return message == null
                     ? new NullPointerException()
-                    : new NullPointerException(message);
+                    : new NullPointerException(message.toString());
         }
         else if (clazz == IllegalStateException.class) {
             return message == null
                     ? new IllegalStateException()
-                    : new IllegalStateException(message);
+                    : new IllegalStateException(message.toString());
         }
         else {
 
             try {
-                Constructor constructor = message == null
-                        ? clazz.getConstructor()
-                        : clazz.getConstructor(String.class);
 
-                return (RuntimeException)constructor.newInstance(message);
+                return message == null
+                        ? clazz.getConstructor().newInstance()
+                        : clazz.getConstructor(String.class).newInstance(message.toString());
 
             } catch (NoSuchMethodException | InvocationTargetException
                     | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
-                return new RuntimeException(message);
+                return new RuntimeException(message != null ? message.toString() : null);
             }
         }
     }

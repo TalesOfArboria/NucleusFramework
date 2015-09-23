@@ -68,7 +68,7 @@ class DelSubCommand extends AbstractCommand implements IExecutableCommand {
 
         IScriptRegion region = regionManager.get(regionName);
         if (region == null)
-            throw new CommandException(NucLang.get(_REGION_NOT_FOUND), regionName);
+            throw new CommandException(NucLang.get(_REGION_NOT_FOUND, regionName));
 
         if (!regionManager.remove(regionName))
             throw new CommandException(NucLang.get(_FAILED));

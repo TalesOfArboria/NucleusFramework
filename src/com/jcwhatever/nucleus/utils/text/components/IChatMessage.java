@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Interface adapter for Minecraft chat messages.
  */
-public interface IChatMessage {
+public interface IChatMessage extends CharSequence {
 
     /**
      * Get the total number of lines in the message.

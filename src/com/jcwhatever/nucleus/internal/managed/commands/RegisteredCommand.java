@@ -84,6 +84,7 @@ class RegisteredCommand implements IRegisteredCommand {
     private final ICommand _command;
     private final CommandCollection _subCommands;
     private final UsageGenerator _usageGenerator = new UsageGenerator();
+    private final PaginatorHelpCommands _paginCommands;
 
     private RegisteredCommandInfo _info;
     private CommandDispatcher _dispatcher;
@@ -107,6 +108,7 @@ class RegisteredCommand implements IRegisteredCommand {
         _plugin = plugin;
         _command = command;
         _subCommands = new CommandCollection(plugin, commandFactory);
+        _paginCommands = new PaginatorHelpCommands(this);
 
         if (_command instanceof IInitializableCommand) {
             ((IInitializableCommand) _command).init(this);
@@ -308,7 +310,7 @@ class RegisteredCommand implements IRegisteredCommand {
         List<IFlagParameter> flagParams = getInfo().getFlagParams();
         ParameterDescriptions paramDescriptions = getInfo().getParamDescriptions();
 
-        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, _paginCommands,
                 NucLang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
         String description = getInfo().getLongDescription().isEmpty()
@@ -399,7 +401,7 @@ class RegisteredCommand implements IRegisteredCommand {
         PreCon.notNull(sender);
         PreCon.positiveNumber(page);
 
-        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, _paginCommands,
                 NucLang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
         if (_command instanceof IExecutableCommand && isHelpVisible(sender)) {

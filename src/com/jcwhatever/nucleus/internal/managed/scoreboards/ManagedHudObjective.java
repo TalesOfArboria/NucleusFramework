@@ -95,8 +95,8 @@ public class ManagedHudObjective extends AbstractObjective implements IHudObject
     }
 
     @Override
-    public ManagedHudObjective set(int lineIndex, String text, Object... args) {
-        return set(lineIndex, text.isEmpty()
+    public ManagedHudObjective set(int lineIndex, CharSequence text, Object... args) {
+        return set(lineIndex, text.length() == 0
                 ? BLANK_TEXT
                 : new DynamicTextBuilder().append(text, args).build());
     }

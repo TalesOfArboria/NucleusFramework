@@ -30,14 +30,13 @@ import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
-
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Represents an item in a {@link MenuView}.
@@ -101,8 +100,8 @@ public class MenuItem extends ItemStack implements IMeta {
      *
      * @param title The menu item title.
      */
-    public void setTitle(@Nullable String title) {
-        ItemStackUtils.setDisplayName(this, title);
+    public void setTitle(@Nullable CharSequence title) {
+        ItemStackUtils.setDisplayName(this, title != null ? title.toString() : null);
     }
 
     /**
@@ -124,7 +123,7 @@ public class MenuItem extends ItemStack implements IMeta {
     /**
      * Set the menu item description.
      */
-    public void setDescription(@Nullable String description) {
+    public void setDescription(@Nullable CharSequence description) {
 
         List<String> lore = ItemStackUtils.getLore(this);
         lore = lore == null
@@ -132,9 +131,9 @@ public class MenuItem extends ItemStack implements IMeta {
                 : new ArrayList<>(lore);
 
         if (lore.isEmpty())
-            lore.add(description);
+            lore.add(description != null ? description.toString() : null);
         else
-            lore.set(0, description);
+            lore.set(0, description != null ? description.toString() : null);
 
         ItemStackUtils.setLore(this, lore);
     }

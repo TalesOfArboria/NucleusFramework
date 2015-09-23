@@ -43,17 +43,17 @@ import java.util.Collection;
 public final class InternalActionBarManager implements IActionBarManager {
 
     @Override
-    public IActionBar create(String text) {
+    public IActionBar create(CharSequence text) {
         return new ActionBar(text);
     }
 
     @Override
-    public IPersistentActionBar createPersistent(String text) {
+    public IPersistentActionBar createPersistent(CharSequence text) {
         return new PersistentActionBar(text);
     }
 
     @Override
-    public IPersistentActionBar createPersistent(String text, int minDuration, TimeScale timeScale) {
+    public IPersistentActionBar createPersistent(CharSequence text, int minDuration, TimeScale timeScale) {
         return new PersistentActionBar(text, minDuration, timeScale);
     }
 
@@ -68,12 +68,12 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
-    public ITimedActionBar createTimed(String text) {
+    public ITimedActionBar createTimed(CharSequence text) {
         return new TimedActionBar(text);
     }
 
     @Override
-    public ITimedActionBar createTimed(String text, int duration, TimeScale timeScale) {
+    public ITimedActionBar createTimed(CharSequence text, int duration, TimeScale timeScale) {
         return new TimedActionBar(text, duration, timeScale);
     }
 
@@ -88,12 +88,12 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
-    public void showTo(Player player, String text) {
+    public void showTo(Player player, CharSequence text) {
         new ActionBar(text).showTo(player);
     }
 
     @Override
-    public void showTo(Player player, String text, ActionBarPriority priority) {
+    public void showTo(Player player, CharSequence text, ActionBarPriority priority) {
         new ActionBar(text).showTo(player, priority);
     }
 
@@ -108,12 +108,12 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
-    public void showTo(Collection<? extends Player> players, String text) {
+    public void showTo(Collection<? extends Player> players, CharSequence text) {
         new ActionBar(text).showTo(players);
     }
 
     @Override
-    public void showTo(Collection<? extends Player> players, String text, ActionBarPriority priority) {
+    public void showTo(Collection<? extends Player> players, CharSequence text, ActionBarPriority priority) {
         new ActionBar(text).showTo(players, priority);
     }
 
@@ -128,12 +128,12 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
-    public void showTimed(Player player, String text, int duration, TimeScale timeScale) {
+    public void showTimed(Player player, CharSequence text, int duration, TimeScale timeScale) {
         new TimedActionBar(text, duration, timeScale).showTo(player);
     }
 
     @Override
-    public void showTimed(Player player, String text,
+    public void showTimed(Player player, CharSequence text,
                           int duration, TimeScale timeScale, ActionBarPriority priority) {
         new TimedActionBar(text, duration, timeScale).showTo(player, priority);
     }
@@ -150,13 +150,13 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
-    public void showTimed(Collection<? extends Player> players, String text,
+    public void showTimed(Collection<? extends Player> players, CharSequence text,
                           int duration, TimeScale timeScale) {
         new TimedActionBar(text, duration, timeScale).showTo(players);
     }
 
     @Override
-    public void showTimed(Collection<? extends Player> players, String text,
+    public void showTimed(Collection<? extends Player> players, CharSequence text,
                           int duration, TimeScale timeScale, ActionBarPriority priority) {
         new TimedActionBar(text, duration, timeScale).showTo(players, priority);
     }

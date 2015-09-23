@@ -27,19 +27,25 @@ package com.jcwhatever.nucleus.managed.messaging;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatClickable.ClickAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatHoverable.HoverAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.args.ClickableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.HoverableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.TextArg;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Chat list paginator.
@@ -47,18 +53,24 @@ import javax.annotation.Nullable;
 public class ChatPaginator implements IPluginOwned {
 
     @Localizable static final String _HEADER =
-            "----------------------------------------\n" +
-            "{AQUA}{0: title} {GRAY}(Page {1: current page} of {2: total pages})";
+            "{GRAY}------------------------------------\n" +
+            "{AQUA}{5: title}\n";
 
     @Localizable static final String _FOOTER =
-            "----------------------------------------";
+            "\n{0: prev} {GRAY}Page {1: current page} of {2: total pages} {3: next}\n" +
+            "{GRAY}------------------------------------";
 
     @Localizable static final String _SEARCH_HEADER = _HEADER +
-            "\n{ITALIC}{LIGHT_PURPLE}Search: '{3: search term}'";
+            "{ITALIC}{LIGHT_PURPLE}Search: '{4: search term}'\n";
 
     @Localizable static final String _NO_ITEMS = "No items to display.";
-
     @Localizable static final String _PAGE_NOT_FOUND = "Page {0: page} was not found.";
+    @Localizable static final String _PREV = "{AQUA}Prev";
+    @Localizable static final String _PREV_DISABLED = "{DARK_GRAY}Prev";
+    @Localizable static final String _PREV_HOVER = "{YELLOW}Click to go to the previous page.";
+    @Localizable static final String _NEXT = "{AQUA}Next";
+    @Localizable static final String _NEXT_DISABLED = "{DARK_GRAY}Next";
+    @Localizable static final String _NEXT_HOVER = "{YELLOW}Click to go to the next page.";
 
     private final Plugin _plugin;
     private final IMessenger _msg;
@@ -68,8 +80,11 @@ public class ChatPaginator implements IPluginOwned {
     protected String _headerFormat;
     protected String _footerFormat;
     protected String _searchHeaderFormat;
-    protected String _title;
+    protected IChatMessage _title;
     protected String _searchTerm;
+    protected IChatPaginatorCommands _commands;
+    protected TextArg _prev;
+    protected TextArg _next;
 
     /**
      * Constructor.
@@ -79,7 +94,7 @@ public class ChatPaginator implements IPluginOwned {
      * @param plugin  The owning plugin.
      */
     public ChatPaginator(Plugin plugin) {
-        this(plugin, 6, "");
+        this(plugin, 6, null, null, "");
     }
 
     /**
@@ -91,7 +106,7 @@ public class ChatPaginator implements IPluginOwned {
      * @param itemsPerPage  Number of items to show per page.
      */
     public ChatPaginator(Plugin plugin, int itemsPerPage) {
-        this(plugin, itemsPerPage, "");
+        this(plugin, itemsPerPage, null, null, "");
     }
 
     /**
@@ -103,8 +118,8 @@ public class ChatPaginator implements IPluginOwned {
      * @param title   The title to insert into the header.
      * @param args    Optional title format args.
      */
-    public ChatPaginator(Plugin plugin, String title, Object... args) {
-        this(plugin, 6, title, args);
+    public ChatPaginator(Plugin plugin, CharSequence title, Object... args) {
+        this(plugin, 6, null, null, title, args);
     }
 
     /**
@@ -112,15 +127,19 @@ public class ChatPaginator implements IPluginOwned {
      *
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
+     * @param commands      Command generator for clickable links.
      * @param title         The title to insert into the header.
      * @param args          Optional title format args.
      */
-    public ChatPaginator(Plugin plugin, int itemsPerPage, String title, Object... args) {
+    public ChatPaginator(Plugin plugin, int itemsPerPage,
+                         @Nullable IChatPaginatorCommands commands,
+                         CharSequence title, Object... args) {
         PreCon.notNull(title);
         PreCon.notNull(args);
 
         _plugin = plugin;
         _msg = Nucleus.getMessengerFactory().get(plugin);
+        _commands = commands;
         _itemsPerPage = itemsPerPage;
         _headerFormat = _HEADER;
         _footerFormat = _FOOTER;
@@ -138,7 +157,7 @@ public class ChatPaginator implements IPluginOwned {
      */
     @Nullable
     public String getTitle() {
-        return _title;
+        return _title.toString();
     }
 
     /**
@@ -269,7 +288,7 @@ public class ChatPaginator implements IPluginOwned {
         PreCon.notNull(format);
         PreCon.notNull(args);
 
-        _printList.add(new Object[]{new PreFormattedLine(format.toString(), args)});
+        _printList.add(new Object[]{new PreFormattedLine(format, args)});
     }
 
     /**
@@ -328,8 +347,10 @@ public class ChatPaginator implements IPluginOwned {
 
         int totalPages = getTotalPages(format);
 
-        String header = getFormattedHeader(page, totalPages);
-        if (!header.isEmpty())
+        loadCommands(page, totalPages);
+
+        IChatMessage header = getFormattedHeader(page, totalPages);
+        if (header.length() != 0)
             _msg.tell(sender, header);
 
         if (page < 1 || page > totalPages) {
@@ -347,8 +368,8 @@ public class ChatPaginator implements IPluginOwned {
             showSearch(sender, page, format);
         }
 
-        String footer = getFormattedFooter(page, totalPages);
-        if (!footer.isEmpty())
+        IChatMessage footer = getFormattedFooter(page, totalPages);
+        if (footer.length() != 0)
             _msg.tell(sender, footer);
     }
 
@@ -380,7 +401,7 @@ public class ChatPaginator implements IPluginOwned {
      */
     protected void showSearch(CommandSender sender, int page, Object format) {
 
-        List<String> lines = getSearchLines(format);
+        List<IChatMessage> lines = getSearchLines(format);
 
         int start = page * _itemsPerPage - _itemsPerPage;
         int end = Math.min(start + _itemsPerPage - 1, lines.size() - 1);
@@ -393,9 +414,9 @@ public class ChatPaginator implements IPluginOwned {
     /*
      * Get all formatted pagin lines filtered by the current search term.
      */
-    protected List<String> getSearchLines(Object format) {
+    protected List<IChatMessage> getSearchLines(Object format) {
 
-        List<String> lines = new ArrayList<>(_printList.size());
+        List<IChatMessage> lines = new ArrayList<>(_printList.size());
 
         for (Object[] arguments : _printList) {
 
@@ -417,37 +438,60 @@ public class ChatPaginator implements IPluginOwned {
     /**
      * Get the header to use and format it.
      */
-    protected String getFormattedHeader(int page, int totalPages) {
+    protected IChatMessage getFormattedHeader(int page, int totalPages) {
 
         String format = _searchTerm != null ? _searchHeaderFormat : _headerFormat;
 
         if (format == null || format.isEmpty())
-            return "";
+            return new SimpleChatMessage();
 
         return NucLang.get(_plugin, format,
-                _title, Math.max(1, page), Math.max(1, totalPages), _searchTerm);
+                _prev, Math.max(1, page), Math.max(1, totalPages), _next, _searchTerm, _title);
     }
 
     /**
      * Get the footer to use and format it.
      */
-    protected String getFormattedFooter(int page, int totalPages) {
+    protected IChatMessage getFormattedFooter(int page, int totalPages) {
 
         if (_footerFormat == null || _footerFormat.isEmpty())
-            return "";
+            return new SimpleChatMessage();
 
         return NucLang.get(_plugin, _footerFormat,
-                _title, Math.max(1, page), Math.max(1, totalPages), _searchTerm);
+                _prev, Math.max(1, page), Math.max(1, totalPages), _next, _searchTerm, _title);
+    }
+
+    protected void loadCommands(int page, int totalPages) {
+        if (_commands == null) {
+            _prev = new TextArg("");
+            _next = _prev;
+            return;
+        }
+
+        String prevCommand = _commands.getPrevCommand(this, page, totalPages);
+        String nextCommand = _commands.getNextCommand(this, page, totalPages);
+
+        _prev = prevCommand == null
+                ? new TextArg(NucLang.get(_plugin, _PREV_DISABLED))
+                : new TextArg(NucLang.get(_plugin, _PREV),
+                new ClickableArgModifier(ClickAction.RUN_COMMAND, prevCommand),
+                new HoverableArgModifier(HoverAction.SHOW_TEXT, NucLang.get(_plugin, _PREV_HOVER)));
+
+        _next = nextCommand == null
+                ? new TextArg(NucLang.get(_plugin, _NEXT_DISABLED))
+                : new TextArg(NucLang.get(_plugin, _NEXT),
+                new ClickableArgModifier(ClickAction.RUN_COMMAND, nextCommand),
+                new HoverableArgModifier(HoverAction.SHOW_TEXT, NucLang.get(_plugin, _NEXT_HOVER)));
     }
 
     /**
      * Used to store formatting information for a single item.
      */
     protected static class PreFormattedLine {
-        public final String format;
+        public final Object format;
         public final Object[] arguments;
 
-        public PreFormattedLine(String format, Object[] arguments) {
+        public PreFormattedLine(Object format, Object[] arguments) {
             this.format = format;
             this.arguments = arguments;
         }

@@ -41,11 +41,14 @@ import net.minecraft.server.v1_8_R3.EnumChatFormat;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/*
- * 
+/**
+ * Chat handler for v1_8_R3
  */
 class v1_8_R3_Chat {
 
+    /**
+     * Get NMS Chat component from {@link IChatMessage}.
+     */
     ChatComponentText getComponent(IChatMessage message) {
 
         List<IChatComponent> components = message.getComponents();
@@ -59,6 +62,9 @@ class v1_8_R3_Chat {
         return text;
     }
 
+    /**
+     * Get NMS Chat component from {@link IChatComponent}.
+     */
     ChatComponentText getComponent(IChatComponent component) {
 
         ChatComponentText text = new ChatComponentText(component.getText());
@@ -71,6 +77,9 @@ class v1_8_R3_Chat {
         return text;
     }
 
+    /**
+     * Get NMS Chat modifier from {@link IChatModifier}.
+     */
     @Nullable
     ChatModifier getModifier(@Nullable IChatModifier modifier) {
         if (modifier == null)

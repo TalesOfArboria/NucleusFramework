@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 public class SimpleChatComponent implements IChatComponent {
 
-    private final String _text;
+    private final CharSequence _text;
     private IChatModifier _modifier;
 
     /**
@@ -41,7 +41,7 @@ public class SimpleChatComponent implements IChatComponent {
      *
      * @param rawText  Component raw text.
      */
-    public SimpleChatComponent(String rawText) {
+    public SimpleChatComponent(CharSequence rawText) {
         PreCon.notNull(rawText);
 
         _text = rawText;
@@ -64,7 +64,7 @@ public class SimpleChatComponent implements IChatComponent {
 
     @Override
     public String getText() {
-        return _text;
+        return _text.toString();
     }
 
     @Override

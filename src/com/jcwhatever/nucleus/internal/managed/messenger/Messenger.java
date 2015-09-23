@@ -33,13 +33,14 @@ import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.nms.INmsChatHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-import com.jcwhatever.nucleus.utils.text.components.SimpleChatMessage;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.ITextFormatterResult;
 import com.jcwhatever.nucleus.utils.text.format.TextFormatter;
-import com.jcwhatever.nucleus.utils.text.format.TextFormatterResult;
 import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,8 +50,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -71,6 +76,7 @@ class Messenger implements IMessenger {
     private final IDataNode _importantData;
     private final Logger _logger;
 
+    private INmsChatHandler _chatHandler;
     private int _maxLineLen = 60;
     private int _spamDelay = 140;
     private LineWrapping _lineWrap = LineWrapping.ENABLED;
@@ -126,8 +132,19 @@ class Messenger implements IMessenger {
     }
 
     @Override
+    public boolean tellNoSpam(Collection<? extends Player> players, Object message, Object... params) {
+        return tellNoSpam(players, _spamDelay, _lineWrap, message, params);
+    }
+
+    @Override
     public boolean tellNoSpam(CommandSender sender, Integer ticks, Object message, Object... params) {
         return tellNoSpam(sender, ticks, _lineWrap, message, params);
+    }
+
+    @Override
+    public boolean tellNoSpam(Collection<? extends Player> players,
+                              Integer ticks, Object message, Object... params) {
+        return tellNoSpam(players, ticks, _lineWrap, message, params);
     }
 
     @Override
@@ -140,12 +157,14 @@ class Messenger implements IMessenger {
         PreCon.notNull(params);
 
         if (!(sender instanceof Player)) {
+            // no spam not applied to console
             return tell(sender, message, params);
         }
 
         Player player = (Player)sender;
 
-        String msg = TextUtils.format(message, params);
+        IChatMessage msg = TextUtils.format(message, params);
+        String str = msg.toString();
 
         TimedHashSet<String> recent = _noSpamCache.get(player.getUniqueId());
         if (recent == null) {
@@ -153,17 +172,60 @@ class Messenger implements IMessenger {
             _noSpamCache.put(player.getUniqueId(), recent);
         }
 
-        if (recent.contains(msg, ticks, TimeScale.TICKS))
+        if (recent.contains(str, ticks, TimeScale.TICKS))
             return false;
 
-        recent.add(msg, ticks, TimeScale.TICKS);
+        recent.add(str, ticks, TimeScale.TICKS);
 
         return tell(player, lineWrapping, msg);
     }
 
     @Override
+    public boolean tellNoSpam(Collection<? extends Player> players,
+                              Integer ticks, LineWrapping lineWrapping, Object message, Object... params) {
+        PreCon.notNull(players);
+        PreCon.positiveNumber(ticks);
+        PreCon.notNull(lineWrapping);
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        IChatMessage msg = TextUtils.format(message, params);
+        String str = msg.toString();
+
+        List<Player> recipients = new ArrayList<>(players.size());
+
+        for (Player player : players) {
+
+            TimedHashSet<String> recent = _noSpamCache.get(player.getUniqueId());
+            if (recent == null) {
+                recent = new TimedHashSet<String>(_plugin, 20, 140);
+                _noSpamCache.put(player.getUniqueId(), recent);
+            }
+
+            if (recent.contains(str, ticks, TimeScale.TICKS))
+                continue;
+
+            recent.add(str, ticks, TimeScale.TICKS);
+
+            recipients.add(player);
+        }
+
+        if (recipients.isEmpty())
+            return false;
+
+        sendMessage(recipients, msg);
+
+        return true;
+    }
+
+    @Override
     public boolean tell(CommandSender sender, Object message, Object... params) {
         return tell(sender, _lineWrap, message, params);
+    }
+
+    @Override
+    public boolean tell(Collection<? extends Player> players, Object message, Object... params) {
+        return tell(players, _lineWrap, message, params);
     }
 
     @Override
@@ -179,44 +241,48 @@ class Messenger implements IMessenger {
 
         TEXT_SETTING.setMaxLineLen(cutLines ? _maxLineLen : -1);
 
-        TextFormatterResult result = TEXT_FORMATTER.format(TEXT_SETTING, messageObject.toString(), params);
-
-        sendMessage(sender, result);
-
-        /*
-        // if lines don't need to be cut, simply send the raw message
-        if (!cutLines) {
-            sender.sendMessage(_chatPrefix + message);
+        if (messageObject instanceof ITextFormatterResult) {
+            ITextFormatterResult result = ((ITextFormatterResult) messageObject);
+            result.rebuild(TEXT_SETTING);
+            sendMessage(sender, result);
             return true;
         }
 
-        String[] lines = TextUtils.PATTERN_NEW_LINE.split(message);
+        ITextFormatterResult result = messageObject instanceof CharSequence
+                ? TEXT_FORMATTER.format(TEXT_SETTING, (CharSequence)messageObject, params)
+                : TEXT_FORMATTER.format(TEXT_SETTING, messageObject.toString(), params);
 
-        for (String line : lines) {
-
-            line = _chatPrefix + line;
-            String testLine = ChatColor.stripColor(line);
-
-            if (testLine.length() > _maxLineLen) {
-                List<String> moreLines = TextUtils.paginateString(line, _chatPrefix, _maxLineLen, true);
-                for (String mLine : moreLines) {
-                    sender.sendMessage(mLine);
-                }
-            } else {
-                sender.sendMessage(line);
-            }
-        }
-        */
+        sendMessage(sender, result);
         return true;
     }
 
-    private void sendMessage(CommandSender sender, TextFormatterResult result) {
-        if (sender instanceof Player) {
-            NmsUtils.getChatHandler().send((Player)sender, result);
+    @Override
+    public boolean tell(Collection<? extends Player> players,
+                        LineWrapping lineWrapping, Object messageObject, Object... params) {
+        PreCon.notNull(players);
+        PreCon.notNull(lineWrapping);
+        PreCon.notNull(messageObject);
+        PreCon.notNull(params);
+
+        loadChatPrefix();
+
+        boolean cutLines = lineWrapping == LineWrapping.ENABLED;
+
+        TEXT_SETTING.setMaxLineLen(cutLines ? _maxLineLen : -1);
+
+        if (messageObject instanceof ITextFormatterResult) {
+            ITextFormatterResult result = ((ITextFormatterResult) messageObject);
+            result.rebuild(TEXT_SETTING);
+            sendMessage(players, result);
+            return true;
         }
-        else {
-            sender.sendMessage(result.toString());
-        }
+
+        IChatMessage result = messageObject instanceof CharSequence
+                ? TEXT_FORMATTER.format(TEXT_SETTING, (CharSequence)messageObject, params)
+                : TEXT_FORMATTER.format(TEXT_SETTING, messageObject.toString(), params);
+
+        sendMessage(players, result);
+        return true;
     }
 
     @Override
@@ -231,12 +297,14 @@ class Messenger implements IMessenger {
         PreCon.notNull(message);
         PreCon.notNull(params);
 
-        if (!TextUtils.isValidName(context, 64))
-            throw new IllegalArgumentException("Illegal characters in context argument or argument is too long.");
+        if (!TextUtils.isValidName(context, 64)) {
+            throw new IllegalArgumentException(
+                    "Illegal characters in context argument or argument is too long. (Max 64)");
+        }
 
-        Player p = PlayerUtils.getPlayer(playerId);
-        if (p != null && p.isOnline()) {
-            tell(p, message, params);
+        Player player = PlayerUtils.getPlayer(playerId);
+        if (player != null && player.isOnline()) {
+            tell(player, message, params);
             return;
         }
 
@@ -263,11 +331,8 @@ class Messenger implements IMessenger {
         PreCon.notNull(message);
         PreCon.notNull(params);
 
-        String formatted = TextUtils.format(message, params);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            tell(p, lineWrapping, formatted);
-        }
+        IChatMessage formatted = TextUtils.format(message, params);
+        sendMessage(Bukkit.getOnlinePlayers(), formatted);
     }
 
     @Override
@@ -278,15 +343,11 @@ class Messenger implements IMessenger {
         PreCon.notNull(message);
         PreCon.notNull(params);
 
-        String formatted = TextUtils.format(message, params);
+        IChatMessage formatted = TextUtils.format(message, params);
+        Set<Player> recipients = new HashSet<>(Bukkit.getOnlinePlayers());
+        recipients.removeAll(exclude);
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-
-            if (exclude.contains(p))
-                continue;
-
-            tell(p, lineWrapping, formatted);
-        }
+        sendMessage(recipients, formatted);
     }
 
     @Override
@@ -336,9 +397,35 @@ class Messenger implements IMessenger {
             _chatPrefix = _prefixSource != null
                     ? TEXT_FORMATTER.format(InternalMessengerFactory.getChatPrefix(_prefixSource))
                     : new SimpleChatMessage();
-            TEXT_SETTING.setLinePrepend(_prefixSource == null ? null :_chatPrefix);
+            TEXT_SETTING.setLinePrefix(_prefixSource == null ? null : _chatPrefix);
         }
         return _chatPrefix;
+    }
+
+    private INmsChatHandler chatHandler() {
+        if (_chatHandler == null)
+            _chatHandler = NmsUtils.getChatHandler();
+        return _chatHandler;
+    }
+
+    private void sendMessage(CommandSender sender, ITextFormatterResult result) {
+        if (sender instanceof Player && chatHandler() != null) {
+            chatHandler().send((Player)sender, result);
+        }
+        else {
+            sender.sendMessage(result.toString());
+        }
+    }
+
+    private void sendMessage(Collection<? extends Player> players, IChatMessage message) {
+        if (chatHandler() != null) {
+            chatHandler().send(players, message);
+        }
+        else {
+            for (Player player : players) {
+                player.sendMessage(message.toString());
+            }
+        }
     }
 }
 

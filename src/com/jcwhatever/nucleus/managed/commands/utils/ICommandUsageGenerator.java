@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.managed.commands.utils;
 
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 /**
  * Generates command usage text.
@@ -52,7 +53,7 @@ public interface ICommandUsageGenerator {
      *
      * @param command  The command to generate usage text for.
      */
-    String generate(IRegisteredCommand command);
+    IChatMessage generate(IRegisteredCommand command);
 
     /**
      * Generate command usage using the specified root command name and
@@ -71,5 +72,5 @@ public interface ICommandUsageGenerator {
      * @param command          The command to generate usage text for.
      * @param template         The format template for the generated text.
      */
-    String generate(IRegisteredCommand command, String template);
+    IChatMessage generate(IRegisteredCommand command, String template);
 }

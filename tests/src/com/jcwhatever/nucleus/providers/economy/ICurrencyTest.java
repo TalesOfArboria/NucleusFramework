@@ -66,7 +66,7 @@ public class ICurrencyTest {
             @Override
             public String format(double amount) {
                 String template = "{0} Dollar";
-                return TextUtils.format(template, amount);
+                return TextUtils.format(template, amount).toString();
             }
 
             @Override

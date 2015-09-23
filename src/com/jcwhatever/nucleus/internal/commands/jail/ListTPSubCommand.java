@@ -25,7 +25,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
@@ -37,7 +36,6 @@ import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.coords.NamedLocation;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
 import org.bukkit.command.CommandSender;
 
 import java.util.Collection;
@@ -63,7 +61,7 @@ class ListTPSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Collection<NamedLocation> locations = jail.getTeleports();
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 6, _PAGINATOR_TITLE);
+        ChatPaginator pagin = createPagin(args, 6, _PAGINATOR_TITLE);
 
         for (NamedLocation loc : locations) {
             pagin.add(loc.getName());

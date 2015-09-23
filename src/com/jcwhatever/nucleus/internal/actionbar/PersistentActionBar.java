@@ -62,7 +62,7 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
      *
      * @param text  The action bar text.
      */
-    public PersistentActionBar(String text) {
+    public PersistentActionBar(CharSequence text) {
         this(new DynamicTextBuilder().append(text).build(), 4, TimeScale.SECONDS);
     }
 
@@ -86,7 +86,7 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
      *                     more than 1 {@link PersistentActionBar}.
      * @param timeScale    The default duration time scale.
      */
-    public PersistentActionBar(String text, int minDuration, TimeScale timeScale) {
+    public PersistentActionBar(CharSequence text, int minDuration, TimeScale timeScale) {
         this(new DynamicTextBuilder().append(text).build(), minDuration, timeScale);
     }
 

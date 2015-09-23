@@ -63,6 +63,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Minecraft version v1_8_R3
@@ -173,17 +174,17 @@ class v1_8_R3_Nms implements INms {
     }
 
     @Override
-    public Object getTitlePacketSub(String subTitle) {
+    public Object getTitlePacketSub(CharSequence subTitle) {
         // sub title packet
         return new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE,
-                IChatBaseComponent.ChatSerializer.a(subTitle));
+                IChatBaseComponent.ChatSerializer.a(subTitle.toString()));
     }
 
     @Override
-    public Object getTitlePacket(String title) {
+    public Object getTitlePacket(CharSequence title) {
         // title packet
         return new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE,
-                IChatBaseComponent.ChatSerializer.a(title));
+                IChatBaseComponent.ChatSerializer.a(title.toString()));
     }
 
     @Override
@@ -208,16 +209,16 @@ class v1_8_R3_Nms implements INms {
     }
 
     @Override
-    public Object getHeaderFooterPacket(@Nullable String headerText, @Nullable String footerText) {
+    public Object getHeaderFooterPacket(@Nullable CharSequence headerText, @Nullable CharSequence footerText) {
 
         // create packet instance based on the presence of a header
         PacketPlayOutPlayerListHeaderFooter packet = headerText != null
-                ? new PacketPlayOutPlayerListHeaderFooter(IChatBaseComponent.ChatSerializer.a(headerText)) // header constructor
+                ? new PacketPlayOutPlayerListHeaderFooter(IChatBaseComponent.ChatSerializer.a(headerText.toString())) // header constructor
                 : new PacketPlayOutPlayerListHeaderFooter(); // no header constructor
 
         if (footerText != null) {
 
-            IChatBaseComponent footerComponent = IChatBaseComponent.ChatSerializer.a(footerText);
+            IChatBaseComponent footerComponent = IChatBaseComponent.ChatSerializer.a(footerText.toString());
 
             // insert footer into packet footer field
             _PacketPlayOutPlayerListHeaderFooter.reflect(packet).set("footer", footerComponent);
@@ -227,8 +228,8 @@ class v1_8_R3_Nms implements INms {
     }
 
     @Override
-    public Object getActionBarPacket(String text) {
-        IChatBaseComponent baseComponent = IChatBaseComponent.ChatSerializer.a(text);
+    public Object getActionBarPacket(CharSequence text) {
+        IChatBaseComponent baseComponent = IChatBaseComponent.ChatSerializer.a(text.toString());
         return new PacketPlayOutChat(baseComponent, (byte)2);
     }
 
@@ -311,14 +312,31 @@ class v1_8_R3_Nms implements INms {
 
     @Override
     public void send(Player player, IChatMessage message) {
+        if (message.totalComponents() == 0)
+            return;
+
         EntityPlayer nmsPlayer = ((CraftPlayer)player).getHandle();
         if (nmsPlayer.playerConnection == null)
             return;
 
+        IChatBaseComponent nmsComponent = _chat.getComponent(message);
+        nmsPlayer.playerConnection.sendPacket(new PacketPlayOutChat(nmsComponent));
+    }
+
+    @Override
+    public void send(Collection<? extends Player> players, IChatMessage message) {
         if (message.totalComponents() == 0)
             return;
 
         IChatBaseComponent nmsComponent = _chat.getComponent(message);
-        nmsPlayer.playerConnection.sendPacket(new PacketPlayOutChat(nmsComponent));
+        PacketPlayOutChat packet = new PacketPlayOutChat(nmsComponent);
+
+        for (Player player : players) {
+            EntityPlayer nmsPlayer = ((CraftPlayer)player).getHandle();
+            if (nmsPlayer.playerConnection == null)
+                continue;
+
+            nmsPlayer.playerConnection.sendPacket(packet);
+        }
     }
 }

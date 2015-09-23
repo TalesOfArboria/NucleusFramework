@@ -108,7 +108,7 @@ public final class InternalProviderLoader extends JarModuleLoader<Provider> {
                 _manager.enableProviders()
                         .onSuccess(new FutureSubscriber() {
                             @Override
-                            public void on(FutureStatus status, @Nullable String message) {
+                            public void on(FutureStatus status, @Nullable CharSequence message) {
                                 ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
                             }
                         });

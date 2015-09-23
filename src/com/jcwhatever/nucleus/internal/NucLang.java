@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.internal;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.managed.language.Localized;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -38,11 +39,11 @@ public final class NucLang {
     private NucLang() {}
 
     @Localized
-    public static String get(String text, Object... params) {
+    public static IChatMessage get(CharSequence text, Object... params) {
         return Nucleus.getPlugin().getLanguageContext().get(text, params);
     }
 
-    public static String get(Plugin plugin, String text, Object... params) {
+    public static IChatMessage get(Plugin plugin, CharSequence text, Object... params) {
 
         if (plugin instanceof NucleusPlugin) {
             NucleusPlugin generic = (NucleusPlugin)plugin;

@@ -35,7 +35,7 @@ public class InvalidArgumentException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected InvalidArgumentException(String message) {
+    protected InvalidArgumentException(CharSequence message) {
         super(message);
     }
 }

@@ -62,7 +62,7 @@ class CurrentSubCommand extends AbstractCommand implements IExecutableCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         List<IRegion> regions = Nucleus.getRegionManager().getRegions(((Player) sender).getLocation());
 

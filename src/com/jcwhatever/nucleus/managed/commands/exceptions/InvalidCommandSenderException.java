@@ -35,7 +35,7 @@ public class InvalidCommandSenderException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected InvalidCommandSenderException(String message) {
+    protected InvalidCommandSenderException(CharSequence message) {
         super(message);
     }
 

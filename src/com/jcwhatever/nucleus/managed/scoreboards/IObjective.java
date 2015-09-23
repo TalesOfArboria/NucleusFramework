@@ -47,7 +47,7 @@ public interface IObjective {
      * @param displayName  The display name.
      * @param args         Optional format arguments.
      */
-    void setDisplayName(String displayName, Object... args);
+    void setDisplayName(CharSequence displayName, Object... args);
 
     /**
      * Get the scoreboard criteria.

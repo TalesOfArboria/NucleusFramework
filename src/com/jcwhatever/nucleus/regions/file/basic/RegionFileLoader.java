@@ -38,10 +38,10 @@ import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 /**
  * Basic region format file loader.
@@ -124,7 +124,7 @@ public class RegionFileLoader extends AbstractRegionFileAccess implements IRegio
 
         restoreProject.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(FutureStatus status, @Nullable String message) {
+            public void on(FutureStatus status, @Nullable CharSequence message) {
 
                 switch (status) {
                     case ERROR:
@@ -146,7 +146,7 @@ public class RegionFileLoader extends AbstractRegionFileAccess implements IRegio
 
         return agent.getFuture().onStatus(new FutureSubscriber() {
             @Override
-            public void on(FutureStatus status, @Nullable String message) {
+            public void on(FutureStatus status, @Nullable CharSequence message) {
                 region.getMeta().setKey(META_IS_READING, null);
             }
         });

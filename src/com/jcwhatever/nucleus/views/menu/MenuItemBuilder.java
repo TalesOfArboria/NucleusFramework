@@ -24,22 +24,21 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * A utility class to build {@link MenuItem}'s.
@@ -49,8 +48,8 @@ public class MenuItemBuilder {
     private ItemStack _itemStack;
     private MaterialData _materialData;
     private Integer _amount;
-    private String _title;
-    private String _description;
+    private CharSequence _title;
+    private CharSequence _description;
     private Map<Object, Object> _meta;
     private List<Runnable> _onClick;
 
@@ -119,7 +118,7 @@ public class MenuItemBuilder {
      *
      * @return  Self for chaining.
      */
-    public MenuItemBuilder title(String title, Object... args) {
+    public MenuItemBuilder title(CharSequence title, Object... args) {
         PreCon.notNull(title);
 
         _title = TextUtils.format(title, args);
@@ -135,7 +134,7 @@ public class MenuItemBuilder {
      *
      * @return  Self for chaining.
      */
-    public MenuItemBuilder description(String description, Object... args) {
+    public MenuItemBuilder description(CharSequence description, Object... args) {
         PreCon.notNull(description);
 
         _description = TextUtils.format(description, args);

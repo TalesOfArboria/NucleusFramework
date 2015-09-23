@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.utils.text.format;
 
 import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
 import com.jcwhatever.nucleus.utils.text.components.IChatLine;
-import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,14 +35,14 @@ import java.util.List;
 /**
  * Used by {@link TextFormatter} to return a result.
  */
-public class TextFormatterResult implements CharSequence, IChatMessage {
+public class TextFormatterResult implements ITextFormatterResult {
 
     private final List<IChatComponent> _components;
     private final boolean _isParsed;
 
     private boolean _parsedColor;
     private String _text;
-    private FormatLines _result;
+    private SimpleChatMessage _result;
 
     TextFormatterResult() {
         _components = new ArrayList<>(5);
@@ -55,27 +55,24 @@ public class TextFormatterResult implements CharSequence, IChatMessage {
         _isParsed = false;
     }
 
-    /**
-     * Determine if the result is parsed or if the formatter determined if
-     * parsing was not needed and returned the format template.
-     *
-     * @return  True if parsed, False if template is result.
-     */
+    TextFormatterResult(Collection<? extends IChatComponent> components) {
+        _components = new ArrayList<>(components);
+        _isParsed = false;
+    }
+
+    @Override
     public boolean isParsed() {
         return _isParsed;
     }
 
-    /**
-     * Determine if color was parsed.
-     *
-     * <p>Does not always indicate the presence of color since the parser may not
-     * have actually parsed the template.</p>
-     *
-     * <p>If the template is parsed and the settings indicate that color should
-     * be ignored or removed, false is returned.</p>
-     */
-    public boolean parsedColor() {
+    @Override
+    public boolean isColorParsed() {
         return _parsedColor;
+    }
+
+    @Override
+    public void rebuild(TextFormatterSettings settings) {
+        _result = new SimpleChatMessage(_components, settings);
     }
 
     @Override
@@ -150,7 +147,12 @@ public class TextFormatterResult implements CharSequence, IChatMessage {
 
     @Override
     public void append(IChatComponent component) {
-        _result.append(component);
+        if (_result == null) {
+            _components.add(component);
+        }
+        else {
+            _result.append(component);
+        }
     }
 
     @Override
@@ -179,7 +181,7 @@ public class TextFormatterResult implements CharSequence, IChatMessage {
     }
 
     TextFormatterResult finishResult(TextFormatterSettings settings) {
-        _result = new FormatLines(_components, settings);
+        rebuild(settings);
         return this;
     }
 

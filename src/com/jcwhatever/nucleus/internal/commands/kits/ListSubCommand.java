@@ -25,7 +25,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
@@ -36,7 +35,12 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
-
+import com.jcwhatever.nucleus.utils.ArrayUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatHoverable.HoverAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.args.ClickGiveItemsArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.HoverableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.TextArg;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collection;
@@ -54,6 +58,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Kits";
     @Localizable static final String _FORMAT = "{GOLD}{0} {GRAY}({1} Items, {2} Armor)";
+    @Localizable static final String _CLICK_MESSAGE = "{YELLOW}Click to receive kit.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
@@ -62,12 +67,19 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         Collection<IKit> kits = Kits.getAll();
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 5, NucLang.get(_PAGINATOR_TITLE));
+
+        IChatMessage clickMessage = NucLang.get(_CLICK_MESSAGE);
 
         for (IKit kit : kits) {
-            pagin.add(kit.getName(), kit.getItems().length, kit.getArmor().length);
+
+            TextArg name = new TextArg(kit.getName(),
+                    new ClickGiveItemsArgModifier(ArrayUtils.addAll(kit.getItems(), kit.getArmor())),
+                    new HoverableArgModifier(HoverAction.SHOW_TEXT, clickMessage));
+
+            pagin.add(name, kit.getItems().length, kit.getArmor().length);
         }
 
-        pagin.show(sender, page, NucLang.get(_FORMAT));
+        pagin.show(sender, page, NucLang.get(_FORMAT).toString());
     }
 }

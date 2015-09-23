@@ -45,7 +45,7 @@ public class TextArg implements IFormatterArg {
      * @param text       The text.
      * @param modifiers  Optional modifiers.
      */
-    public TextArg(String text, IFormatterArgModifier... modifiers) {
+    public TextArg(CharSequence text, IFormatterArgModifier... modifiers) {
         PreCon.notNull(text);
         PreCon.notNull(modifiers);
 

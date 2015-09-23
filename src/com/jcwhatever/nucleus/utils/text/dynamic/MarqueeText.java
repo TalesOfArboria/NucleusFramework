@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.ColoredCircularString;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 /**
  * An {@link IDynamicText} implementation that displays marquee
@@ -42,7 +43,7 @@ public class MarqueeText implements IDynamicText {
     private volatile MarqueeDirection _direction = MarqueeDirection.LEFT;
     private volatile int _refreshRate = 3; // 3 ticks
     private volatile long _nextUpdate;
-    private volatile String _currentText;
+    private volatile IChatMessage _currentText;
     private final Object _sync = new Object();
 
     public enum MarqueeDirection {
@@ -107,7 +108,7 @@ public class MarqueeText implements IDynamicText {
      * Get the text currently being displayed by the marquee.
      */
     public String getCurrentText() {
-        return _currentText;
+        return _currentText.toString();
     }
 
     /**
@@ -151,7 +152,7 @@ public class MarqueeText implements IDynamicText {
     }
 
     @Override
-    public String nextText() {
+    public IChatMessage nextText() {
 
         // ensure refresh rate (and scroll rate) is maintained even if refreshed
         // at a faster rate than requested.
@@ -171,7 +172,7 @@ public class MarqueeText implements IDynamicText {
                 _marquee.rotateRight(1);
             }
 
-            _currentText = _marquee.subSequence(0, _charWidth).toString();
+            _currentText = TextUtils.format(_marquee.subSequence(0, _charWidth).toString());
             _nextUpdate = System.currentTimeMillis() + _refreshRate;
 
             return _currentText;
@@ -197,7 +198,7 @@ public class MarqueeText implements IDynamicText {
     // get the current text modified for the marquee
     private String getMarqueeText() {
         return _direction == MarqueeDirection.LEFT
-                ? TextUtils.padLeft(_text.nextText(), _charWidth)
-                : TextUtils.padRight(_text.nextText(), _charWidth);
+                ? TextUtils.padLeft(_text.nextText().toString(), _charWidth)
+                : TextUtils.padRight(_text.nextText().toString(), _charWidth);
     }
 }

@@ -50,7 +50,7 @@ public interface ITeam {
      * @param displayName  The display name.
      * @param args         Optional format arguments.
      */
-    void setDisplayName(String displayName, Object... args);
+    void setDisplayName(CharSequence displayName, Object... args);
 
     /**
      * Get the team prefix.
@@ -63,7 +63,7 @@ public interface ITeam {
      * @param prefix  The prefix.
      * @param args    Optional format arguments.
      */
-    void setPrefix(String prefix, Object... args);
+    void setPrefix(CharSequence prefix, Object... args);
 
     /**
      * Get the team suffix.
@@ -76,7 +76,7 @@ public interface ITeam {
      * @param suffix  The team suffix.
      * @param args    Optional format arguments.
      */
-    void setSuffix(String suffix, Object... args);
+    void setSuffix(CharSequence suffix, Object... args);
 
     /**
      * Determine if friendly fire is allowed.
@@ -162,7 +162,7 @@ public interface ITeam {
      *
      * @param entry  The entry to add.
      */
-    void addEntry(String entry);
+    void addEntry(CharSequence entry);
 
     /**
      * Remove a player from the team.
@@ -180,7 +180,7 @@ public interface ITeam {
      *
      * @return  True if removed, otherwise false.
      */
-    boolean removeEntry(String entry);
+    boolean removeEntry(CharSequence entry);
 
     /**
      * Unregister team from scoreboard.
@@ -199,5 +199,5 @@ public interface ITeam {
      *
      * @param entry  The entry to check.
      */
-    boolean hasEntry(String entry);
+    boolean hasEntry(CharSequence entry);
 }

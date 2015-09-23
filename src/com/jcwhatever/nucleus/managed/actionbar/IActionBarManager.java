@@ -41,14 +41,14 @@ public interface IActionBarManager {
      *
      * @param text  The text the action bar displays.
      */
-    IActionBar create(String text);
+    IActionBar create(CharSequence text);
 
     /**
      * Create a new {@link IPersistentActionBar}.
      *
      * @param text  The text the action bar displays.
      */
-    IPersistentActionBar createPersistent(String text);
+    IPersistentActionBar createPersistent(CharSequence text);
 
     /**
      * Create a new {@link IPersistentActionBar}.
@@ -57,7 +57,7 @@ public interface IActionBarManager {
      * @param minDuration  The minimum display duration when displayed with other persistent action bars.
      * @param timeScale    The time scale of the specified duration.
      */
-    IPersistentActionBar createPersistent(String text, int minDuration, TimeScale timeScale);
+    IPersistentActionBar createPersistent(CharSequence text, int minDuration, TimeScale timeScale);
 
     /**
      * Create a new {@link IPersistentActionBar}.
@@ -80,7 +80,7 @@ public interface IActionBarManager {
      *
      * @param text  The text the action bar displays.
      */
-    ITimedActionBar createTimed(String text);
+    ITimedActionBar createTimed(CharSequence text);
 
     /**
      * Create a new {@link ITimedActionBar}.
@@ -89,7 +89,7 @@ public interface IActionBarManager {
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    ITimedActionBar createTimed(String text, int duration, TimeScale timeScale);
+    ITimedActionBar createTimed(CharSequence text, int duration, TimeScale timeScale);
 
     /**
      * Create a new {@link ITimedActionBar}.
@@ -115,7 +115,7 @@ public interface IActionBarManager {
      * @param player  The player to show the action bar to.
      * @param text    The text the action bar displays.
      */
-    void showTo(Player player, String text);
+    void showTo(Player player, CharSequence text);
 
     /**
      * Show an {@link IActionBar} to a player.
@@ -124,7 +124,7 @@ public interface IActionBarManager {
      * @param text      The text the action bar displays.
      * @param priority  The action bar priority.
      */
-    void showTo(Player player, String text, ActionBarPriority priority);
+    void showTo(Player player, CharSequence text, ActionBarPriority priority);
 
     /**
      * Show an {@link IActionBar} to a player.
@@ -153,7 +153,7 @@ public interface IActionBarManager {
      * @param players  The players to show the action bar to.
      * @param text     The text the action bar displays.
      */
-    void showTo(Collection<? extends Player> players, String text);
+    void showTo(Collection<? extends Player> players, CharSequence text);
 
     /**
      * Show an {@link IActionBar} to a collection of players.
@@ -162,7 +162,7 @@ public interface IActionBarManager {
      * @param text      The text the action bar displays.
      * @param priority  The action bar priority.
      */
-    void showTo(Collection<? extends Player> players, String text, ActionBarPriority priority);
+    void showTo(Collection<? extends Player> players, CharSequence text, ActionBarPriority priority);
 
     /**
      * Show an {@link IActionBar} to a collection of players.
@@ -193,7 +193,7 @@ public interface IActionBarManager {
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    void showTimed(Player player, String text, int duration, TimeScale timeScale);
+    void showTimed(Player player, CharSequence text, int duration, TimeScale timeScale);
 
     /**
      * Show an {@link ITimedActionBar} to a player.
@@ -204,7 +204,7 @@ public interface IActionBarManager {
      * @param timeScale  The time scale of the specified duration.
      * @param priority   The action bar priority.
      */
-    void showTimed(Player player, String text,
+    void showTimed(Player player, CharSequence text,
                    int duration, TimeScale timeScale, ActionBarPriority priority);
 
     /**
@@ -241,7 +241,7 @@ public interface IActionBarManager {
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    void showTimed(Collection<? extends Player> players, String text,
+    void showTimed(Collection<? extends Player> players, CharSequence text,
                    int duration, TimeScale timeScale);
 
     /**
@@ -253,7 +253,7 @@ public interface IActionBarManager {
      * @param timeScale  The time scale of the specified duration.
      * @param priority   The action bar priority.
      */
-    void showTimed(Collection<? extends Player> players, String text,
+    void showTimed(Collection<? extends Player> players, CharSequence text,
                    int duration, TimeScale timeScale, ActionBarPriority priority);
 
     /**

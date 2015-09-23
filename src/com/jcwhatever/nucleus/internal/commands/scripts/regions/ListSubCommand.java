@@ -63,7 +63,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
         if (!args.isDefaultValue("search"))
             pagin.setSearchTerm(args.getString("search"));
 

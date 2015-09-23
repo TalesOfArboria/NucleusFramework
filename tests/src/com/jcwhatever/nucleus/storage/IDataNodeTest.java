@@ -1,10 +1,5 @@
 package com.jcwhatever.nucleus.storage;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
@@ -13,7 +8,6 @@ import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.v1_8_R3.BukkitTester;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,13 +16,18 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /*
  * 
@@ -963,7 +962,7 @@ public abstract class IDataNodeTest {
                 IDataNode dataNode = _generator.generateRoot();
                 dataNode.loadAsync().onStatus(new FutureSubscriber() {
                     @Override
-                    public void on(FutureStatus status, @Nullable String message) {
+                    public void on(FutureStatus status, @Nullable CharSequence message) {
 
                         _testLoadRunCount++;
 
@@ -1004,7 +1003,7 @@ public abstract class IDataNodeTest {
 
                 dataNode.save().onStatus(new FutureSubscriber() {
                     @Override
-                    public void on(FutureStatus status, @Nullable String message) {
+                    public void on(FutureStatus status, @Nullable CharSequence message) {
 
                         _testSaveRunCount++;
 

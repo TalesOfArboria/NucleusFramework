@@ -71,7 +71,7 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
 
         IScriptRegion region = regionManager.get(regionName);
         if (region != null)
-            throw new CommandException(NucLang.get(_REGION_ALREADY_EXISTS), regionName);
+            throw new CommandException(NucLang.get(_REGION_ALREADY_EXISTS, regionName));
 
         IRegionSelection selection = getRegionSelection((Player) sender);
 

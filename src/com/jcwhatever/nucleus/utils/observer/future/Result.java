@@ -40,7 +40,7 @@ public class Result<R> {
     private final double _totalCompletion;
     private final double _resultCompletion;
     private final R _result;
-    private final String _message;
+    private final CharSequence _message;
     private final Exception _exception;
 
     /**
@@ -99,7 +99,7 @@ public class Result<R> {
      * @param message     A result message.
      */
     public Result(double totalCompletion, double resultCompletion, @Nullable R result,
-                  @Nullable String message) {
+                  @Nullable CharSequence message) {
         this(totalCompletion, resultCompletion, result, message, null);
     }
 
@@ -136,7 +136,7 @@ public class Result<R> {
      * @param exception   The exception that was thrown.
      */
     public Result(double totalCompletion, double resultCompletion,
-                  @Nullable R result, @Nullable String message, @Nullable Exception exception) {
+                  @Nullable R result, @Nullable CharSequence message, @Nullable Exception exception) {
 
         _totalCompletion = totalCompletion;
         _resultCompletion = resultCompletion;
@@ -211,7 +211,7 @@ public class Result<R> {
      */
     @Nullable
     public String getMessage() {
-        return _message;
+        return _message != null ? _message.toString() : null;
     }
 
     /**

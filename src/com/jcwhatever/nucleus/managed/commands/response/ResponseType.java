@@ -83,7 +83,7 @@ public class ResponseType {
      */
     @Localized
     public String getCommandName() {
-        return NucLang.get(_commandName);
+        return NucLang.get(_commandName).toString();
     }
 
     /**

@@ -71,7 +71,7 @@ class AddAnchorSubCommand extends AbstractCommand implements IExecutableCommand 
 
         IScriptRegion region = regionManager.get(regionName);
         if (region != null)
-            throw new CommandException(NucLang.get(_REGION_ALREADY_EXISTS), regionName);
+            throw new CommandException(NucLang.get(_REGION_ALREADY_EXISTS, regionName));
 
         Location anchor = ((Player)sender).getLocation();
 

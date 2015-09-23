@@ -54,6 +54,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -221,14 +222,14 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @param msg     The message to send.
      * @param params  The message format parameters.
      */
-    protected void debug(String msg, Object... params) {
+    protected void debug(CharSequence msg, Object... params) {
         _msg.debug(msg, params);
     }
 
     /**
      * Tell the {@link org.bukkit.command.CommandSender} a generic message.
      */
-    protected void tell(CommandSender sender, String msg, Object... params) {
+    protected void tell(CommandSender sender, CharSequence msg, Object... params) {
         _msg.tell(sender, TextUtils.format(msg, params));
     }
 
@@ -236,22 +237,22 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * Tell the {@link org.bukkit.command.CommandSender} the command
      * executed the request successfully.
      */
-    protected void tellSuccess(CommandSender sender, String msg, Object... params) {
-        _msg.tell(sender, TextColor.GREEN + msg, params);
+    protected void tellSuccess(CommandSender sender, CharSequence msg, Object... params) {
+        _msg.tell(sender, TextColor.GREEN + msg.toString(), params);
     }
 
     /**
      * Tell the {@link org.bukkit.command.CommandSender} the command failed to
      * perform the requested task.
      */
-    protected void tellError(CommandSender sender, String msg, Object... params) {
-        _msg.tell(sender, TextColor.RED + msg, params);
+    protected void tellError(CommandSender sender, CharSequence msg, Object... params) {
+        _msg.tell(sender, TextColor.RED + msg.toString(), params);
     }
 
     /**
      * Get the command to type to get help for the current command.
      */
-    protected String getInlineHelpCommand() {
+    protected IChatMessage getInlineHelpCommand() {
         return getInlineHelpCommand(getRegistered());
     }
 
@@ -260,7 +261,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      *
      * @param subCommandName  The name of the sub-command.
      */
-    protected String getInlineHelpCommand(String subCommandName) {
+    protected IChatMessage getInlineHelpCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
         IRegisteredCommand command = getCommand(subCommandName);
@@ -277,7 +278,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      *
      * @param command  The command.
      */
-    protected String getInlineHelpCommand(IRegisteredCommand command) {
+    protected IChatMessage getInlineHelpCommand(IRegisteredCommand command) {
         PreCon.notNull(command);
 
         ICommandUsageGenerator generator =
@@ -290,7 +291,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     /**
      * Get the command to type for the current command.
      */
-    protected String getInlineCommand() {
+    protected IChatMessage getInlineCommand() {
         return getInlineCommand(getRegistered());
     }
 
@@ -299,7 +300,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      *
      * @param subCommandName  The name of the sub-command.
      */
-    protected String getInlineCommand(String subCommandName) {
+    protected IChatMessage getInlineCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
         IRegisteredCommand command = getCommand(subCommandName);
@@ -316,7 +317,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      *
      * @param command  The command.
      */
-    protected String getInlineCommand(IRegisteredCommand command) {
+    protected IChatMessage getInlineCommand(IRegisteredCommand command) {
         PreCon.notNull(command);
 
         ICommandUsageGenerator generator =
@@ -381,22 +382,16 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     /**
      * Create a new {@link ChatPaginator}.
      *
-     * @param title  The paginator title.
-     * @param args   The paginator title format arguments.
-     */
-    protected ChatPaginator createPagin(String title, Object... args) {
-        return createPagin(6, title, args);
-    }
-
-    /**
-     * Create a new {@link ChatPaginator}.
-     *
+     * @param cmdArgs       The command arguments.
      * @param itemsPerPage  The number of items per page.
      * @param title         The paginator title.
-     * @param args          The paginator title format arguments.
+     * @param titleArgs     The paginator title format arguments.
      */
-    protected ChatPaginator createPagin(int itemsPerPage, String title, Object... args) {
-        return new ChatPaginator(getPlugin(), itemsPerPage, title, args);
+    protected ChatPaginator createPagin(ICommandArguments cmdArgs, int itemsPerPage,
+                                        CharSequence title, Object... titleArgs) {
+
+        PaginatorCommands paginCommands = new PaginatorCommands(cmdArgs);
+        return new ChatPaginator(getPlugin(), itemsPerPage, paginCommands, title, titleArgs);
     }
 
     /**
@@ -503,7 +498,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
                     public void onLocationRetrieved (Player player, Location location) {
 
                         if (settings.set(settingName, location)) {
-                            String successMessage = NucLang.get(_SET_PROPERTY_SUCCESS, settingName,
+                           IChatMessage successMessage = NucLang.get(_SET_PROPERTY_SUCCESS, settingName,
                                     TextUtils.formatLocation(location, true));
 
                             tellSuccess(player, successMessage);
@@ -534,7 +529,7 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
         // make sure the result is valid
         if (!settings.set(settingName, value)) {
             throw new CommandException(
-                    NucLang.get(_INVALID_PROPERTY_VALUE, value, settingName) + '\n' +
+                    NucLang.get(_INVALID_PROPERTY_VALUE, value, settingName).toString() + '\n' +
                             NucLang.get(_PROPERTY_DESCRIPTION,
                                     propertyDefinition.getName(), propertyDefinition.getDescription())
             );

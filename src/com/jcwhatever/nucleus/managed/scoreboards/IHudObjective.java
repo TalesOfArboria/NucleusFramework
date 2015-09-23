@@ -47,7 +47,7 @@ public interface IHudObjective extends IObjective {
      *
      * @return  Self for chaining.
      */
-    IHudObjective set(int lineIndex, String text, Object... args);
+    IHudObjective set(int lineIndex, CharSequence text, Object... args);
 
     /**
      * Set a line of dynamic text on the HUD.

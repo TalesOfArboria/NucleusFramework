@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import com.jcwhatever.nucleus.utils.text.format.IFormatterAppendable;
 import com.jcwhatever.nucleus.utils.text.format.ITagFormatter;
 import com.jcwhatever.nucleus.utils.text.format.TextFormatter;
@@ -68,10 +69,10 @@ public final class TextUtils {
     @Localizable static final String _FORMAT_TEMPLATE_DEFINITION = "{GOLD}{0}{AQUA} - {GRAY}{1}";
     @Localizable static final String _FORMAT_TEMPLATE_ITEM_DESCRIPTION = "{YELLOW}{0}{AQUA} - {GRAY}{1}";
     @Localizable static final String _LOCATION_FORMAT_COLOR =
-            "{LIGHT_PURPLE}X:{YELLOW}{0: x}{WHITE}, " +
-                    "{LIGHT_PURPLE}Y:{YELLOW}{1: y}{WHITE}, " +
-                    "{LIGHT_PURPLE}Z:{YELLOW}{2: x}{WHITE}, " +
-                    "{LIGHT_PURPLE}W:{YELLOW}{3: world}";
+            "{LIGHT_PURPLE}X:{GRAY}{0: x}{WHITE}, " +
+                    "{LIGHT_PURPLE}Y:{GRAY}{1: y}{WHITE}, " +
+                    "{LIGHT_PURPLE}Z:{GRAY}{2: x}{WHITE}, " +
+                    "{LIGHT_PURPLE}W:{GRAY}{3: world}";
     @Localizable static final String _LOCATION_FORMAT =
             "X:{0: x}, Y:{1: y}, Z:{2: x}, W:{3: world}";
 
@@ -146,7 +147,7 @@ public final class TextUtils {
         @Override
         @Localized
         public String toString() {
-            return NucLang.get(_template);
+            return NucLang.get(_template).toString();
         }
     }
 
@@ -840,7 +841,7 @@ public final class TextUtils {
                 format.format(loc.getX()),
                 format.format(loc.getY()),
                 format.format(loc.getZ()),
-                worldName);
+                worldName).toString();
     }
 
     /**
@@ -854,7 +855,7 @@ public final class TextUtils {
      * @param msg     The message to format plugin info into.
      * @param args    Optional message format arguments.
      */
-    public static String formatPluginInfo(Plugin plugin, String msg, Object... args) {
+    public static IChatMessage formatPluginInfo(Plugin plugin, CharSequence msg, Object... args) {
         return formatPluginInfo(plugin, null, msg, args);
     }
 
@@ -870,9 +871,9 @@ public final class TextUtils {
      * @param msg       The message to format plugin info into.
      * @param args      Optional message format arguments.
      */
-    public static String formatPluginInfo(Plugin plugin,
+    public static IChatMessage formatPluginInfo(Plugin plugin,
                                           @Nullable TextFormatterSettings settings,
-                                          String msg, Object... args) {
+                                          CharSequence msg, Object... args) {
         PreCon.notNull(plugin);
         PreCon.notNull(msg);
         PreCon.notNull(args);
@@ -890,7 +891,7 @@ public final class TextUtils {
             formatters = getPluginFormatters(plugin, settings);
         }
 
-        return TEXT_FORMATTER.format(formatters, msg, args).toString();
+        return TEXT_FORMATTER.format(formatters, msg, args);
     }
 
     /**
@@ -906,8 +907,10 @@ public final class TextUtils {
      * @param template  An object whose {@link #toString} method yields the message template.
      * @param args      Optional format arguments.
      */
-    public static String format(Object template, Object... args) {
-        return format(template.toString(), args);
+    public static IChatMessage format(Object template, Object... args) {
+        return template instanceof CharSequence
+                ? format((CharSequence) template, args)
+                : format(template.toString(), args);
     }
 
     /**
@@ -924,12 +927,12 @@ public final class TextUtils {
      * @param template  An object whose {@link #toString} method yields the message template.
      * @param args      Optional format arguments.
      */
-    public static String format(TextFormatterSettings settings, Object template, Object... args) {
+    public static IChatMessage format(TextFormatterSettings settings, Object template, Object... args) {
         PreCon.notNull(settings);
         PreCon.notNull(template);
         PreCon.notNull(args);
 
-        return TEXT_FORMATTER.format(settings, template.toString(), args).toString();
+        return TEXT_FORMATTER.format(settings, template.toString(), args);
     }
 
     /**
@@ -945,11 +948,11 @@ public final class TextUtils {
      * @param msg   The message to format.
      * @param args  Optional format arguments.
      */
-    public static String format(String msg, Object... args) {
+    public static IChatMessage format(CharSequence msg, Object... args) {
         PreCon.notNull(msg);
         PreCon.notNull(args);
 
-        return TEXT_FORMATTER.format(msg, args).toString();
+        return TEXT_FORMATTER.format(msg, args);
     }
 
     /**
@@ -1284,7 +1287,7 @@ public final class TextUtils {
 
     private static boolean isTitleCaseExcluded(String word) {
         if (_titleCaseExclusions == null) {
-            String exclusionString = NucLang.get(_TITLE_CASE_EXCLUSIONS);
+            IChatMessage exclusionString = NucLang.get(_TITLE_CASE_EXCLUSIONS);
 
             String[] excl = PATTERN_COMMA.split(exclusionString);
             _titleCaseExclusions = new HashSet<>(excl.length + 10);

@@ -26,10 +26,10 @@ package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.collections.wrap.WrappedArrayList;
 import com.jcwhatever.nucleus.utils.converters.IConverter;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -39,7 +39,6 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Array utilities.
@@ -60,6 +59,38 @@ public final class ArrayUtils {
     public static final ItemStack[] EMPTY_ITEMSTACK_ARRAY = new ItemStack[0];
     public static final Entity[] EMPTY_ENTITY_ARRAY = new Entity[0];
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
+    /**
+     * Combine to arrays into a single array.
+     *
+     * @param array1  The first array.
+     * @param array2  The seconds array.
+     *
+     * @return  A new array consisting of elements from both arrays.
+     */
+    public static <T> T[] addAll(T[] array1, T[] array2) {
+        PreCon.notNull(array1);
+        PreCon.notNull(array2);
+
+        int len = array1.length + array2.length;
+
+        @SuppressWarnings("unchecked")
+        Class<T> componentClass = (Class<T>) array1.getClass().getComponentType();
+
+        T[] result = newArray(componentClass, len);
+
+        for (int i=0, j=0; i < len; i++) {
+            if (i < array1.length) {
+                result[i] = array1[i];
+            }
+            else {
+                result[i] = array2[j];
+                j++;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Copy the source array elements to the destination array starting from the

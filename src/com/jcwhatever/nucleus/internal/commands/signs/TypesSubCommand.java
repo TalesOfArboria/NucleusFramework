@@ -61,7 +61,7 @@ class TypesSubCommand extends AbstractCommand implements IExecutableCommand {
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         Collection<SignHandler> signHandlers = Nucleus.getSignManager().getSignHandlers();
         for (SignHandler handler : signHandlers) {

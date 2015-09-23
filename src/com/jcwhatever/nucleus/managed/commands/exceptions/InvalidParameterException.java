@@ -36,7 +36,7 @@ public class InvalidParameterException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected InvalidParameterException(String message) {
+    protected InvalidParameterException(CharSequence message) {
         super(message);
     }
 }

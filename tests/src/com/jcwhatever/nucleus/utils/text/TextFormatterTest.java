@@ -1,10 +1,11 @@
 package com.jcwhatever.nucleus.utils.text;
 
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings;
 import com.jcwhatever.nucleus.utils.text.format.TextFormatterSettings.FormatPolicy;
-
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TextFormatterTest {
 
@@ -14,35 +15,39 @@ public class TextFormatterTest {
     @Test
     public void testFormat() throws Exception {
 
-        Assert.assertEquals("zero, one, two", TextUtils.format("{0}, {1}, {2}", "zero", "one", "two"));
+        assertEquals("zero, one, two", format("{0}, {1}, {2}", "zero", "one", "two"));
 
-        Assert.assertEquals("§czero, one, two", TextUtils.format("{RED}{0}, {1}, {2}", "zero", "one", "two"));
+        assertEquals("§czero, one, two", format("{RED}{0}, {1}, {2}", "zero", "one", "two"));
 
-        Assert.assertEquals("§czero, §9one, two", TextUtils.format("{RED}{0}, {BLUE}{1}, {2}", "zero", "one", "two"));
+        assertEquals("§czero, §9one, two", format("{RED}{0}, {BLUE}{1}, {2}", "zero", "one", "two"));
 
-        Assert.assertEquals("§czero, §9one§c, two", TextUtils.format("{RED}{0}, {1}, {2}", "zero", "§9one", "two"));
+        assertEquals("§czero, §9one§c, two", format("{RED}{0}, {1}, {2}", "zero", "§9one", "two"));
 
-        Assert.assertEquals("§czero, §9one§c, two", TextUtils.format("{RED}{0}, {1}, {2}", "zero", "{BLUE}one", "two"));
+        assertEquals("§czero, §9one§c, two", format("{RED}{0}, {1}, {2}", "zero", "{BLUE}one", "two"));
 
-        Assert.assertEquals("§c§lzero, §9one§c§l, two", TextUtils.format("{RED}{BOLD}{0}, {1}, {2}", "zero", "§9one", "two"));
+        assertEquals("§c§lzero, §9one§c§l, two", format("{RED}{BOLD}{0}, {1}, {2}", "zero", "§9one", "two"));
 
-        Assert.assertEquals("§zero", TextUtils.format("\\u00A7zero"));
+        assertEquals("§zero", format("\\u00A7zero"));
 
-        Assert.assertEquals("\\u00A7zero", TextUtils.format("\\\\u00A7zero"));
+        assertEquals("\\u00A7zero", format("\\\\u00A7zero"));
 
-        Assert.assertEquals("\\§zero", TextUtils.format("\\\\\\u00A7zero"));
+        assertEquals("\\§zero", format("\\\\\\u00A7zero"));
 
-        Assert.assertEquals("zero\n one", TextUtils.format("zero\\n one"));
+        assertEquals("zero\n one", format("zero\\n one"));
 
-        Assert.assertEquals("zero\\n one", TextUtils.format("zero\\\\n one"));
+        assertEquals("zero\\n one", format("zero\\\\n one"));
 
-        Assert.assertEquals("ZeroZeroOneZero", TextUtils.format("{0}{0}{1}{0}", "Zero", "One"));
+        assertEquals("ZeroZeroOneZero", format("{0}{0}{1}{0}", "Zero", "One"));
 
-        Assert.assertEquals("\"", TextUtils.format("{0}", "\""));
+        assertEquals("\"", format("{0}", "\""));
 
-        Assert.assertEquals("§c§czero, §9§9one§9, two", TextUtils.format("{RED}{RED}{0}, {BLUE}{1}, {2}", "zero", "{BLUE}one", "two"));
+        assertEquals("§c§czero, §9§9one§9, two", format("{RED}{RED}{0}, {BLUE}{1}, {2}", "zero", "{BLUE}one", "two"));
 
-        Assert.assertEquals("§c§czero, §9§9one§9, two", TextUtils.format("{RED}{RED}{0}, §9{1}, {2}", "zero", "§9one", "two"));
+        assertEquals("§c§czero, §9§9one§9, two", format("{RED}{RED}{0}, §9{1}, {2}", "zero", "§9one", "two"));
+
+        assertEquals("§c§czero, §9, ", format("{RED}{RED}{0}, §9{1}, {2}", "zero", "", ""));
+
+        assertEquals("§czero, §a", format("{RED}{0}, {GREEN}{1}", "zero", ""));
     }
 
     @Test
@@ -50,9 +55,9 @@ public class TextFormatterTest {
 
         TextFormatterSettings settings = new TextFormatterSettings().setEscaped('"');
 
-        Assert.assertEquals("\\\"", TextUtils.format(settings, "\""));
+        assertEquals("\\\"", format(settings, "\""));
 
-        Assert.assertEquals("\\\"", TextUtils.format(settings, "{0}", "\""));
+        assertEquals("\\\"", format(settings, "{0}", "\""));
     }
 
     /**
@@ -63,23 +68,23 @@ public class TextFormatterTest {
 
         TextFormatterSettings settings = new TextFormatterSettings().setLineReturnPolicy(FormatPolicy.IGNORE);
 
-        Assert.assertEquals("\\r", TextUtils.format(settings, "\\r"));
+        assertEquals("\\r", format(settings, "\\r"));
 
-        Assert.assertEquals("\\n", TextUtils.format(settings, "\\n"));
+        assertEquals("\\n", format(settings, "\\n"));
 
-        Assert.assertEquals("\\r", TextUtils.format(settings, "{0}", "\\r"));
+        assertEquals("\\r", format(settings, "{0}", "\\r"));
 
-        Assert.assertEquals("\\n", TextUtils.format(settings, "{0}", "\\n"));
+        assertEquals("\\n", format(settings, "{0}", "\\n"));
 
         settings = new TextFormatterSettings().setLineReturnPolicy(FormatPolicy.REMOVE);
 
-        Assert.assertEquals("", TextUtils.format(settings, "\\r"));
+        assertEquals("", format(settings, "\\r"));
 
-        Assert.assertEquals("", TextUtils.format(settings, "\\n"));
+        assertEquals("", format(settings, "\\n"));
 
-        Assert.assertEquals("", TextUtils.format(settings, "{0}", "\\r"));
+        assertEquals("", format(settings, "{0}", "\\r"));
 
-        Assert.assertEquals("", TextUtils.format(settings, "{0}", "\\n"));
+        assertEquals("", format(settings, "{0}", "\\n"));
     }
 
     /**
@@ -90,15 +95,15 @@ public class TextFormatterTest {
 
         TextFormatterSettings settings = new TextFormatterSettings().setColorPolicy(FormatPolicy.IGNORE);
 
-        Assert.assertEquals("{RED}redRed", TextUtils.format(settings, "{RED}red{0}", "Red"));
+        assertEquals("{RED}redRed", format(settings, "{RED}red{0}", "Red"));
 
-        Assert.assertEquals("{RED}red{RED}Red", TextUtils.format(settings, "{RED}red{0}", "{RED}Red"));
+        assertEquals("{RED}red{RED}Red", format(settings, "{RED}red{0}", "{RED}Red"));
 
         settings = new TextFormatterSettings().setColorPolicy(FormatPolicy.REMOVE);
 
-        Assert.assertEquals("redRed", TextUtils.format(settings, "{RED}red{0}", "Red"));
+        assertEquals("redRed", format(settings, "{RED}red{0}", "Red"));
 
-        Assert.assertEquals("redRed", TextUtils.format(settings, "{RED}red{0}", "{RED}Red"));
+        assertEquals("redRed", format(settings, "{RED}red{0}", "{RED}Red"));
     }
 
     /**
@@ -109,15 +114,15 @@ public class TextFormatterTest {
 
         TextFormatterSettings settings = new TextFormatterSettings().setUnicodePolicy(FormatPolicy.IGNORE);
 
-        Assert.assertEquals("\\u00A7unicodeTest", TextUtils.format(settings, "\\u00A7unicode{0}", "Test"));
+        assertEquals("\\u00A7unicodeTest", format(settings, "\\u00A7unicode{0}", "Test"));
 
-        Assert.assertEquals("\\u00A7unicode\\u00A7Test", TextUtils.format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
+        assertEquals("\\u00A7unicode\\u00A7Test", format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
 
         settings = new TextFormatterSettings().setUnicodePolicy(FormatPolicy.REMOVE);
 
-        Assert.assertEquals("unicodeTest", TextUtils.format(settings, "\\u00A7unicode{0}", "Test"));
+        assertEquals("unicodeTest", format(settings, "\\u00A7unicode{0}", "Test"));
 
-        Assert.assertEquals("unicodeTest", TextUtils.format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
+        assertEquals("unicodeTest", format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
     }
 
     /**
@@ -128,21 +133,43 @@ public class TextFormatterTest {
 
         TextFormatterSettings settings = new TextFormatterSettings().setIsArgsFormatted(false);
 
-        Assert.assertEquals("zero, one, two", TextUtils.format(settings, "{0}, {1}, {2}", "zero", "one", "two"));
+        assertEquals("zero, one, two", format(settings, "{0}, {1}, {2}", "zero", "one", "two"));
 
-        Assert.assertEquals("§czero, one, two", TextUtils.format(settings, "{RED}{0}, {1}, {2}", "zero", "one", "two"));
+        assertEquals("§czero, one, two", format(settings, "{RED}{0}, {1}, {2}", "zero", "one", "two"));
 
-        Assert.assertEquals("§czero, §9one§c, two", TextUtils.format(settings, "{RED}{0}, {1}, {2}", "zero", "§9one", "two"));
+        assertEquals("§czero, §9one§c, two", format(settings, "{RED}{0}, {1}, {2}", "zero", "§9one", "two"));
 
-        Assert.assertEquals("§czero, {BLUE}one, two", TextUtils.format(settings, "{RED}{0}, {1}, {2}", "zero", "{BLUE}one", "two"));
+        assertEquals("§czero, {BLUE}one, two", format(settings, "{RED}{0}, {1}, {2}", "zero", "{BLUE}one", "two"));
 
-        Assert.assertEquals("§unicode\\u00A7Test", TextUtils.format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
+        assertEquals("§unicode\\u00A7Test", format(settings, "\\u00A7unicode{0}", "\\u00A7Test"));
 
-        Assert.assertEquals("\n \\n", TextUtils.format(settings, "\\n {0}", "\\n"));
+        assertEquals("\n \\n", format(settings, "\\n {0}", "\\n"));
 
 
         settings.setEscaped('\"');
 
-        Assert.assertEquals("\\\"\"", TextUtils.format(settings, "\"{0}", "\""));
+        assertEquals("\\\"\"", format(settings, "\"{0}", "\""));
+    }
+
+    /**
+     * Test chat message arg
+     */
+    @Test
+    public void testFormat6() throws Exception {
+
+        IChatMessage message1 = TextUtils.format("{RED}red");
+
+        assertEquals("§cred", format("{0}", message1));
+        assertEquals("§cred§9 blue", format("{0}{BLUE} blue", message1));
+        assertEquals("§9§cred§9 blue", format("{BLUE}{0} blue", message1));
+
+    }
+
+    private String format(TextFormatterSettings settings, String template, Object... args) {
+        return TextUtils.format(settings, template, args).toString();
+    }
+
+    private String format(String template, Object... args) {
+        return TextUtils.format(template, args).toString();
     }
 }

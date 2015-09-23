@@ -44,7 +44,7 @@ public final class ActionBars {
      *
      * @param text  The text the action bar displays.
      */
-    public static IActionBar create(String text) {
+    public static IActionBar create(CharSequence text) {
         return manager().create(text);
     }
 
@@ -53,7 +53,7 @@ public final class ActionBars {
      *
      * @param text  The text the action bar displays.
      */
-    public static IPersistentActionBar createPersistent(String text) {
+    public static IPersistentActionBar createPersistent(CharSequence text) {
         return manager().createPersistent(text);
     }
 
@@ -64,7 +64,7 @@ public final class ActionBars {
      * @param minDuration  The minimum display duration when displayed with other persistent action bars.
      * @param timeScale    The time scale of the specified duration.
      */
-    public static IPersistentActionBar createPersistent(String text, int minDuration, TimeScale timeScale) {
+    public static IPersistentActionBar createPersistent(CharSequence text, int minDuration, TimeScale timeScale) {
         return manager().createPersistent(text, minDuration, timeScale);
     }
 
@@ -104,7 +104,7 @@ public final class ActionBars {
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    public static ITimedActionBar createTimed(String text, int duration, TimeScale timeScale) {
+    public static ITimedActionBar createTimed(CharSequence text, int duration, TimeScale timeScale) {
         return manager().createTimed(text, duration, timeScale);
     }
 
@@ -136,7 +136,7 @@ public final class ActionBars {
      * @param player  The player to show the action bar to.
      * @param text    The text the action bar displays.
      */
-    public static void showTo(Player player, String text) {
+    public static void showTo(Player player, CharSequence text) {
         manager().showTo(player, text);
     }
 
@@ -147,7 +147,7 @@ public final class ActionBars {
      * @param text      The text the action bar displays.
      * @param priority  The action bar priority.
      */
-    public static void showTo(Player player, String text, ActionBarPriority priority) {
+    public static void showTo(Player player, CharSequence text, ActionBarPriority priority) {
         manager().showTo(player, text, priority);
     }
 
@@ -182,7 +182,7 @@ public final class ActionBars {
      * @param players  The players to show the action bar to.
      * @param text     The text the action bar displays.
      */
-    public static void showTo(Collection<? extends Player> players, String text) {
+    public static void showTo(Collection<? extends Player> players, CharSequence text) {
         manager().showTo(players, text);
     }
 
@@ -193,7 +193,7 @@ public final class ActionBars {
      * @param text      The text the action bar displays.
      * @param priority  The action bar priority.
      */
-    public static void showTo(Collection<? extends Player> players, String text, ActionBarPriority priority) {
+    public static void showTo(Collection<? extends Player> players, CharSequence text, ActionBarPriority priority) {
         manager().showTo(players, text, priority);
     }
 
@@ -230,7 +230,7 @@ public final class ActionBars {
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    public static void showTimed(Player player, String text, int duration, TimeScale timeScale) {
+    public static void showTimed(Player player, CharSequence text, int duration, TimeScale timeScale) {
         manager().showTimed(player, text, duration, timeScale);
     }
 
@@ -243,7 +243,7 @@ public final class ActionBars {
      * @param timeScale  The time scale of the specified duration.
      * @param priority   The action bar priority.
      */
-    public static void showTimed(Player player, String text,
+    public static void showTimed(Player player, CharSequence text,
                                  int duration, TimeScale timeScale, ActionBarPriority priority) {
         manager().showTimed(player, text, duration, timeScale, priority);
     }
@@ -287,7 +287,7 @@ public final class ActionBars {
      * @param timeScale  The time scale of the specified duration.
      */
     public static void showTimed(Collection<? extends Player> players,
-                                 String text, int duration, TimeScale timeScale) {
+                                 CharSequence text, int duration, TimeScale timeScale) {
         manager().showTimed(players, text, duration, timeScale);
     }
 
@@ -300,7 +300,7 @@ public final class ActionBars {
      * @param timeScale  The time scale of the specified duration.
      * @param priority   The action bar priority.
      */
-    public static void showTimed(Collection<? extends Player> players, String text,
+    public static void showTimed(Collection<? extends Player> players, CharSequence text,
                                  int duration, TimeScale timeScale, ActionBarPriority priority) {
         manager().showTimed(players, text, duration, timeScale, priority);
     }

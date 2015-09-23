@@ -43,5 +43,5 @@ public abstract class FutureSubscriber extends Subscriber {
      * @param status   The status.
      * @param message  Optional status message.
      */
-    public abstract void on(FutureStatus status, @Nullable String message);
+    public abstract void on(FutureStatus status, @Nullable CharSequence message);
 }

@@ -31,10 +31,10 @@ import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Used for returning asynchronous operation result status from a method.
@@ -49,7 +49,7 @@ public class FutureAgent extends SubscriberAgent {
             new SubscriberSetMultimap<>();
 
     private FutureStatus _finalStatus;
-    private String _finalMessage;
+    private CharSequence _finalMessage;
     private boolean _hasFutureSubscribers;
 
     /**
@@ -71,7 +71,7 @@ public class FutureAgent extends SubscriberAgent {
      * @param message  Optional status message.
      * @param args     Optional message format arguments.
      */
-    public void sendStatus(FutureStatus status, @Nullable String message, Object... args) {
+    public void sendStatus(FutureStatus status, @Nullable CharSequence message, Object... args) {
         PreCon.notNull(status);
 
         _finalStatus = status;
@@ -112,7 +112,7 @@ public class FutureAgent extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public IFuture cancel(@Nullable String message, Object... args) {
+    public IFuture cancel(@Nullable CharSequence message, Object... args) {
         sendStatus(FutureStatus.CANCEL, message, args);
         return getFuture();
     }
@@ -135,7 +135,7 @@ public class FutureAgent extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public IFuture error(@Nullable String message, Object... args) {
+    public IFuture error(@Nullable CharSequence message, Object... args) {
         sendStatus(FutureStatus.ERROR, message, args);
         return getFuture();
     }
@@ -157,7 +157,7 @@ public class FutureAgent extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public IFuture success(@Nullable String message, Object... args) {
+    public IFuture success(@Nullable CharSequence message, Object... args) {
         sendStatus(FutureStatus.SUCCESS, message, args);
         return getFuture();
     }
@@ -178,7 +178,7 @@ public class FutureAgent extends SubscriberAgent {
     }
 
     private void sendToSubscribers(
-            String agentName, FutureStatus status, @Nullable String message, Object[] args) {
+            String agentName, FutureStatus status, @Nullable CharSequence message, Object[] args) {
 
         if (message != null)
             message = TextUtils.format(message, args);

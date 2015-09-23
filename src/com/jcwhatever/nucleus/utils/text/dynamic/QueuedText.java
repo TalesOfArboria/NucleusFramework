@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.utils.text.dynamic;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class QueuedText implements IDynamicText {
     }
 
     @Override
-    public String nextText() {
+    public IChatMessage nextText() {
 
         if (_nextUpdate != 0 && _nextUpdate >= System.currentTimeMillis()) {
             return _currentText != null ? _currentText.nextText() : null;
@@ -128,7 +129,7 @@ public class QueuedText implements IDynamicText {
 
     @Override
     public String toString() {
-        return nextText();
+        return nextText().toString();
     }
 
     public class QueueTextBuilder {

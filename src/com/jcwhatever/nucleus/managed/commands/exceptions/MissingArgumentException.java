@@ -34,7 +34,7 @@ public class MissingArgumentException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected MissingArgumentException(String message) {
+    protected MissingArgumentException(CharSequence message) {
         super(message);
     }
 }

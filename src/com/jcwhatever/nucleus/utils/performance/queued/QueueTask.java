@@ -144,7 +144,7 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         onEnd();
 
         if (reason != null)
-            reason = TextUtils.format(reason, args);
+            reason = TextUtils.format(reason, args).toString();
 
         _resultAgent.sendStatus(FutureStatus.CANCEL, reason);
 
@@ -205,7 +205,7 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         onEnd();
 
         if (reason != null)
-            reason = TextUtils.format(reason, args);
+            reason = TextUtils.format(reason, args).toString();
 
         _resultAgent.sendStatus(FutureStatus.ERROR, reason);
 

@@ -36,7 +36,6 @@ import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -47,11 +46,11 @@ import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
-import javax.annotation.Nullable;
 
 
 /**
@@ -188,7 +187,7 @@ public abstract class BuildableRegion extends Region {
 
         project.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(FutureStatus status, @Nullable String message) {
+            public void on(FutureStatus status, @Nullable CharSequence message) {
                 _isBuilding = false;
             }
         });

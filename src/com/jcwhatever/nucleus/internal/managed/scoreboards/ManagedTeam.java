@@ -60,8 +60,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public void setDisplayName(String displayName, Object... args) {
-        _team.setDisplayName(TextUtils.format(displayName, args));
+    public void setDisplayName(CharSequence displayName, Object... args) {
+        _team.setDisplayName(TextUtils.format(displayName, args).toString());
     }
 
     @Override
@@ -70,8 +70,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public void setPrefix(String prefix, Object... args) {
-        _team.setPrefix(TextUtils.format(prefix, args));
+    public void setPrefix(CharSequence prefix, Object... args) {
+        _team.setPrefix(TextUtils.format(prefix, args).toString());
     }
 
     @Override
@@ -80,8 +80,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public void setSuffix(String suffix, Object... args) {
-        _team.setSuffix(TextUtils.format(suffix, args));
+    public void setSuffix(CharSequence suffix, Object... args) {
+        _team.setSuffix(TextUtils.format(suffix, args).toString());
     }
 
     @Override
@@ -156,8 +156,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public void addEntry(String entry) {
-        _team.addEntry(entry);
+    public void addEntry(CharSequence entry) {
+        _team.addEntry(entry.toString());
     }
 
     @Override
@@ -166,8 +166,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public boolean removeEntry(String entry) {
-        return _team.removeEntry(entry);
+    public boolean removeEntry(CharSequence entry) {
+        return _team.removeEntry(entry.toString());
     }
 
     @Override
@@ -181,8 +181,8 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public boolean hasEntry(String entry) {
-        return _team.hasEntry(entry);
+    public boolean hasEntry(CharSequence entry) {
+        return _team.hasEntry(entry.toString());
     }
 
     @Override

@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.managed.language;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,5 +68,5 @@ public interface ILanguageContext extends IPluginOwned {
      * @param params  Optional format arguments.
      */
     @Localized
-    String get(String text, Object... params);
+    IChatMessage get(CharSequence text, Object... params);
 }

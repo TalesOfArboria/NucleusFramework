@@ -49,7 +49,7 @@ class ActionBar implements IActionBar {
      *
      * @param text  The action bar text.
      */
-    public ActionBar(String text) {
+    public ActionBar(CharSequence text) {
         this(new DynamicTextBuilder().append(text).build());
     }
 

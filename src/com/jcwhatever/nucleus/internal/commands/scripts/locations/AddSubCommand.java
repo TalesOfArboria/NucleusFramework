@@ -70,7 +70,7 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
 
         NamedLocation scriptLocation = manager.get(locationName);
         if (scriptLocation != null)
-            throw new CommandException(NucLang.get(_LOCATION_ALREADY_EXISTS), locationName);
+            throw new CommandException(NucLang.get(_LOCATION_ALREADY_EXISTS, locationName));
 
         args.getLocation(sender, "location", new ILocationHandler() {
 

@@ -31,13 +31,12 @@ import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidArgumentExcepti
 import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidParameterException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.annotation.Nullable;
 
 /**
  * Processes command arguments.
@@ -52,6 +51,11 @@ import javax.annotation.Nullable;
  * {@link InvalidParameterException} and {@link TooManyArgsException}.</p>
  */
 public interface ICommandArguments extends IPluginOwned, Iterable<ICommandArgument> {
+
+    /**
+     * Get the command the arguments were parsed for.
+     */
+    IRegisteredCommand getCommand();
 
     /**
      * Get the raw unparsed arguments.

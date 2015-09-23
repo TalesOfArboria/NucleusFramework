@@ -38,7 +38,7 @@ public class DuplicateArgumentException extends CommandException {
      *
      * @param message  The message to tell the command sender.
      */
-    protected DuplicateArgumentException(String message) {
+    protected DuplicateArgumentException(CharSequence message) {
         super(message);
     }
 }

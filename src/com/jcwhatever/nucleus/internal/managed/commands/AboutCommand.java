@@ -45,13 +45,13 @@ import java.util.List;
         isHelpVisible = false)
 class AboutCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable static final String _HEADER = "----------------------------------------";
+    @Localizable static final String _HEADER = "{GRAY}------------------------------------";
     @Localizable static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";
-    @Localizable static final String _AUTHOR = "Plugin by {plugin-author}";
+    @Localizable static final String _AUTHOR = "{GRAY}Plugin by {plugin-author}";
     @Localizable static final String _HELP = "{AQUA}For a list of commands, type '/{plugin-command} ?'";
     @Localizable static final String _HELP2 = "{DARK_AQUA}Add ? after any command to get help. " +
             "Add ?? after any command to get detailed help.";
-    @Localizable static final String _FOOTER = "----------------------------------------";
+    @Localizable static final String _FOOTER = "{GRAY}------------------------------------";
 
     @Override
     public void execute(CommandSender sender,  ICommandArguments args)

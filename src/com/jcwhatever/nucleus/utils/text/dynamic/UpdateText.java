@@ -24,6 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.text.dynamic;
 
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+
 import javax.annotation.Nullable;
 
 /**
@@ -31,7 +34,7 @@ import javax.annotation.Nullable;
  */
 public class UpdateText implements IDynamicText {
 
-    private String _text;
+    private IChatMessage _text;
     private int _refreshRate = 3; // 3 ticks
     private final Object _sync = new Object();
 
@@ -48,7 +51,7 @@ public class UpdateText implements IDynamicText {
      * @param text  The initial text to display.
      */
     public UpdateText(@Nullable String text) {
-        _text = text;
+        _text = text == null ? null : TextUtils.format(text);
     }
 
     /**
@@ -56,7 +59,7 @@ public class UpdateText implements IDynamicText {
      */
     public String getText() {
         synchronized (_sync) {
-            return _text;
+            return _text.toString();
         }
     }
 
@@ -68,12 +71,12 @@ public class UpdateText implements IDynamicText {
     public void setText(@Nullable String text) {
         synchronized (_sync) {
             _refreshRate = 1;
-            _text = text;
+            _text = text == null ? null : TextUtils.format(text);
         }
     }
 
     @Override
-    public String nextText() {
+    public IChatMessage nextText() {
 
         synchronized (_sync) {
             _refreshRate = 5;

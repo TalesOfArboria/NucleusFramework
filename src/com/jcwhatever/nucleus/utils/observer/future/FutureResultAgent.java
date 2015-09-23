@@ -82,7 +82,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> successResult(@Nullable T result, String message, Object... args) {
+    public static <T> IFutureResult<T> successResult(@Nullable T result, CharSequence message, Object... args) {
         return new FutureResultAgent<T>().success(result, message, args);
     }
 
@@ -121,7 +121,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> cancelResult(@Nullable T result, String message, Object... args) {
+    public static <T> IFutureResult<T> cancelResult(@Nullable T result, CharSequence message, Object... args) {
         return new FutureResultAgent<T>().cancel(result, message, args);
     }
 
@@ -160,7 +160,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return  The future result.
      */
-    public static <T> IFutureResult<T> errorResult(@Nullable T result, String message, Object... args) {
+    public static <T> IFutureResult<T> errorResult(@Nullable T result, CharSequence message, Object... args) {
         return new FutureResultAgent<T>().error(result, message, args);
     }
 
@@ -258,7 +258,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public FutureResult<R> cancel(@Nullable R result, @Nullable String message, Object... args) {
+    public FutureResult<R> cancel(@Nullable R result, @Nullable CharSequence message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .cancel()
@@ -311,7 +311,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public FutureResult<R> error(@Nullable R result, @Nullable String message, Object... args) {
+    public FutureResult<R> error(@Nullable R result, @Nullable CharSequence message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .error()
@@ -364,7 +364,7 @@ public class FutureResultAgent<R> extends SubscriberAgent {
      *
      * @return The agents future.
      */
-    public FutureResult<R> success(@Nullable R result, @Nullable String message, Object... args) {
+    public FutureResult<R> success(@Nullable R result, @Nullable CharSequence message, Object... args) {
 
         sendResult(new ResultBuilder<R>()
                 .success()

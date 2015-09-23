@@ -28,18 +28,30 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.parameters.ICommandParameter;
 import com.jcwhatever.nucleus.managed.commands.parameters.IFlagParameter;
+import com.jcwhatever.nucleus.managed.commands.parameters.IParameterDescription;
+import com.jcwhatever.nucleus.managed.commands.parameters.IParameterDescriptions;
 import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.components.IChatClickable.ClickAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
+import com.jcwhatever.nucleus.utils.text.components.IChatHoverable.HoverAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatClickable;
+import com.jcwhatever.nucleus.utils.text.format.args.HoverableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.TextArg;
 
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Generates command usage text.
  */
 class UsageGenerator implements ICommandUsageGenerator {
+
+    private static final String COMMAND = "/{0: root command}{1: command path}{2: command}";
 
     private final String _defaultTemplate;
 
@@ -60,7 +72,7 @@ class UsageGenerator implements ICommandUsageGenerator {
     }
 
     @Override
-    public String generate(IRegisteredCommand command) {
+    public IChatMessage generate(IRegisteredCommand command) {
         PreCon.notNull(command);
 
         if (_defaultTemplate != null) {
@@ -78,7 +90,7 @@ class UsageGenerator implements ICommandUsageGenerator {
     }
 
     @Override
-    public String generate(IRegisteredCommand command, String template) {
+    public IChatMessage generate(IRegisteredCommand command, String template) {
         PreCon.isValid(command instanceof RegisteredCommand);
 
         String rootCommandName = command.getInfo().getRootAliasName();
@@ -105,42 +117,116 @@ class UsageGenerator implements ICommandUsageGenerator {
         }
 
         StringBuilder params = new StringBuilder(30);
+        IParameterDescriptions descriptions = command.getInfo().getParamDescriptions();
+        Deque<Object> paramArgs = new ArrayDeque<>(10);
 
+        // static params
         List<ICommandParameter> staticParams = command.getInfo().getStaticParams();
         for (ICommandParameter parameter : staticParams) {
 
             boolean isRequired = !parameter.hasDefaultValue();
+            IParameterDescription description = descriptions.get(parameter.getName());
 
-            params.append(isRequired ? '<' : '[')
-                  .append(parameter.getName())
-                  .append(isRequired ? '>' : ']')
-                  .append(' ');
+            if (description == null) {
+                params.append(isRequired ? '<' : '[')
+                        .append(parameter.getName())
+                        .append(isRequired ? '>' : ']')
+                        .append(' ');
+            }
+            else {
+                params.append('{')
+                        .append(paramArgs.size())
+                        .append('}');
+
+                paramArgs.add(
+                        new TextArg(new StringBuilder(20)
+                                .append(isRequired ? '<' : '[')
+                                .append(parameter.getName())
+                                .append(isRequired ? '>' : ']')
+                                .append(' '),
+                                new HoverableArgModifier(HoverAction.SHOW_TEXT,
+                                        description.getDescription())));
+            }
         }
 
+        // floating params
         List<ICommandParameter> floatingParams = command.getInfo().getFloatingParams();
         for (ICommandParameter parameter : floatingParams) {
 
             boolean isRequired = !parameter.hasDefaultValue();
+            IParameterDescription description = descriptions.get(parameter.getName());
 
-            params.append(isRequired ? '<' : '[')
-                  .append(ArgumentParser.FLOATING_PREFIX)
-                  .append(parameter.getName())
-                  .append(isRequired ? '>' : ']')
-                  .append(' ');
+            if (description == null) {
+                params.append(isRequired ? '<' : '[')
+                        .append(ArgumentParser.FLOATING_PREFIX)
+                        .append(parameter.getName())
+                        .append(isRequired ? '>' : ']')
+                        .append(' ');
+            }
+            else {
+                params.append('{')
+                        .append(paramArgs.size())
+                        .append('}');
+
+                paramArgs.add(
+                        new TextArg(new StringBuilder(20)
+                                .append(isRequired ? '<' : '[')
+                                .append(ArgumentParser.FLOATING_PREFIX)
+                                .append(parameter.getName())
+                                .append(isRequired ? '>' : ']')
+                                .append(' '),
+                                new HoverableArgModifier(HoverAction.SHOW_TEXT,
+                                        description.getDescription())));
+            }
         }
 
+        // flags
         List<IFlagParameter> flagParams = command.getInfo().getFlagParams();
         for (IFlagParameter parameter : flagParams) {
-            params.append('[')
-                  .append(ArgumentParser.FLAG_PREFIX)
-                  .append(parameter.getName())
-                  .append("] ");
+
+            IParameterDescription description = descriptions.get(parameter.getName());
+
+            if (description == null) {
+                params.append('[')
+                        .append(ArgumentParser.FLAG_PREFIX)
+                        .append(parameter.getName())
+                        .append("] ");
+            }
+            else {
+                params.append('{')
+                        .append(paramArgs.size())
+                        .append('}');
+
+                paramArgs.add(
+                        new TextArg(new StringBuilder(20)
+                                .append('[')
+                                .append(ArgumentParser.FLAG_PREFIX)
+                                .append(parameter.getName())
+                                .append("] "),
+                                new HoverableArgModifier(HoverAction.SHOW_TEXT,
+                                        description.getDescription())));
+            }
         }
 
+        IChatMessage paramMessage = TextUtils.format(params, paramArgs.toArray());
         String commandName = command.getParent() != null
                 ? command.getInfo().getName() + ' '
                 : "";
-        return NucLang.get(command.getPlugin(),
-                template, rootCommandName + ' ', commandPath, commandName, params);
+
+        IChatMessage message = NucLang.get(command.getPlugin(),
+                template, rootCommandName + ' ', commandPath, commandName, paramMessage);
+
+        String baseCommand = TextUtils.format(
+                template.endsWith("?")
+                        ? COMMAND + '?'
+                        : COMMAND, rootCommandName + ' ', commandPath, commandName).toString();
+
+        SimpleChatClickable clickable = new SimpleChatClickable(ClickAction.SUGGEST_COMMAND, baseCommand);
+
+        for (IChatComponent component : message.getComponents()) {
+            component.getModifier().setClickable(clickable);
+        }
+
+        return message;
     }
 }

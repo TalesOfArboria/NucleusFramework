@@ -224,11 +224,11 @@ public final class DateUtils {
      * @param date    The date to format
      * @param format  The format to use
      */
-    public static String format(Date date, String format) {
+    public static String format(Date date, CharSequence format) {
         PreCon.notNull(date);
         PreCon.notNull(format);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format.toString());
         return dateFormat.format(date);
     }
 

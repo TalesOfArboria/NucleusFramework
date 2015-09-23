@@ -31,16 +31,15 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * A collection of ItemStacks that can be used for validation/filtering of ItemStacks.
@@ -67,9 +66,9 @@ public class ItemFilter implements IPluginOwned {
         public String getDisplayName() {
             switch (this) {
                 case WHITELIST:
-                    return NucLang.get(_WHITELIST);
+                    return NucLang.get(_WHITELIST).toString();
                 case BLACKLIST:
-                    return NucLang.get(_BLACKLIST);
+                    return NucLang.get(_BLACKLIST).toString();
                 default:
                     return super.toString();
             }

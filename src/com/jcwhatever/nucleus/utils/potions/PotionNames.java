@@ -122,13 +122,13 @@ public class PotionNames {
 
             switch (potionId) {
                 case 0:
-                    return NucLang.get(_WATER);
+                    return NucLang.get(_WATER).toString();
                 case 16:
-                    return NucLang.get(_AWKWARD);
+                    return NucLang.get(_AWKWARD).toString();
                 case 32:
-                    return NucLang.get(_THICK);
+                    return NucLang.get(_THICK).toString();
                 case 64:
-                    return NucLang.get(_MUNDANE);
+                    return NucLang.get(_MUNDANE).toString();
                 default:
                     throw new IllegalArgumentException(
                             "Failed to get PotionType for Potion name Id: " +  potionId);

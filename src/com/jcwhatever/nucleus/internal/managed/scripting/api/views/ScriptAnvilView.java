@@ -43,7 +43,7 @@ public class ScriptAnvilView extends FilteredAnvilView implements IDisposable {
 
     private final Player _player;
 
-    private String _denyMsg;
+    private CharSequence _denyMsg;
     private boolean _isDisposed;
 
     /**
@@ -113,10 +113,10 @@ public class ScriptAnvilView extends FilteredAnvilView implements IDisposable {
 
     @Override
     public String getDenyMessage() {
-        return _denyMsg == null ? super.getDenyMessage() : _denyMsg;
+        return _denyMsg == null ? super.getDenyMessage() : _denyMsg.toString();
     }
 
-    public void setDenyMessage(@Nullable String message) {
+    public void setDenyMessage(@Nullable CharSequence message) {
 
         if (message != null)
             message = TextUtils.format(message);

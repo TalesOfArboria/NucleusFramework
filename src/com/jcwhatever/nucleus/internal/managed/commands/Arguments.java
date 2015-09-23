@@ -48,7 +48,7 @@ import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.MatchableItem;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -61,12 +61,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
-import javax.annotation.Nullable;
 
 /**
  * Processes command arguments.
@@ -139,6 +139,11 @@ class Arguments implements ICommandArguments {
     @Override
     public Plugin getPlugin() {
         return _plugin;
+    }
+
+    @Override
+    public IRegisteredCommand getCommand() {
+        return _command;
     }
 
     @Override
@@ -457,7 +462,7 @@ class Arguments implements ICommandArguments {
 
     @Override
     public float getFloat(String parameterName) throws InvalidArgumentException {
-        return getFloat(parameterName, -Float.MIN_NORMAL, Float.MAX_VALUE);
+        return getFloat(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     @Override
@@ -491,7 +496,7 @@ class Arguments implements ICommandArguments {
 
     @Override
     public double getDouble(String parameterName) throws InvalidArgumentException {
-        return getDouble(parameterName, -Double.MIN_NORMAL, Double.MAX_VALUE);
+        return getDouble(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     @Override
@@ -711,7 +716,8 @@ class Arguments implements ICommandArguments {
 
                     Location location = selectedBlock.getLocation();
 
-                    String message = NucLang.get("Location selected: {0} ", TextUtils.formatLocation(location, true));
+                    IChatMessage message = NucLang.get("Location selected: {0} ",
+                            TextUtils.formatLocation(location, true));
                     _msg.tell(player, message);
 
                     locationHandler.onLocationRetrieved(player, location);

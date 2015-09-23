@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.text;
 
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -65,11 +67,11 @@ public class SimpleJSONBuilder {
      *
      * @return  Self for chaining.
      */
-    public SimpleJSONBuilder text(String propertyName, String value, Object... args) {
+    public SimpleJSONBuilder text(String propertyName, CharSequence value, Object... args) {
 
-        String text = TextUtils.format(value, args);
+        IChatMessage text = TextUtils.format(value, args);
 
-        _textMap.put(propertyName, text);
+        _textMap.put(propertyName, text.toString());
 
         _estimatedSize += propertyName.length() + text.length() + 20;
 
@@ -163,7 +165,7 @@ public class SimpleJSONBuilder {
 
             for (int i=0; i < textList.size(); i++) {
                 String rawText = textList.get(i);
-                String text = TextUtils.format(rawText);
+                String text = TextUtils.format(rawText).toString();
                 TextComponents components = new TextComponents(text);
 
                 if (i != 0)
@@ -229,7 +231,7 @@ public class SimpleJSONBuilder {
      */
     public static void text(Appendable buffer, Object textTemplate, Object... args) throws IOException {
 
-        String rawText = TextUtils.format(textTemplate, args);
+        String rawText = TextUtils.format(textTemplate, args).toString();
 
         TextComponents components = new TextComponents(rawText);
 

@@ -48,7 +48,7 @@ import java.util.Map;
  */
 public class ScriptMenuView extends MenuView implements IDisposable {
 
-    private final String _title;
+    private final CharSequence _title;
     private final Map<Integer, MenuItem> _menuItems = new HashMap<>(16);
     private final Player _player;
 
@@ -61,7 +61,7 @@ public class ScriptMenuView extends MenuView implements IDisposable {
      * @param player  The player the view is for.
      * @param title   The view title.
      */
-    protected ScriptMenuView(Plugin plugin, Player player, String title) {
+    protected ScriptMenuView(Plugin plugin, Player player, CharSequence title) {
         super(plugin, ItemStackMatcher.getDefault());
 
         PreCon.notNull(title);
@@ -147,7 +147,7 @@ public class ScriptMenuView extends MenuView implements IDisposable {
 
     @Override
     public String getTitle() {
-        return _title;
+        return _title.toString();
     }
 
     @Override

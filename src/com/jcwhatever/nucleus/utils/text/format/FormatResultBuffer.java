@@ -24,48 +24,42 @@
 
 package com.jcwhatever.nucleus.utils.text.format;
 
-import com.jcwhatever.nucleus.utils.text.components.SimpleChatComponent;
-import com.jcwhatever.nucleus.utils.text.components.SimpleChatModifier;
 import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import com.jcwhatever.nucleus.utils.text.components.IChatModifier;
+import com.jcwhatever.nucleus.utils.text.components.NewLineComponent;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatComponent;
+import com.jcwhatever.nucleus.utils.text.components.SimpleChatModifier;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /*
  * 
  */
-public class FormatContext implements IChatComponent, IFormatterAppendable {
+public class FormatResultBuffer implements IFormatterAppendable {
 
-    StringBuilder componentBuffer;
-    IChatModifier modifier = new SimpleChatModifier();
-    boolean isModified;
-    List<IChatComponent> results = new ArrayList<>(20);
+    private final StringBuilder _buffer;
+    private IChatModifier _modifier = new SimpleChatModifier();
+    private boolean _isModified;
+
+    final List<IChatComponent> results = new ArrayList<>(20);
     int lineLen = 0;
 
-    FormatContext() {
-        componentBuffer = new StringBuilder(100);
+    FormatResultBuffer() {
+        _buffer = new StringBuilder(50);
     }
 
-    FormatContext(int len) {
-        componentBuffer = new StringBuilder(len);
+    FormatResultBuffer(int len) {
+        _buffer = new StringBuilder(len);
     }
 
     void newLine() {
-        IChatModifier currModifier = modifier;
-        reset(modifier);
-        results.add(new FormatNewLine());
+        IChatModifier currModifier = _modifier;
+        reset(_modifier);
+        results.add(new NewLineComponent());
         lineLen = 0;
         reset(new SimpleChatModifier(currModifier)); // reset using same modifier
-    }
-
-    void prependNewLine() {
-        if (results.isEmpty())
-            results.add(new FormatNewLine());
-        else
-            results.add(results.size() - 1, new FormatNewLine());
     }
 
     void incrementCharCount(int amount) {
@@ -78,10 +72,10 @@ public class FormatContext implements IChatComponent, IFormatterAppendable {
 
     void reset(IChatModifier modifier) {
         if (isModified()) {
-            results.add(new SimpleChatComponent(componentBuffer.toString(), this.modifier));
+            results.add(new SimpleChatComponent(_buffer.toString(), this._modifier));
         }
-        componentBuffer.setLength(0);
-        this.modifier = modifier;
+        _buffer.setLength(0);
+        this._modifier = modifier;
     }
 
     void hardReset() {
@@ -91,61 +85,33 @@ public class FormatContext implements IChatComponent, IFormatterAppendable {
     }
 
     boolean isModified() {
-        return isModified || modifier.isModified();
+        return _isModified || _modifier.isModified();
     }
 
     @Override
     public void append(Object object) {
-        isModified = true;
 
         if (object instanceof IChatMessage) {
             reset();
             ((IChatMessage) object).getComponents(results);
             return;
         }
-
-        componentBuffer.append(object);
-    }
-
-    public void appendPrefix(IChatMessage message) {
-        IChatModifier currMod = modifier;
-        reset();
-        message.getComponents(results);
-        reset(currMod);
-    }
-
-    @Override
-    public String getText() {
-        return componentBuffer.toString();
-    }
-
-    @Override
-    public void getText(Appendable output) {
-        try {
-            output.append(componentBuffer);
-        } catch (IOException e) {
-            e.printStackTrace();
+        else if (object instanceof IChatComponent) {
+            reset();
+            results.add((IChatComponent) object);
+            return;
         }
-    }
 
-    @Override
-    public String getFormatted() {
-        return modifier.getFormatted() + getText();
-    }
-
-    @Override
-    public void getFormatted(Appendable output) {
-        modifier.getFormatted(output);
-        getText(output);
+        _isModified = true;
+        _buffer.append(object);
     }
 
     @Override
     public IChatModifier getModifier() {
-        return modifier;
+        return _modifier;
     }
 
-    @Override
     public void setModifier(IChatModifier modifier) {
-        this.modifier = modifier;
+        this._modifier = modifier;
     }
 }

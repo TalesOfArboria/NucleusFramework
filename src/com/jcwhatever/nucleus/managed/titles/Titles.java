@@ -78,7 +78,7 @@ public final class Titles {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    public static ITitle create(String title, @Nullable String subTitle,
+    public static ITitle create(CharSequence title, @Nullable CharSequence subTitle,
                   int fadeInTime, int stayTime, int fadeOutTime) {
         return manager().create(title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }
@@ -89,7 +89,7 @@ public final class Titles {
      * @param player  The player to show the title to.
      * @param title   The title text.
      */
-    public static void showTo(Player player, String title) {
+    public static void showTo(Player player, CharSequence title) {
         manager().showTo(player, title);
     }
 
@@ -100,7 +100,7 @@ public final class Titles {
      * @param title     The title text.
      * @param subTitle  The sub title text.
      */
-    public static void showTo(Player player, String title, @Nullable String subTitle) {
+    public static void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle) {
         manager().showTo(player, title, subTitle);
     }
 
@@ -113,7 +113,7 @@ public final class Titles {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    public static void showTo(Player player, String title,
+    public static void showTo(Player player, CharSequence title,
                               int fadeInTime, int stayTime, int fadeOutTime) {
         manager().showTo(player, title, fadeInTime, stayTime, fadeOutTime);
     }
@@ -128,7 +128,7 @@ public final class Titles {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    public static void showTo(Player player, String title, @Nullable String subTitle,
+    public static void showTo(Player player, CharSequence title, @Nullable CharSequence subTitle,
                 int fadeInTime, int stayTime, int fadeOutTime) {
         manager().showTo(player, title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }
@@ -139,7 +139,7 @@ public final class Titles {
      * @param players      The players to show the title to.
      * @param title        The title text.
      */
-    public static void showTo(Collection<? extends Player> players, String title) {
+    public static void showTo(Collection<? extends Player> players, CharSequence title) {
         manager().showTo(players, title);
     }
 
@@ -151,7 +151,7 @@ public final class Titles {
      * @param subTitle     The sub title text.
      */
     public static void showTo(Collection<? extends Player> players,
-                              String title, @Nullable String subTitle) {
+                              CharSequence title, @Nullable CharSequence subTitle) {
         manager().showTo(players, title, subTitle);
     }
 
@@ -164,7 +164,7 @@ public final class Titles {
      * @param stayTime     The stay visible time in ticks.
      * @param fadeOutTime  The fade-out time in ticks.
      */
-    public static void showTo(Collection<? extends Player> players, String title,
+    public static void showTo(Collection<? extends Player> players, CharSequence title,
                 int fadeInTime, int stayTime, int fadeOutTime) {
         manager().showTo(players, title, fadeInTime, stayTime, fadeOutTime);
     }
@@ -180,7 +180,7 @@ public final class Titles {
      * @param fadeOutTime  The fade-out time in ticks.
      */
     public static void showTo(Collection<? extends Player> players,
-                              String title, @Nullable String subTitle,
+                              CharSequence title, @Nullable CharSequence subTitle,
                               int fadeInTime, int stayTime, int fadeOutTime) {
         manager().showTo(players, title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }

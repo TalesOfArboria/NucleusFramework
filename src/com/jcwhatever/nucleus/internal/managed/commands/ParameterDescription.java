@@ -148,7 +148,7 @@ class ParameterDescription implements IParameterDescription {
 
         _command = command;
         _parameterName = parameterName;
-        _description = TextUtils.format(FORMAT_SETTINGS, NucLang.get(command.getPlugin(), description));
+        _description = TextUtils.format(FORMAT_SETTINGS, NucLang.get(command.getPlugin(), description)).toString();
     }
 
     /**
@@ -174,7 +174,7 @@ class ParameterDescription implements IParameterDescription {
 
         // re-add equal characters that may have been in the description.
         _description = TextUtils.format(FORMAT_SETTINGS,
-                NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
+                NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "="))).toString();
     }
 
     @Override

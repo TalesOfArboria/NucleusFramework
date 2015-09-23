@@ -36,7 +36,11 @@ import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.scripting.items.IScriptItem;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
-
+import com.jcwhatever.nucleus.utils.text.components.IChatHoverable.HoverAction;
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+import com.jcwhatever.nucleus.utils.text.format.args.ClickGiveItemsArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.HoverableArgModifier;
+import com.jcwhatever.nucleus.utils.text.format.args.TextArg;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collection;
@@ -55,18 +59,26 @@ import java.util.Collection;
 class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Quest Items";
+    @Localizable static final String _CLICK_MESSAGE = "{YELLOW}Click to receive item.";
 
     @Override
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 7, NucLang.get(_PAGINATOR_TITLE));
 
         Collection<IScriptItem> items = Nucleus.getScriptManager().getItems().getAll();
 
+        IChatMessage clickMessage = NucLang.get(_CLICK_MESSAGE);
+
         for (IScriptItem item : items) {
-            pagin.add(item.getName(), ItemStackUtils.serialize(item.getItem()));
+
+            TextArg name = new TextArg(item.getName(),
+                    new ClickGiveItemsArgModifier(item.getItem()),
+                    new HoverableArgModifier(HoverAction.SHOW_TEXT, clickMessage));
+
+            pagin.add(name, ItemStackUtils.serialize(item.getItem()));
         }
 
         if (!args.isDefaultValue("search"))

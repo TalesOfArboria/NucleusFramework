@@ -37,7 +37,7 @@ public class ResultBuilder<R> {
 
     private double _totalCompletion;
     private double _resultCompletion;
-    private String _message;
+    private CharSequence _message;
     private R _result;
 
     /**
@@ -121,7 +121,7 @@ public class ResultBuilder<R> {
      *
      * @return  Self for chaining.
      */
-    public ResultBuilder<R> message(@Nullable String message, Object... args) {
+    public ResultBuilder<R> message(@Nullable CharSequence message, Object... args) {
         _message = message == null ? null : TextUtils.format(message, args);
         return this;
     }

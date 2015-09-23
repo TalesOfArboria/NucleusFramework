@@ -60,7 +60,7 @@ public final class NucleusCurrency implements ICurrency {
 
         String formattedDecimal = _formatter.format(amount);
         return TextUtils.format(_template,
-                formattedDecimal, (amount > 1 ? _plural : _singular));
+                formattedDecimal, (amount > 1 ? _plural : _singular)).toString();
     }
 
     @Override

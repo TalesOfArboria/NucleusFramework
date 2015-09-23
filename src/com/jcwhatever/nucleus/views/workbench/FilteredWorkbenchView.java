@@ -106,7 +106,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      * Invoked to get the craft deny message displayed in item lore.
      */
     protected String getDenyLore() {
-        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_LORE);
+        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_LORE).toString();
     }
 
     /**
@@ -116,7 +116,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      */
     @Nullable
     protected String getDenyChat() {
-        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_CHAT);
+        return NucLang.get(getPlugin(), _NOT_CRAFTABLE_CHAT).toString();
     }
 
     /**

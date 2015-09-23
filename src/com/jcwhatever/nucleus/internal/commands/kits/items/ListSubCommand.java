@@ -25,7 +25,6 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits.items;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.commands.kits.AbstractKitCommand;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
@@ -69,7 +68,7 @@ class ListSubCommand extends AbstractKitCommand implements IExecutableCommand {
         if (kit == null)
             throw new CommandException(NucLang.get(_KIT_NOT_FOUND, kitName));
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 5, NucLang.get(_PAGINATOR_TITLE));
 
         // Armor
         pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(_LABEL_ARMOR));

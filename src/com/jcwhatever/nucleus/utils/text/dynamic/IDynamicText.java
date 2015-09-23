@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.text.dynamic;
 
+import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
+
 /**
  * Represents a text generator that produces changing text.
  */
@@ -32,7 +34,7 @@ public interface IDynamicText {
     /**
      * Get the next String to display.
      */
-    String nextText();
+    IChatMessage nextText();
 
     /**
      * The preferred (but not guaranteed) speed the text should be
