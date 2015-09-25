@@ -171,7 +171,8 @@ public final class InternalMessengerFactory implements IMessengerFactory {
      * Get a chat prefix from the supplied object.
      */
     public static String getChatPrefix(@Nullable Object source) {
-        if (source instanceof IChatPrefixed) {
+        if (source instanceof IChatPrefixed
+                && ((IChatPrefixed) source).getChatPrefix() != null) {
             return ((IChatPrefixed) source).getChatPrefix();
         }
         else if (source instanceof Plugin) {
@@ -192,7 +193,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
      * Get a console prefix from the supplied object.
      */
     public static String getConsolePrefix(@Nullable Object source) {
-        return source instanceof IChatPrefixed
+        return source instanceof IChatPrefixed && ((IChatPrefixed) source).getConsolePrefix() != null
                 ? ((IChatPrefixed) source).getConsolePrefix()
                 : getChatPrefix(source);
     }
