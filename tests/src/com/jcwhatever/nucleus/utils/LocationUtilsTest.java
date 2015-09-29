@@ -238,6 +238,61 @@ public class LocationUtilsTest {
     }
 
     @Test
+    public void testGetYawAngle() throws Exception {
+
+        World world = BukkitTester.world("dummy");
+
+        Location source = new Location(world, 0, 0, 0);
+        Location target = new Location(world, 10, 0, 10);
+
+        float yaw = LocationUtils.getYawAngle(source, target);
+
+        assertEquals(-45, yaw, 0.0D);
+    }
+
+    @Test
+    public void testGetYawAngle2() throws Exception {
+
+        World world = BukkitTester.world("dummy");
+
+        Location source = new Location(world, 10, 0, 10);
+        Location target = new Location(world, 20, 0, 20);
+
+        float yaw = LocationUtils.getYawAngle(source, target);
+
+        assertEquals(-45, yaw, 0.0D);
+    }
+
+    @Test
+    public void testGetYawAngle3() throws Exception {
+
+        World world = BukkitTester.world("dummy");
+
+        Location source = new Location(world, 0, 0, 0);
+        Location target = new Location(world, -10, 0, -10);
+
+        float yaw = LocationUtils.getYawAngle(source, target);
+
+        assertEquals(135, yaw, 0.0D);
+    }
+
+    @Test
+    public void testGetYawAngle4() throws Exception {
+
+        World world = BukkitTester.world("dummy");
+
+        Location source = new Location(world, 0, 0, 0);
+        Location target = new Location(world, 0, 0, 10);
+
+        float yaw = LocationUtils.getYawAngle(source, target);
+
+        assertEquals(0.0D, yaw, 0.0D);
+
+        // make sure 0 value is not negated
+        assertTrue(Float.compare(yaw, 0.0f) == 0);
+    }
+
+    @Test
     public void testGetClosestLocation1() throws Exception {
         World world = BukkitTester.world("dummy");
 
@@ -282,5 +337,33 @@ public class LocationUtilsTest {
         assertEquals(0, result.getZ(), 0.0D);
         assertEquals(0, result.getYaw(), 0.0D);
         assertEquals(0, result.getPitch(), 0.0D);
+    }
+
+    @Test
+    public void testClampYaw() throws Exception {
+
+        float yaw = LocationUtils.clampYaw(360);
+        assertEquals(0, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(-360);
+        assertEquals(0, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(-180);
+        assertEquals(-180, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(-45);
+        assertEquals(-45, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(45);
+        assertEquals(45, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(180);
+        assertEquals(180, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(179);
+        assertEquals(179, yaw, 0.0f);
+
+        yaw = LocationUtils.clampYaw(-179);
+        assertEquals(-179, yaw, 0.0f);
     }
 }

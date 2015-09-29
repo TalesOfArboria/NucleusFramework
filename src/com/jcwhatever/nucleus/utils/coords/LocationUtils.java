@@ -800,7 +800,8 @@ public final class LocationUtils {
 
         double angle = Math.atan2(deltaY, deltaX);
 
-        return -(float)Math.toDegrees(angle);
+        float result = (float)Math.toDegrees(angle);
+        return Float.compare(result, 0.0f) == 0 ? result : -result;
     }
 
     /**
@@ -811,9 +812,11 @@ public final class LocationUtils {
      * @return Clamped yaw angle.
      */
     public static float clampYaw(float yaw) {
-        return yaw >= 0
-                ? ((180 + yaw) % 360) - 180
-                : 180 - ((Math.abs(yaw) + 180) % 360);
+        while (yaw > 180f)
+            yaw -= 360f;
+        while (yaw < -180f)
+            yaw += 360f;
+        return yaw;
     }
 
     /**
