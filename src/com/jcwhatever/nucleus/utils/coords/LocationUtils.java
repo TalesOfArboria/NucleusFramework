@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
+import com.jcwhatever.nucleus.providers.math.FastMath;
+import com.jcwhatever.nucleus.providers.math.IRotationMatrix;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
@@ -66,8 +68,7 @@ public final class LocationUtils {
         }
     };
 
-    private static final ThreadSingletons<Location> MUTABLE_LOCATIONS =
-            new ThreadSingletons<>(SINGLETON_FACTORY);
+    private static final Vector3D VECTOR = new Vector3D();
 
     /**
      * Create a new {@link ThreadSingletons}.
@@ -771,8 +772,8 @@ public final class LocationUtils {
 
         double radianYaw = Math.toRadians(-yaw);
 
-        double x = Math.sin(radianYaw) * distance;
-        double z = Math.cos(radianYaw) * distance;
+        double x = FastMath.sin(radianYaw) * distance;
+        double z = FastMath.cos(radianYaw) * distance;
 
         output.setWorld(source.getWorld());
         output.setX(source.getX() + x);
@@ -794,11 +795,10 @@ public final class LocationUtils {
         PreCon.notNull(source);
         PreCon.notNull(target);
 
-        // Y and X to prevent ide warnings on Math.atan2
-        double deltaY = target.getX() - source.getX();
-        double deltaX = target.getZ() - source.getZ();
+        double deltaX = target.getX() - source.getX();
+        double deltaZ = target.getZ() - source.getZ();
 
-        double angle = Math.atan2(deltaY, deltaX);
+        double angle = FastMath.atan2(deltaX, deltaZ);
 
         float result = (float)Math.toDegrees(angle);
         return Float.compare(result, 0.0f) == 0 ? result : -result;
@@ -869,56 +869,21 @@ public final class LocationUtils {
         PreCon.notNull(location);
         PreCon.notNull(output);
 
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
+        Vector3D vector = VECTOR.copyFrom3D(location).subtract3D(axis);
 
-        double centerX = axis.getX();
-        double centerY = axis.getY();
-        double centerZ = axis.getZ();
+        IRotationMatrix xMatrix = FastMath.getRotationMatrix((float)rotationX);
+        IRotationMatrix yMatrix = FastMath.getRotationMatrix((float)rotationY);
+        IRotationMatrix zMatrix = FastMath.getRotationMatrix((float)rotationZ);
 
-        double translateX = x;
-        double translateY = y;
-        double translateZ = z;
-        double yaw = location.getYaw();
-
-        // rotate on X axis
-        if (Double.compare(rotationX, 0.0D) != 0) {
-            double rotX = Math.toRadians(rotationX);
-            translateY = rotateX(centerY, centerZ, y, z, rotX);
-            translateZ = rotateZ(centerY, centerZ, y, z, rotX);
-        }
-
-        // rotate on Y axis
-        if (Double.compare(rotationY, 0.0D) != 0) {
-            double rotY = Math.toRadians(rotationY);
-            translateX = rotateX(centerX, centerZ, x, z, rotY);
-            translateZ = rotateZ(centerX, centerZ, x, z, rotY);
-            yaw += rotationY;
-        }
-
-        // rotate on Z axis
-        if (Double.compare(rotationZ, 0.0D) != 0) {
-            double rotZ = Math.toRadians(rotationZ);
-            translateX = rotateX(centerX, centerY, x, y, rotZ);
-            translateY = rotateZ(centerX, centerY, x, y, rotZ);
-        }
+        xMatrix.rotateX(vector, vector);
+        yMatrix.rotateY(vector, vector);
+        zMatrix.rotateZ(vector, vector);
 
         output.setWorld(location.getWorld());
-        output.setX(translateX);
-        output.setY(translateY);
-        output.setZ(translateZ);
-        output.setYaw((float) yaw);
+        output.setYaw(location.getYaw() + (float)rotationY);
         output.setPitch(location.getPitch());
+        vector.add3D(axis).copyTo3D(output);
 
         return output;
-    }
-
-    private static double rotateX(double centerA, double centerB, double a, double b, double rotation) {
-        return centerA + Math.cos(rotation) * (a - centerA) - Math.sin(rotation) * (b - centerB);
-    }
-
-    private static double rotateZ(double centerA, double centerB, double a, double b, double rotation) {
-        return centerB + Math.sin(rotation) * (a - centerA) + Math.cos(rotation) * (b - centerB);
     }
 }

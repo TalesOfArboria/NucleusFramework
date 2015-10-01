@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.managed.nms;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.IVector3D;
 import com.jcwhatever.nucleus.utils.nms.INmsEntityHandler;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -33,6 +34,8 @@ import org.bukkit.util.Vector;
  * Implementation of {@link INmsEntityHandler}.
  */
 class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
+
+    private static final Vector VELOCITY = new Vector();
 
     @Override
     public boolean isVisible(Entity entity) {
@@ -49,10 +52,21 @@ class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
     }
 
     @Override
-    public void getVelocity(Entity entity, Vector output) {
+    public Vector getVelocity(Entity entity, Vector output) {
         PreCon.notNull(entity);
         PreCon.notNull(output);
 
         nms().getVelocity(entity, output);
+        return output;
+    }
+
+    @Override
+    public <T extends IVector3D> T getVelocity(Entity entity, T output) {
+        PreCon.notNull(entity);
+        PreCon.notNull(output);
+
+        nms().getVelocity(entity, VELOCITY);
+        output.copyFrom3D(VELOCITY);
+        return output;
     }
 }

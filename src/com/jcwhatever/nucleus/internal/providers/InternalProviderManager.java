@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.friends.NucleusFriendsProvider;
 import com.jcwhatever.nucleus.internal.providers.jail.NucleusJailProvider;
 import com.jcwhatever.nucleus.internal.providers.kits.NucleusKitProvider;
+import com.jcwhatever.nucleus.internal.providers.math.NucleusFastMathProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.bukkit.BukkitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.vault.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
@@ -49,6 +50,7 @@ import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.kits.IKitProvider;
+import com.jcwhatever.nucleus.providers.math.IFastMathProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
@@ -99,6 +101,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile IRegionSelectProvider _regionSelect;
     private volatile IEconomyProvider _economy;
     private volatile IBankItemsProvider _bankItems;
+    private volatile IFastMathProvider _math;
     private volatile INpcProvider _npc;
     private volatile IJailProvider _jail;
     private volatile IStorageProvider _defaultStorage;
@@ -156,6 +159,11 @@ public final class InternalProviderManager implements IProviderManager {
             _economy = add(VaultEconomyBankProvider.hasBankEconomy()
                     ? new VaultEconomyBankProvider()
                     : new VaultEconomyProvider());
+        }
+
+        String prefMath = getPreferred(ProviderType.MATH);
+        if (NucleusFastMathProvider.NAME.equalsIgnoreCase(prefMath) || prefMath == null) {
+            _math = add(new NucleusFastMathProvider());
         }
 
         // setup preferred internal friends
@@ -408,6 +416,9 @@ public final class InternalProviderManager implements IProviderManager {
             case KITS:
                 provider = _kits;
                 break;
+            case MATH:
+                provider = _math;
+                break;
             case NPC:
                 provider = _npc;
                 break;
@@ -642,6 +653,20 @@ public final class InternalProviderManager implements IProviderManager {
 
         output.addAll(_storageProviders.values());
         return output;
+    }
+
+    @Override
+    public IFastMathProvider getMath() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_math == null) {
+            _math = new NucleusFastMathProvider();
+            _math.registerTypes();
+            _math.enable();
+        }
+        return _math;
     }
 
     @Override

@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.utils;
 
+import com.jcwhatever.nucleus.providers.math.FastMath;
+
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -38,7 +40,6 @@ public final class Rand {
     static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "01234567890`~!@#$%^&*()_+-=";
-    static final XORShiftRandom XOR_RANDOM = new XORShiftRandom();
 
     /**
      * Get a random item from a list.
@@ -100,7 +101,7 @@ public final class Rand {
      */
     public static int getInt(int min, int max) {
         int range = max - min + 1;
-        int i = Math.abs(XOR_RANDOM.nextInt()) % range;
+        int i = Math.abs(getInt()) % range;
         return  min + i;
     }
 
@@ -110,14 +111,18 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static int getInt(int max) {
-        return XOR_RANDOM.nextInt(max);
+        if (max <= 1)
+            return 0;
+
+        return getInt() % max;
     }
 
     /**
      * Get a random integer.
      */
     public static int getInt() {
-        return XOR_RANDOM.nextInt();
+        long l = FastMath.randomLong();
+        return Math.abs((int) ((l >> 32) ^ ((int) l)));
     }
 
     /**
@@ -254,29 +259,5 @@ public final class Rand {
         int chance = 100 / sides;
 
         return chance(chance);
-    }
-
-    private static class XORShiftRandom {
-        volatile long x = System.currentTimeMillis();
-
-        long next() {
-            long w = x;
-            w ^= (w << 21);
-            w ^= (w >>> 35);
-            w ^= (w << 4);
-            return x = w;
-        }
-
-        int nextInt() {
-            long l = next();
-            return Math.abs((int) ((l >> 32) ^ ((int) l)));
-        }
-
-        int nextInt(int max) {
-            if (max <= 1)
-                return 0;
-
-            return nextInt() % max;
-        }
     }
 }

@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.kits.IKitProvider;
+import com.jcwhatever.nucleus.providers.math.IFastMathProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
@@ -38,9 +39,9 @@ import com.jcwhatever.nucleus.providers.sql.ISqlProvider;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * Service provider types.
@@ -52,6 +53,7 @@ public enum ProviderType implements INamedInsensitive {
     FRIENDS       ("Friends",      IFriendsProvider.class),
     JAIL          ("Jail",         IJailProvider.class),
     KITS          ("Kits",         IKitProvider.class),
+    MATH          ("Math",         IFastMathProvider.class),
     NPC           ("NPC",          INpcProvider.class),
     PERMISSIONS   ("Permissions",  IPermissionsProvider.class),
     PLAYER_LOOKUP ("PlayerLookup", IPlayerLookupProvider.class),

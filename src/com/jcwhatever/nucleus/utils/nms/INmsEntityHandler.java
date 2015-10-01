@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.nms;
 
+import com.jcwhatever.nucleus.utils.coords.IVector3D;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
@@ -52,6 +53,18 @@ public interface INmsEntityHandler extends INmsHandler {
      *
      * @param entity  The entity.
      * @param output  The output vector.
+     *
+     * @return  The output vector.
      */
-    void getVelocity(Entity entity, Vector output);
+    Vector getVelocity(Entity entity, Vector output);
+
+    /**
+     * Copy the entity velocity into the specified output vector.
+     *
+     * @param entity  The entity.
+     * @param output  The output vector.
+     *
+     * @return  The output vector.
+     */
+    <T extends IVector3D> T getVelocity(Entity entity, T output);
 }
