@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.utils.nms;
 
 import com.jcwhatever.nucleus.utils.coords.IVector3D;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -67,4 +68,46 @@ public interface INmsEntityHandler extends INmsHandler {
      * @return  The output vector.
      */
     <T extends IVector3D> T getVelocity(Entity entity, T output);
+
+    /**
+     * Get the forward motion applied by the specified player.
+     *
+     * @param player  The player.
+     */
+    float getForwardMotion(Player player);
+
+    /**
+     * Get the lateral motion applied by the specified player.
+     *
+     * @param player  The player.
+     */
+    float getLateralMotion(Player player);
+
+    /**
+     * Determine if the specified player is pressing the move forward button (W).
+     *
+     * @param player  The player.
+     */
+    boolean isForwardPressed(Player player);
+
+    /**
+     * Determine if the specified player is pressing the move backwards button (S).
+     *
+     * @param player  The player.
+     */
+    boolean isBackwardPressed(Player player);
+
+    /**
+     * Determine if the specified player is pressing the move left button (A).
+     *
+     * @param player  The player.
+     */
+    boolean isLeftPressed(Player player);
+
+    /**
+     * Determine if the specified player is pressing the move right button (D).
+     *
+     * @param player  The player.
+     */
+    boolean isRightPressed(Player player);
 }

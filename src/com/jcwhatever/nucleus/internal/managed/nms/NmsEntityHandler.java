@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.IVector3D;
 import com.jcwhatever.nucleus.utils.nms.INmsEntityHandler;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -68,5 +69,35 @@ class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
         nms().getVelocity(entity, VELOCITY);
         output.copyFrom3D(VELOCITY);
         return output;
+    }
+
+    @Override
+    public float getForwardMotion(Player player) {
+        return nms().getForwardMotion(player);
+    }
+
+    @Override
+    public float getLateralMotion(Player player) {
+        return nms().getLateralMotion(player);
+    }
+
+    @Override
+    public boolean isForwardPressed(Player player) {
+        return nms().getForwardMotion(player) > 0;
+    }
+
+    @Override
+    public boolean isBackwardPressed(Player player) {
+        return nms().getForwardMotion(player) < 0;
+    }
+
+    @Override
+    public boolean isLeftPressed(Player player) {
+        return nms().getLateralMotion(player) < 0;
+    }
+
+    @Override
+    public boolean isRightPressed(Player player) {
+        return nms().getLateralMotion(player) > 0;
     }
 }

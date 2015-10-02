@@ -227,4 +227,18 @@ interface INms {
      * @param message  The chat message.
      */
     void send(Collection<? extends Player> players, IChatMessage message);
+
+    /**
+     * Get the forward motion applied by the specified player.
+     *
+     * @param player  The player.
+     */
+    float getForwardMotion(Player player);
+
+    /**
+     * Get the lateral motion applied by the specified player.
+     *
+     * @param player  The player.
+     */
+    float getLateralMotion(Player player);
 }

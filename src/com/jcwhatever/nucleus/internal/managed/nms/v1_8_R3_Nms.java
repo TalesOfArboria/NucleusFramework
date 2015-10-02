@@ -53,6 +53,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftContainer;
@@ -338,5 +339,15 @@ class v1_8_R3_Nms implements INms {
 
             nmsPlayer.playerConnection.sendPacket(packet);
         }
+    }
+
+    @Override
+    public float getForwardMotion(Player player) {
+        return ((CraftLivingEntity)player).getHandle().ba;
+    }
+
+    @Override
+    public float getLateralMotion(Player player) {
+        return ((CraftLivingEntity)player).getHandle().aZ;
     }
 }
