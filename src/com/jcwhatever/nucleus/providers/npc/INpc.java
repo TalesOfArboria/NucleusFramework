@@ -66,6 +66,20 @@ public interface INpc extends INpcState, INpcScriptEvents, IDisposable {
     INpc setDisplayName(String name);
 
     /**
+     * Determine if the NPC's name-plate is visible.
+     */
+    boolean isDisplayNameVisible();
+
+    /**
+     * Set the NPC's name-plate visibility.
+     *
+     * @param isVisible  True to make name-plate visible, otherwise false.
+     *
+     * @return  Self for chaining.
+     */
+    INpc setDisplayNameVisible(boolean isVisible);
+
+    /**
      * Spawn the NPC in the specified location.
      *
      * <p>If the NPC is already spawned, the NPC is teleported to the
