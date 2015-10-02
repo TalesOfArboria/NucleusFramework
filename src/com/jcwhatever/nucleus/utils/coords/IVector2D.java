@@ -217,14 +217,14 @@ public interface IVector2D extends ICoords2D {
     double getDot2D(ICoords2D vector);
 
     /**
-     * Get vector magnitude.
+     * Get vector magnitude from X and Z axis.
      */
-    double getMagnitude();
+    double getMagnitude2D();
 
     /**
-     * Get vector magnitude.
+     * Get vector magnitude squared from X and Z axis.
      */
-    double getMagnitudeSquared();
+    double getMagnitudeSquared2D();
 
     /**
      * Get vector direction.

@@ -356,23 +356,17 @@ public final class ItemStackUtils {
      *
      * @param itemString  The {@link ItemStack} string to parse.
      *
-     * @throws InvalidItemStackStringException
-     *
-     * @return  Null if the string could not be parsed.
+     * @throws InvalidItemStackStringException  If the item stack string could not be parsed.
      *
      * @see IItemStackSerializer
      * @see IItemStackDeserializer
      */
-    @Nullable
     public static ItemStack[] parse(String itemString) throws InvalidItemStackStringException {
 
         if (itemString == null || itemString.length() == 0)
             return new ItemStack[0];
 
-        IItemStackDeserializer parser;
-
-        parser = Nucleus.getItemSerialization().parse(itemString);
-
+        IItemStackDeserializer parser = Nucleus.getItemSerialization().parse(itemString);
         return parser.getArray();
     }
 

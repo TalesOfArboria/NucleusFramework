@@ -40,6 +40,8 @@ public class Vector3D extends Vector2D implements IVector3D {
     private static final Vector ENTITY_VELOCITY = new Vector();
 
     protected double _y;
+    protected transient double _magnitude3D;
+    protected transient boolean _hasMagnitude3D;
     private transient AsVector _asVector;
 
     /**
@@ -401,14 +403,16 @@ public class Vector3D extends Vector2D implements IVector3D {
 
     @Override
     public Vector3D normalize() {
-        double magnitude = getMagnitude();
+        double magnitude = getMagnitude3D();
         if (magnitude < 0.0D || magnitude > 0.0D) {
             _x /= magnitude;
             _z /= magnitude;
             _y /= magnitude;
             onChange();
-            _magnitude = 1;
-            _hasMagnitude = true;
+            _magnitude3D = 1;
+            _hasMagnitude3D = true;
+            _magnitude2D = 1;
+            _hasMagnitude2D = true;
         }
         return this;
     }
@@ -417,8 +421,10 @@ public class Vector3D extends Vector2D implements IVector3D {
     public Vector3D reset() {
         _x = _y = _z = 0;
         resetCaches();
-        _magnitude = 0;
-        _hasMagnitude = true;
+        _magnitude3D = 0;
+        _hasMagnitude3D = true;
+        _magnitude2D = 0;
+        _hasMagnitude2D = true;
         return this;
     }
 
@@ -430,7 +436,16 @@ public class Vector3D extends Vector2D implements IVector3D {
     }
 
     @Override
-    public double getMagnitudeSquared() {
+    public double getMagnitude3D() {
+        if (_hasMagnitude3D)
+            return _magnitude3D;
+
+        _hasMagnitude3D = true;
+        return _magnitude3D = Math.sqrt(_x * _x + _y * _y + _z * _z);
+    }
+
+    @Override
+    public double getMagnitudeSquared3D() {
         return _x * _x + _y * _y + _z * _z;
     }
 
@@ -509,10 +524,20 @@ public class Vector3D extends Vector2D implements IVector3D {
         }
     }
 
-    private void resetCaches() {
-        _hasDirection = false;
-        _hasMagnitude = false;
-        _hasYaw = false;
+    @Override
+    protected void copyCaches(Vector2D vector) {
+        super.copyCaches(vector);
+
+        if (vector instanceof Vector3D) {
+            _magnitude3D = ((Vector3D) vector)._magnitude3D;
+            _hasMagnitude3D = ((Vector3D) vector)._hasMagnitude3D;
+        }
+    }
+
+    @Override
+    protected void resetCaches() {
+        super.resetCaches();
+        _hasMagnitude3D = false;
     }
 
     class AsVector extends Vector {
@@ -568,7 +593,7 @@ public class Vector3D extends Vector2D implements IVector3D {
 
         @Override
         public double length() {
-            return getMagnitude();
+            return getMagnitude3D();
         }
 
         @Override
@@ -630,6 +655,7 @@ public class Vector3D extends Vector2D implements IVector3D {
         @Override
         public Vector normalize() {
             Vector3D.this.normalize();
+
             return this;
         }
 

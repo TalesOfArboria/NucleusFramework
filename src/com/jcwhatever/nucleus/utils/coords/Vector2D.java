@@ -37,10 +37,10 @@ public class Vector2D implements IVector2D {
     protected double _x;
     protected double _z;
 
-    protected transient double _magnitude;
+    protected transient double _magnitude2D;
     protected transient double _direction;
     protected transient float _yaw;
-    protected transient boolean _hasMagnitude;
+    protected transient boolean _hasMagnitude2D;
     protected transient boolean _hasDirection;
     protected transient boolean _hasYaw;
 
@@ -240,13 +240,13 @@ public class Vector2D implements IVector2D {
 
     @Override
     public Vector2D normalize() {
-        double magnitude = getMagnitude();
+        double magnitude = getMagnitude2D();
         if (magnitude < 0.0D || magnitude > 0.0D) {
             _x /= magnitude;
             _z /= magnitude;
             onChange();
-            _magnitude = 1;
-            _hasMagnitude = true;
+            _magnitude2D = 1;
+            _hasMagnitude2D = true;
         }
         return this;
     }
@@ -254,6 +254,8 @@ public class Vector2D implements IVector2D {
     @Override
     public Vector2D reset() {
         _x = _z = 0;
+        _magnitude2D = 0;
+        _hasMagnitude2D = true;
         return this;
     }
 
@@ -271,14 +273,14 @@ public class Vector2D implements IVector2D {
 
         // If vector, use vectors magnitude. Otherwise calculate
         double oMag = vector instanceof IVector2D
-                ? ((IVector2D) vector).getMagnitude()
+                ? ((IVector2D) vector).getMagnitude2D()
                 : calculateMagnitude(vector);
 
         double dot = this instanceof IVector3D && vector instanceof ICoords3D
                 ? ((IVector3D) this).getDot3D((ICoords3D) vector)
                 : getDot2D(vector);
 
-        return FastMath.acos(dot / (getMagnitude() * oMag));
+        return FastMath.acos(dot / (getMagnitude2D() * oMag));
     }
 
     @Override
@@ -314,16 +316,16 @@ public class Vector2D implements IVector2D {
     }
 
     @Override
-    public double getMagnitude() {
-        if (_hasMagnitude)
-            return _magnitude;
+    public double getMagnitude2D() {
+        if (_hasMagnitude2D)
+            return _magnitude2D;
 
-        _hasMagnitude = true;
-        return _magnitude = calculateMagnitude(this);
+        _hasMagnitude2D = true;
+        return _magnitude2D = FastMath.sqrt(_x * _x + _z * _z);
     }
 
     @Override
-    public double getMagnitudeSquared() {
+    public double getMagnitudeSquared2D() {
         return _x * _x + _z * _z;
     }
 
@@ -374,17 +376,17 @@ public class Vector2D implements IVector2D {
     }
 
     protected void copyCaches(Vector2D vector) {
-        _magnitude = vector._magnitude;
+        _magnitude2D = vector._magnitude2D;
         _direction = vector._direction;
         _yaw = vector._yaw;
-        _hasMagnitude = vector._hasMagnitude;
+        _hasMagnitude2D = vector._hasMagnitude2D;
         _hasDirection = vector._hasDirection;
         _hasYaw = vector._hasYaw;
     }
 
-    private void resetCaches() {
+    protected void resetCaches() {
         _hasDirection = false;
-        _hasMagnitude = false;
+        _hasMagnitude2D = false;
         _hasYaw = false;
     }
 

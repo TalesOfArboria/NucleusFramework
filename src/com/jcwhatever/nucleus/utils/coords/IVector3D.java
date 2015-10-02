@@ -256,6 +256,16 @@ public interface IVector3D extends IVector2D, ICoords3D {
     double getDistanceSquared3D(Location vector);
 
     /**
+     * Get vector magnitude from X, Y and Z axis.
+     */
+    double getMagnitude3D();
+
+    /**
+     * Get vector magnitude squared from X, Y and Z axis.
+     */
+    double getMagnitudeSquared3D();
+
+    /**
      * Get a Bukkit Vector whose values are linked to the current vector.
      */
     Vector asBukkitVector();
