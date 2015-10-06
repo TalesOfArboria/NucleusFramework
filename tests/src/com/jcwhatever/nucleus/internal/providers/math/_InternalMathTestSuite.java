@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        FastMathTest.class,
         NucleusRotationMatrixTest.class
 })
 public class _InternalMathTestSuite {

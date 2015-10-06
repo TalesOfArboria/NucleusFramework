@@ -329,7 +329,6 @@ public class LocationUtilsTest {
         Location location = new Location(world, 10, 0, 0);
 
         Location result = LocationUtils.rotate(axis, location, 0, 0, 180);
-
         assertTrue(result != location); // must not be same instance
 
         assertEquals(-10, result.getX(), 1.0D);
@@ -337,6 +336,15 @@ public class LocationUtilsTest {
         assertEquals(0, result.getZ(), 0.0D);
         assertEquals(0, result.getYaw(), 0.0D);
         assertEquals(0, result.getPitch(), 0.0D);
+
+        result = LocationUtils.rotate(axis, location, 0, 180, 0);
+        assertTrue(result != location); // must not be same instance
+
+        assertEquals(-10, result.getX(), 1.0D);
+        assertEquals(0, result.getY(), 1.0D);
+        assertEquals(0, result.getZ(), 0.0D);
+        assertEquals(180f, result.getYaw(), 0.0f);
+        assertEquals(0, result.getPitch(), 0.0f);
     }
 
     @Test

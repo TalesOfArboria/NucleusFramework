@@ -37,44 +37,44 @@ public interface IFastMathProvider extends IProvider {
     /**
      * Get the trigonometric sine of an angle.
      *
-     * @param radianAngle  The radian angle.
+     * @param angleDegrees  The angle in degrees.
      */
-    float sin(double radianAngle);
+    float sin(double angleDegrees);
 
     /**
      * Get the trigonometric cosine of an angle.
      *
-     * @param radianAngle  The radian angle.
+     * @param angleDegrees  The angle in degrees.
      */
-    float cos(double radianAngle);
+    float cos(double angleDegrees);
 
     /**
      * Get the trigonometric tangent of an angle.
      *
-     * @param radianAngle  The radian angle.
+     * @param angleDegrees  The angle in degrees.
      */
-    float tan(double radianAngle);
+    float tan(double angleDegrees);
 
     /**
      * Get the arc sine of a value.
      *
-     * @param value  The value to get an arc sine from.
+     * @param angleDegrees  The value to get an arc sine from in degrees.
      */
-    float asin(double value);
+    float asin(double angleDegrees);
 
     /**
      * Get the arc cosine of a value.
      *
-     * @param value  The value to get an arc cosine from.
+     * @param angleDegrees  The value to get an arc cosine from in degrees.
      */
-    float acos(double value);
+    float acos(double angleDegrees);
 
     /**
      * Get the arc tangent of a value.
      *
-     * @param value  The value to get an arc tangent from.
+     * @param angleDegrees  The value to get an arc tangent from in degrees.
      */
-    float atan(double value);
+    float atan(double angleDegrees);
 
     /**
      * Returns the angle theta from the conversion of rectangular coordinates
@@ -105,23 +105,23 @@ public interface IFastMathProvider extends IProvider {
     /**
      * Get the hyperbolic sine of a value.
      *
-     * @param value  The value to get a hyperbolic sine from.
+     * @param angleDegrees  The value to get a hyperbolic sine from in degrees.
      */
-    float sinh(double value);
+    float sinh(double angleDegrees);
 
     /**
      * Get the hyperbolic cosine of a value.
      *
-     * @param value  The value to get a hyperbolic sine from.
+     * @param angleDegrees  The value to get a hyperbolic sine from in degrees.
      */
-    float cosh(double value);
+    float cosh(double angleDegrees);
 
     /**
      * Get the hyperbolic tangent of a value.
      *
-     * @param value  The value to get a hyperbolic tangent from.
+     * @param angleDegrees  The value to get a hyperbolic tangent from in degrees.
      */
-    float tanh(double value);
+    float tanh(double angleDegrees);
 
     /**
      * Get a random long value.
@@ -136,18 +136,15 @@ public interface IFastMathProvider extends IProvider {
     /**
      * Get a rotation matrix used for rotating vectors.
      *
-     * <p>May return a cached matrix after rounding the specified angle.</p>
+     * <p>May return a cached matrix after rounding the specified angle to an implementation
+     * specific precision.</p>
      *
-     * @param angle  The angle of rotation.
+     * <p>Note that Minecraft's X axis coordinates are inverted relative to Yaw 0 and the returned
+     * matrix implementation values will be consistent with this. When rotating the Y axis, it will
+     * rotate in the opposite direction requested to compensate.</p>
+     *
+     * @param angleDegrees  The angle of rotation in degrees. Values are in the range of -180 to 180.
+     *                      Values outside range are clamped.
      */
-    IRotationMatrix getRotationMatrix(float angle);
-
-    /**
-     * Get a rotation matrix used for rotating vectors.
-     *
-     * <p>The matrix returned always uses the angle specified.</p>
-     *
-     * @param angle  The angle of rotation.
-     */
-    IRotationMatrix getStrictRotationMatrix(float angle);
+    IRotationMatrix getRotationMatrix(float angleDegrees);
 }

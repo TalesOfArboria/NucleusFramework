@@ -171,21 +171,13 @@ public final class FastMath {
      *
      * <p>May return a cached matrix after rounding the specified angle.</p>
      *
+     * <p>Note that Minecraft's X axis coordinates are inverted and the returned matrix
+     * implementation values will be consistent with this.</p>
+     *
      * @param angle  The angle of rotation.
      */
     public static IRotationMatrix getRotationMatrix(float angle) {
         return provider().getRotationMatrix(angle);
-    }
-
-    /**
-     * Get a rotation matrix used for rotating vectors.
-     *
-     * <p>The matrix returned always uses the angle specified.</p>
-     *
-     * @param angle  The angle of rotation.
-     */
-    public static IRotationMatrix getStrictRotationMatrix(float angle) {
-        return provider().getStrictRotationMatrix(angle);
     }
 
     @Nonnull

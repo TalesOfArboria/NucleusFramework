@@ -29,13 +29,56 @@ import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.math.IFastMathProvider;
 import com.jcwhatever.nucleus.providers.math.IRotationMatrix;
 
-/*
- * 
- */
 public class NucleusFastMathProvider extends Provider implements IFastMathProvider {
 
     public static final String NAME = "NucleusFastMath";
     static final XORShiftRandom XOR_RANDOM = new XORShiftRandom();
+
+    private static final int SIN_BITS = 12;
+    private static final int SIN_MASK = ~(-1 << SIN_BITS);
+    private static final float DEG_TO_INDEX;
+    private static final float[] SIN_TABLE, COS_TABLE;
+
+    private static final int ATAN2_BITS = 12;
+    private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
+    private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
+    private static final int ATAN2_COUNT = ATAN2_MASK + 1;
+    private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
+    private static final float ATAN2_DIM_MINUS_1 = (ATAN2_DIM - 1);
+    private static final float[] ATAN2_TABLE = new float[ATAN2_COUNT];
+
+    static {
+
+        // cos/sin code from http://riven8192.blogspot.com/2009/08/fastmath-sincos-lookup-tables.html
+        // licensed: http://creativecommons.org/licenses/by/3.0/
+        int sinCount = SIN_MASK + 1;
+        float degFull = (float) (360.0);
+        float radFull = (float) (Math.PI * 2.0);
+        DEG_TO_INDEX = sinCount / degFull;
+        SIN_TABLE = new float[sinCount];
+        COS_TABLE = new float[sinCount];
+
+        for (int i = 0; i < sinCount; i++) {
+            SIN_TABLE[i] = (float) Math.sin((i + 0.5f) / sinCount * radFull);
+            COS_TABLE[i] = (float) Math.cos((i + 0.5f) / sinCount * radFull);
+        }
+        for (int i = 0; i < 360; i += 90) {
+            SIN_TABLE[(int)(i * DEG_TO_INDEX) & SIN_MASK] = (float)Math.sin(i * Math.PI / 180.0);
+            COS_TABLE[(int)(i * DEG_TO_INDEX) & SIN_MASK] = (float)Math.cos(i * Math.PI / 180.0);
+        }
+
+        // atan2 code from http://riven8192.blogspot.com/2009/08/fastmath-atan2-lookup-table.html
+        // licensed: http://creativecommons.org/licenses/by/3.0/
+        for (int i = 0; i < ATAN2_DIM; i++) {
+            for (int j = 0; j < ATAN2_DIM; j++) {
+
+                float x = (float) i / ATAN2_DIM;
+                float y = (float) j / ATAN2_DIM;
+
+                ATAN2_TABLE[j * ATAN2_DIM + i] = (float) Math.atan2(y, x);
+            }
+        }
+    }
 
     public NucleusFastMathProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
@@ -43,44 +86,74 @@ public class NucleusFastMathProvider extends Provider implements IFastMathProvid
     }
 
     @Override
-    public float sin(double radianAngle) {
-        return (float)Math.sin(radianAngle);
+    public float sin(double angleDegrees) {
+        return SIN_TABLE[(int) (angleDegrees * DEG_TO_INDEX) & SIN_MASK];
     }
 
     @Override
-    public float cos(double radianAngle) {
-        return (float)Math.cos(radianAngle);
+    public float cos(double angleDegrees) {
+        return COS_TABLE[(int) (angleDegrees * DEG_TO_INDEX) & SIN_MASK];
     }
 
     @Override
-    public float tan(double radianAngle) {
-        return (float)Math.tan(radianAngle);
+    public float tan(double angleDegrees) {
+        return (float)Math.tan(Math.toRadians(angleDegrees));
     }
 
     @Override
-    public float asin(double value) {
-        return (float)Math.asin(value);
+    public float asin(double angleDegrees) {
+        return (float)Math.toDegrees(Math.asin(Math.toRadians(angleDegrees)));
     }
 
     @Override
-    public float acos(double value) {
-        return (float)Math.acos(value);
+    public float acos(double angleDegrees) {
+        return (float)Math.toDegrees(Math.acos(Math.toRadians(angleDegrees)));
     }
 
     @Override
-    public float atan(double value) {
-        return (float)Math.atan(value);
+    public float atan(double angleDegrees) {
+        return (float)Math.toDegrees(Math.atan(Math.toRadians(angleDegrees)));
     }
 
     @Override
-    public float atan2(double x, double z) {
-        //noinspection SuspiciousNameCombination
-        return (float)Math.atan2(x, z);
+    public float atan2(double y, double x) {
+
+        float add, mul;
+
+        if (x < 0.0f) {
+
+            if (y < 0.0f) {
+                x = -x;
+                y = -y;
+                mul = 1.0f;
+            } else {
+                x = -x;
+                mul = -1.0f;
+            }
+            add = -3.141592653f;
+
+        } else {
+
+            if (y < 0.0f) {
+                y = -y;
+                mul = -1.0f;
+            }
+            else {
+                mul = 1.0f;
+            }
+            add = 0.0f;
+        }
+
+        float invDiv = ATAN2_DIM_MINUS_1 / (float)((x < y) ? y : x);
+        int xi = Math.min((int) (x * invDiv), (int)ATAN2_DIM_MINUS_1);
+        int yi = Math.min((int) (y * invDiv), (int)ATAN2_DIM_MINUS_1);
+
+        return (ATAN2_TABLE[yi * ATAN2_DIM + xi] + add) * mul;
     }
 
     @Override
     public float sqrt(double value) {
-        return (float)Math.sqrt(value);
+        return (float)Math.sqrt(value); // this is already very fast
     }
 
     @Override
@@ -89,18 +162,18 @@ public class NucleusFastMathProvider extends Provider implements IFastMathProvid
     }
 
     @Override
-    public float sinh(double value) {
-        return (float)Math.sinh(value);
+    public float sinh(double angleDegrees) {
+        return (float)Math.sinh(Math.toRadians(angleDegrees));
     }
 
     @Override
-    public float cosh(double value) {
-        return (float)Math.cosh(value);
+    public float cosh(double angleDegrees) {
+        return (float)Math.cosh(Math.toRadians(angleDegrees));
     }
 
     @Override
-    public float tanh(double value) {
-        return (float)Math.tanh(value);
+    public float tanh(double angleDegrees) {
+        return (float)Math.tanh(Math.toRadians(angleDegrees));
     }
 
     @Override
@@ -114,13 +187,8 @@ public class NucleusFastMathProvider extends Provider implements IFastMathProvid
     }
 
     @Override
-    public IRotationMatrix getRotationMatrix(float angle) {
-        return NucleusRotationMatrix.get(angle);
-    }
-
-    @Override
-    public IRotationMatrix getStrictRotationMatrix(float angle) {
-        return new NucleusRotationMatrix(angle);
+    public IRotationMatrix getRotationMatrix(float angleDegrees) {
+        return NucleusRotationMatrix.get(angleDegrees);
     }
 
     private static class XORShiftRandom {

@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.providers.math.IRotationMatrix;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.IVector2D;
 import com.jcwhatever.nucleus.utils.coords.IVector3D;
+import com.jcwhatever.nucleus.utils.coords.Vector2D;
 import com.jcwhatever.nucleus.utils.coords.Vector3D;
 
 import java.math.BigDecimal;
@@ -38,7 +39,15 @@ import java.math.BigDecimal;
  */
 public class NucleusRotationMatrix implements IRotationMatrix {
 
-    private static NucleusRotationMatrix[] MATRICES = new NucleusRotationMatrix[361];
+    private static final int ANGLE_PRECISION = 64;
+    private static final int ANGLE_MODULUS = 361 * ANGLE_PRECISION;
+    private static NucleusRotationMatrix[] MATRICES = new NucleusRotationMatrix[ANGLE_MODULUS];
+
+    static {
+        for (int i=0; i < MATRICES.length; i++) {
+            MATRICES[i] = new NucleusRotationMatrix((float)(i / ANGLE_PRECISION) - 180f);
+        }
+    }
 
     public static NucleusRotationMatrix get(float rotation) {
 
@@ -47,29 +56,24 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         while (rotation < -180f)
             rotation += 360f;
 
-        int index = (int)rotation + 180;
-
-        NucleusRotationMatrix matrix = MATRICES[index];
-        if (matrix == null) {
-            matrix = new NucleusRotationMatrix((int)rotation, 4);
-            MATRICES[index] = matrix;
-        }
-        return matrix;
+        int index = (int)((rotation + 180) * ANGLE_PRECISION + 0.5f);
+        return MATRICES[index];
     }
 
     private final float _rotation;
-    private final int _scale;
-    private float[][] _xMatrix;
-    private float[][] _yMatrix;
-    private float[][] _zMatrix;
-    private float[][] _xReverseMatrix;
-    private float[][] _yReverseMatrix;
-    private float[][] _zReverseMatrix;
-    private boolean _isCalculated;
+    private final float _cos;
+    private final float _sin;
 
     NucleusRotationMatrix(float rotation, int scale) {
         _rotation = rotation;
-        _scale = scale;
+        _cos = scale(FastMath.cos(_rotation), scale);
+        _sin = scale(FastMath.sin(_rotation), scale);
+
+        /*
+        newX = x * matrix[0][0] + y * matrix[1][0] + z * matrix[2][0];
+        newY = x * matrix[0][1] + y * matrix[1][1] + z * matrix[2][1];
+        newZ = x * matrix[0][2] + y * matrix[1][2] + z * matrix[2][2];
+        */
     }
 
     NucleusRotationMatrix(float rotation) {
@@ -82,7 +86,12 @@ public class NucleusRotationMatrix implements IRotationMatrix {
     }
 
     @Override
-    public IVector3D rotateX(IVector2D vector) {
+    public IVector2D rotateX(IVector2D vector) {
+        return rotateX(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateX(IVector3D vector) {
         return rotateX(vector, new Vector3D());
     }
 
@@ -91,12 +100,38 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _xMatrix, output);
+        double x = vector.getX();
+        double z = vector.getZ();
+
+        output.setX(x);
+        output.setZ(z * _cos);
+
+        return output;
     }
 
     @Override
-    public IVector3D rotateY(IVector2D vector) {
+    public <T extends IVector3D> T rotateX(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+
+        output.setX(x);
+        output.setY(y * _cos + z * -_sin);
+        output.setZ(y * _sin + z * _cos);
+
+        return output;
+    }
+
+    @Override
+    public IVector2D rotateY(IVector2D vector) {
+        return rotateY(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateY(IVector3D vector) {
         return rotateY(vector, new Vector3D());
     }
 
@@ -105,12 +140,42 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _yMatrix, output);
+        double x = vector.getX();
+        double z = vector.getZ();
+
+        // using reverse Matrix instead of forward Matrix due to Minecraft's inverted X axis coordinates
+        // relative to Yaw 0.
+        output.setX(x * _cos + z * -_sin);
+        output.setZ(x * _sin + z * _cos);
+
+        return output;
     }
 
     @Override
-    public IVector3D rotateZ(IVector2D vector) {
+    public <T extends IVector3D> T rotateY(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+
+        // using reverse Matrix instead of forward Matrix due to Minecraft's inverted X axis coordinates
+        // relative to Yaw 0.
+        output.setX(x * _cos + z * -_sin);
+        output.setY(y);
+        output.setZ(x * _sin + z * _cos);
+
+        return output;
+    }
+
+    @Override
+    public IVector2D rotateZ(IVector2D vector) {
+        return rotateZ(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateZ(IVector3D vector) {
         return rotateZ(vector, new Vector3D());
     }
 
@@ -119,12 +184,38 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _zMatrix, output);
+        double x = vector.getX();
+        double z = vector.getZ();
+
+        output.setX(x * _cos);
+        output.setZ(z);
+
+        return output;
     }
 
     @Override
-    public IVector3D rotateReverseX(IVector2D vector) {
+    public <T extends IVector3D> T rotateZ(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+
+        output.setX(x * _cos + y * -_sin);
+        output.setY(x * _sin + y * _cos);
+        output.setZ(z);
+
+        return output;
+    }
+
+    @Override
+    public IVector2D rotateReverseX(IVector2D vector) {
+        return rotateReverseX(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateReverseX(IVector3D vector) {
         return rotateReverseX(vector, new Vector3D());
     }
 
@@ -133,12 +224,38 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _xReverseMatrix, output);
+        double x = vector.getX();
+        double z = vector.getZ();
+
+        output.setX(x);
+        output.setZ(z * _cos);
+
+        return output;
     }
 
     @Override
-    public IVector3D rotateReverseY(IVector2D vector) {
+    public <T extends IVector3D> T rotateReverseX(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+
+        output.setX(x);
+        output.setY(y * _cos + z * _sin);
+        output.setZ(y * -_sin + z * _cos);
+
+        return output;
+    }
+
+    @Override
+    public IVector2D rotateReverseY(IVector2D vector) {
+        return rotateReverseY(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateReverseY(IVector3D vector) {
         return rotateReverseY(vector, new Vector3D());
     }
 
@@ -147,12 +264,42 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _yReverseMatrix, output);
+        double x = vector.getX();
+        double z = vector.getZ();
+
+        // using forward Matrix instead of Reverse Matrix due to Minecraft's inverted X axis coordinates
+        // relative to Yaw 0.
+        output.setX(x * _cos + z * _sin);
+        output.setZ(x * -_sin + z * _cos);
+
+        return output;
     }
 
     @Override
-    public IVector3D rotateReverseZ(IVector2D vector) {
+    public <T extends IVector3D> T rotateReverseY(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+
+        // using forward Matrix instead of Reverse Matrix due to Minecraft's inverted X axis coordinates
+        // relative to Yaw 0.
+        output.setX(x * _cos + z * _sin);
+        output.setY(y);
+        output.setZ(x * -_sin + z * _cos);
+
+        return output;
+    }
+
+    @Override
+    public IVector2D rotateReverseZ(IVector2D vector) {
+        return rotateReverseZ(vector, new Vector2D());
+    }
+
+    @Override
+    public IVector3D rotateReverseZ(IVector3D vector) {
         return rotateReverseZ(vector, new Vector3D());
     }
 
@@ -161,98 +308,29 @@ public class NucleusRotationMatrix implements IRotationMatrix {
         PreCon.notNull(vector);
         PreCon.notNull(output);
 
-        calculate();
-        return rotate(vector, _zReverseMatrix, output);
-    }
-
-    private void calculate() {
-        if (_isCalculated)
-            return;
-
-        _isCalculated = true;
-
-        float cos = scale(FastMath.cos(Math.toRadians(_rotation)), _scale);
-        float sin = scale(FastMath.sin(Math.toRadians(_rotation)), _scale);
-
-        _xMatrix = new float[][] {
-                { 1,    0,   0 },
-                { 0,  cos, sin },
-                { 0, -sin, cos }
-        };
-
-        _yMatrix = new float[][] {
-                { cos, 0, -sin },
-                {   0, 1,    0 },
-                { sin, 0,  cos }
-        };
-
-        _zMatrix = new float[][] {
-                {  cos, sin, 0 },
-                { -sin, cos, 0 },
-                {    0,   0, 1 },
-        };
-
-        _xReverseMatrix = new float[][] {
-                { 1,    0,     0 },
-                { 0,  cos,  -sin },
-                { 0,  sin,   cos }
-        };
-
-        _yReverseMatrix = new float[][] {
-                {  cos, 0, sin },
-                {    0, 1,   0 },
-                { -sin, 0, cos }
-        };
-
-        _zReverseMatrix = new float[][] {
-                { cos, -sin, 0 },
-                { sin,  cos, 0 },
-                {   0,    0, 1 }
-        };
-    }
-
-    private <T extends IVector2D> T rotate(IVector2D vector, float[][] matrix, T output) {
-
-        if (output instanceof IVector3D) {
-            ((IVector3D)output).copyFrom3D(vector);
-        }
-        else {
-            output.copyFrom2D(vector);
-        }
-
-        applyMatrix(output, matrix);
-        return output;
-    }
-
-    private static void applyMatrix(IVector2D vector, float[][] matrix) {
-
-        if (vector instanceof IVector3D) {
-            applyMatrix((IVector3D)vector, matrix);
-            return;
-        }
-
         double x = vector.getX();
         double z = vector.getZ();
 
-        double newX = x * matrix[0][0] + z * matrix[2][0];
-        double newZ = x * matrix[0][2] + z * matrix[2][2];
+        output.setX(x * _cos);
+        output.setZ(z);
 
-        vector.setX(newX);
-        vector.setZ(newZ);
+        return output;
     }
 
-    private static void applyMatrix(IVector3D vector, float[][] matrix) {
+    @Override
+    public <T extends IVector3D> T rotateReverseZ(IVector3D vector, T output) {
+        PreCon.notNull(vector);
+        PreCon.notNull(output);
+
         double x = vector.getX();
         double y = vector.getY();
         double z = vector.getZ();
 
-        double newX = x * matrix[0][0] + y * matrix[1][0] + z * matrix[2][0];
-        double newY = x * matrix[0][1] + y * matrix[1][1] + z * matrix[2][1];
-        double newZ = x * matrix[0][2] + y * matrix[1][2] + z * matrix[2][2];
+        output.setX(x * _cos + y * _sin);
+        output.setY(x * -_sin + y * _cos);
+        output.setZ(z);
 
-        vector.setX(newX);
-        vector.setY(newY);
-        vector.setZ(newZ);
+        return output;
     }
 
     private static float scale(float value, int scale) {

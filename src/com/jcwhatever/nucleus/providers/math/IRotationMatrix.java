@@ -44,13 +44,21 @@ public interface IRotationMatrix {
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateX(IVector2D vector);
+    IVector2D rotateX(IVector2D vector);
+
+    /**
+     * Rotate the vector on the X axis by the rotation angle.
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateX(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the X axis by the rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      * @param output  The rotated output vector.
      *
      * @return  The rotated output vector.
@@ -58,16 +66,44 @@ public interface IRotationMatrix {
     <T extends IVector2D> T rotateX(IVector2D vector, T output);
 
     /**
+     * Copy and rotate the vector on the X axis by the rotation angle.
+     *
+     * @param vector  The input vector.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateX(IVector3D vector, T output);
+
+    /**
      * Rotate the vector on the Y axis by the rotation angle.
+     *
+     * <p>This method should reverse rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
      *
      * @param vector  The input vector.
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateY(IVector2D vector);
+    IVector2D rotateY(IVector2D vector);
+
+    /**
+     * Rotate the vector on the Y axis by the rotation angle.
+     *
+     * <p>This method should reverse rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateY(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the Y axis by the rotation angle.
+     *
+     * <p>This method should reverse rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
      *
      * @param vector  The input vector.
      *                If the vector is 2D, 0 is substituted for the Y coords.
@@ -78,19 +114,40 @@ public interface IRotationMatrix {
     <T extends IVector2D> T rotateY(IVector2D vector, T output);
 
     /**
+     * Copy and rotate the vector on the Y axis by the rotation angle.
+     *
+     * <p>This method should reverse rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
+     * @param vector  The input vector.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateY(IVector3D vector, T output);
+
+    /**
      * Rotate the vector on the Z axis by the rotation angle.
      *
      * @param vector  The input vector.
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateZ(IVector2D vector);
+    IVector2D rotateZ(IVector2D vector);
+
+    /**
+     * Rotate the vector on the Z axis by the rotation angle.
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateZ(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the Z axis by the matrix angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      * @param output  The rotated output vector.
      *
      * @return  The rotated output vector.
@@ -98,20 +155,37 @@ public interface IRotationMatrix {
     <T extends IVector2D> T rotateZ(IVector2D vector, T output);
 
     /**
+     * Copy and rotate the vector on the Z axis by the matrix angle.
+     *
+     * @param vector  The input vector.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateZ(IVector3D vector, T output);
+
+    /**
      * Rotate the vector on the Y axis by the negated rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateReverseX(IVector2D vector);
+    IVector2D rotateReverseX(IVector2D vector);
+
+    /**
+     * Rotate the vector on the Y axis by the negated rotation angle.
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateReverseX(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the X axis by the negated rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      * @param output  The rotated output vector.
      *
      * @return  The rotated output vector.
@@ -119,20 +193,46 @@ public interface IRotationMatrix {
     <T extends IVector2D> T rotateReverseX(IVector2D vector, T output);
 
     /**
-     * Rotate the vector on the Y axis by the negated rotation angle.
+     * Copy and rotate the vector on the X axis by the negated rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateReverseX(IVector3D vector, T output);
+
+    /**
+     * Rotate the vector on the Y axis by the negated rotation angle.
+     *
+     * <p>This method should forward rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
+     * @param vector  The input vector.
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateReverseY(IVector2D vector);
+    IVector2D rotateReverseY(IVector2D vector);
+
+    /**
+     * Rotate the vector on the Y axis by the negated rotation angle.
+     *
+     * <p>This method should forward rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateReverseY(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the Y axis by the negated rotation angle.
      *
+     * <p>This method should forward rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      * @param output  The rotated output vector.
      *
      * @return  The rotated output vector.
@@ -140,23 +240,53 @@ public interface IRotationMatrix {
     <T extends IVector2D> T rotateReverseY(IVector2D vector, T output);
 
     /**
+     * Copy and rotate the vector on the Y axis by the negated rotation angle.
+     *
+     * <p>This method should forward rotate Y to keep values consistent with
+     * Minecraft's inverted X axis coordinates.</p>
+     *
+     * @param vector  The input vector.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateReverseY(IVector3D vector, T output);
+
+    /**
      * Rotate the vector on the Z axis by the negated rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      *
      * @return  A new rotated vector.
      */
-    IVector3D rotateReverseZ(IVector2D vector);
+    IVector2D rotateReverseZ(IVector2D vector);
+
+    /**
+     * Rotate the vector on the Z axis by the negated rotation angle.
+     *
+     * @param vector  The input vector.
+     *
+     * @return  A new rotated vector.
+     */
+    IVector3D rotateReverseZ(IVector3D vector);
 
     /**
      * Copy and rotate the vector on the Z axis by the negated rotation angle.
      *
      * @param vector  The input vector.
-     *                If the vector is 2D, 0 is substituted for the Y coords.
      * @param output  The rotated output vector.
      *
      * @return  The rotated output vector.
      */
     <T extends IVector2D> T rotateReverseZ(IVector2D vector, T output);
+
+    /**
+     * Copy and rotate the vector on the Z axis by the negated rotation angle.
+     *
+     * @param vector  The input vector.
+     * @param output  The rotated output vector.
+     *
+     * @return  The rotated output vector.
+     */
+    <T extends IVector3D> T rotateReverseZ(IVector3D vector, T output);
 }

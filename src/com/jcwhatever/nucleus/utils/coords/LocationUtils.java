@@ -770,10 +770,8 @@ public final class LocationUtils {
 
         yaw = clampYaw(yaw);
 
-        double radianYaw = Math.toRadians(-yaw);
-
-        double x = FastMath.sin(radianYaw) * distance;
-        double z = FastMath.cos(radianYaw) * distance;
+        double x = FastMath.sin(-yaw) * distance;
+        double z = FastMath.cos(-yaw) * distance;
 
         output.setWorld(source.getWorld());
         output.setX(source.getX() + x);
@@ -853,6 +851,8 @@ public final class LocationUtils {
     /**
      * Rotate a {@link org.bukkit.Location} around an axis {@link org.bukkit.Location}.
      *
+     * <p>Rotations are performed in the order: X, Y, then Z</p>
+     *
      * @param axis       The axis location.
      * @param location   The location to move.
      * @param rotationX  The rotation around the X axis in degrees.
@@ -871,13 +871,20 @@ public final class LocationUtils {
 
         Vector3D vector = VECTOR.copyFrom3D(location).subtract3D(axis);
 
-        IRotationMatrix xMatrix = FastMath.getRotationMatrix((float)rotationX);
-        IRotationMatrix yMatrix = FastMath.getRotationMatrix((float)rotationY);
-        IRotationMatrix zMatrix = FastMath.getRotationMatrix((float)rotationZ);
+        if (rotationX != 0.0D) {
+            IRotationMatrix xMatrix = FastMath.getRotationMatrix((float) rotationX);
+            xMatrix.rotateX(vector, vector);
+        }
 
-        xMatrix.rotateX(vector, vector);
-        yMatrix.rotateY(vector, vector);
-        zMatrix.rotateZ(vector, vector);
+        if (rotationY != 0.0D) {
+            IRotationMatrix yMatrix = FastMath.getRotationMatrix((float) rotationY);
+            yMatrix.rotateY(vector, vector);
+        }
+
+        if (rotationZ != 0.0D) {
+            IRotationMatrix zMatrix = FastMath.getRotationMatrix((float) rotationZ);
+            zMatrix.rotateZ(vector, vector);
+        }
 
         output.setWorld(location.getWorld());
         output.setYaw(location.getYaw() + (float)rotationY);
