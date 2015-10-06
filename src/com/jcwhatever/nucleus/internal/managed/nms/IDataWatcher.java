@@ -24,49 +24,32 @@
 
 package com.jcwhatever.nucleus.internal.managed.nms;
 
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.IVector3D;
-import com.jcwhatever.nucleus.utils.nms.INmsEntityHandler;
-import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
-
 /**
- * Implementation of {@link INmsEntityHandler}.
+ * DataWatcher wrapper interface.
  */
-class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
+public interface IDataWatcher {
 
-    private static final Vector VELOCITY = new Vector();
+    /**
+     * Determine if the entity is allowed to dismount a vehicle.
+     */
+    boolean canDismount();
 
-    @Override
-    public boolean isVisible(Entity entity) {
-        PreCon.notNull(entity);
+    /**
+     * Set if the entity is allowed to dismount the vehicle.
+     *
+     * @param canDismount  True to allow dismount, otherwise false.
+     */
+    void setCanDismount(boolean canDismount);
 
-        return nms().isEntityVisible(entity);
-    }
+    /**
+     * Determine if the player is pressing the dismount button (L.SHIFT)
+     */
+    boolean isDismountPressed();
 
-    @Override
-    public void setVisible(Entity entity, boolean isVisible) {
-        PreCon.notNull(entity);
-
-        nms().setEntityVisible(entity, isVisible);
-    }
-
-    @Override
-    public Vector getVelocity(Entity entity, Vector output) {
-        PreCon.notNull(entity);
-        PreCon.notNull(output);
-
-        nms().getVelocity(entity, output);
-        return output;
-    }
-
-    @Override
-    public <T extends IVector3D> T getVelocity(Entity entity, T output) {
-        PreCon.notNull(entity);
-        PreCon.notNull(output);
-
-        nms().getVelocity(entity, VELOCITY);
-        output.copyFrom3D(VELOCITY);
-        return output;
-    }
+    /**
+     * Set player pressing dismount button.
+     *
+     * @param isPressed  True if pressed, otherwise false.
+     */
+    void setDismountPressed(boolean isPressed);
 }

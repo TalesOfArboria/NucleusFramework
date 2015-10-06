@@ -35,7 +35,9 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.Container;
 import net.minecraft.server.v1_8_R3.ContainerAnvil;
+import net.minecraft.server.v1_8_R3.DataWatcher;
 import net.minecraft.server.v1_8_R3.EntityLightning;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumParticle;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -58,6 +60,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftContainer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
@@ -75,7 +78,17 @@ class v1_8_R3_Nms implements INms {
 
     private IReflectedType _IChatBaseComponent = _reflection.nmsType("IChatBaseComponent");
 
+    private IReflectedType _Entity = _reflection.nmsType("Entity")
+            .fieldAlias("datawatcher", "datawatcher");
+
     private IReflectedType _EntityPlayer = _reflection.nmsType("EntityPlayer");
+
+    private IReflectedType _EntityLiving = _reflection.nmsType("EntityLiving")
+            /* protected field "aY" (boolean) usage found in EntityPlayer method
+             * a(float f, float f1, *boolean jump*, boolean flag1), invoked from
+             * PlayerConnection#a(PacketPlayInSteerVehicle packet) */
+            .fieldAlias("vehicleJump", "aY");
+
 
     private IReflectedType _Packet = _reflection.nmsType("Packet");
 
@@ -342,12 +355,88 @@ class v1_8_R3_Nms implements INms {
     }
 
     @Override
-    public float getForwardMotion(Player player) {
-        return ((CraftLivingEntity)player).getHandle().ba;
+    public float getVehicleForwardMotion(LivingEntity passenger) {
+        /* public field "ba" (float) usage found in EntityPlayer method
+         * a(*float forward*, float f1, boolean flag, boolean flag1), invoked from
+         * PlayerConnection#a(PacketPlayInSteerVehicle packet) */
+        return ((CraftLivingEntity)passenger).getHandle().ba;
     }
 
     @Override
-    public float getLateralMotion(Player player) {
-        return ((CraftLivingEntity)player).getHandle().aZ;
+    public void setVehicleForwardMotion(LivingEntity passenger, float value) {
+        ((CraftLivingEntity)passenger).getHandle().ba = value;
+    }
+
+    @Override
+    public float getVehicleLateralMotion(LivingEntity passenger) {
+        /* public field "aZ" (float) usage found in EntityPlayer method
+         * a(float f, *float lateral*, boolean flag, boolean flag1), invoked from
+         * PlayerConnection#a(PacketPlayInSteerVehicle packet) */
+        return ((CraftLivingEntity) passenger).getHandle().aZ;
+    }
+
+    @Override
+    public void setVehicleLateralMotion(LivingEntity passenger, float value) {
+        ((CraftLivingEntity) passenger).getHandle().aZ = value;
+    }
+
+    @Override
+    public boolean isVehicleJumpPressed(LivingEntity passenger) {
+        EntityLiving entity = ((CraftLivingEntity) passenger).getHandle();
+        Object jumpObject = _EntityLiving.reflect(entity).get("vehicleJump");
+        return jumpObject instanceof Boolean && (Boolean) jumpObject;
+    }
+
+    @Override
+    public void setVehicleJumpPressed(LivingEntity passenger, boolean isPressed) {
+        EntityLiving entity = ((CraftLivingEntity) passenger).getHandle();
+        _EntityLiving.reflect(entity).set("vehicleJump", isPressed);
+    }
+
+    @Override
+    public boolean isVehicleDismountPressed(LivingEntity passenger) {
+        IDataWatcher watcher = getReplacedDataWatcher(passenger);
+        return watcher != null
+                ? watcher.isDismountPressed()
+                : ((CraftLivingEntity)passenger).getHandle().isSneaking();
+    }
+
+    @Override
+    public void setVehicleDismountPressed(LivingEntity passenger, boolean isPressed) {
+        ((CraftLivingEntity) passenger).getHandle().setSneaking(isPressed);
+    }
+
+    @Override
+    public boolean canDismount(LivingEntity passenger) {
+        IDataWatcher watcher = getReplacedDataWatcher(passenger);
+        return watcher == null || watcher.canDismount();
+    }
+
+    @Override
+    public void setCanDismount(LivingEntity passenger, boolean canDismount) {
+        IDataWatcher watcher = getReplacedDataWatcher(passenger);
+        if (watcher == null) {
+            if (canDismount)
+                return;
+
+            watcher = replaceDataWatcher(passenger);
+        }
+        watcher.setCanDismount(canDismount);
+    }
+
+    @Nullable
+    private IDataWatcher getReplacedDataWatcher(LivingEntity entity) {
+        DataWatcher watcher = ((CraftLivingEntity)entity).getHandle().getDataWatcher();
+        if (!(watcher instanceof IDataWatcher))
+            return null;
+
+        return (IDataWatcher)watcher;
+    }
+
+    private IDataWatcher replaceDataWatcher(LivingEntity entity) {
+        EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
+        IDataWatcher watcher = new v1_8_R3_DataWatcher(entity);
+        _Entity.reflect(nmsEntity).set("datawatcher", watcher);
+        return watcher;
     }
 }

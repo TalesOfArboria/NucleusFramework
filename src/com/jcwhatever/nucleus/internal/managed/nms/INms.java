@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.util.Vector;
@@ -229,16 +230,79 @@ interface INms {
     void send(Collection<? extends Player> players, IChatMessage message);
 
     /**
-     * Get the forward motion applied by the specified player.
+     * Get the forward motion applied by the specified vehicle passenger.
      *
-     * @param player  The player.
+     * @param passenger  The passenger.
      */
-    float getForwardMotion(Player player);
+    float getVehicleForwardMotion(LivingEntity passenger);
 
     /**
-     * Get the lateral motion applied by the specified player.
+     * Set the forward motion applied by the specified vehicle passenger.
      *
-     * @param player  The player.
+     * @param passenger  The passenger.
+     * @param value      The forward motion value. 0 is no motion, negative values are reverse,
+     *                   positive values are forward.
      */
-    float getLateralMotion(Player player);
+    void setVehicleForwardMotion(LivingEntity passenger, float value);
+
+    /**
+     * Get the lateral motion applied by the specified vehicle passenger.
+     *
+     * @param passenger  The passenger.
+     */
+    float getVehicleLateralMotion(LivingEntity passenger);
+
+    /**
+     * Set the lateral motion applied by the specified vehicle passenger.
+     *
+     * @param passenger  The passenger.
+     * @param value      The lateral motion value. 0 is no motion, negative values are left,
+     *                   positive values are right.
+     */
+    void setVehicleLateralMotion(LivingEntity passenger, float value);
+
+    /**
+     * Determine if the vehicle passenger has requested a vehicle jump by pressing Space button.
+     *
+     * @param passenger  The passenger.
+     */
+    boolean isVehicleJumpPressed(LivingEntity passenger);
+
+    /**
+     * Determine if the specified vehicle passenger is pressing the jump button (SPACE).
+     *
+     * @param passenger  The passenger.
+     * @param isPressed  True to set jump flag to pressed, otherwise false.
+     */
+    void setVehicleJumpPressed(LivingEntity passenger, boolean isPressed);
+
+    /**
+     * Determine if the specified vehicle passenger is pressing the dismount button (L.SHIFT)
+     *
+     * @param passenger  The passenger.
+     */
+    boolean isVehicleDismountPressed(LivingEntity passenger);
+
+    /**
+     * Set the specified vehicle passenger dismount flag.
+     *
+     * @param passenger     The vehicle passenger.
+     * @param isPressed  True to set dismount pressed, otherwise false.
+     */
+    void setVehicleDismountPressed(LivingEntity passenger, boolean isPressed);
+
+    /**
+     * Determine if the specified passenger is allowed to dismount vehicle.
+     *
+     * @param passenger  The passenger.
+     */
+    boolean canDismount(LivingEntity passenger);
+
+    /**
+     * Set flag that allows passenger to dismount vehicle.
+     *
+     * @param passenger    The passenger.
+     * @param canDismount  True to allow dismounting from vehicle, otherwise false.
+     */
+    void setCanDismount(LivingEntity passenger, boolean canDismount);
 }

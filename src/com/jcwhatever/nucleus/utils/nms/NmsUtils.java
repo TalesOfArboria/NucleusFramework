@@ -229,6 +229,17 @@ public final class NmsUtils {
         return Nucleus.getNmsManager().getHandler(InternalNmsManager.CHAT);
     }
 
+    /**
+     * Get NucleusFramework's internal vehicle handler.
+     *
+     * @return  The handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsVehicleHandler getVehicleHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.VEHICLE);
+    }
+
     // load the the craft package version from NucleusFramework's config
     // or detect the version.
     private static void loadPackageVersion() {

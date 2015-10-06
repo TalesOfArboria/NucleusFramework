@@ -83,6 +83,11 @@ public final class InternalNmsManager extends NmsManager {
      */
     public static final String CHAT = "CHAT";
 
+    /**
+     * The name of the internal entity handler.
+     */
+    public static final String VEHICLE = "VEHICLE";
+
     private static INms _nms;
 
     /**
@@ -111,6 +116,7 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R3", EFFECT, NmsEffectHandler.class);
         registerHandler("v1_8_R3", ENTITY, NmsEntityHandler.class);
         registerHandler("v1_8_R3", CHAT, NmsChatHandler.class);
+        registerHandler("v1_8_R3", VEHICLE, NmsVehicleHandler.class);
 
         registerHandler(NmsUtils.getNmsVersion(), POTIONS, NmsPotionHandler.class);
     }
