@@ -25,24 +25,25 @@
 package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.providers.math.FastMath;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.file.IByteReader;
+import com.jcwhatever.nucleus.utils.file.IByteSerializable;
+import com.jcwhatever.nucleus.utils.file.IByteWriter;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import java.io.IOException;
 
 /**
  * Implementation of {@link IVector2D}.
  */
-public class Vector2D implements IVector2D {
+public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializable {
 
     protected double _x;
     protected double _z;
-
-    protected transient double _magnitude2D;
-    protected transient double _direction;
-    protected transient float _yaw;
-    protected transient boolean _hasMagnitude2D;
-    protected transient boolean _hasDirection;
-    protected transient boolean _hasYaw;
 
     /**
      * Constructor.
@@ -69,9 +70,6 @@ public class Vector2D implements IVector2D {
      */
     public Vector2D(ICoords2D coords2D) {
         this(coords2D.getX(), coords2D.getZ());
-
-        if (coords2D instanceof Vector2D)
-            copyCaches((Vector2D)coords2D);
     }
 
     /**
@@ -106,14 +104,19 @@ public class Vector2D implements IVector2D {
     @Override
     public Vector2D setX(double x) {
         _x = x;
-        onChange();
         return this;
     }
 
     @Override
     public Vector2D setZ(double z) {
         _z = z;
-        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector2D set2D(double x, double z) {
+        _x = x;
+        _z = z;
         return this;
     }
 
@@ -123,12 +126,6 @@ public class Vector2D implements IVector2D {
 
         _x = coords.getX();
         _z = coords.getZ();
-
-        if (coords instanceof Vector2D) {
-            copyCaches((Vector2D)coords);
-        }
-
-        onChange();
         return this;
     }
 
@@ -174,7 +171,6 @@ public class Vector2D implements IVector2D {
 
         _x += vector.getX();
         _z += vector.getZ();
-        onChange();
         return this;
     }
 
@@ -182,7 +178,32 @@ public class Vector2D implements IVector2D {
     public Vector2D add2D(double value) {
         _x += value;
         _z += value;
-        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector2D add2DMax(double scalar, double value) {
+        _x = Math.max(_x * scalar, value);
+        _z = Math.max(_z * scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D add2DMin(double scalar, double value) {
+        _x = Math.min(_x * scalar, value);
+        _z = Math.min(_z * scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D addX(double value) {
+        _x += value;
+        return this;
+    }
+
+    @Override
+    public Vector2D addZ(double value) {
+        _z += value;
         return this;
     }
 
@@ -192,7 +213,6 @@ public class Vector2D implements IVector2D {
 
         _x -= vector.getX();
         _z -= vector.getZ();
-        onChange();
         return this;
     }
 
@@ -200,7 +220,32 @@ public class Vector2D implements IVector2D {
     public Vector2D subtract2D(double scalar) {
         _x -= scalar;
         _z -= scalar;
-        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector2D subtract2DMax(double scalar, double value) {
+        _x = Math.max(_x - scalar, value);
+        _z = Math.max(_z - scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D subtract2DMin(double scalar, double value) {
+        _x = Math.min(_x - scalar, value);
+        _z = Math.min(_z - scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D subtractX(double value) {
+        _x -= value;
+        return this;
+    }
+
+    @Override
+    public Vector2D subtractZ(double value) {
+        _z -= value;
         return this;
     }
 
@@ -210,7 +255,6 @@ public class Vector2D implements IVector2D {
 
         _x *= vector.getX();
         _z *= vector.getZ();
-        onChange();
         return this;
     }
 
@@ -218,7 +262,32 @@ public class Vector2D implements IVector2D {
     public Vector2D multiply2D(double scalar) {
         _x *= scalar;
         _z *= scalar;
-        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector2D multiply2DMax(double scalar, double value) {
+        _x = Math.max(_x * scalar, value);
+        _z = Math.max(_z * scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D multiply2DMin(double scalar, double value) {
+        _x = Math.min(_x * scalar, value);
+        _z = Math.min(_z * scalar, value);
+        return this;
+    }
+
+    @Override
+    public Vector2D multiplyX(double value) {
+        _x *= value;
+        return this;
+    }
+
+    @Override
+    public Vector2D multiplyZ(double value) {
+        _z *= value;
         return this;
     }
 
@@ -244,9 +313,6 @@ public class Vector2D implements IVector2D {
         if (magnitude < 0.0D || magnitude > 0.0D) {
             _x /= magnitude;
             _z /= magnitude;
-            onChange();
-            _magnitude2D = 1;
-            _hasMagnitude2D = true;
         }
         return this;
     }
@@ -254,8 +320,6 @@ public class Vector2D implements IVector2D {
     @Override
     public Vector2D reset() {
         _x = _z = 0;
-        _magnitude2D = 0;
-        _hasMagnitude2D = true;
         return this;
     }
 
@@ -263,7 +327,6 @@ public class Vector2D implements IVector2D {
     public Vector2D abs() {
         _x = Math.abs(_x);
         _z = Math.abs(_z);
-        onChange();
         return this;
     }
 
@@ -287,10 +350,6 @@ public class Vector2D implements IVector2D {
     public float getYawDelta(ICoords2D vector) {
         PreCon.notNull(vector);
 
-        if (_hasYaw && vector instanceof Vector2D && ((Vector2D) vector)._hasYaw) {
-            return ((Vector2D) vector)._yaw - _yaw;
-        }
-
         float localAngle = getYaw();
         float otherAngle = vector instanceof IVector2D
                 ? ((IVector2D) vector).getYaw()
@@ -301,11 +360,7 @@ public class Vector2D implements IVector2D {
 
     @Override
     public float getYaw() {
-        if (_hasYaw)
-            return _yaw;
-
-        _hasYaw = true;
-        return _yaw = calculateYaw(this);
+        return calculateYaw(this);
     }
 
     @Override
@@ -317,11 +372,7 @@ public class Vector2D implements IVector2D {
 
     @Override
     public double getMagnitude2D() {
-        if (_hasMagnitude2D)
-            return _magnitude2D;
-
-        _hasMagnitude2D = true;
-        return _magnitude2D = FastMath.sqrt(_x * _x + _z * _z);
+        return FastMath.sqrt(_x * _x + _z * _z);
     }
 
     @Override
@@ -331,20 +382,18 @@ public class Vector2D implements IVector2D {
 
     @Override
     public double getDirection() {
-        if (_hasDirection)
-            return _direction;
-
-        _hasDirection = true;
         double angle = FastMath.atan2(_z, _x);
         float degrees = (float)Math.toDegrees(angle);
-        return _direction = Float.compare(degrees, 0.0f) == 0 ? degrees : -degrees;
+        return Float.compare(degrees, 0.0f) == 0 ? degrees : -degrees;
     }
 
     @Override
     public double getDistance2D(ICoords2D vector) {
         PreCon.notNull(vector);
 
-        return Math.sqrt(getDistanceSquared2D(vector));
+        double deltaX = _x - vector.getX();
+        double deltaZ = _z - vector.getZ();
+        return FastMath.sqrt(deltaX * deltaX + deltaZ * deltaZ);
     }
 
     @Override
@@ -371,23 +420,53 @@ public class Vector2D implements IVector2D {
         return output;
     }
 
-    protected void onChange() {
-        resetCaches();
+    @Override
+    public void serialize(IByteWriter writer) throws IOException {
+        writer.write(_x);
+        writer.write(_z);
     }
 
-    protected void copyCaches(Vector2D vector) {
-        _magnitude2D = vector._magnitude2D;
-        _direction = vector._direction;
-        _yaw = vector._yaw;
-        _hasMagnitude2D = vector._hasMagnitude2D;
-        _hasDirection = vector._hasDirection;
-        _hasYaw = vector._hasYaw;
+    @Override
+    public void deserialize(IByteReader reader) throws IOException {
+        _x = reader.getDouble();
+        _z = reader.getDouble();
     }
 
-    protected void resetCaches() {
-        _hasDirection = false;
-        _hasMagnitude2D = false;
-        _hasYaw = false;
+    @Override
+    public void serialize(IDataNode dataNode) {
+        dataNode.set("x", _x);
+        dataNode.set("z", _z);
+    }
+
+    @Override
+    public void deserialize(IDataNode dataNode) throws DeserializeException {
+        _x = dataNode.getDouble("x");
+        _z = dataNode.getDouble("z");
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " { x:" + getX() + ", z:" + getZ() + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)(_x * 100) ^ (int)(_z * 100);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        if (obj instanceof Vector2D) {
+            Vector2D other = (Vector2D)obj;
+
+            return Double.compare(other.getX(), getX()) == 0
+                    && Double.compare(other.getZ(), getZ()) == 0;
+        }
+
+        return false;
     }
 
     private static double calculateMagnitude(ICoords2D coords) {

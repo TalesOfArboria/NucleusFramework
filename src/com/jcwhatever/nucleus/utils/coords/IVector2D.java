@@ -51,6 +51,16 @@ public interface IVector2D extends ICoords2D {
     IVector2D setZ(double z);
 
     /**
+     * Set the vector X and Z coordinates.
+     *
+     * @param x  The X coordinate.
+     * @param z  The Z coordinate.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D set2D(double x, double z);
+
+    /**
      * Copy coordinate values from specified coordinates.
      *
      * @param coords  The values to copy.
@@ -114,6 +124,50 @@ public interface IVector2D extends ICoords2D {
     IVector2D add2D(double value);
 
     /**
+     * Add scalar to vector.
+     *
+     * <p>Uses the larger of the specified value or the added result. Essentially performs a
+     * Math.max operation using the specified value and the added result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D add2DMax(double scalar, double value);
+
+    /**
+     * Add scalar to vector.
+     *
+     * <p>Uses the smaller of the specified value or the added result. Essentially performs a
+     * Math.max operation using the specified value and the added result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D add2DMin(double scalar, double value);
+
+    /**
+     * Add a value to the X axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D addX(double value);
+
+    /**
+     * Add a value to the Z axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D addZ(double value);
+
+    /**
      * Subtract vector.
      *
      * @param vector  The vector to subtract.
@@ -132,6 +186,50 @@ public interface IVector2D extends ICoords2D {
     IVector2D subtract2D(double scalar);
 
     /**
+     * Subtract scalar from vector.
+     *
+     * <p>Uses the larger of the specified value or the subtracted result. Essentially performs a
+     * Math.max operation using the specified value and the subtraction result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D subtract2DMax(double scalar, double value);
+
+    /**
+     * Subtract scalar from vector.
+     *
+     * <p>Uses the smaller of the specified value or the subtracted result. Essentially performs a
+     * Math.min operation using the specified value and the subtraction result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D subtract2DMin(double scalar, double value);
+
+    /**
+     * Subtract a value from to the X axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D subtractX(double value);
+
+    /**
+     * Subtract a value from the Z axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D subtractZ(double value);
+
+    /**
      * Multiply the vector by another vector.
      *
      * @param vector  The other vector.
@@ -148,6 +246,50 @@ public interface IVector2D extends ICoords2D {
      * @return  Self for chaining.
      */
     IVector2D multiply2D(double scalar);
+
+    /**
+     * Multiply the vector by a scalar value.
+     *
+     * <p>Uses the larger of the specified value or the factor result. Essentially performs a
+     * Math.max operation using the specified value and the factor result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiply2DMax(double scalar, double value);
+
+    /**
+     * Multiply the vector by a scalar value.
+     *
+     * <p>Uses the smaller of the specified value or the factor result. Essentially performs a
+     * Math.min operation using the specified value and the factor result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiply2DMin(double scalar, double value);
+
+    /**
+     * Multiply the X axis by the specified value.
+     *
+     * @param value  The value.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiplyX(double value);
+
+    /**
+     * Multiply the Z axis by the specified value.
+     *
+     * @param value  The value.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiplyZ(double value);
 
     /**
      * Average the vector with another vector.

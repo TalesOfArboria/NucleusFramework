@@ -43,6 +43,17 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D setY(double y);
 
     /**
+     * Set the vector X, Y and Z coordinates.
+     *
+     * @param x  The X coordinate.
+     * @param y  The Y coordinate.
+     * @param z  The Z coordinate.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D set3D(double x, double y, double z);
+
+    /**
      * Copy entity velocity into vector.
      *
      * @param entity  The entity.
@@ -50,7 +61,6 @@ public interface IVector3D extends IVector2D, ICoords3D {
      * @return  Self for chaining.
      */
     IVector3D copyFrom3D(Entity entity);
-
 
     /**
      * Copy coordinate values from specified coordinates.
@@ -135,6 +145,41 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D add3D(double value);
 
     /**
+     * Add a value to the Y axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D addY(double value);
+
+    /**
+     * Add scalar to vector.
+     *
+     * <p>Uses the larger of the specified value or the added result. Essentially performs a
+     * Math.max operation using the specified value and the added result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D add3DMax(double scalar, double value);
+
+    /**
+     * Add scalar to vector.
+     *
+     * <p>Uses the smaller of the specified value or the added result. Essentially performs a
+     * Math.max operation using the specified value and the added result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D add3DMin(double scalar, double value);
+
+    /**
      * Subtract vector.
      *
      * @param vector  The vector to subtract.
@@ -163,6 +208,41 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D subtract3D(double scalar);
 
     /**
+     * Subtract scalar from vector.
+     *
+     * <p>Uses the larger of the specified value or the subtracted result. Essentially performs a
+     * Math.max operation using the specified value and the subtraction result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D subtract3DMax(double scalar, double value);
+
+    /**
+     * Subtract scalar from vector.
+     *
+     * <p>Uses the smaller of the specified value or the subtracted result. Essentially performs a
+     * Math.min operation using the specified value and the subtraction result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D subtract3DMin(double scalar, double value);
+
+    /**
+     * Subtract a value from to the Y axis.
+     *
+     * @param value  The value to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D subtractY(double value);
+
+    /**
      * Multiply the vector by another vector.
      *
      * @param vector  The other vector.
@@ -189,6 +269,41 @@ public interface IVector3D extends IVector2D, ICoords3D {
      * @return  Self for chaining.
      */
     IVector3D multiply3D(double scalar);
+
+    /**
+     * Multiply the vector by a scalar value.
+     *
+     * <p>Uses the larger of the specified value or the factor result. Essentially performs a
+     * Math.max operation using the specified value and the factor result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the max comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D multiply3DMax(double scalar, double value);
+
+    /**
+     * Multiply the vector by a scalar value.
+     *
+     * <p>Uses the smaller of the specified value or the factor result. Essentially performs a
+     * Math.min operation using the specified value and the factor result per axis.</p>
+     *
+     * @param scalar  The scalar value.
+     * @param value   The value to use in the min comparison.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D multiply3DMin(double scalar, double value);
+
+    /**
+     * Multiply the Y axis by the specified value.
+     *
+     * @param value  The value.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiplyY(double value);
 
     /**
      * Average the vector with another vector.
@@ -271,6 +386,15 @@ public interface IVector3D extends IVector2D, ICoords3D {
     Vector asBukkitVector();
 
     @Override
+    IVector3D setX(double x);
+
+    @Override
+    IVector3D setZ(double z);
+
+    @Override
+    IVector3D set2D(double x, double z);
+
+    @Override
     IVector3D copyFrom2D(ICoords2D coords);
 
     @Override
@@ -283,7 +407,7 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D copyTo2D(Vector vector);
 
     @Override
-    IVector2D copyTo2D(Location location);
+    IVector3D copyTo2D(Location location);
 
     @Override
     IVector3D add2D(ICoords2D vector);
@@ -292,16 +416,52 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D add2D(double value);
 
     @Override
+    IVector3D add2DMax(double scalar, double value);
+
+    @Override
+    IVector3D add2DMin(double scalar, double value);
+
+    @Override
+    IVector3D addX(double value);
+
+    @Override
+    IVector3D addZ(double value);
+
+    @Override
     IVector3D subtract2D(ICoords2D vector);
 
     @Override
     IVector3D subtract2D(double scalar);
 
     @Override
+    IVector3D subtract2DMax(double scalar, double value);
+
+    @Override
+    IVector3D subtract2DMin(double scalar, double value);
+
+    @Override
+    IVector3D subtractX(double value);
+
+    @Override
+    IVector3D subtractZ(double value);
+
+    @Override
     IVector3D multiply2D(ICoords2D vector);
 
     @Override
     IVector3D multiply2D(double scalar);
+
+    @Override
+    IVector3D multiply2DMax(double scalar, double value);
+
+    @Override
+    IVector3D multiply2DMin(double scalar, double value);
+
+    @Override
+    IVector3D multiplyX(double value);
+
+    @Override
+    IVector3D multiplyZ(double value);
 
     @Override
     IVector3D average2D(ICoords2D vector);
