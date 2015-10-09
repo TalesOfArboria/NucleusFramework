@@ -64,20 +64,15 @@ public class NucleusRotationMatrix implements IRotationMatrix {
     private final float _cos;
     private final float _sin;
 
-    NucleusRotationMatrix(float rotation, int scale) {
+    NucleusRotationMatrix(float rotation) {
         _rotation = rotation;
-        _cos = scale(FastMath.cos(_rotation), scale);
-        _sin = scale(FastMath.sin(_rotation), scale);
-
+        _cos = FastMath.cos(_rotation);
+        _sin = FastMath.sin(_rotation);
         /*
         newX = x * matrix[0][0] + y * matrix[1][0] + z * matrix[2][0];
         newY = x * matrix[0][1] + y * matrix[1][1] + z * matrix[2][1];
         newZ = x * matrix[0][2] + y * matrix[1][2] + z * matrix[2][2];
         */
-    }
-
-    NucleusRotationMatrix(float rotation) {
-        this(rotation, 10);
     }
 
     @Override
