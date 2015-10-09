@@ -266,6 +266,12 @@ class MountTeleporter {
 
             Entity passenger = entity.getPassenger();
 
+            if (entity.hasMetadata(InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
+                entity.eject();
+                entity = passenger;
+                continue;
+            }
+
             if (entity instanceof Player) {
 
                 if (_mode.isMountsTeleport() || entity.equals(_entity)) {

@@ -33,10 +33,16 @@ import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
 import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -48,7 +54,22 @@ import java.util.UUID;
  */
 public final class InternalTeleportManager implements ITeleportManager {
 
-    private Map<UUID, ScheduledTeleport> _scheduled = new PlayerMap<>(Nucleus.getPlugin());
+    static final String TELEPORT_DENY_META_NAME =
+            InternalTeleportManager.class.getName() + ":CanTeleport";
+
+    private static final FixedMetadataValue TELEPORT_DENY_META =
+            new FixedMetadataValue(Nucleus.getPlugin(), false);
+
+    private static BukkitListener LISTENER;
+
+    private final Map<UUID, ScheduledTeleport> _scheduled = new PlayerMap<>(Nucleus.getPlugin());
+
+    public InternalTeleportManager() {
+        if (LISTENER == null) {
+            LISTENER = new BukkitListener();
+            Bukkit.getPluginManager().registerEvents(LISTENER, Nucleus.getPlugin());
+        }
+    }
 
     @Nullable
     @Override
@@ -78,6 +99,11 @@ public final class InternalTeleportManager implements ITeleportManager {
 
         scheduled = new ScheduledTeleport(this, player, location,
                 PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
+
+        if (player.hasMetadata(TELEPORT_DENY_META_NAME)) {
+            scheduled.cancel();
+            return scheduled;
+        }
 
         _scheduled.put(player.getUniqueId(), scheduled);
 
@@ -111,6 +137,9 @@ public final class InternalTeleportManager implements ITeleportManager {
         PreCon.notNull(location);
         PreCon.notNull(cause);
         PreCon.notNull(mode);
+
+        if (player.hasMetadata(TELEPORT_DENY_META_NAME))
+            return false;
 
         ScheduledTeleport scheduled = _scheduled.remove(player.getUniqueId());
         if (scheduled != null)
@@ -164,6 +193,25 @@ public final class InternalTeleportManager implements ITeleportManager {
                 : mountedTeleport(entity, location, PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
     }
 
+    @Override
+    public boolean canTeleport(Entity entity) {
+        PreCon.notNull(entity);
+
+        return !entity.hasMetadata(TELEPORT_DENY_META_NAME);
+    }
+
+    @Override
+    public void setCanTeleport(Entity entity, boolean canTeleport) {
+        PreCon.notNull(entity);
+
+        if (canTeleport) {
+            entity.removeMetadata(TELEPORT_DENY_META_NAME, Nucleus.getPlugin());
+        }
+        else {
+            entity.setMetadata(TELEPORT_DENY_META_NAME, TELEPORT_DENY_META);
+        }
+    }
+
     void removeTask(UUID playerId) {
         _scheduled.remove(playerId);
     }
@@ -191,5 +239,15 @@ public final class InternalTeleportManager implements ITeleportManager {
         return !(entity instanceof Player &&
                 !LeashUtils.getLeashed((Player) entity).isEmpty())
                 && entity.getVehicle() == null && entity.getPassenger() == null;
+    }
+
+    private static class BukkitListener implements Listener {
+
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onTeleport(EntityTeleportEvent event) {
+            Entity entity = event.getEntity();
+            if (entity.hasMetadata(TELEPORT_DENY_META_NAME))
+                event.setCancelled(true);
+        }
     }
 }

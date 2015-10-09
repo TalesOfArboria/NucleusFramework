@@ -244,6 +244,25 @@ public final class Teleporter {
         return manager().teleport(entity, location, mode);
     }
 
+    /**
+     * Determine if an entity is allowed to teleport.
+     *
+     * @param entity  The entity to check.
+     */
+    public static boolean canTeleport(Entity entity) {
+        return manager().canTeleport(entity);
+    }
+
+    /**
+     * Set if an entity is allowed to be teleported.
+     *
+     * @param entity       The entity.
+     * @param canTeleport  True to allow teleporting, false to prevent teleporting.
+     */
+    public static void setCanTeleport(Entity entity, boolean canTeleport) {
+        manager().setCanTeleport(entity, canTeleport);
+    }
+
     private static ITeleportManager manager() {
         return Nucleus.getTeleportManager();
     }

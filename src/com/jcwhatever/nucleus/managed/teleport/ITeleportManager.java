@@ -211,4 +211,19 @@ public interface ITeleportManager {
      * @return  True if the entity was teleported, otherwise false.
      */
     boolean teleport(Entity entity, Location location, TeleportMode mode);
+
+    /**
+     * Determine if an entity is allowed to teleport.
+     *
+     * @param entity  The entity to check.
+     */
+    boolean canTeleport(Entity entity);
+
+    /**
+     * Set if an entity is allowed to be teleported.
+     *
+     * @param entity       The entity.
+     * @param canTeleport  True to allow teleporting, false to prevent teleporting.
+     */
+    void setCanTeleport(Entity entity, boolean canTeleport);
 }

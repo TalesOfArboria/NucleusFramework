@@ -131,15 +131,19 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     @Override
     public void run() {
 
-        boolean isSuccess = InternalTeleportManager.isSingleTeleport(_player)
-                ? _player.teleport(_location)
-                : InternalTeleportManager.mountedTeleport(_player, _location, _cause, _mode);
-
-        if (isSuccess) {
-            _agent.success();
+        if (_player.hasMetadata(InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
+            _agent.cancel();
         }
         else {
-            _agent.cancel();
+            boolean isSuccess = InternalTeleportManager.isSingleTeleport(_player)
+                    ? _player.teleport(_location)
+                    : InternalTeleportManager.mountedTeleport(_player, _location, _cause, _mode);
+
+            if (isSuccess) {
+                _agent.success();
+            } else {
+                _agent.cancel();
+            }
         }
         _isFinished = true;
         _manager.removeTask(_player.getUniqueId());
