@@ -290,6 +290,65 @@ public final class EntityUtils {
     }
 
     /**
+     * Get the closest {@link org.bukkit.entity.Entity} to the specified source
+     * {@link org.bukkit.entity.Entity}.
+     *
+     * @param sourceLocation  The location to check.
+     * @param radius          The max radius to search in.
+     * @param validator       The validator used to determine if an entity is a candidate.
+     */
+    @Nullable
+    public static Entity getClosestEntity(Location sourceLocation, double radius,
+                                          @Nullable final IValidator<Entity> validator) {
+        PreCon.notNull(sourceLocation);
+        PreCon.positiveNumber(radius);
+
+        if (sourceLocation.getWorld() == null)
+            return null;
+
+        int xRadius = (int)Math.ceil(radius / 16);
+        int zRadius = xRadius;
+
+        int xSource = sourceLocation.getBlockX();
+        if (xSource < radius || xSource > 16 - radius)
+            xRadius++;
+
+        int zSource = sourceLocation.getBlockZ();
+        if (zSource < radius || zSource > 16 - radius)
+            zRadius++;
+
+        Entity closest = null;
+        double closestDistanceSq = 0;
+
+        for (int x = 0; x <= xRadius; x++) {
+            for (int z = 0; z <= zRadius; z++) {
+
+                Chunk chunk = sourceLocation.getWorld().getChunkAt(x, z);
+                Entity[] entities = chunk.getEntities();
+
+                for (Entity entity : entities) {
+
+                    if (validator != null && !validator.isValid(entity))
+                        continue;
+
+                    double distance = entity.getLocation(NEARBY_ENTITY_LOCATION)
+                            .distanceSquared(sourceLocation);
+                    if (distance > radius * radius)
+                        continue;
+
+                    if (closest == null ||
+                            distance < closestDistanceSq) {
+                        closestDistanceSq = distance;
+                        closest = entity;
+                    }
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    /**
      * Get the closest {@link org.bukkit.entity.Entity} to a {@link org.bukkit.Location}.
      *
      * @param sourceLocation  The location to check.
@@ -298,7 +357,7 @@ public final class EntityUtils {
      */
     @Nullable
     public static Entity getClosestEntity(Location sourceLocation,
-                                          List<Entity> entities,
+                                          List<? extends Entity> entities,
                                           @Nullable IValidator<Entity> validator) {
         PreCon.notNull(sourceLocation);
         PreCon.notNull(entities);

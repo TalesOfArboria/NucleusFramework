@@ -449,6 +449,55 @@ public final class PlayerUtils {
     }
 
     /**
+     * Get the closest {@link Player} to the specified {@link Location} within the
+     * specified radius.
+     *
+     * <p>Does not include NPC players in result.</p>
+     *
+     * @param loc        The {@link Location} to check.
+     * @param radius     The radius that players must be within to be considered.
+     * @param validator  A validator used to validate if a player is a candidate to return.
+     *
+     * @return  The closest player or null if not found.
+     */
+    @Nullable
+    public static Player getClosestPlayer(Location loc, double radius,
+                                          @Nullable IValidator<Player> validator) {
+        PreCon.notNull(loc, "loc");
+        PreCon.notNull(loc.getWorld(), "loc world");
+
+        World world = loc.getWorld();
+        List<Player> players = world.getPlayers();
+        if (players.isEmpty())
+            return null;
+
+        radius *= radius;
+
+        Player closest = null;
+        double closestDistSq = 0;
+
+        for (Player player : players) {
+            if (Npcs.isNpc(player))
+                continue;
+
+            Location playerLoc = player.getLocation(PLAYER_LOCATION);
+            double distanceSq = loc.distanceSquared(playerLoc);
+            if (distanceSq > radius)
+                continue;
+
+            if (validator != null && !validator.isValid(player))
+                continue;
+
+            if (closest == null ||  distanceSq < closestDistSq) {
+                closest = player;
+                closestDistSq = distanceSq;
+            }
+        }
+
+        return closest;
+    }
+
+    /**
      * Iterates over blocks in the direction the player is looking until the
      * max distance is reached or a block that isn't {@link org.bukkit.Material#AIR}
      * is found.
