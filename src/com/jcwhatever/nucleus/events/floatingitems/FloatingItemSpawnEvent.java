@@ -45,7 +45,7 @@ public class FloatingItemSpawnEvent extends Event implements Cancellable {
     /**
      * Constructor.
      *
-     * @param item  The item being despawned.
+     * @param item  The item being spawned.
      */
     public FloatingItemSpawnEvent (IFloatingItem item) {
         PreCon.notNull(item);
@@ -54,7 +54,7 @@ public class FloatingItemSpawnEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the floating item that is being despawned.
+     * Get the floating item that is being spawned.
      */
     public IFloatingItem getFloatingItem() {
         return _item;

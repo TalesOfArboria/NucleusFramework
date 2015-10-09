@@ -56,7 +56,9 @@ public interface IFloatingItem extends IPluginOwned, INamedInsensitive, IDisposa
     ItemStack getItem();
 
     /**
-     * Get the current item entity.
+     * Get the current entity.
+     *
+     * <p>Not guaranteed to be specific type of entity.</p>
      *
      * @return  The {@link Entity} or null if not spawned.
      */
