@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
 import com.jcwhatever.nucleus.managed.reflection.IReflection;
 import com.jcwhatever.nucleus.managed.reflection.Reflection;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.nms.INmsParticleEffectHandler;
 import com.jcwhatever.nucleus.utils.text.components.IChatMessage;
 import net.minecraft.server.v1_8_R3.BlockPosition;
@@ -36,6 +37,7 @@ import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.Container;
 import net.minecraft.server.v1_8_R3.ContainerAnvil;
 import net.minecraft.server.v1_8_R3.DataWatcher;
+import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityLightning;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
@@ -317,6 +319,37 @@ class v1_8_R3_Nms implements INms {
         output.setX(nmsEntity.motX);
         output.setY(nmsEntity.motY);
         output.setZ(nmsEntity.motZ);
+    }
+
+    @Override
+    public void setYaw(Entity entity, float yaw) {
+        net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        yaw = LocationUtils.clampYaw(yaw);
+        nmsEntity.yaw = yaw;
+
+        if (nmsEntity instanceof EntityLiving) {
+            EntityLiving nmsLiving = (EntityLiving)nmsEntity;
+            nmsLiving.aK = yaw;
+            nmsLiving.aL = yaw;
+            if (!(nmsEntity instanceof EntityHuman)) {
+                nmsLiving.aI = yaw;
+            }
+        }
+    }
+
+    @Override
+    public void setPitch(Entity entity, float pitch) {
+        net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        pitch = LocationUtils.limitPitch(pitch);
+        nmsEntity.pitch = pitch;
+    }
+
+    @Override
+    public void setStepHeight(Entity entity, float height) {
+        net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        /* public field S found in Entity. Default value for EntityLiving is 0.6f as set
+        * in EntityLiving Constructor. */
+        nmsEntity.S = height;
     }
 
     @Override

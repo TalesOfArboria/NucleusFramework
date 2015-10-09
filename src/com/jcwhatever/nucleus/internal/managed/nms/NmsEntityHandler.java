@@ -69,4 +69,25 @@ class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
         output.copyFrom3D(VELOCITY);
         return output;
     }
+
+    @Override
+    public void setYaw(Entity entity, float yaw) {
+        PreCon.notNull(entity);
+
+        nms().setYaw(entity, yaw);
+    }
+
+    @Override
+    public void setPitch(Entity entity, float pitch) {
+        PreCon.notNull(entity);
+
+        nms().setPitch(entity, pitch);
+    }
+
+    @Override
+    public void setStepHeight(Entity entity, float height) {
+        PreCon.notNull(entity);
+
+        nms().setStepHeight(entity, height);
+    }
 }

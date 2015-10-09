@@ -207,6 +207,30 @@ interface INms {
     void getVelocity(Entity entity, Vector output);
 
     /**
+     * Set an entities yaw angle.
+     *
+     * @param entity  The entity.
+     * @param yaw     The yaw angle.
+     */
+    void setYaw(Entity entity, float yaw);
+
+    /**
+     * Set an entities pitch angle.
+     *
+     * @param entity  The entity.
+     * @param pitch   The pitch angle.
+     */
+    void setPitch(Entity entity, float pitch);
+
+    /**
+     * Set an entity's path step height.
+     *
+     * @param entity  The entity.
+     * @param height  The step height.
+     */
+    void setStepHeight(Entity entity, float height);
+
+    /**
      * Generate chat message from text.
      *
      * @param text  The text to convert.
