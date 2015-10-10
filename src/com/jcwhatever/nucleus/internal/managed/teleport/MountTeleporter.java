@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.managed.teleport;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.teleport.EntityTeleportRespawnEvent;
 import com.jcwhatever.nucleus.managed.entity.mob.ISerializableMob;
 import com.jcwhatever.nucleus.managed.entity.mob.Mobs;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
@@ -127,17 +128,27 @@ class MountTeleporter {
 
                 Object obj = mounts.mounts[i];
 
-                if (obj instanceof ISerializableMob) {
-                    mounts.mounts[i] = ((ISerializableMob) obj).spawn(destination);
+                if (obj instanceof SerializedEntity) {
+                    SerializedEntity serializedEntity = (SerializedEntity)obj;
+                    Entity respawned = serializedEntity.serialized.spawn(destination);
+                    mounts.mounts[i] = respawned;
+
+                    EntityTeleportRespawnEvent event = new EntityTeleportRespawnEvent(
+                            serializedEntity.original, respawned);
+                    Nucleus.getEventManager().callBukkit(this, event);
                 }
             }
 
             for (LeashPair pair : mounts.leashes) {
-                pair.spawned = pair.leashed.spawn(destination);
+                pair.spawned = pair.leashed.serialized.spawn(destination);
                 if (!(pair.spawned instanceof LivingEntity))
                     continue;
 
                 ((LivingEntity) pair.spawned).setLeashHolder(pair.player);
+
+                EntityTeleportRespawnEvent event = new EntityTeleportRespawnEvent(
+                        pair.leashed.original, pair.spawned);
+                Nucleus.getEventManager().callBukkit(this, event);
             }
 
             _isSpawningNewEntity = false;
@@ -180,54 +191,6 @@ class MountTeleporter {
             _keepLoaded.remove(_entity.getLocation().getChunk());
         }
     }
-
-    /*
-     * Represents a leash from a player to an entity.
-     */
-    private static class LeashPair {
-        Player player;
-        ISerializableMob leashed;
-        Entity spawned;
-
-        LeashPair(Player player, ISerializableMob leashed) {
-            this.player = player;
-            this.leashed = leashed;
-        }
-    }
-
-    private static class TeleportListener implements Listener {
-
-        // prevent spawn restrictions from preventing a mounted mob from
-        // being teleported with a player.
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onMountedEntitySpawn(EntitySpawnEvent event) {
-            if ( _isSpawningNewEntity)
-                event.setCancelled(false);
-        }
-
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onMountedEntityTeleport(EntityTeleportEvent event) {
-            if ( _isSpawningNewEntity)
-                event.setCancelled(false);
-        }
-
-        // prevent spawn restrictions from preventing a mounted mob from
-        // being teleported with a player.
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        private void onChunkUnload(ChunkUnloadEvent event) {
-            if (_keepLoaded.contains(event.getChunk()))
-                event.setCancelled(true);
-        }
-    }
-
-    private static class Mounts {
-        Object[] mounts;
-        Deque<Player> players = new ArrayDeque<>(3);
-        Deque<PlayerStateSnapshot> snapshots = new ArrayDeque<>(3);
-        Deque<LeashPair> leashes = new ArrayDeque<>(3);
-        Deque<ISerializableMob> mobs = new ArrayDeque<>(3);
-    }
-
 
     private static void mountAll(Object[] mounts, Location mountLocation) {
 
@@ -286,8 +249,8 @@ class MountTeleporter {
                     for (Entity leashEntity : leashed) {
 
                         if (_mode.isLeashTeleport()) {
-                            ISerializableMob mob = Mobs.getSerializable(leashEntity);
-                            if (mob == null)
+                            SerializedEntity mob = new SerializedEntity(leashEntity);
+                            if (mob.serialized == null)
                                 continue;
 
                             result.leashes.add(new LeashPair((Player) entity, mob));
@@ -303,8 +266,8 @@ class MountTeleporter {
 
                 if (_mode.isMountsTeleport() || entity.equals(_entity)) {
                     if (entity instanceof LivingEntity) {
-                        ISerializableMob mob = Mobs.getSerializable(entity);
-                        if (mob != null) {
+                        SerializedEntity mob = new SerializedEntity(entity);
+                        if (mob.serialized != null) {
                             mounts.add(mob);
                             result.mobs.add(mob);
                         }
@@ -325,5 +288,61 @@ class MountTeleporter {
 
         result.mounts = mounts.toArray();
         return result;
+    }
+
+    private static class Mounts {
+        Object[] mounts;
+        Deque<Player> players = new ArrayDeque<>(3);
+        Deque<PlayerStateSnapshot> snapshots = new ArrayDeque<>(3);
+        Deque<LeashPair> leashes = new ArrayDeque<>(3);
+        Deque<SerializedEntity> mobs = new ArrayDeque<>(3);
+    }
+
+    private static class SerializedEntity {
+        ISerializableMob serialized;
+        Entity original;
+        SerializedEntity(Entity entity) {
+            this.original = entity;
+            this.serialized = Mobs.getSerializable(entity);
+        }
+    }
+
+    /*
+     * Represents a leash from a player to an entity.
+     */
+    private static class LeashPair {
+        Player player;
+        SerializedEntity leashed;
+        Entity spawned;
+
+        LeashPair(Player player, SerializedEntity leashed) {
+            this.player = player;
+            this.leashed = leashed;
+        }
+    }
+
+    private static class TeleportListener implements Listener {
+
+        // prevent spawn restrictions from preventing a mounted mob from
+        // being teleported with a player.
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onMountedEntitySpawn(EntitySpawnEvent event) {
+            if ( _isSpawningNewEntity)
+                event.setCancelled(false);
+        }
+
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onMountedEntityTeleport(EntityTeleportEvent event) {
+            if ( _isSpawningNewEntity)
+                event.setCancelled(false);
+        }
+
+        // prevent spawn restrictions from preventing a mounted mob from
+        // being teleported with a player.
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        private void onChunkUnload(ChunkUnloadEvent event) {
+            if (_keepLoaded.contains(event.getChunk()))
+                event.setCancelled(true);
+        }
     }
 }
