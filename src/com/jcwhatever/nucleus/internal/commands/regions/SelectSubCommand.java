@@ -86,14 +86,10 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand, IT
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         CommandException.checkNotConsole(getPlugin(), this, sender);
-
-        String regionName = args.getString("regionName");
         boolean hasRegionName = !args.isDefaultValue("regionName");
 
-        Player p = (Player)sender;
-
-        List<IRegion> regions = Nucleus.getRegionManager().getRegions(p.getLocation());
-
+        Player player = (Player)sender;
+        List<IRegion> regions = Nucleus.getRegionManager().getRegions(player.getLocation());
 
         if (regions.isEmpty())
             throw new CommandException(NucLang.get(_NO_REGIONS));
@@ -109,6 +105,7 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand, IT
                     NucLang.get(_FOUND_MORE_THAN_ONE, TextUtils.concat(regionNames, ", ")));
         }
 
+        String regionName = args.getString("regionName");
         IRegion region = null;
 
         for (IRegion r : regions) {
@@ -126,7 +123,7 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand, IT
                     ? NucLang.get(getPlugin(), _NAMED_REGION_NOT_FOUND, regionName)
                     : NucLang.get(getPlugin(), _REGION_NOT_FOUND));
 
-        RegionSelection.set(p, new SimpleRegionSelection(region.getP1(), region.getP2()));
+        RegionSelection.set(player, new SimpleRegionSelection(region.getP1(), region.getP2()));
 
         tellSuccess(sender, NucLang.get(_SUCCESS,
                 region.getName(), region.getPlugin().getName()));
