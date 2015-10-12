@@ -27,24 +27,22 @@ package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
-import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class SAPI_Depends implements IDisposable {
 
-    private List<DependsWrapper> _wrappers = new ArrayList<>(10);
+    private final List<DependsWrapper> _wrappers = new ArrayList<>(10);
     private IScheduledTask _task;
     private boolean _isDisposed;
 
@@ -59,7 +57,9 @@ public class SAPI_Depends implements IDisposable {
         if (_task != null)
             _task.cancel();
 
-        _wrappers.clear();
+        synchronized (_wrappers) {
+            _wrappers.clear();
+        }
 
         _isDisposed = true;
     }
@@ -76,7 +76,10 @@ public class SAPI_Depends implements IDisposable {
             return;
 
         DependsWrapper wrapper = new DependsWrapper(pluginName, runnable);
-        _wrappers.add(wrapper);
+
+        synchronized (_wrappers) {
+            _wrappers.add(wrapper);
+        }
 
         if (_task == null || _task.isCancelled())
             _task = Scheduler.runTaskRepeat(Nucleus.getPlugin(), 20, 20, new DependsChecker());
@@ -167,23 +170,23 @@ public class SAPI_Depends implements IDisposable {
         @Override
         public void run() {
 
-            if (_wrappers.isEmpty()) {
-                cancelTask();
-                return;
-            }
+            synchronized (_wrappers) {
+                if (_wrappers.isEmpty()) {
+                    cancelTask();
+                    return;
+                }
 
-            Iterator<DependsWrapper> iterator = _wrappers.iterator();
+                List<DependsWrapper> wrappers = new ArrayList<>(_wrappers);
 
-            while (iterator.hasNext()) {
+                for (DependsWrapper wrapper : wrappers) {
 
-                DependsWrapper wrapper = iterator.next();
+                    if (wrapper.getTotalChecks() > 60 ||
+                            runDepends(wrapper.getPluginName(), wrapper.getRunnable())) {
 
-                if (wrapper.getTotalChecks() > 60 ||
-                        runDepends(wrapper.getPluginName(), wrapper.getRunnable())) {
-
-                    iterator.remove();
-                } else {
-                    wrapper.incrementCheck();
+                        _wrappers.remove(wrapper);
+                    } else {
+                        wrapper.incrementCheck();
+                    }
                 }
             }
         }
