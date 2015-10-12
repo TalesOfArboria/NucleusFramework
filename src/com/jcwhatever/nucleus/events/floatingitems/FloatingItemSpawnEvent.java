@@ -25,9 +25,10 @@
 
 package com.jcwhatever.nucleus.events.floatingitems;
 
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
-
+import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -37,7 +38,8 @@ import org.bukkit.event.HandlerList;
  */
 public class FloatingItemSpawnEvent extends Event implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), FloatingItemSpawnEvent.class);
 
     private final IFloatingItem _item;
     private boolean _isCancelled;

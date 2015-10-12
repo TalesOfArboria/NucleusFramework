@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.manager;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -181,13 +183,15 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * Used to forward Bukkit events.
  *
  * <p>The forwarder listens to events that are registered via {@link #register}
- * and forwards the events to once of the appropriate abstract methods.</p>
+ * and forwards the events to one of the appropriate abstract methods.</p>
  *
  * <p>An event forwarder can be used to forward the received Bukkit events to
  * another event manager instance that is used in a context that might be
@@ -197,183 +201,43 @@ import java.util.Set;
  */
 public abstract class BukkitEventForwarder implements IPluginOwned, IDisposable {
 
-    private final Plugin _plugin;
-    private final Forwarder _forwarder;
-    private final EventPriority _priority;
-    private final Listener _dummyListener = new Listener() {};
-    private final EventExecutor _executor = new EventExecutor() {
+    private static final Listener GLOBAL_DUMMY_LISTENER = new Listener() {};
+    private static final ElementCounter<Class<? extends Event>> ALL_REGISTERED =
+            new ElementCounter<Class<? extends Event>>(ElementCounter.RemovalPolicy.REMOVE);
+    private static final Set<Class<? extends Event>> GLOBAL_REGISTERED = new HashSet<>(35);
+
+    private static final Map<Forwarder, Void> FORWARDERS = new WeakHashMap<>(35);
+    private static final EventExecutor GLOBAL_EXECUTOR = new EventExecutor() {
         @Override
         public void execute(Listener listener, Event event) throws EventException {
-            _forwarder.on(event);
+            for (Forwarder forwarder : FORWARDERS.keySet()) {
+                forwarder.on(event);
+            }
+
         }
     };
-    private final Set<Class<? extends Event>> _registered = new HashSet<>(35);
+    private static boolean _isInitialized;
 
-    private boolean _isDisposed;
+    public static void registerGlobal(Plugin plugin, Class<? extends Event> event) {
+        PreCon.notNull(event);
 
-    /**
-     * Constructor.
-     *
-     * @param plugin        The owning plugin.
-     * @param priority      The priority of the forwarded events.
-     */
-    public BukkitEventForwarder(Plugin plugin, EventPriority priority) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(priority);
-
-        _plugin = plugin;
-        _priority = priority;
-        _forwarder = new Forwarder();
-    }
-
-    /**
-     * Register an event to forward.
-     *
-     * @param event  The event to forward.
-     */
-    public void register(Class<? extends Event> event) {
-        if (_registered.contains(event))
+        if (GLOBAL_REGISTERED.contains(event))
             return;
 
-        _registered.add(event);
-        Bukkit.getPluginManager().registerEvent(event, _dummyListener, _priority, _executor, _plugin, false);
+        GLOBAL_REGISTERED.add(event);
+        ALL_REGISTERED.add(event);
+        Bukkit.getPluginManager().registerEvent(event, GLOBAL_DUMMY_LISTENER,
+                EventPriority.HIGHEST, GLOBAL_EXECUTOR, plugin, false);
     }
 
-    @Override
-    public Plugin getPlugin() {
-        return _plugin;
-    }
+    public static void init() {
 
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
+        if (_isInitialized)
+            return;
 
-    @Override
-    public void dispose() {
+        _isInitialized = true;
 
-        _isDisposed = true;
-
-        HandlerList.unregisterAll(_dummyListener);
-        _registered.clear();
-    }
-
-    /**
-     * Invoked whenever a registered event is called.
-     *
-     * @param event  The called event
-     */
-    protected abstract void onEvent(Event event);
-
-    /**
-     * Invoked whenever a registered block event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onBlockEvent(BlockEvent event) {}
-
-    /**
-     * Invoked whenever a registered player event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onPlayerEvent(PlayerEvent event) {}
-
-    /**
-     * Invoked whenever a registered inventory event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onInventoryEvent(InventoryEvent event) {}
-
-    /**
-     * Invoked whenever a registered hanging event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onHangingEvent(HangingEvent event) {}
-
-    /**
-     * Invoked whenever a registered vehicle event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onVehicleEvent(VehicleEvent event) {}
-
-    /**
-     * Invoked whenever a registered entity event is called.
-     *
-     * <p>Intended for optional override.</p>
-     *
-     * @param event  The called event.
-     */
-    protected void onEntityEvent(EntityEvent event) {}
-
-    public class Forwarder {
-
-        public void on(Object e) {
-
-            if (!(e instanceof Event))
-                return;
-
-            Event event = (Event) e;
-
-            onEvent(event);
-
-            if (event instanceof PlayerEvent) {
-                onPlayerEvent((PlayerEvent)event);
-            }
-            else if (event instanceof BlockEvent) {
-                onBlockEvent((BlockEvent)event);
-            }
-            else if (event instanceof HangingEvent) {
-                onHangingEvent((HangingEvent)event);
-            }
-            else if (event instanceof InventoryEvent) {
-                onInventoryEvent((InventoryEvent) event);
-            }
-            else if (event instanceof VehicleEvent) {
-                onVehicleEvent((VehicleEvent) event);
-            }
-            else if (event instanceof EntityEvent) {
-                onEntityEvent((EntityEvent) event);
-            }
-        }
-    }
-
-    private static class RegistrationHelper {
-
-        BukkitEventForwarder forwarder;
-
-        RegistrationHelper(BukkitEventForwarder forwarder) {
-            this.forwarder = forwarder;
-        }
-
-        RegistrationHelper reg(Class<? extends Event> event) {
-            forwarder.register(event);
-            return this;
-        }
-    }
-
-    /**
-     * Register Bukkit events with the forwarder.
-     *
-     * @param forwarder  The forwarder to register the events on.
-     */
-    public static void registerBukkitEvents(BukkitEventForwarder forwarder) {
-
-        new RegistrationHelper(forwarder)
-
+        new RegistrationHelper()
                 /* Block events */
                 .reg(BlockBreakEvent.class)
                 .reg(BlockBurnEvent.class)
@@ -529,5 +393,171 @@ public abstract class BukkitEventForwarder implements IPluginOwned, IDisposable 
                 .reg(WorldLoadEvent.class)
                 .reg(WorldSaveEvent.class)
                 .reg(WorldUnloadEvent.class);
+    }
+
+    private final Plugin _plugin;
+    private final Forwarder _forwarder;
+    private final EventPriority _priority;
+    private final Listener _dummyListener = new Listener() {};
+    private final Set<Class<? extends Event>> _registered = new HashSet<>(35);
+    private final EventExecutor _executor = new EventExecutor() {
+        @Override
+        public void execute(Listener listener, Event event) throws EventException {
+            _forwarder.on(event);
+        }
+    };
+
+    private boolean _isDisposed;
+
+    /**
+     * Constructor.
+     *
+     * @param plugin        The owning plugin.
+     * @param priority      The priority of the forwarded events.
+     */
+    public BukkitEventForwarder(Plugin plugin, EventPriority priority) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(priority);
+
+        _plugin = plugin;
+        _priority = priority;
+        _forwarder = new Forwarder();
+        FORWARDERS.put(_forwarder, null);
+    }
+
+    /**
+     * Register an event to forward.
+     *
+     * @param event  The event to forward.
+     */
+    public void register(Class<? extends Event> event) {
+        PreCon.notNull(event);
+
+        if (_registered.contains(event))
+            return;
+
+        _registered.add(event);
+        Bukkit.getPluginManager().registerEvent(event, _dummyListener,
+                _priority, _executor, _plugin, false);
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+
+        _isDisposed = true;
+
+        HandlerList.unregisterAll(_dummyListener);
+        ALL_REGISTERED.subtractAll(_registered);
+    }
+
+    /**
+     * Invoked whenever a registered event is called.
+     *
+     * @param event  The called event
+     */
+    protected abstract void onEvent(Event event);
+
+    /**
+     * Invoked whenever a registered block event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onBlockEvent(BlockEvent event) {}
+
+    /**
+     * Invoked whenever a registered player event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onPlayerEvent(PlayerEvent event) {}
+
+    /**
+     * Invoked whenever a registered inventory event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onInventoryEvent(InventoryEvent event) {}
+
+    /**
+     * Invoked whenever a registered hanging event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onHangingEvent(HangingEvent event) {}
+
+    /**
+     * Invoked whenever a registered vehicle event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onVehicleEvent(VehicleEvent event) {}
+
+    /**
+     * Invoked whenever a registered entity event is called.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param event  The called event.
+     */
+    protected void onEntityEvent(EntityEvent event) {}
+
+    private class Forwarder {
+
+        public void on(Object e) {
+
+            if (!(e instanceof Event))
+                return;
+
+            Event event = (Event) e;
+
+            onEvent(event);
+
+            if (event instanceof PlayerEvent) {
+                onPlayerEvent((PlayerEvent)event);
+            }
+            else if (event instanceof BlockEvent) {
+                onBlockEvent((BlockEvent)event);
+            }
+            else if (event instanceof HangingEvent) {
+                onHangingEvent((HangingEvent)event);
+            }
+            else if (event instanceof InventoryEvent) {
+                onInventoryEvent((InventoryEvent) event);
+            }
+            else if (event instanceof VehicleEvent) {
+                onVehicleEvent((VehicleEvent) event);
+            }
+            else if (event instanceof EntityEvent) {
+                onEntityEvent((EntityEvent) event);
+            }
+        }
+    }
+
+    private static class RegistrationHelper {
+
+        RegistrationHelper reg(Class<? extends Event> event) {
+            registerGlobal(Nucleus.getPlugin(), event);
+            return this;
+        }
     }
 }

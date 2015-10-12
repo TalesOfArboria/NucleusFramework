@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.teleport;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
@@ -36,7 +38,8 @@ import org.bukkit.event.entity.EntityEvent;
  */
 public class EntityTeleportRespawnEvent extends EntityEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), EntityTeleportRespawnEvent.class);
 
     private Entity _original;
 

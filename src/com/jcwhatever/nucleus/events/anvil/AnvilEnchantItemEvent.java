@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.anvil;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import org.bukkit.entity.Player;
@@ -39,7 +41,7 @@ import org.bukkit.inventory.ItemStack;
 public class AnvilEnchantItemEvent extends Event
         implements Cancellable, ICancellable, IPlayerReference {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(Nucleus.getPlugin(), AnvilEnchantItemEvent.class);
 
     private final Player _player;
     private final AnvilInventory _anvilInventory;

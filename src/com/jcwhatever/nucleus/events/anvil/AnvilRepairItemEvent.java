@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.events.anvil;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 
@@ -41,7 +43,7 @@ import org.bukkit.inventory.ItemStack;
 public class AnvilRepairItemEvent extends Event
 		implements Cancellable, ICancellable, IPlayerReference {
 	
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerListExt(Nucleus.getPlugin(), AnvilRepairItemEvent.class);
 	
 	private final Player _player;
 	private final AnvilInventory _anvilInventory;

@@ -25,11 +25,12 @@
 
 package com.jcwhatever.nucleus.events.sounds;
 
-import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -39,7 +40,8 @@ import org.bukkit.event.HandlerList;
  */
 public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerListExt(
+			Nucleus.getPlugin(), ResourceSoundEndEvent.class);
 	
 	private final Player _player;
 	private final ResourceSound _sound;

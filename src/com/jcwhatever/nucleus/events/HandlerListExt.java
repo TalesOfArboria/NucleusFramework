@@ -22,38 +22,38 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.events;
+package com.jcwhatever.nucleus.events;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.manager.BukkitEventForwarder;
-import com.jcwhatever.nucleus.events.manager.EventManager;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-
+import com.jcwhatever.nucleus.utils.PreCon;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
 /**
- * NucleusFrameworks global event manager.
+ * Extended Bukkit event HandlerList which automatically registers
+ * the event with the global event forwarder.
  */
-public final class InternalEventManager extends EventManager {
+public class HandlerListExt extends HandlerList {
 
-    public InternalEventManager(Plugin plugin) {
-        super(plugin, null);
+    /**
+     * Constructor.
+     *
+     * @param plugin      The plugin the event is from.
+     * @param eventClass  The event class.
+     */
+    public HandlerListExt(final Plugin plugin, final Class<? extends Event> eventClass) {
+        super();
+        PreCon.notNull(plugin);
+        PreCon.notNull(eventClass);
 
-        new GlobalForwarder(this);
-
-        Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
+        Bukkit.getScheduler().runTaskLater(Nucleus.getPlugin(), new Runnable() {
             @Override
             public void run() {
-
-                BukkitEventForwarder.init();
+                BukkitEventForwarder.registerGlobal(plugin, eventClass);
             }
-        });
-    }
-
-    @Override
-    public void dispose() {
-
-        // The global manager cannot be disposed.
-        throw new RuntimeException("Cannot dispose the global event manager.");
+        }, 1);
     }
 }

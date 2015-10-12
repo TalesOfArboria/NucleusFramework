@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.block;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -41,7 +43,8 @@ import org.bukkit.event.block.BlockEvent;
 public class PlayerTransformBlockEvent extends BlockEvent
         implements Cancellable, ICancellable, IPlayerReference {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), PlayerTransformBlockEvent.class);
 
     private final Player _player;
     private Material _material;

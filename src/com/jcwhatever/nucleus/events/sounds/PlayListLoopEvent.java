@@ -24,13 +24,14 @@
 
 package com.jcwhatever.nucleus.events.sounds;
 
-import com.jcwhatever.nucleus.mixins.ICancellable;
-import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList.PlayerSoundQueue;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.mixins.ICancellable;
+import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -43,7 +44,8 @@ import java.util.List;
  */
 public class PlayListLoopEvent extends Event implements IPlayerReference, Cancellable, ICancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), PlayListLoopEvent.class);
 
     private final PlayList _playList;
     private final PlayerSoundQueue _soundQueue;

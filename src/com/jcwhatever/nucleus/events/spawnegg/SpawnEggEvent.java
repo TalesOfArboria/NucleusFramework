@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.spawnegg;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,7 +38,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SpawnEggEvent extends PlayerEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), SpawnEggEvent.class);
 
     private final ItemStack _spawnEgg;
     private final Entity _entity;

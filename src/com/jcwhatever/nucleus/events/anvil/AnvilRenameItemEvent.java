@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.events.anvil;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 
@@ -43,7 +45,7 @@ import javax.annotation.Nullable;
 public class AnvilRenameItemEvent extends Event implements
 		Cancellable, ICancellable, IPlayerReference {
 	
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerListExt(Nucleus.getPlugin(), AnvilRenameItemEvent.class);
 	
 	private final Player _player;
 	private final AnvilInventory _anvilInventory;

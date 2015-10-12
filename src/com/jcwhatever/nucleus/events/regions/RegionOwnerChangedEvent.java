@@ -25,24 +25,26 @@
 
 package com.jcwhatever.nucleus.events.regions;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.ReadOnlyRegion;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Called when a regions owner is changed.
  */
 public class RegionOwnerChangedEvent extends Event implements Cancellable, ICancellable {
     
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), RegionOwnerChangedEvent.class);
     
     private final ReadOnlyRegion _region;
     private final UUID _oldId;

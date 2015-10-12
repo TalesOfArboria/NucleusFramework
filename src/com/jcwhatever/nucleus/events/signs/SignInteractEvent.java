@@ -25,10 +25,11 @@
 
 package com.jcwhatever.nucleus.events.signs;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -46,7 +47,8 @@ import org.bukkit.inventory.ItemStack;
 public class SignInteractEvent extends Event
 		implements Cancellable, ICancellable, IPlayerReference {
 	
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerListExt(
+			Nucleus.getPlugin(), SignInteractEvent.class);
 	
 	private final PlayerInteractEvent _parentEvent;
 	private final Sign _sign;

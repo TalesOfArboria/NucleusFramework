@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.events.spawnegg;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.entity.EntityType;
@@ -40,7 +42,8 @@ import org.bukkit.material.SpawnEgg;
  */
 public class PreSpawnEggEvent extends PlayerEvent implements Cancellable, ICancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerListExt(
+            Nucleus.getPlugin(), PreSpawnEggEvent.class);
 
     private final ItemStack _spawnEgg;
 
