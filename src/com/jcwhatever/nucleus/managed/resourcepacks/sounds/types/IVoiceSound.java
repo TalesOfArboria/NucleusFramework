@@ -23,21 +23,17 @@
  */
 
 
-package com.jcwhatever.nucleus.managed.sounds.types;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds.types;
 
-import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.managed.sounds.Transcript;
 
 /**
- * A resource sound that represents a sound effect.
+ * A resource sound that represents voice/dialog.
  */
-public class EffectSound extends ResourceSound {
+public interface IVoiceSound extends IResourceSound {
 
     /**
-     * Constructor.
-     *
-     * @param dataNode  The sound effect data node.
+     * Get the sounds {@link Transcript} object.
      */
-    public EffectSound(IDataNode dataNode) {
-        super(dataNode);
-    }
+    Transcript getTranscript();
 }

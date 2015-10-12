@@ -22,22 +22,38 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.managed.resourcepacks;
 
-package com.jcwhatever.nucleus.managed.sounds.types;
-
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IVoiceSound;
+import com.jcwhatever.nucleus.managed.sounds.Transcript;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * A resource sound that represents music.
+ * Internal implementation of {@link IVoiceSound}.
  */
-public class MusicSound extends ResourceSound {
+class SoundVoice extends SoundResource implements IVoiceSound{
+
+    private final Transcript _transcript;
 
     /**
      * Constructor.
      *
-     * @param dataNode  The music sounds data node.
+     * @param resourcePack  The resource pack the sound belongs to.
+     * @param dataNode      The resource sounds data node.
      */
-    public MusicSound(IDataNode dataNode) {
-        super(dataNode);
+    SoundVoice(IResourcePack resourcePack, IDataNode dataNode) {
+        super(resourcePack, dataNode);
+
+        String transcript = dataNode.getString("transcript", "");
+        _transcript = new Transcript(transcript);
+    }
+
+    /**
+     * Get the sounds {@link Transcript} object.
+     */
+    @Override
+    public final Transcript getTranscript() {
+        return _transcript;
     }
 }

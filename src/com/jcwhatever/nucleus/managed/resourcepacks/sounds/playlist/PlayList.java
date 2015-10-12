@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.sounds.playlist;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.managed.resourcepacks.ResourcePacks;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.MetaStore;
@@ -213,7 +213,7 @@ public abstract class PlayList implements IPluginOwned {
             @Override
             public void run() {
 
-                ResourceSound sound = queue.next();
+                IResourceSound sound = queue.next();
                 if (sound == null) {
                     queue.removeNow();
                     return;
@@ -289,7 +289,7 @@ public abstract class PlayList implements IPluginOwned {
      * @param queue      The {@link PlayerSoundQueue} that will be refilled.
      * @param loopCount  The number of times the sound queue has been refilled.
      */
-    protected abstract List<ResourceSound> getSounds(PlayerSoundQueue queue, int loopCount);
+    protected abstract List<IResourceSound> getSounds(PlayerSoundQueue queue, int loopCount);
 
     /**
      * Invoked when the next sound is played from a playlist.
@@ -307,8 +307,8 @@ public abstract class PlayList implements IPluginOwned {
      * @return  The next sound to play. Null ends the queue playback.
      */
     @Nullable
-    protected ResourceSound onTrackChange(PlayerSoundQueue queue,
-                                          @Nullable ResourceSound prev, ResourceSound next) {
+    protected IResourceSound onTrackChange(PlayerSoundQueue queue,
+                                          @Nullable IResourceSound prev, IResourceSound next) {
 
         PlayListTrackChangeEvent event = new PlayListTrackChangeEvent(this, queue, prev, next);
         Nucleus.getEventManager().callBukkit(this, event);
@@ -330,10 +330,10 @@ public abstract class PlayList implements IPluginOwned {
      * <p>Intended for optional override by implementation.</p>
      *
      * @param queue      The {@link PlayerSoundQueue} that is playing.
-     * @param sounds     The list of {@link ResourceSound}'s that will be played during the next loop.
+     * @param sounds     The list of {@link IResourceSound}'s that will be played during the next loop.
      * @param loopCount  The number of times the {@link PlayerSoundQueue} has already looped.
      */
-    protected void onLoop(PlayerSoundQueue queue, List<ResourceSound> sounds, int loopCount) {
+    protected void onLoop(PlayerSoundQueue queue, List<IResourceSound> sounds, int loopCount) {
 
         PlayListLoopEvent event = new PlayListLoopEvent(this, queue, sounds, loopCount);
         Nucleus.getEventManager().callBukkit(this, event);
@@ -350,7 +350,7 @@ public abstract class PlayList implements IPluginOwned {
      * @param settings      The sound settings to use.
      * @param trackChanger  The track changer.
      */
-    protected void playNextSound(final Player player, final ResourceSound sound,
+    protected void playNextSound(final Player player, final IResourceSound sound,
                                  final SoundSettings settings,
                                  final FutureResultSubscriber<ISoundContext> trackChanger) {
 
@@ -382,8 +382,8 @@ public abstract class PlayList implements IPluginOwned {
         private final SoundSettings _settings;
         private final MetaStore _meta = new MetaStore();
 
-        private LinkedList<ResourceSound> _queue;
-        private ResourceSound _current;
+        private LinkedList<IResourceSound> _queue;
+        private IResourceSound _current;
         private boolean _isRemoved;
         private int _loopCount;
 
@@ -419,7 +419,7 @@ public abstract class PlayList implements IPluginOwned {
          * Get the current sound being played to the player.
          */
         @Nullable
-        public ResourceSound getCurrent() {
+        public IResourceSound getCurrent() {
             return _current;
         }
 
@@ -510,10 +510,10 @@ public abstract class PlayList implements IPluginOwned {
          * @return  Null if the playlist is finished.
          */
         @Nullable
-        ResourceSound next() {
+        IResourceSound next() {
 
             Player player = getPlayer();
-            ResourceSound prev = _current;
+            IResourceSound prev = _current;
 
             // check for first time use of queue
             if (_queue == null) {
@@ -550,7 +550,7 @@ public abstract class PlayList implements IPluginOwned {
         // refill queue
         private void refill() {
 
-            List<ResourceSound> sounds = getSounds(this, _loopCount);
+            List<IResourceSound> sounds = getSounds(this, _loopCount);
             _queue.addAll(sounds);
 
             onLoop(this, _queue, _loopCount);
@@ -584,7 +584,7 @@ public abstract class PlayList implements IPluginOwned {
                 return;
             }
 
-            ResourceSound sound = _soundQueue.next();
+            IResourceSound sound = _soundQueue.next();
             if (sound == null) {
                 removeNow(player);
                 return;

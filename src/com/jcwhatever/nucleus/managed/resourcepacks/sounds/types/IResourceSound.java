@@ -22,41 +22,44 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.sounds;
 
-import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds.types;
 
-import org.bukkit.entity.Player;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.mixins.INamed;
 
 /**
- * Interface for an object that represents the context of a single sound playing
- * to a player.
+ * Abstract implementation of a resource sound.
  */
-public interface ISoundContext {
+public interface IResourceSound extends INamed {
 
     /**
-     * Get the player the sound context is for.
+     * Get the resource pack the sound belongs to.
      */
-    Player getPlayer();
+    IResourcePack getResourcePack();
 
     /**
-     * Get the resource sound of the context.
+     * Get the name of the sound as recognized by the client.
      */
-    IResourceSound getResourceSound();
+    String getClientName();
 
     /**
-     * Get the sound settings.
+     * Get the title of the sound.
      */
-    SoundSettings getSettings();
+    String getTitle();
 
     /**
-     * Determine if the sound is finished playing.
+     * Get the name of the sound creator.
      */
-    boolean isFinished();
+    String getCredit();
 
     /**
-     * Get a future used to run a success callback when the sound is finished.
+     * Get the duration of the sound in seconds.
      */
-    IFutureResult<ISoundContext> getFuture();
+    int getDurationSeconds();
+
+    /**
+     * Get the duration of the sound in ticks.
+     */
+    int getDurationTicks();
 }

@@ -22,41 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.sounds;
+package com.jcwhatever.nucleus.internal.managed.resourcepacks;
 
-import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
-
-import org.bukkit.entity.Player;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IEffectSound;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * Interface for an object that represents the context of a single sound playing
- * to a player.
+ * Internal implementation of {@link IEffectSound}.
  */
-public interface ISoundContext {
+class SoundEffect extends SoundResource implements IEffectSound {
 
     /**
-     * Get the player the sound context is for.
+     * Constructor.
+     *
+     * @param resourcePack  The resource pack the sound belongs to.
+     * @param dataNode      The sound effect data node.
      */
-    Player getPlayer();
-
-    /**
-     * Get the resource sound of the context.
-     */
-    IResourceSound getResourceSound();
-
-    /**
-     * Get the sound settings.
-     */
-    SoundSettings getSettings();
-
-    /**
-     * Determine if the sound is finished playing.
-     */
-    boolean isFinished();
-
-    /**
-     * Get a future used to run a success callback when the sound is finished.
-     */
-    IFutureResult<ISoundContext> getFuture();
+    SoundEffect(IResourcePack resourcePack, IDataNode dataNode) {
+        super(resourcePack, dataNode);
+    }
 }

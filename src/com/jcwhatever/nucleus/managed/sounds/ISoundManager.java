@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.managed.sounds;
 
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -39,50 +39,23 @@ import java.util.Collection;
 public interface ISoundManager {
 
     /**
-     * Get a resource sound by name.
+     * Get a resource pack sound by sound path.
      *
-     * @param name  The name of the sound.
+     * @param soundPath  The path of the sound. The path is the name of the
+     *                   resource pack followed by a period then the name of the sound.
+     *                   i.e. "resourcePackName.soundName"
+     *
+     * @return  The resource sound or null if not found.
      */
     @Nullable
-    ResourceSound getSound(String name);
-
-    /**
-     * Get all resource sounds.
-     */
-    Collection<ResourceSound> getSounds();
-
-    /**
-     * Get all resource sounds.
-     *
-     * @param output  The output collection to add results to.
-     *
-     * @return  The output collection.
-     */
-    <T extends Collection<ResourceSound>> T getSounds(T output);
-
-    /**
-     * Get resource sounds by type.
-     *
-     * @param type  The type to look for.
-     */
-    <T extends ResourceSound> Collection<T> getSounds(Class<T> type);
-
-    /**
-     * Get resource sounds by type.
-     *
-     * @param type    The type to look for.
-     * @param output  The output collection to add results to.
-     *
-     * @return  The output collection.
-     */
-    <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output);
+    IResourceSound get(String soundPath);
 
     /**
      * Get the resource sounds being played to the specified player.
      *
      * @param player  The player to check.
      */
-    Collection<ResourceSound> getSounds(Player player);
+    Collection<IResourceSound> getPlaying(Player player);
 
     /**
      * Get the resource sounds being played to the specified player.
@@ -92,7 +65,7 @@ public interface ISoundManager {
      *
      * @return  The output collection.
      */
-    <T extends Collection<ResourceSound>> T getSounds(Player player, T output);
+    <T extends Collection<IResourceSound>> T getPlaying(Player player, T output);
 
     /**
      * Get information about the resource sounds being played
@@ -122,7 +95,7 @@ public interface ISoundManager {
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound);
+    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, IResourceSound sound);
 
     /**
      * Play a resource sound to a player.
@@ -135,7 +108,7 @@ public interface ISoundManager {
      * @return  A future used to run a success callback when the sound is finished playing.
      */
     IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
-                                    ResourceSound sound, SoundSettings settings);
+                                    IResourceSound sound, SoundSettings settings);
 
     /**
      * Play a resource sound to a player.
@@ -151,7 +124,7 @@ public interface ISoundManager {
      * @return  A future used to run a callback when the sound is finished playing.
      */
     IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
-                                    ResourceSound sound, SoundSettings settings,
+                                    IResourceSound sound, SoundSettings settings,
                                     @Nullable Collection<Player> transcriptViewers);
 
     /**

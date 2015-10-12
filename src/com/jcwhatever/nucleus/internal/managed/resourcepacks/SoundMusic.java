@@ -22,35 +22,24 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.managed.resourcepacks;
 
-package com.jcwhatever.nucleus.managed.sounds.types;
-
-import com.jcwhatever.nucleus.managed.sounds.Transcript;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IMusicSound;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * A resource sound that represents voice/dialog.
+ * Internal implementation of {@link IMusicSound}.
  */
-public class VoiceSound extends ResourceSound {
-
-    private final Transcript _transcript;
+class SoundMusic extends SoundResource implements IMusicSound {
 
     /**
      * Constructor.
      *
-     * @param dataNode  The resource sounds data node.
+     * @param resourcePack  The resource pack the sound belongs to.
+     * @param dataNode  The music sounds data node.
      */
-    public VoiceSound(IDataNode dataNode) {
-        super(dataNode);
-
-        String transcript = dataNode.getString("transcript", "");
-        _transcript = new Transcript(transcript);
-    }
-
-    /**
-     * Get the sounds {@link Transcript} object.
-     */
-    public final Transcript getTranscript() {
-        return _transcript;
+    SoundMusic(IResourcePack resourcePack, IDataNode dataNode) {
+        super(resourcePack, dataNode);
     }
 }

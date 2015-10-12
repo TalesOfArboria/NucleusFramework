@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.managed.resourcepacks;
 
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.IResourcePackSounds;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import org.bukkit.entity.Player;
 
@@ -64,4 +65,9 @@ public interface IResourcePack extends INamedInsensitive {
      * @return  True if found and removed, otherwise false.
      */
     boolean remove(Player player);
+
+    /**
+     * Get the resource pack sounds.
+     */
+    IResourcePackSounds getSounds();
 }

@@ -30,18 +30,14 @@ import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.ResourcePacks;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IVoiceSound;
 import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
 import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.managed.sounds.Transcript;
-import com.jcwhatever.nucleus.managed.sounds.types.EffectSound;
-import com.jcwhatever.nucleus.managed.sounds.types.MusicDiskSound;
-import com.jcwhatever.nucleus.managed.sounds.types.MusicSound;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
-import com.jcwhatever.nucleus.providers.storage.DataStorage;
-import com.jcwhatever.nucleus.storage.DataPath;
-import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ThreadSingletons;
@@ -52,6 +48,7 @@ import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -69,70 +66,47 @@ import java.util.UUID;
  */
 public final class InternalSoundManager implements ISoundManager {
 
-    private ThreadSingletons<Location> EFFECT_LOCATIONS = LocationUtils.createThreadSingleton();
+    private static final ThreadSingletons<Location> EFFECT_LOCATION = LocationUtils.createThreadSingleton();
 
     private final Map<UUID, TimedArrayList<ISoundContext>> _playing = new HashMap<>(100);
-    private Map<String, ResourceSound> _sounds;
 
-    public InternalSoundManager() {
-        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("resource-sounds"));
-        dataNode.load();
-
-        load(dataNode);
-    }
-
-    @Override
     @Nullable
-    public ResourceSound getSound(String name) {
-        PreCon.notNull(name);
-
-        return _sounds.get(name.toLowerCase());
-    }
-
     @Override
-    public Collection<ResourceSound> getSounds() {
-        return new ArrayList<>(_sounds.values());
-    }
+    public IResourceSound get(String soundPath) {
+        PreCon.notNull(soundPath);
 
-    @Override
-    public <T extends Collection<ResourceSound>> T getSounds(T output) {
-        PreCon.notNull(output);
+        soundPath = soundPath.toLowerCase();
 
-        output.addAll(_sounds.values());
-        return output;
-    }
+        String packName;
+        String soundName;
 
-    @Override
-    public <T extends ResourceSound> Collection<T> getSounds(Class<T> type) {
-        return getSounds(type, new ArrayList<T>(_sounds.size()));
-    }
-
-    @Override
-    public <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output) {
-        PreCon.notNull(type);
-        PreCon.notNull(output);
-
-        for (ResourceSound sound : _sounds.values()) {
-
-            if (type.isInstance(sound)) {
-
-                @SuppressWarnings("unchecked")
-                T result = (T) sound;
-
-                output.add(result);
-            }
+        String[] components = TextUtils.PATTERN_DOT.split(soundPath);
+        if (components.length == 1) {
+            packName = "_default";
+            soundName = soundPath;
+        }
+        else if (components.length == 2) {
+            packName = components[0];
+            soundName = components[1];
+        }
+        else {
+            return null;
         }
 
-        return output;
+        IResourcePack pack = ResourcePacks.get(packName);
+        if (pack == null)
+            return null;
+
+        return pack.getSounds().get(soundName);
     }
 
     @Override
-    public Collection<ResourceSound> getSounds(Player player) {
-        return getSounds(player, new ArrayList<ResourceSound>(10));
+    public Collection<IResourceSound> getPlaying(Player player) {
+        return getPlaying(player, new ArrayList<IResourceSound>(10));
     }
 
     @Override
-    public <T extends Collection<ResourceSound>> T getSounds(Player player, T output) {
+    public <T extends Collection<IResourceSound>> T getPlaying(Player player, T output) {
         PreCon.notNull(player);
         PreCon.notNull(output);
 
@@ -171,18 +145,18 @@ public final class InternalSoundManager implements ISoundManager {
     }
 
     @Override
-    public IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound) {
+    public IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, IResourceSound sound) {
         return playSound(plugin, player, sound, new SoundSettings(), null);
     }
 
     @Override
-    public IFutureResult<ISoundContext> playSound(Plugin plugin, final Player player, ResourceSound sound,
+    public IFutureResult<ISoundContext> playSound(Plugin plugin, final Player player, IResourceSound sound,
                                         SoundSettings settings) {
         return playSound(plugin, player, sound, settings, null);
     }
 
     @Override
-    public IFutureResult<ISoundContext> playSound(final Plugin plugin, Player player, ResourceSound sound,
+    public IFutureResult<ISoundContext> playSound(final Plugin plugin, Player player, IResourceSound sound,
                                         SoundSettings settings,
                                         final @Nullable Collection<Player> transcriptViewers) {
         PreCon.notNull(plugin);
@@ -244,11 +218,11 @@ public final class InternalSoundManager implements ISoundManager {
 
         // display transcript to players if the sound is a voice
         // sound and transcript viewers are provided.
-        if (sound instanceof VoiceSound &&
+        if (sound instanceof IVoiceSound &&
                 transcriptViewers != null &&
                 !transcriptViewers.isEmpty()) {
 
-            Transcript transcript = ((VoiceSound) sound).getTranscript();
+            Transcript transcript = ((IVoiceSound) sound).getTranscript();
             if (transcript != null) {
 
                 transcript.run(plugin, new UpdateSubscriber<String>() {
@@ -273,7 +247,7 @@ public final class InternalSoundManager implements ISoundManager {
         PreCon.notNull(player);
 
         sendSound(ArrayUtils.asList(player),
-                player.getLocation(EFFECT_LOCATIONS.get()), clientSoundName, 1.0f, 1.0f);
+                player.getLocation(EFFECT_LOCATION.get()), clientSoundName, 1.0f, 1.0f);
     }
 
     @Override
@@ -312,7 +286,7 @@ public final class InternalSoundManager implements ISoundManager {
         PreCon.notNull(player);
 
         sendSound(ArrayUtils.asList(player),
-                player.getLocation(EFFECT_LOCATIONS.get()), clientSoundName, volume, pitch);
+                player.getLocation(EFFECT_LOCATION.get()), clientSoundName, volume, pitch);
     }
 
     @Override
@@ -378,53 +352,5 @@ public final class InternalSoundManager implements ISoundManager {
         return "playsound " + soundName + ' ' + p.getName() + ' ' +
                 loc.getBlockX() + ' ' + loc.getBlockY() + ' ' + loc.getBlockZ() + ' '
                 + volume + ' ' + pitch;
-    }
-
-    /*
-     * Load resource sounds
-     */
-    public void load(IDataNode dataNode) {
-
-        _sounds = new HashMap<>(dataNode.size());
-
-        for (IDataNode soundNode : dataNode) {
-
-            ResourceSound sound = getNewSound(soundNode);
-
-            _sounds.put(sound.getName().toLowerCase(), sound);
-        }
-    }
-
-    /*
-     * Create a new resource sound instance
-     */
-    private static ResourceSound getNewSound(IDataNode node) {
-
-        String type = node.getString("type");
-
-        if (type == null || type.isEmpty()) {
-            int diskId = node.getInteger("disk-id", -1);
-            type = diskId == -1
-                    ? "music"
-                    : "disc";
-        }
-
-        switch(type.toLowerCase()) {
-
-            case "music":
-                return new MusicSound(node);
-
-            case "disc":
-                return new MusicDiskSound(node);
-
-            case "effect":
-                return new EffectSound(node);
-
-            case "voice":
-                return new VoiceSound(node);
-
-            default:
-                throw new RuntimeException("Invalid sound type in resource sounds: " + type);
-        }
     }
 }

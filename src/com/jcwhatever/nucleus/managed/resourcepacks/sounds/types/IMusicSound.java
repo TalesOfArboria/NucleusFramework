@@ -22,41 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.sounds;
 
-import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
-
-import org.bukkit.entity.Player;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds.types;
 
 /**
- * Interface for an object that represents the context of a single sound playing
- * to a player.
+ * A resource sound that represents music.
  */
-public interface ISoundContext {
-
-    /**
-     * Get the player the sound context is for.
-     */
-    Player getPlayer();
-
-    /**
-     * Get the resource sound of the context.
-     */
-    IResourceSound getResourceSound();
-
-    /**
-     * Get the sound settings.
-     */
-    SoundSettings getSettings();
-
-    /**
-     * Determine if the sound is finished playing.
-     */
-    boolean isFinished();
-
-    /**
-     * Get a future used to run a success callback when the sound is finished.
-     */
-    IFutureResult<ISoundContext> getFuture();
+public interface IMusicSound extends IResourceSound {
 }

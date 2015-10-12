@@ -22,18 +22,19 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.managed.resourcepacks;
 
-package com.jcwhatever.nucleus.managed.sounds.types;
-
-import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
- * Abstract implementation of a resource sound.
+ * Abstract implementation of {@link IResourceSound}.
  */
-public abstract class ResourceSound implements INamed {
+abstract class SoundResource implements IResourceSound {
 
+    private final IResourcePack _resourcePack;
     private final String _soundName;
     private final String _clientName;
     private final String _title;
@@ -44,18 +45,24 @@ public abstract class ResourceSound implements INamed {
     /**
      * Constructor.
      *
-     * @param dataNode  The resource sound data node.
+     * @param resourcePack  The resource pack the sound belongs to.
+     * @param dataNode      The resource sound data node.
      */
-    public ResourceSound (IDataNode dataNode) {
+    SoundResource(IResourcePack resourcePack, IDataNode dataNode) {
+        PreCon.notNull(resourcePack);
         PreCon.notNull(dataNode);
+
+        _resourcePack = resourcePack;
 
         // get the required sound name
         _soundName = loadName(dataNode);
 
         // get the required duration of the sound
         _durationSeconds = dataNode.getInteger("duration", -1);
-        if (_durationSeconds < 0)
-            throw new RuntimeException("Resource sounds file is missing required duration parameter for sound: " + _soundName);
+        if (_durationSeconds < 0) {
+            throw new RuntimeException("Resource sounds file is missing required duration "
+                    + "parameter for sound: " + _soundName);
+        }
 
         _clientName = dataNode.getString("client-name", _soundName);
         _title = dataNode.getString("title", _soundName);
@@ -63,46 +70,37 @@ public abstract class ResourceSound implements INamed {
         _durationTicks = _durationSeconds * 20;
     }
 
-    /**
-     * Get the name of the sound.
-     */
+    @Override
+    public IResourcePack getResourcePack() {
+        return _resourcePack;
+    }
+
     @Override
     public final String getName() {
         return _soundName;
     }
 
-    /**
-     * Get the name of the sound as recognized by the client.
-     * @return
-     */
+    @Override
     public final String getClientName() {
         return _clientName;
     }
 
-    /**
-     * Get the title of the sound.
-     */
+    @Override
     public final String getTitle() {
         return _title;
     }
 
-    /**
-     * Get the name of the sound creator.
-     */
+    @Override
     public final String getCredit() {
         return _credit;
     }
 
-    /**
-     * Get the duration of the sound in seconds.
-     */
+    @Override
     public final int getDurationSeconds() {
         return _durationSeconds;
     }
 
-    /**
-     * Get the duration of the sound in ticks.
-     */
+    @Override
     public final int getDurationTicks() {
         return _durationTicks;
     }

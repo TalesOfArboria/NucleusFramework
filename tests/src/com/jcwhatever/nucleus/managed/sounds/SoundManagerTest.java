@@ -2,11 +2,12 @@ package com.jcwhatever.nucleus.managed.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
-import com.jcwhatever.nucleus.internal.managed.sounds.InternalSoundManager;
-import com.jcwhatever.nucleus.managed.sounds.types.EffectSound;
-import com.jcwhatever.nucleus.managed.sounds.types.MusicSound;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
+import com.jcwhatever.nucleus.internal.managed.resourcepacks.ResourcePackSounds;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IEffectSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IMusicSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IVoiceSound;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.v1_8_R3.BukkitTester;
@@ -44,91 +45,68 @@ public class SoundManagerTest {
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
         dataNode.load();
 
-        ((InternalSoundManager)Nucleus.getSoundManager()).load(dataNode);
+        IResourcePack pack = Nucleus.getResourcePacks().getDefault();
+        assert pack != null;
+
+        ((ResourcePackSounds)pack.getSounds()).load(dataNode);
     }
 
     /**
-     * Make sure {@link ISoundManager#getSounds()} works correctly.
+     * Make sure {@link ISoundManager#get} works correctly.
      */
     @Test
-    public void testGetSounds() throws Exception {
+    public void testGet() throws Exception {
 
-        Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds();
-        assertNotNull(sounds);
-        assertEquals(6, sounds.size());
-    }
-
-    /**
-     * Make sure {@link ISoundManager#getSound} works correctly.
-     */
-    @Test
-    public void testGetSound() throws Exception {
-
-        ResourceSound sound =Nucleus.getSoundManager().getSound("music1");
+        IResourceSound sound = Nucleus.getSoundManager().get("music1");
         assertNotNull(sound);
 
-        assertTrue(sound instanceof MusicSound);
+        assertTrue(sound instanceof IMusicSound);
         assertEquals("music1", sound.getName());
 
-        sound = Nucleus.getSoundManager().getSound("voice2");
+        sound = Nucleus.getSoundManager().get("voice2");
         assertNotNull(sound);
 
-        assertTrue(sound instanceof VoiceSound);
+        assertTrue(sound instanceof IVoiceSound);
         assertEquals("voice2", sound.getName());
 
-        sound = Nucleus.getSoundManager().getSound("effect1");
+        sound = Nucleus.getSoundManager().get("effect1");
         assertNotNull(sound);
 
-        assertTrue(sound instanceof EffectSound);
+        assertTrue(sound instanceof IEffectSound);
         assertEquals("effect1", sound.getName());
     }
 
     /**
-     * Make sure {@link ISoundManager#getSounds(Player)} works correctly.
-     * Also tests {@link ISoundManager#playSound} and {@link ISoundManager#getSounds}.
+     * Make sure {@link ISoundManager#getPlaying(Player)} works correctly.
+     * Also tests {@link ISoundManager#playSound} and {@link ISoundManager#getPlaying}.
      */
     @Test
-    public void testGetSounds1() throws Exception {
+    public void testGetPlaying1() throws Exception {
 
         // establish that there are no sounds playing to the player
-        Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds(_player);
+        Collection<IResourceSound> sounds = Nucleus.getSoundManager().getPlaying(_player);
         assertEquals(0, sounds.size());
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound("voice1");
+        IResourceSound sound = Nucleus.getSoundManager().get("voice1");
         assertNotNull(sound);
 
         // play sound and make sure it is returned
         Nucleus.getSoundManager().playSound(_plugin, _player, sound, _settings);
 
-        sounds = Nucleus.getSoundManager().getSounds(_player);
+        sounds = Nucleus.getSoundManager().getPlaying(_player);
         assertEquals(1, sounds.size());
 
         // wait for sound to end
         BukkitTester.pause(25);
 
         // make sure the sound ended
-        sounds = Nucleus.getSoundManager().getSounds(_player);
+        sounds = Nucleus.getSoundManager().getPlaying(_player);
         assertEquals(0, sounds.size());
     }
 
     /**
-     * Make sure {@link ISoundManager#getSounds(Class)} works correctly.
-     */
-    @Test
-    public void testGetSounds2() throws Exception {
-        Collection<MusicSound> music = Nucleus.getSoundManager().getSounds(MusicSound.class);
-        assertEquals(2, music.size());
-
-        Collection<VoiceSound> voice = Nucleus.getSoundManager().getSounds(VoiceSound.class);
-        assertEquals(2, voice.size());
-
-        Collection<EffectSound> effects = Nucleus.getSoundManager().getSounds(EffectSound.class);
-        assertEquals(2, effects.size());
-    }
-
-    /**
      * Make sure {@link ISoundManager#getContexts} works correctly.
-     * Also tests {@link ISoundManager#getSound} and {@link ISoundManager#getContexts}.
+     * Also tests {@link ISoundManager#get} and {@link ISoundManager#getContexts}.
      */
     @Test
     public void testGetContexts() throws Exception {
@@ -136,7 +114,7 @@ public class SoundManagerTest {
         Collection<ISoundContext> playing = Nucleus.getSoundManager().getContexts(_player);
         assertEquals(0, playing.size());
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound("effect1");
+        IResourceSound sound = Nucleus.getSoundManager().get("effect1");
         assertNotNull(sound);
 
         Nucleus.getSoundManager().playSound(_plugin, _player, sound, _settings);

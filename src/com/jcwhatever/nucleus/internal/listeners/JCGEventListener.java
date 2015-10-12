@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.regions.RegionEventReason;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;

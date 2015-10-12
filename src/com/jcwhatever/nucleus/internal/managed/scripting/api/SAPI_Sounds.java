@@ -25,15 +25,13 @@
 
 package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
-import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist.SimplePlayList;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.managed.sounds.Sounds;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
-import com.jcwhatever.nucleus.managed.sounds.playlist.SimplePlayList;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -61,14 +59,14 @@ public class SAPI_Sounds implements IDisposable {
     }
 
     /**
-     * Get a {@link ResourceSound} by name.
+     * Get a {@link IResourceSound} by name.
      *
      * @param soundName  The name of the sound.
      */
-    public ResourceSound get(String soundName) {
+    public IResourceSound get(String soundName) {
         PreCon.notNullOrEmpty(soundName, "soundName");
 
-        ResourceSound sound = Sounds.getSound(soundName);
+        IResourceSound sound = Sounds.get(soundName);
         PreCon.isValid(sound != null, "Sound not found.");
 
         return sound;
@@ -87,7 +85,7 @@ public class SAPI_Sounds implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
+        IResourceSound sound = Sounds.get(soundName);
         if (sound == null) {
             Sounds.playEffect(soundName, p);
             return;
@@ -116,7 +114,7 @@ public class SAPI_Sounds implements IDisposable {
 
         Location location = new Location(p.getWorld(), x, y, z);
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
+        IResourceSound sound = Sounds.get(soundName);
         if (sound == null) {
             Sounds.playEffect(soundName, p, location, (float)volume, 1.0f);
             return;
@@ -142,7 +140,7 @@ public class SAPI_Sounds implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
+        IResourceSound sound = Sounds.get(soundName);
         if (sound == null) {
             Sounds.playEffect(soundName, p, location, (float)volume, 1.0f);
             return;
@@ -154,14 +152,17 @@ public class SAPI_Sounds implements IDisposable {
     /**
      * Create a new playlist.
      *
-     * @param soundNames  The names of the resource sounds to play.
+     * @param soundNames  The names of the resource sounds to play. The resource pack the sound
+     *                    is in precedes the sound name and is separated with a colon.
+     *                    i.e. "resourcePackName.soundName"
      */
     public SimplePlayList createPlayList(String... soundNames) {
 
-        List<ResourceSound> sounds = new ArrayList<>(soundNames.length);
+        List<IResourceSound> sounds = new ArrayList<>(soundNames.length);
 
         for (String soundName : soundNames) {
-            ResourceSound sound = Nucleus.getSoundManager().getSound(soundName);
+
+            IResourceSound sound = Sounds.get(soundName);
             if (sound == null)
                 throw new RuntimeException("The sound " + soundName + " was not found.");
 
@@ -169,9 +170,7 @@ public class SAPI_Sounds implements IDisposable {
         }
 
         SimplePlayList playList = new SimplePlayList(_plugin);
-
         playList.addSounds(sounds);
-
         return playList;
     }
 

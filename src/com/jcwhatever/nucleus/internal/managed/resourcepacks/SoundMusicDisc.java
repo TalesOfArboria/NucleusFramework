@@ -22,30 +22,33 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.managed.resourcepacks;
 
-package com.jcwhatever.nucleus.managed.sounds.types;
-
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IMusicDiscSound;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * A resource sound for a music disc.
+ * Internal implementation of {@link IMusicDiscSound}.
  */
-public class MusicDiskSound extends ResourceSound {
+class SoundMusicDisc extends SoundResource implements IMusicDiscSound {
 
     private int _diskId;
 
     /**
      * Constructor.
      *
-     * @param dataNode  The resource sound data node.
+     * @param resourcePack  The resource pack the sound belongs to.
+     * @param dataNode      The resource sound data node.
      */
-    public MusicDiskSound(IDataNode dataNode) {
-        super(dataNode);
+    SoundMusicDisc(IResourcePack resourcePack, IDataNode dataNode) {
+        super(resourcePack, dataNode);
     }
 
     /**
      * Get the disk id.
      */
+    @Override
     public final int getDiskId() {
         return _diskId;
     }

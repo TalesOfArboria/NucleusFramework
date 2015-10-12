@@ -22,41 +22,60 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.sounds;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds;
 
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
 import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
-import org.bukkit.entity.Player;
+import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
- * Interface for an object that represents the context of a single sound playing
- * to a player.
+ * Interface for the sounds that are in a resource pack.
  */
-public interface ISoundContext {
+public interface IResourcePackSounds {
 
     /**
-     * Get the player the sound context is for.
+     * Get the resource pack the sounds are from.
      */
-    Player getPlayer();
+    IResourcePack getResourcePack();
 
     /**
-     * Get the resource sound of the context.
+     * Get a resource sound by name.
+     *
+     * @param name  The name of the sound.
      */
-    IResourceSound getResourceSound();
+    @Nullable
+    IResourceSound get(String name);
 
     /**
-     * Get the sound settings.
+     * Get all resource sounds.
      */
-    SoundSettings getSettings();
+    Collection<IResourceSound> getAll();
 
     /**
-     * Determine if the sound is finished playing.
+     * Get all resource sounds.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
      */
-    boolean isFinished();
+    <T extends Collection<IResourceSound>> T getAll(T output);
 
     /**
-     * Get a future used to run a success callback when the sound is finished.
+     * Get resource sounds by type.
+     *
+     * @param type  The type to look for.
      */
-    IFutureResult<ISoundContext> getFuture();
+    <T extends IResourceSound> Collection<T> getTypes(Class<T> type);
+
+    /**
+     * Get resource sounds by type.
+     *
+     * @param type    The type to look for.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends IResourceSound, E extends Collection<T>> E getTypes(Class<T> type, E output);
 }

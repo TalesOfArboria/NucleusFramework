@@ -23,9 +23,9 @@
  */
 
 
-package com.jcwhatever.nucleus.managed.sounds.playlist;
+package com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist;
 
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class SimplePlayList extends PlayList {
 
-    private final List<ResourceSound> _playList;
+    private final List<IResourceSound> _playList;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ public class SimplePlayList extends PlayList {
      * @param plugin    The owning plugin.
      * @param playList  The collections of sounds for the playlist.
      */
-    public SimplePlayList(Plugin plugin, Collection<? extends ResourceSound> playList) {
+    public SimplePlayList(Plugin plugin, Collection<? extends IResourceSound> playList) {
         super(plugin);
         PreCon.notNull(playList);
 
@@ -78,7 +78,7 @@ public class SimplePlayList extends PlayList {
      *
      * @param sound  The sound to add.
      */
-    public void addSound(ResourceSound sound) {
+    public void addSound(IResourceSound sound) {
         _playList.add(sound);
     }
 
@@ -87,7 +87,7 @@ public class SimplePlayList extends PlayList {
      *
      * @param sound  The sound to remove.
      */
-    public void removeSound(ResourceSound sound) {
+    public void removeSound(IResourceSound sound) {
         _playList.remove(sound);
     }
 
@@ -96,7 +96,7 @@ public class SimplePlayList extends PlayList {
      *
      * @param sounds  The collection of sounds to add.
      */
-    public void addSounds(Collection<? extends ResourceSound> sounds) {
+    public void addSounds(Collection<? extends IResourceSound> sounds) {
         _playList.addAll(sounds);
     }
 
@@ -110,12 +110,12 @@ public class SimplePlayList extends PlayList {
     /**
      * Get all sounds in the playlist.
      */
-    public List<ResourceSound> getSounds() {
+    public List<IResourceSound> getSounds() {
         return new ArrayList<>(_playList);
     }
 
     @Override
-    protected List<ResourceSound> getSounds(PlayerSoundQueue queue, int loopCount) {
+    protected List<IResourceSound> getSounds(PlayerSoundQueue queue, int loopCount) {
         return _playList;
     }
 }

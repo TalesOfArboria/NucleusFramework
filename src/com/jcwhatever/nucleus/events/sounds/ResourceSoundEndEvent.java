@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.events.sounds;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 			Nucleus.getPlugin(), ResourceSoundEndEvent.class);
 	
 	private final Player _player;
-	private final ResourceSound _sound;
+	private final IResourceSound _sound;
 	private final SoundSettings _settings;
 
 	/**
@@ -54,7 +54,7 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	 * @param sound     The sound that ended.
 	 * @param settings  The settings the sound was played with.
 	 */
-	public ResourceSoundEndEvent(Player player, ResourceSound sound, SoundSettings settings) {
+	public ResourceSoundEndEvent(Player player, IResourceSound sound, SoundSettings settings) {
 		PreCon.notNull(player);
 		PreCon.notNull(sound);
 		PreCon.notNull(settings);
@@ -75,7 +75,7 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	/**
 	 * Get the sound that ended.
 	 */
-	public ResourceSound getResourceSound() {
+	public IResourceSound getResourceSound() {
 		return _sound;
 	}
 

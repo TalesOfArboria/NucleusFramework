@@ -136,6 +136,17 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
     }
 
     @Override
+    @Nullable
+    public IResourcePack get(String name) {
+        PreCon.notNull(name);
+
+        if (name.isEmpty())
+            return _defaultPack;
+
+        return super.get(name);
+    }
+
+    @Override
     public PlayerResourcePacks get(Player player) {
         PreCon.notNull(player);
 
@@ -146,6 +157,13 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
         }
 
         return packs;
+    }
+
+    @Override
+    public boolean remove(String name) {
+        PreCon.notNull(name);
+
+        return !name.equalsIgnoreCase("_default") && super.remove(name);
     }
 
     @Nullable
@@ -219,8 +237,11 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
 
     private void loadDefault() {
 
-        if (Nucleus.getPlugin().isTesting())
+        if (Nucleus.getPlugin().isTesting()) {
+            _defaultPack = new ResourcePack("_default", "http://respack.test.com", this);
+            _map.put("_default", _defaultPack);
             return;
+        }
 
         File file = new File("server.properties");
 
@@ -238,5 +259,6 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
                 resourcePack.substring("resourcePack=".length() + 1)).replaceAll(":").trim();
 
         _defaultPack = new ResourcePack("_default", resourcePack, this);
+        _map.put("_default", _defaultPack);
     }
 }

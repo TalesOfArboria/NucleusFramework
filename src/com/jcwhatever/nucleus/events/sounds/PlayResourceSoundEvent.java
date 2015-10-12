@@ -29,7 +29,7 @@ package com.jcwhatever.nucleus.events.sounds;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.HandlerListExt;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -50,7 +50,7 @@ public class PlayResourceSoundEvent extends Event
 	private final Player _player;
     private final SoundSettings _settings;
 
-	private ResourceSound _sound;
+	private IResourceSound _sound;
 	private boolean _isCancelled;
 
 	/**
@@ -60,7 +60,7 @@ public class PlayResourceSoundEvent extends Event
 	 * @param sound     The sound being played.
 	 * @param settings  The sound settings.
 	 */
-	public PlayResourceSoundEvent(Player p, ResourceSound sound, SoundSettings settings) {
+	public PlayResourceSoundEvent(Player p, IResourceSound sound, SoundSettings settings) {
 		PreCon.notNull(p);
 		PreCon.notNull(sound);
 		PreCon.notNull(settings);
@@ -81,7 +81,7 @@ public class PlayResourceSoundEvent extends Event
 	/**
 	 * Get the resource sound being played.
 	 */
-	public ResourceSound getResourceSound() {
+	public IResourceSound getResourceSound() {
 		return _sound;
 	}
 

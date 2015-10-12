@@ -2,9 +2,11 @@ package com.jcwhatever.nucleus.managed.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
-import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList.PlayerSoundQueue;
-import com.jcwhatever.nucleus.managed.sounds.playlist.SimplePlayList;
-import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.resourcepacks.IResourcePack;
+import com.jcwhatever.nucleus.managed.resourcepacks.ResourcePacks;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist.PlayList.PlayerSoundQueue;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.playlist.SimplePlayList;
+import com.jcwhatever.nucleus.managed.resourcepacks.sounds.types.IResourceSound;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
@@ -58,20 +60,10 @@ public class SimplePlayListTest {
     }
 
     @Test
-    public void testSize() throws Exception {
-
-        Collection<ResourceSound> sounds =  Nucleus.getSoundManager().getSounds();
-
-        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
-
-        assertEquals(6, playList.size());
-    }
-
-    @Test
     public void testAddSound() throws Exception {
 
-        ResourceSound sound1 = Nucleus.getSoundManager().getSound("music1");
-        ResourceSound sound2 = Nucleus.getSoundManager().getSound("music2");
+        IResourceSound sound1 = Nucleus.getSoundManager().get("music1");
+        IResourceSound sound2 = Nucleus.getSoundManager().get("music2");
 
         SimplePlayList playList = new SimplePlayList(_plugin);
         assertEquals(0, playList.size());
@@ -86,8 +78,8 @@ public class SimplePlayListTest {
     @Test
     public void testRemoveSound() throws Exception {
 
-        ResourceSound sound1 = Nucleus.getSoundManager().getSound("music1");
-        ResourceSound sound2 = Nucleus.getSoundManager().getSound("music2");
+        IResourceSound sound1 = Nucleus.getSoundManager().get("music1");
+        IResourceSound sound2 = Nucleus.getSoundManager().get("music2");
 
         SimplePlayList playList = new SimplePlayList(_plugin);
         assertEquals(0, playList.size());
@@ -109,7 +101,10 @@ public class SimplePlayListTest {
     @Test
     public void testAddSounds() throws Exception {
 
-        Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds();
+        IResourcePack pack = ResourcePacks.getDefault();
+        assert pack != null;
+
+        Collection<IResourceSound> sounds = pack.getSounds().getAll();
 
         SimplePlayList playList = new SimplePlayList(_plugin);
 
@@ -119,7 +114,10 @@ public class SimplePlayListTest {
 
     @Test
     public void testClearSounds() throws Exception {
-        Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds();
+        IResourcePack pack = ResourcePacks.getDefault();
+        assert pack != null;
+
+        Collection<IResourceSound> sounds = pack.getSounds().getAll();
 
         SimplePlayList playList = new SimplePlayList(_plugin);
 
@@ -132,7 +130,10 @@ public class SimplePlayListTest {
 
     @Test
     public void testGetSounds() throws Exception {
-        Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds();
+        IResourcePack pack = ResourcePacks.getDefault();
+        assert pack != null;
+
+        Collection<IResourceSound> sounds = pack.getSounds().getAll();
 
         SimplePlayList playList = new SimplePlayList(_plugin);
 
@@ -148,7 +149,12 @@ public class SimplePlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        SimplePlayList playList = new SimplePlayList(_plugin, Nucleus.getSoundManager().getSounds());
+        IResourcePack pack = ResourcePacks.getDefault();
+        assert pack != null;
+
+        Collection<IResourceSound> sounds = pack.getSounds().getAll();
+
+        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
@@ -161,7 +167,12 @@ public class SimplePlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        SimplePlayList playList = new SimplePlayList(_plugin, Nucleus.getSoundManager().getSounds());
+        IResourcePack pack = ResourcePacks.getDefault();
+        assert pack != null;
+
+        Collection<IResourceSound> sounds = pack.getSounds().getAll();
+
+        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
@@ -186,10 +197,10 @@ public class SimplePlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        List<ResourceSound> sounds = ArrayUtils.asList(
-                Nucleus.getSoundManager().getSound("music1"),
-                Nucleus.getSoundManager().getSound("music2"),
-                Nucleus.getSoundManager().getSound("voice1")
+        List<IResourceSound> sounds = ArrayUtils.asList(
+                Nucleus.getSoundManager().get("music1"),
+                Nucleus.getSoundManager().get("music2"),
+                Nucleus.getSoundManager().get("voice1")
         );
 
         SimplePlayList playList = new SimplePlayList(_plugin, sounds);
@@ -226,10 +237,10 @@ public class SimplePlayListTest {
     @Test
     public void testSoundQueueLoop() throws Exception {
 
-        List<ResourceSound> sounds = ArrayUtils.asList(
-                Nucleus.getSoundManager().getSound("music1"),
-                Nucleus.getSoundManager().getSound("music2"),
-                Nucleus.getSoundManager().getSound("voice1")
+        List<IResourceSound> sounds = ArrayUtils.asList(
+                Nucleus.getSoundManager().get("music1"),
+                Nucleus.getSoundManager().get("music2"),
+                Nucleus.getSoundManager().get("voice1")
         );
 
         SimplePlayList playList = new SimplePlayList(_plugin, sounds);
