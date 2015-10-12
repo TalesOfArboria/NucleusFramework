@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.internal.managed.teleport;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.teleport.EntityTeleportRespawnEvent;
+import com.jcwhatever.nucleus.managed.entity.meta.EntityMeta;
+import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaContext;
 import com.jcwhatever.nucleus.managed.entity.mob.ISerializableMob;
 import com.jcwhatever.nucleus.managed.entity.mob.Mobs;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
@@ -60,6 +62,8 @@ import java.util.Set;
  * after transport.
  */
 class MountTeleporter {
+
+    private static final IEntityMetaContext META = EntityMeta.getContext(Nucleus.getPlugin());
 
     private static TeleportListener _listener;
     private static boolean _isSpawningNewEntity;
@@ -229,7 +233,7 @@ class MountTeleporter {
 
             Entity passenger = entity.getPassenger();
 
-            if (entity.hasMetadata(InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
+            if (META.has(entity, InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
                 entity.eject();
                 entity = passenger;
                 continue;

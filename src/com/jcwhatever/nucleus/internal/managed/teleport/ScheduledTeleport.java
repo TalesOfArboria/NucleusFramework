@@ -24,6 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.managed.teleport;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.entity.meta.EntityMeta;
+import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaContext;
 import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
 import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
@@ -39,6 +42,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
  * Implementation of {@link IScheduledTeleport}.
  */
 class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
+
+    private static final IEntityMetaContext META = EntityMeta.getContext(Nucleus.getPlugin());
 
     private final InternalTeleportManager _manager;
     private final Player _player;
@@ -131,7 +136,7 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     @Override
     public void run() {
 
-        if (_player.hasMetadata(InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
+        if (META.has(_player, InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
             _agent.cancel();
         }
         else {

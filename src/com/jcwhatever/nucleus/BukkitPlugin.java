@@ -52,6 +52,7 @@ import com.jcwhatever.nucleus.internal.listeners.StartupListener;
 import com.jcwhatever.nucleus.internal.managed.commands.InternalCommandManager;
 import com.jcwhatever.nucleus.internal.managed.commands.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.managed.entity.InternalEntityTracker;
+import com.jcwhatever.nucleus.internal.managed.entity.meta.InternalEntityMetaManager;
 import com.jcwhatever.nucleus.internal.managed.entity.mobs.InternalMobSerializer;
 import com.jcwhatever.nucleus.internal.managed.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.managed.items.floating.InternalFloatingItemManager;
@@ -121,6 +122,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalCommandManager _commandManager;
     InternalParticleEffectFactory _particleFactory;
     InternalResourcePackManager _resourcePacks;
+    InternalEntityMetaManager _entityMetaManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -183,6 +185,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _itemSerialization = new InternalItemSerializationManager();
         _equipperManager = new InternalEquipperManager();
         _scoreboardTracker = new InternalScoreboardManager();
+        _entityMetaManager = new InternalEntityMetaManager();
         _scheduler = new InternalTaskScheduler();
         _teleportManager = new InternalTeleportManager();
         _leashTracker = new InternalLeashTracker();

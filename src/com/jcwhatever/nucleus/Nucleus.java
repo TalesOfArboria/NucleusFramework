@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.commands.ICommandManager;
 import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
+import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaManager;
 import com.jcwhatever.nucleus.managed.entity.mob.IMobSerializer;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
@@ -158,6 +159,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._commandManager != null, ERROR_NOT_READY);
 
         return _plugin._commandManager;
+    }
+
+    /**
+     * Get the global entity meta data manager.
+     */
+    public static IEntityMetaManager getEntityMeta() {
+        PreCon.isValid(_plugin._entityMetaManager != null, ERROR_NOT_READY);
+
+        return _plugin._entityMetaManager;
     }
 
     /**

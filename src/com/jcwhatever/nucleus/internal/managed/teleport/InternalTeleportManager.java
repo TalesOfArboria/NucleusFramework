@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.internal.managed.teleport;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.managed.entity.meta.EntityMeta;
+import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaContext;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
 import com.jcwhatever.nucleus.managed.teleport.ITeleportManager;
@@ -42,7 +44,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -56,9 +57,8 @@ public final class InternalTeleportManager implements ITeleportManager {
 
     static final String TELEPORT_DENY_META_NAME =
             InternalTeleportManager.class.getName() + ":CanTeleport";
-
-    private static final FixedMetadataValue TELEPORT_DENY_META =
-            new FixedMetadataValue(Nucleus.getPlugin(), false);
+    private static final Object TELEPORT_DENY_META = new Object();
+    private static final IEntityMetaContext META = EntityMeta.getContext(Nucleus.getPlugin());
 
     private static BukkitListener LISTENER;
 
@@ -100,7 +100,7 @@ public final class InternalTeleportManager implements ITeleportManager {
         scheduled = new ScheduledTeleport(this, player, location,
                 PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
 
-        if (player.hasMetadata(TELEPORT_DENY_META_NAME)) {
+        if (META.has(player, TELEPORT_DENY_META_NAME)) {
             scheduled.cancel();
             return scheduled;
         }
@@ -138,7 +138,7 @@ public final class InternalTeleportManager implements ITeleportManager {
         PreCon.notNull(cause);
         PreCon.notNull(mode);
 
-        if (player.hasMetadata(TELEPORT_DENY_META_NAME))
+        if (META.has(player, TELEPORT_DENY_META_NAME))
             return false;
 
         ScheduledTeleport scheduled = _scheduled.remove(player.getUniqueId());
@@ -197,19 +197,14 @@ public final class InternalTeleportManager implements ITeleportManager {
     public boolean canTeleport(Entity entity) {
         PreCon.notNull(entity);
 
-        return !entity.hasMetadata(TELEPORT_DENY_META_NAME);
+        return !META.has(entity, TELEPORT_DENY_META_NAME);
     }
 
     @Override
     public void setCanTeleport(Entity entity, boolean canTeleport) {
         PreCon.notNull(entity);
 
-        if (canTeleport) {
-            entity.removeMetadata(TELEPORT_DENY_META_NAME, Nucleus.getPlugin());
-        }
-        else {
-            entity.setMetadata(TELEPORT_DENY_META_NAME, TELEPORT_DENY_META);
-        }
+        META.set(entity, TELEPORT_DENY_META_NAME, canTeleport ? null : TELEPORT_DENY_META);
     }
 
     void removeTask(UUID playerId) {
@@ -246,7 +241,7 @@ public final class InternalTeleportManager implements ITeleportManager {
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         private void onTeleport(EntityTeleportEvent event) {
             Entity entity = event.getEntity();
-            if (entity.hasMetadata(TELEPORT_DENY_META_NAME))
+            if (META.has(entity, TELEPORT_DENY_META_NAME))
                 event.setCancelled(true);
         }
     }
