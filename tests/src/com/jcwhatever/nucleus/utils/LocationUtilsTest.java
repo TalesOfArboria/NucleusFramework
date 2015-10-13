@@ -331,18 +331,18 @@ public class LocationUtilsTest {
         Location result = LocationUtils.rotate(axis, location, 0, 0, 180);
         assertTrue(result != location); // must not be same instance
 
-        assertEquals(-10, result.getX(), 1.0D);
-        assertEquals(0, result.getY(), 1.0D);
-        assertEquals(0, result.getZ(), 0.0D);
+        assertEquals(-10, result.getX(), 0.00001D);
+        assertEquals(0, result.getY(), 0.00001D);
+        assertEquals(0, result.getZ(), 0.00001D);
         assertEquals(0, result.getYaw(), 0.0D);
         assertEquals(0, result.getPitch(), 0.0D);
 
         result = LocationUtils.rotate(axis, location, 0, 180, 0);
         assertTrue(result != location); // must not be same instance
 
-        assertEquals(-10, result.getX(), 1.0D);
-        assertEquals(0, result.getY(), 1.0D);
-        assertEquals(0, result.getZ(), 0.0D);
+        assertEquals(-10, result.getX(), 0.00001D);
+        assertEquals(0, result.getY(), 0.00001D);
+        assertEquals(0, result.getZ(), 0.00001D);
         assertEquals(180f, result.getYaw(), 0.0f);
         assertEquals(0, result.getPitch(), 0.0f);
     }
