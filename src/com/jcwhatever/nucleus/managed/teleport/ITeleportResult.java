@@ -24,39 +24,33 @@
 
 package com.jcwhatever.nucleus.managed.teleport;
 
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 /**
- * Scheduled teleport future.
+ * Results of a non-scheduled teleport.
  */
-public interface IScheduledTeleport extends IFutureResult<ITeleportResult> {
+public interface ITeleportResult extends ITeleportInfo {
+
+    enum Status {
+        PENDING,
+        SUCCESS,
+        CANCELLED
+    }
 
     /**
-     * Get the player that will be teleported.
+     * Get the current status of the teleport operation.
      */
-    Player getPlayer();
+    Status getStatus();
 
     /**
-     * Get the scheduled delay in ticks.
-     */
-    int getDelayTicks();
-
-    /**
-     * Get the location the player will be teleported to.
-     */
-    Location getLocation();
-
-    /**
-     * Copy the values of the location the player will be teleported to
-     * into the specified output location.
+     * Determine if teleport is a success.
      *
-     * @param output  The output location.
-     *
-     * @return  The output location.
+     * <p>Returns the most up to date status of success, regardless of the result
+     * of {@link #getStatus()}. For instance, if {@link #getStatus()} returns pending, but
+     * the entity has been successfully teleported, the result will be true.</p>
      */
-    Location getLocation(Location output);
+    boolean isSuccess();
 
     /**
      * Determine if the teleport has been cancelled.
@@ -64,9 +58,35 @@ public interface IScheduledTeleport extends IFutureResult<ITeleportResult> {
     boolean isCancelled();
 
     /**
-     * Cancel the teleport.
-     *
-     * <p>If the teleport is already cancelled or executed, nothing happens.</p>
+     * Get the location the entity was teleported from.
      */
-    void cancel();
+    Location getFrom();
+
+    /**
+     * Copy the location the entity was teleported from to the specified output location.
+     *
+     * @param output  The output location.
+     *
+     * @return  The output location.
+     */
+    Location getFrom(Location output);
+
+    /**
+     * Get the location the entity was teleported to.
+     */
+    Location getTo();
+
+    /**
+     * Copy the location the entity was teleported to to the specified output location.
+     *
+     * @param output  The output location.
+     *
+     * @return  The output location.
+     */
+    Location getTo(Location output);
+
+    /**
+     * Get a future which can be used if the teleport requires scheduled tasks to complete.
+     */
+    IFuture getFuture();
 }

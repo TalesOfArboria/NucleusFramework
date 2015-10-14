@@ -41,6 +41,28 @@ public final class Teleporter {
     private Teleporter() {}
 
     /**
+     * Determine if an entity is currently being teleported by the teleport manager.
+     *
+     * <p>This can be checked in events that may occur during teleport.</p>
+     *
+     * @param entity  The entity to check.
+     */
+    public static boolean isTeleporting(Entity entity) {
+        return manager().isTeleporting(entity);
+    }
+
+    /**
+     * Determine if an entity is currently being teleported cross world.
+     *
+     * <p>This can be checked in events that may occur during teleport.</p>
+     *
+     * @param entity  The entity to check.
+     */
+    public static boolean isCrossWorldTeleporting(Entity entity) {
+        return manager().isCrossWorldTeleporting(entity);
+    }
+
+    /**
      * Get a players current scheduled teleport.
      *
      * @param player  The player.
@@ -95,9 +117,9 @@ public final class Teleporter {
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Location location) {
+    public static ITeleportResult teleport(Player player, Location location) {
         return manager().teleport(player, location);
     }
 
@@ -110,9 +132,9 @@ public final class Teleporter {
      * @param location  The location to teleport the player to.
      * @param mode      The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Location location, TeleportMode mode) {
+    public static ITeleportResult teleport(Player player, Location location, TeleportMode mode) {
         return manager().teleport(player, location, mode);
     }
 
@@ -127,9 +149,9 @@ public final class Teleporter {
      * @param location  The location to teleport the player to.
      * @param cause     The cause of the player teleport.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Location location,
+    public static ITeleportResult teleport(Player player, Location location,
                                    PlayerTeleportEvent.TeleportCause cause) {
         return manager().teleport(player, location, cause);
     }
@@ -144,9 +166,9 @@ public final class Teleporter {
      * @param cause     The cause of the player teleport.
      * @param mode      The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Location location,
+    public static ITeleportResult teleport(Player player, Location location,
                      PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
         return manager().teleport(player, location, cause, mode);
     }
@@ -161,9 +183,9 @@ public final class Teleporter {
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Entity entity) {
+    public static ITeleportResult teleport(Player player, Entity entity) {
         return manager().teleport(player, entity);
     }
 
@@ -176,9 +198,9 @@ public final class Teleporter {
      * @param entity  The entity to teleport to.
      * @param mode    The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Entity entity, TeleportMode mode) {
+    public static ITeleportResult teleport(Player player, Entity entity, TeleportMode mode) {
         return manager().teleport(player, entity, mode);
     }
 
@@ -193,9 +215,9 @@ public final class Teleporter {
      * @param entity  The entity to teleport to.
      * @param cause   The cause of the player teleport.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Entity entity,
+    public static ITeleportResult teleport(Player player, Entity entity,
                                    PlayerTeleportEvent.TeleportCause cause) {
         return manager().teleport(player, entity, cause);
     }
@@ -210,9 +232,9 @@ public final class Teleporter {
      * @param cause   The cause of the player teleport.
      * @param mode    The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Player player, Entity entity,
+    public static ITeleportResult teleport(Player player, Entity entity,
                      PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
         return manager().teleport(player, entity, cause, mode);
     }
@@ -225,9 +247,9 @@ public final class Teleporter {
      * @param entity    The entity to teleport.
      * @param location  The location to teleport to.
      *
-     * @return  True if the entity was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Entity entity, Location location) {
+    public static ITeleportResult teleport(Entity entity, Location location) {
         return manager().teleport(entity, location);
     }
 
@@ -238,9 +260,9 @@ public final class Teleporter {
      * @param location  The location to teleport to.
      * @param mode      The teleport mode.
      *
-     * @return  True if the entity was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    public static boolean teleport(Entity entity, Location location, TeleportMode mode) {
+    public static ITeleportResult teleport(Entity entity, Location location, TeleportMode mode) {
         return manager().teleport(entity, location, mode);
     }
 

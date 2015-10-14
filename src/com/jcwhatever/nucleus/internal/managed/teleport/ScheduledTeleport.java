@@ -24,47 +24,50 @@
 
 package com.jcwhatever.nucleus.internal.managed.teleport;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.managed.entity.meta.EntityMeta;
-import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaContext;
 import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
+import com.jcwhatever.nucleus.managed.teleport.ITeleportResult;
 import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.future.IFuture;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+
+import javax.annotation.Nullable;
 
 /**
  * Implementation of {@link IScheduledTeleport}.
  */
 class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
 
-    private static final IEntityMetaContext META = EntityMeta.getContext(Nucleus.getPlugin());
-
     private final InternalTeleportManager _manager;
     private final Player _player;
+    private final int _delay;
     private final Location _location;
-    private final FutureAgent _agent;
-    private final IFuture _future;
-    private final PlayerTeleportEvent.TeleportCause _cause;
+    private final FutureResultAgent<ITeleportResult> _agent;
+    private final IFutureResult<ITeleportResult> _future;
+    private final TeleportCause _cause;
     private final TeleportMode _mode;
 
     private boolean _isFinished;
+    private boolean _isCancelled;
 
     /**
      * Constructor.
      *
      * @param manager   The owning manager instance.
      * @param player    The player.
+     * @param delay     The scheduled delay in ticks.
      * @param location  The location to teleport the player.
      * @param cause     The teleport cause.
      */
-    ScheduledTeleport(InternalTeleportManager manager, Player player,
-                      Location location, PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+    ScheduledTeleport(InternalTeleportManager manager, Player player, int delay,
+                      Location location, TeleportCause cause, TeleportMode mode) {
         PreCon.notNull(manager);
         PreCon.notNull(player);
         PreCon.notNull(location);
@@ -73,8 +76,9 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
 
         _manager = manager;
         _player = player;
+        _delay = delay;
         _location = location;
-        _agent = new FutureAgent();
+        _agent = new FutureResultAgent<ITeleportResult>();
         _future = _agent.getFuture();
         _cause = cause;
         _mode = mode;
@@ -83,6 +87,11 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     @Override
     public Player getPlayer() {
         return _player;
+    }
+
+    @Override
+    public int getDelayTicks() {
+        return _delay;
     }
 
     @Override
@@ -105,30 +114,43 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     }
 
     @Override
+    public boolean isCancelled() {
+        return _isCancelled;
+    }
+
+    @Override
     public void cancel() {
         cancelTask();
     }
 
     @Override
-    public IFuture onStatus(FutureSubscriber subscriber) {
-        _future.onStatus(subscriber);
+    public IFutureResult<ITeleportResult> onResult(FutureResultSubscriber<ITeleportResult> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _future.onResult(subscriber);
         return this;
     }
 
     @Override
-    public IFuture onSuccess(FutureSubscriber subscriber) {
+    public IFutureResult<ITeleportResult> onSuccess(FutureResultSubscriber<ITeleportResult> subscriber) {
+        PreCon.notNull(subscriber);
+
         _future.onSuccess(subscriber);
         return this;
     }
 
     @Override
-    public IFuture onCancel(FutureSubscriber subscriber) {
+    public IFutureResult<ITeleportResult> onCancel(FutureResultSubscriber<ITeleportResult> subscriber) {
+        PreCon.notNull(subscriber);
+
         _future.onCancel(subscriber);
         return this;
     }
 
     @Override
-    public IFuture onError(FutureSubscriber subscriber) {
+    public IFutureResult<ITeleportResult> onError(FutureResultSubscriber<ITeleportResult> subscriber) {
+        PreCon.notNull(subscriber);
+
         _future.onError(subscriber);
         return this;
     }
@@ -136,22 +158,29 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
     @Override
     public void run() {
 
-        if (META.has(_player, InternalTeleportManager.TELEPORT_DENY_META_NAME)) {
-            _agent.cancel();
-        }
-        else {
-            boolean isSuccess = InternalTeleportManager.isSingleTeleport(_player)
-                    ? _player.teleport(_location)
-                    : InternalTeleportManager.mountedTeleport(_player, _location, _cause, _mode);
+        final ITeleportResult result = new TeleportHandler(_player, _cause, _mode).teleport(_location);
 
-            if (isSuccess) {
-                _agent.success();
-            } else {
-                _agent.cancel();
-            }
-        }
-        _isFinished = true;
-        _manager.removeTask(_player.getUniqueId());
+        result.getFuture()
+                .onStatus(new FutureSubscriber() {
+                    @Override
+                    public void on(FutureStatus status, @Nullable CharSequence message) {
+
+                        switch (status) {
+                            case SUCCESS:
+                                _agent.success(result);
+                                break;
+                            case CANCEL:
+                                _agent.cancel(result);
+                                break;
+                            case ERROR:
+                                _agent.error(result);
+                                break;
+                        }
+
+                        _isFinished = true;
+                        _manager.removeTask(_player.getUniqueId());
+                    }
+                });
     }
 
     @Override
@@ -161,6 +190,7 @@ class ScheduledTeleport extends TaskHandler implements IScheduledTeleport {
             _agent.cancel();
 
         _isFinished = true;
+        _isCancelled = true;
 
         _manager.removeTask(_player.getUniqueId());
     }

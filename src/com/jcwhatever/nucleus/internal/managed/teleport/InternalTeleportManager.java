@@ -26,15 +26,17 @@ package com.jcwhatever.nucleus.internal.managed.teleport;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.events.teleport.TeleportScheduledEvent;
 import com.jcwhatever.nucleus.managed.entity.meta.EntityMeta;
 import com.jcwhatever.nucleus.managed.entity.meta.IEntityMetaContext;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.teleport.IScheduledTeleport;
 import com.jcwhatever.nucleus.managed.teleport.ITeleportManager;
+import com.jcwhatever.nucleus.managed.teleport.ITeleportResult;
 import com.jcwhatever.nucleus.managed.teleport.TeleportMode;
 import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -43,18 +45,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 /**
  * Implementation of {@link ITeleportManager}.
  */
 public final class InternalTeleportManager implements ITeleportManager {
 
+    static final Map<Entity, Void> CROSS_WORLD_TELEPORTS = new WeakHashMap<>(10);
+    static final Map<Entity, Void> TELEPORTS = new WeakHashMap<>(10);
     static final String TELEPORT_DENY_META_NAME =
             InternalTeleportManager.class.getName() + ":CanTeleport";
     private static final Object TELEPORT_DENY_META = new Object();
@@ -69,6 +74,20 @@ public final class InternalTeleportManager implements ITeleportManager {
             LISTENER = new BukkitListener();
             Bukkit.getPluginManager().registerEvents(LISTENER, Nucleus.getPlugin());
         }
+    }
+
+    @Override
+    public boolean isTeleporting(Entity entity) {
+        PreCon.notNull(entity);
+
+        return TELEPORTS.containsKey(entity);
+    }
+
+    @Override
+    public boolean isCrossWorldTeleporting(Entity entity) {
+        PreCon.notNull(entity);
+
+        return CROSS_WORLD_TELEPORTS.containsKey(entity);
     }
 
     @Nullable
@@ -97,90 +116,95 @@ public final class InternalTeleportManager implements ITeleportManager {
         if (scheduled != null)
             scheduled.cancel();
 
-        scheduled = new ScheduledTeleport(this, player, location,
-                PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
+        location = LocationUtils.copy(location);
 
+        TeleportScheduledEvent event = new TeleportScheduledEvent(player, location, tickDelay);
         if (META.has(player, TELEPORT_DENY_META_NAME)) {
+            event.setCancelled(true);
+        }
+
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        scheduled = new ScheduledTeleport(this, player, event.getDelayTicks(), location,
+                TeleportCause.PLUGIN, mode);
+
+        if (event.isCancelled()) {
             scheduled.cancel();
             return scheduled;
         }
 
         _scheduled.put(player.getUniqueId(), scheduled);
-
-        Scheduler.runTaskLater(plugin, tickDelay, scheduled);
+        Scheduler.runTaskLater(plugin, scheduled.getDelayTicks(), scheduled);
 
         return scheduled;
     }
 
     @Override
-    public boolean teleport(Player player, Location location) {
-        return teleport(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN,
+    public ITeleportResult teleport(Player player, Location location) {
+        return teleport(player, location, TeleportCause.PLUGIN,
                 TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Player player, Location location, TeleportMode mode) {
-        return teleport(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN,
-                TeleportMode.MOUNTS_AND_LEASHED);
+    public ITeleportResult teleport(Player player, Location location, TeleportMode mode) {
+        return teleport(player, location, TeleportCause.PLUGIN, mode);
     }
 
     @Override
-    public boolean teleport(Player player, Location location,
-                            PlayerTeleportEvent.TeleportCause cause) {
+    public ITeleportResult teleport(Player player, Location location,
+                            TeleportCause cause) {
         return teleport(player, location, cause, TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Player player, Location location,
-                            PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+    public ITeleportResult teleport(Player player, Location location,
+                            TeleportCause cause, TeleportMode mode) {
         PreCon.notNull(player);
         PreCon.notNull(location);
         PreCon.notNull(cause);
         PreCon.notNull(mode);
 
         if (META.has(player, TELEPORT_DENY_META_NAME))
-            return false;
+            return new TeleportHandler(player, cause, mode);
 
         ScheduledTeleport scheduled = _scheduled.remove(player.getUniqueId());
         if (scheduled != null)
             scheduled.cancel();
 
-        return isSingleTeleport(player)
-                ? player.teleport(location, cause)
-                : mountedTeleport(player, location, cause, mode);
+        return new TeleportHandler(player, cause, mode).teleport(location);
     }
 
     @Override
-    public boolean teleport(Player player, Entity entity) {
-        return teleport(player, entity.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN,
+    public ITeleportResult teleport(Player player, Entity entity) {
+        return teleport(player, entity.getLocation(), TeleportCause.PLUGIN,
                 TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Player player, Entity entity, TeleportMode mode) {
-        return teleport(player, entity.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN,
+    public ITeleportResult teleport(Player player, Entity entity, TeleportMode mode) {
+        return teleport(player, entity.getLocation(), TeleportCause.PLUGIN,
                 TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Player player, Entity entity,
-                            PlayerTeleportEvent.TeleportCause cause) {
+    public ITeleportResult teleport(Player player, Entity entity,
+                            TeleportCause cause) {
         return teleport(player, entity.getLocation(), cause, TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Player player, Entity entity,
-                            PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
+    public ITeleportResult teleport(Player player, Entity entity,
+                            TeleportCause cause, TeleportMode mode) {
         return teleport(player, entity.getLocation(), cause, mode);
     }
 
     @Override
-    public boolean teleport(Entity entity, Location location) {
+    public ITeleportResult teleport(Entity entity, Location location) {
         return teleport(entity, location, TeleportMode.MOUNTS_AND_LEASHED);
     }
 
     @Override
-    public boolean teleport(Entity entity, Location location, TeleportMode mode) {
+    public ITeleportResult teleport(Entity entity, Location location, TeleportMode mode) {
         PreCon.notNull(entity);
         PreCon.notNull(location);
 
@@ -188,9 +212,7 @@ public final class InternalTeleportManager implements ITeleportManager {
             return teleport((Player)entity, location);
         }
 
-        return isSingleTeleport(entity)
-                ? entity.teleport(location)
-                : mountedTeleport(entity, location, PlayerTeleportEvent.TeleportCause.PLUGIN, mode);
+        return new TeleportHandler(entity, TeleportCause.PLUGIN, mode);
     }
 
     @Override
@@ -209,24 +231,6 @@ public final class InternalTeleportManager implements ITeleportManager {
 
     void removeTask(UUID playerId) {
         _scheduled.remove(playerId);
-    }
-
-    static boolean mountedTeleport(Entity entity, Location destination,
-                                   PlayerTeleportEvent.TeleportCause cause, TeleportMode mode) {
-
-        Entity rootVehicle = EntityUtils.getRootVehicle(entity);
-
-        if (!mode.isLeashTeleport() && !mode.isMountsTeleport()) {
-            entity.eject();
-            Entity vehicle = entity.getVehicle();
-            if (vehicle != null)
-                vehicle.eject();
-
-            entity.teleport(destination, cause);
-        }
-
-        return new MountTeleporter(rootVehicle, mode)
-                .teleport(destination, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     static boolean isSingleTeleport(Entity entity) {

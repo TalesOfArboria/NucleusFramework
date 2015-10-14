@@ -24,49 +24,20 @@
 
 package com.jcwhatever.nucleus.managed.teleport;
 
-import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 /**
- * Scheduled teleport future.
+ * Interface to provide information about a leash entity pair.
  */
-public interface IScheduledTeleport extends IFutureResult<ITeleportResult> {
+public interface ITeleportLeashPair {
 
     /**
-     * Get the player that will be teleported.
+     * Get the leashed entity.
      */
-    Player getPlayer();
+    Entity getLeashed();
 
     /**
-     * Get the scheduled delay in ticks.
+     * Get the leash holder.
      */
-    int getDelayTicks();
-
-    /**
-     * Get the location the player will be teleported to.
-     */
-    Location getLocation();
-
-    /**
-     * Copy the values of the location the player will be teleported to
-     * into the specified output location.
-     *
-     * @param output  The output location.
-     *
-     * @return  The output location.
-     */
-    Location getLocation(Location output);
-
-    /**
-     * Determine if the teleport has been cancelled.
-     */
-    boolean isCancelled();
-
-    /**
-     * Cancel the teleport.
-     *
-     * <p>If the teleport is already cancelled or executed, nothing happens.</p>
-     */
-    void cancel();
+    Entity getLeashHolder();
 }

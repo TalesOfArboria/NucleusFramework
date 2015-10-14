@@ -26,36 +26,76 @@ package com.jcwhatever.nucleus.events.teleport;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.HandlerListExt;
+import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import org.bukkit.entity.Entity;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.player.PlayerEvent;
 
 /**
- * Called when an entity is removed and a new entity is created during
- * the teleport process when teleported via
- * {@link com.jcwhatever.nucleus.managed.teleport.ITeleportManager}.
+ * Called when a teleport is scheduled.
+ *
+ * @see com.jcwhatever.nucleus.managed.teleport.Teleporter
+ * @see com.jcwhatever.nucleus.managed.teleport.ITeleportManager
  */
-public class EntityTeleportRespawnEvent extends EntityEvent {
+public class TeleportScheduledEvent extends PlayerEvent implements ICancellable, Cancellable {
 
     private static final HandlerList handlers = new HandlerListExt(
-            Nucleus.getPlugin(), EntityTeleportRespawnEvent.class);
+            Nucleus.getPlugin(), TeleportScheduledEvent.class);
 
-    private Entity _original;
+    private final Location _to;
+    private int _delay;
+    private boolean _isCancelled;
 
-    public EntityTeleportRespawnEvent(Entity original, Entity newEntity) {
-        super(newEntity);
-        PreCon.notNull(original);
-        PreCon.notNull(newEntity);
+    /**
+     * Constructor.
+     *
+     * @param player  The player scheduled to be teleported.
+     * @param to      The location to be teleported to.
+     * @param delay   The teleport delay in ticks.
+     */
+    public TeleportScheduledEvent(Player player, Location to, int delay) {
+        super(player);
+        PreCon.notNull(player);
+        PreCon.notNull(to);
 
-        _original = original;
+        _to = to;
+        _delay = delay;
     }
 
     /**
-     * Get original removed entity.
+     * Get the teleport delay in ticks.
      */
-    public Entity getOriginal() {
-        return _original;
+    public int getDelayTicks() {
+        return _delay;
+    }
+
+    /**
+     * Set the teleport delay.
+     *
+     * @param ticks  The number of ticks to delay.
+     */
+    public void setDelayTicks(int ticks) {
+        _delay = ticks;
+    }
+
+    /**
+     * Get a direct reference to the location the player will be teleported to.
+     */
+    public Location getTo() {
+        return _to;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return _isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean isCancelled) {
+        _isCancelled = isCancelled;
     }
 
     @Override
@@ -67,3 +107,4 @@ public class EntityTeleportRespawnEvent extends EntityEvent {
         return handlers;
     }
 }
+

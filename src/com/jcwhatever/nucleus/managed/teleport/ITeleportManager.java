@@ -38,6 +38,24 @@ import javax.annotation.Nullable;
 public interface ITeleportManager {
 
     /**
+     * Determine if an entity is currently being teleported by the teleport manager.
+     *
+     * <p>This can be checked in events that may occur during teleport.</p>
+     *
+     * @param entity  The entity to check.
+     */
+    boolean isTeleporting(Entity entity);
+
+    /**
+     * Determine if an entity is currently being teleported cross world.
+     *
+     * <p>This can be checked in events that may occur during teleport.</p>
+     *
+     * @param entity  The entity to check.
+     */
+    boolean isCrossWorldTeleporting(Entity entity);
+
+    /**
      * Get a players current scheduled teleport.
      *
      * @param player  The player.
@@ -85,9 +103,9 @@ public interface ITeleportManager {
      * @param player    The player to teleport.
      * @param location  The location to teleport the player to.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Location location);
+    ITeleportResult teleport(Player player, Location location);
 
     /**
      * Teleports a player to the specified location.
@@ -98,9 +116,9 @@ public interface ITeleportManager {
      * @param location  The location to teleport the player to.
      * @param mode      The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Location location, TeleportMode mode);
+    ITeleportResult teleport(Player player, Location location, TeleportMode mode);
 
     /**
      * Teleports a player to the specified location.
@@ -113,9 +131,9 @@ public interface ITeleportManager {
      * @param location  The location to teleport the player to.
      * @param cause     The cause of the player teleport.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Location location, PlayerTeleportEvent.TeleportCause cause);
+    ITeleportResult teleport(Player player, Location location, PlayerTeleportEvent.TeleportCause cause);
 
     /**
      * Teleports a player to the specified location.
@@ -127,9 +145,9 @@ public interface ITeleportManager {
      * @param cause     The cause of the player teleport.
      * @param mode      The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Location location,
+    ITeleportResult teleport(Player player, Location location,
                      PlayerTeleportEvent.TeleportCause cause, TeleportMode mode);
 
     /**
@@ -142,9 +160,9 @@ public interface ITeleportManager {
      * @param player  The player to teleport.
      * @param entity  The entity to teleport to.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Entity entity);
+    ITeleportResult teleport(Player player, Entity entity);
 
     /**
      * Teleports a player to the specified entity.
@@ -155,9 +173,9 @@ public interface ITeleportManager {
      * @param entity  The entity to teleport to.
      * @param mode    The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Entity entity, TeleportMode mode);
+    ITeleportResult teleport(Player player, Entity entity, TeleportMode mode);
 
     /**
      * Teleports a player to the specified entity.
@@ -170,9 +188,9 @@ public interface ITeleportManager {
      * @param entity  The entity to teleport to.
      * @param cause   The cause of the player teleport.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Entity entity, PlayerTeleportEvent.TeleportCause cause);
+    ITeleportResult teleport(Player player, Entity entity, PlayerTeleportEvent.TeleportCause cause);
 
     /**
      * Teleports a player to the specified entity.
@@ -184,9 +202,9 @@ public interface ITeleportManager {
      * @param cause   The cause of the player teleport.
      * @param mode    The teleport mode.
      *
-     * @return  True if the player was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Player player, Entity entity,
+    ITeleportResult teleport(Player player, Entity entity,
                      PlayerTeleportEvent.TeleportCause cause, TeleportMode mode);
 
     /**
@@ -197,9 +215,9 @@ public interface ITeleportManager {
      * @param entity    The entity to teleport.
      * @param location  The location to teleport to.
      *
-     * @return  True if the entity was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Entity entity, Location location);
+    ITeleportResult teleport(Entity entity, Location location);
 
     /**
      * Teleports an entity to the specified location.
@@ -208,9 +226,9 @@ public interface ITeleportManager {
      * @param location  The location to teleport to.
      * @param mode      The teleport mode.
      *
-     * @return  True if the entity was teleported, otherwise false.
+     * @return  Teleport result.
      */
-    boolean teleport(Entity entity, Location location, TeleportMode mode);
+    ITeleportResult teleport(Entity entity, Location location, TeleportMode mode);
 
     /**
      * Determine if an entity is allowed to teleport.
