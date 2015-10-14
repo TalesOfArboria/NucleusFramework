@@ -147,31 +147,12 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 Location p1 = event.getClickedBlock().getLocation();
-
-
-                Location previous;
-
-                synchronized (_sync) {
-                    previous = _p1Selections.put(player.getUniqueId(), p1);
-                }
-
-                if (!p1.equals(previous)) {
-                    NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.serialize(p1, 2)));
-                }
+                setP1(player, p1);
                 event.setCancelled(true);
             }
             else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 Location p2 = event.getClickedBlock().getLocation();
-
-                Location previous;
-
-                synchronized (_sync) {
-                    previous = _p2Selections.put(player.getUniqueId(), p2);
-                }
-
-                if (!p2.equals(previous)) {
-                    NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.serialize(p2, 2)));
-                }
+                setP2(player, p2);
                 event.setCancelled(true);
             }
         }
@@ -181,10 +162,49 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
             Player player = event.getPlayer();
 
-            if (event.getMessage().equals("//wand") && hasPermission(player)) {
-                event.getPlayer().getInventory().addItem(new ItemStack(Material.WOOD_AXE));
-                event.setCancelled(true);
+            if (!hasPermission(player))
+                return;
+
+            String message = event.getMessage();
+
+            switch (message) {
+                case "//wand":
+                    player.getInventory().addItem(new ItemStack(Material.WOOD_AXE));
+                    event.setCancelled(true);
+                    break;
+                case "//pos1":
+                    setP1(player, player.getLocation());
+                    event.setCancelled(true);
+                    break;
+                case "//pos2":
+                    setP2(player, player.getLocation());
+                    event.setCancelled(true);
+                    break;
             }
+        }
+    }
+
+    private void setP1(Player player, Location location) {
+        Location previous;
+
+        synchronized (_sync) {
+            previous = _p1Selections.put(player.getUniqueId(), location);
+        }
+
+        if (!location.equals(previous)) {
+            NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.serialize(location, 2)));
+        }
+    }
+
+    private void setP2(Player player, Location location) {
+        Location previous;
+
+        synchronized (_sync) {
+            previous = _p2Selections.put(player.getUniqueId(), location);
+        }
+
+        if (!location.equals(previous)) {
+            NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.serialize(location, 2)));
         }
     }
 
