@@ -40,10 +40,13 @@ import java.util.List;
 public class v1_8_R3_DataWatcher extends DataWatcher implements IDataWatcher {
 
     private static final byte SNEAK_FLAG = 1 << 1;
+    private static final int ENTITY_FLAGS_ID = 0;
+    private static final int ARROW_STICK_ID = 9;
 
     private final DataWatcher _watcher;
     private boolean _canDismount;
     private boolean _isDismountPressed = false;
+    private boolean _canArrowsStick = true;
 
     public v1_8_R3_DataWatcher(Entity entity) {
         super(null);
@@ -88,6 +91,23 @@ public class v1_8_R3_DataWatcher extends DataWatcher implements IDataWatcher {
             }
             watch(0, flags);
         }
+    }
+
+    @Override
+    public void removeArrows() {
+        _watcher.watch(ARROW_STICK_ID, (byte)0);
+    }
+
+    @Override
+    public boolean canArrowsStick() {
+        return _canArrowsStick;
+    }
+
+    @Override
+    public void setCanArrowsStick(boolean isAllowed) {
+        _canArrowsStick = isAllowed;
+        if (!isAllowed)
+            removeArrows();
     }
 
     @Override
@@ -138,7 +158,7 @@ public class v1_8_R3_DataWatcher extends DataWatcher implements IDataWatcher {
     @Override
     public <T> void watch(int i, T t0) {
 
-        if (i == 0) {
+        if (i == ENTITY_FLAGS_ID) {
             byte newFlags = ((Number)t0).byteValue();
             if ((newFlags & SNEAK_FLAG) == SNEAK_FLAG) {
                 _isDismountPressed = true;
@@ -149,6 +169,10 @@ public class v1_8_R3_DataWatcher extends DataWatcher implements IDataWatcher {
             else {
                 _isDismountPressed = false;
             }
+        }
+        else if (i == ARROW_STICK_ID) {
+            if (!_canArrowsStick && ((Number)t0).byteValue() != 0)
+                return;
         }
         _watcher.watch(i, t0);
     }

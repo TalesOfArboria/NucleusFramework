@@ -329,4 +329,26 @@ interface INms {
      * @param canDismount  True to allow dismounting from vehicle, otherwise false.
      */
     void setCanDismount(LivingEntity passenger, boolean canDismount);
+
+    /**
+     * Remove arrows from an entity.
+     *
+     * @param entity  The entity to remove arrows from.
+     */
+    void removeArrows(Entity entity);
+
+    /**
+     * Determine if arrows can get stuck in an entity.
+     *
+     * @param entity  The entity to check.
+     */
+    boolean canArrowsStick(Entity entity);
+
+    /**
+     * Set allow arrows to get stuck in an entity.
+     *
+     * @param entity     The entity.
+     * @param isAllowed  True to allow arrows to get stuck.
+     */
+    void setCanArrowsStick(Entity entity, boolean isAllowed);
 }

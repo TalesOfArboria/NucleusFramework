@@ -90,4 +90,19 @@ class NmsEntityHandler extends AbstractNMSHandler implements INmsEntityHandler {
 
         nms().setStepHeight(entity, height);
     }
+
+    @Override
+    public void removeArrows(Entity entity) {
+        nms().removeArrows(entity);
+    }
+
+    @Override
+    public boolean canArrowsStick(Entity entity) {
+        return nms().canArrowsStick(entity);
+    }
+
+    @Override
+    public void setCanArrowsStick(Entity entity, boolean isAllowed) {
+        nms().setCanArrowsStick(entity, isAllowed);
+    }
 }

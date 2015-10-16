@@ -457,6 +457,41 @@ class v1_8_R3_Nms implements INms {
         watcher.setCanDismount(canDismount);
     }
 
+    @Override
+    public void removeArrows(Entity entity) {
+        if (!(entity instanceof Player))
+            return;
+
+        IDataWatcher watcher = getReplacedDataWatcher((Player)entity);
+        if (watcher == null) {
+            watcher = replaceDataWatcher((Player)entity);
+        }
+
+        watcher.removeArrows();
+    }
+
+    @Override
+    public boolean canArrowsStick(Entity entity) {
+        if (!(entity instanceof Player))
+            return false;
+
+        IDataWatcher watcher = getReplacedDataWatcher((Player) entity);
+        return watcher == null || watcher.canArrowsStick();
+    }
+
+    @Override
+    public void setCanArrowsStick(Entity entity, boolean isAllowed) {
+        if (!(entity instanceof Player))
+            return;
+
+        IDataWatcher watcher = getReplacedDataWatcher((Player) entity);
+        if (watcher == null) {
+            watcher = replaceDataWatcher((Player)entity);
+        }
+
+        watcher.setCanArrowsStick(isAllowed);
+    }
+
     @Nullable
     private IDataWatcher getReplacedDataWatcher(LivingEntity entity) {
         DataWatcher watcher = ((CraftLivingEntity)entity).getHandle().getDataWatcher();

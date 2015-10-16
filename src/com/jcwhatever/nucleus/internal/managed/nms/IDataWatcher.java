@@ -52,4 +52,21 @@ public interface IDataWatcher {
      * @param isPressed  True if pressed, otherwise false.
      */
     void setDismountPressed(boolean isPressed);
+
+    /**
+     * Remove arrows. (Player)
+     */
+    void removeArrows();
+
+    /**
+     * Determine if arrows can get stuck in the player. (Player)
+     */
+    boolean canArrowsStick();
+
+    /**
+     * Set allow arrows to get stuck in an entity.
+     *
+     * @param isAllowed  True to allow arrows to get stuck.
+     */
+    void setCanArrowsStick(boolean isAllowed);
 }
