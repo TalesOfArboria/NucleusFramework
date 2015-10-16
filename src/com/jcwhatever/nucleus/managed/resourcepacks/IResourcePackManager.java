@@ -69,6 +69,25 @@ public interface IResourcePackManager extends INamedManager<IResourcePack> {
     void setWorld(World world, @Nullable IResourcePack pack);
 
     /**
+     * Determine if the specified world requires the player to have its resource
+     * pack loaded.
+     *
+     * @param world  The world to check.
+     *
+     * @return  True if the world requires a resource pack, otherwise false.
+     */
+    boolean isRequired(World world);
+
+    /**
+     * Set access to a world based on the player accepting and loading the
+     * resource pack set for the specified world.
+     *
+     * @param world       The world
+     * @param isRequired  True to require resource pack, otherwise false.
+     */
+    void setRequired(World world, boolean isRequired);
+
+    /**
      * Create a new managed scoreboard.
      *
      * <p>The resource pack created is transient in nature and is not permanently stored.</p>

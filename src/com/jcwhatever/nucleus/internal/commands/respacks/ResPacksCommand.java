@@ -42,6 +42,7 @@ public final class ResPacksCommand extends AbstractCommand {
         registerCommand(DelSubCommand.class);
         registerCommand(ListSubCommand.class);
         registerCommand(RemoveSubCommand.class);
+        registerCommand(RequireSubCommand.class);
         registerCommand(SetWorldSubCommand.class);
         registerCommand(StatusSubCommand.class);
     }
