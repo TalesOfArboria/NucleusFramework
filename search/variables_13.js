@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['target_5fonly',['TARGET_ONLY',['../dd/dbd/enumcom_1_1jcwhatever_1_1nucleus_1_1managed_1_1teleport_1_1TeleportMode.html#a7f88ebebcb7763cc346311ba01e168d5',1,'com::jcwhatever::nucleus::managed::teleport::TeleportMode']]],
+  ['teleport',['TELEPORT',['../d1/d29/enumcom_1_1jcwhatever_1_1nucleus_1_1regions_1_1options_1_1LeaveRegionReason.html#a041cbfc9d31c82a29012d10a8ebf3259',1,'com.jcwhatever.nucleus.regions.options.LeaveRegionReason.TELEPORT()'],['../d9/d08/enumcom_1_1jcwhatever_1_1nucleus_1_1regions_1_1options_1_1EnterRegionReason.html#a041cbfc9d31c82a29012d10a8ebf3259',1,'com.jcwhatever.nucleus.regions.options.EnterRegionReason.TELEPORT()'],['../df/d47/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1entity_1_1EntityTypeProperty.html#a8b7b6acff4ba97925639eac47854e8eb',1,'com.jcwhatever.nucleus.utils.entity.EntityTypeProperty.TELEPORT()']]],
+  ['throwable',['THROWABLE',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a544600bb19912c2a2e56f9a010aed9d0',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['ticks',['TICKS',['../d1/dc7/enumcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1TimeScale.html#a72d0ed8b0956b30ad2db1c726ac734cf',1,'com::jcwhatever::nucleus::utils::TimeScale']]],
+  ['titles',['TITLES',['../db/d3c/classcom_1_1jcwhatever_1_1nucleus_1_1internal_1_1managed_1_1nms_1_1InternalNmsManager.html#a89e88d44ab8ccbedd3dc1e8f7794e943',1,'com::jcwhatever::nucleus::internal::managed::nms::InternalNmsManager']]],
+  ['tool',['TOOL',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a87c59ac2b60cdc317838acc115267532',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['top',['TOP',['../db/d7e/enumcom_1_1jcwhatever_1_1nucleus_1_1views_1_1chest_1_1InventoryItemAction_1_1InventoryPosition.html#ab42f8b60865f7ba76c338647dc85870a',1,'com::jcwhatever::nucleus::views::chest::InventoryItemAction::InventoryPosition']]],
+  ['transient',['TRANSIENT',['../de/d5a/enumcom_1_1jcwhatever_1_1nucleus_1_1managed_1_1scoreboards_1_1ScoreboardLifespan.html#a3075e56822dad67c326215671fccab47',1,'com::jcwhatever::nucleus::managed::scoreboards::ScoreboardLifespan']]],
+  ['transparent',['TRANSPARENT',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a89e585f2d4fbd34cf3f2469a63c62e66',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['trapdoor',['TRAPDOOR',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#aeca53e19bcc5b809a0af49a5cc601ffa',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['type_5fmeta_5fdurability_5fmatch',['TYPE_META_DURABILITY_MATCH',['../d3/de5/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1items_1_1ItemStackMatcher.html#af08419c3af680bc4b7e26e70f1f05052',1,'com::jcwhatever::nucleus::utils::items::ItemStackMatcher']]]
+];

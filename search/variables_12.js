@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['saddle',['SADDLE',['../df/d47/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1entity_1_1EntityTypeProperty.html#a7dbc17e0947156bafd088ba0c292bf61',1,'com::jcwhatever::nucleus::utils::entity::EntityTypeProperty']]],
+  ['search',['SEARCH',['../d0/d17/enumcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1modules_1_1ClassLoadMethod.html#a97b77d2efe5ed4d44728b82d462806a1',1,'com::jcwhatever::nucleus::utils::modules::ClassLoadMethod']]],
+  ['seconds',['SECONDS',['../d1/dc7/enumcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1TimeScale.html#ab8525077f240c3057fed9192aa8396ea',1,'com::jcwhatever::nucleus::utils::TimeScale']]],
+  ['shoot',['SHOOT',['../df/d47/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1entity_1_1EntityTypeProperty.html#a0e725211d1c1810d4c3d012b7e15d504',1,'com::jcwhatever::nucleus::utils::entity::EntityTypeProperty']]],
+  ['shovel',['SHOVEL',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a64e179331bc7f430ec1907bce7c101ba',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['slot',['SLOT',['../db/d6d/enumcom_1_1jcwhatever_1_1nucleus_1_1views_1_1chest_1_1ChestEventInfo_1_1ItemStackSource.html#af6d70e49005ce360e7eddf1b5684f57e',1,'com::jcwhatever::nucleus::views::chest::ChestEventInfo::ItemStackSource']]],
+  ['sound_5feffect',['SOUND_EFFECT',['../db/d3c/classcom_1_1jcwhatever_1_1nucleus_1_1internal_1_1managed_1_1nms_1_1InternalNmsManager.html#ad6c5028dffe3845d2f4d9cba84764b25',1,'com::jcwhatever::nucleus::internal::managed::nms::InternalNmsManager']]],
+  ['stairs',['STAIRS',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#aed4559d1d9f758c5a285dc2a4f05cb4c',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['stone_5fbased',['STONE_BASED',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a66888f532e69f58741c52145a63301a3',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['sub_5fheader',['SUB_HEADER',['../d8/d3c/enumcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1text_1_1TextUtils_1_1FormatTemplate.html#a482ed569dc254ce777c512401ebe73d0',1,'com::jcwhatever::nucleus::utils::text::TextUtils::FormatTemplate']]],
+  ['sub_5fmaterial_5fdata',['SUB_MATERIAL_DATA',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a1bcdbcd3ec57de19212cb66fd6b90c12',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['sub_5fmaterial_5fdurability',['SUB_MATERIAL_DURABILITY',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a759117d47d9b0709ec8c1bd545cd277f',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['success',['SUCCESS',['../d0/d05/enumcom_1_1jcwhatever_1_1nucleus_1_1managed_1_1resourcepacks_1_1ResourcePackStatus.html#a5b7e5913b5de5e9cc298ee5ff5d38174',1,'com::jcwhatever::nucleus::managed::resourcepacks::ResourcePackStatus']]],
+  ['surface',['SURFACE',['../d0/de9/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1materials_1_1MaterialProperty.html#a20dd2e40601fc43ceb099b07d528ee4b',1,'com::jcwhatever::nucleus::utils::materials::MaterialProperty']]],
+  ['swim',['SWIM',['../df/d47/classcom_1_1jcwhatever_1_1nucleus_1_1utils_1_1entity_1_1EntityTypeProperty.html#ace74c5b387ae90570c55f36b1748f146',1,'com::jcwhatever::nucleus::utils::entity::EntityTypeProperty']]],
+  ['sync',['SYNC',['../d0/d60/classcom_1_1jcwhatever_1_1nucleus_1_1collections_1_1wrap_1_1SyncStrategy.html#ab1fcc845f4e74849e70aa57474ab7f75',1,'com::jcwhatever::nucleus::collections::wrap::SyncStrategy']]]
+];
