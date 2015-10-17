@@ -72,7 +72,13 @@ public abstract class NucleusPlugin extends JavaPlugin
      */
     public NucleusPlugin() {
         super();
-        onInit();
+        try {
+            onInit();
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -83,8 +89,13 @@ public abstract class NucleusPlugin extends JavaPlugin
         super(loader, description, dataFolder, file);
 
         _isTesting = true;
-
-        onInit();
+        try {
+            onInit();
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
