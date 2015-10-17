@@ -326,28 +326,7 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
         if (packs == null)
             return;
 
-        final ResourcePackStatus status = ResourcePackStatus.fromBukkit(bukkitStatus);
-        ResourcePackStatus current = packs.getStatus();
-
-        if ((status == ResourcePackStatus.ACCEPTED
-                || status == ResourcePackStatus.DECLINED)
-                && current != ResourcePackStatus.PENDING
-                && current != ResourcePackStatus.NO_RESOURCE) {
-            return;
-        }
-
-        if ((status == ResourcePackStatus.FAILED
-                || status == ResourcePackStatus.SUCCESS)
-                && (current != ResourcePackStatus.ACCEPTED
-                && current != ResourcePackStatus.DECLINED)) {
-            return;
-        }
-
-        if (status == ResourcePackStatus.SUCCESS
-                && current != ResourcePackStatus.ACCEPTED) {
-            return;
-        }
-
+        ResourcePackStatus status = ResourcePackStatus.fromBukkit(bukkitStatus);
         packs.setStatus(status);
     }
 
