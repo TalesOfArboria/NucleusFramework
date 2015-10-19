@@ -25,6 +25,9 @@
 package com.jcwhatever.nucleus.utils.text.format;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolRecycleHandler;
+import com.jcwhatever.nucleus.utils.performance.pool.SimplePool;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 import com.jcwhatever.nucleus.utils.text.TextFormat;
 import com.jcwhatever.nucleus.utils.text.components.IChatComponent;
@@ -132,9 +135,21 @@ public class TextFormatter {
         }
     }
 
-    private final FormatResultBuffer _buffer = new FormatResultBuffer();
     private final Thread _homeThread;
     private final TextFormatterSettings _settings;
+    private final SimplePool<FormatResultBuffer> _bufferPool = new SimplePool<FormatResultBuffer>(10,
+            new IPoolElementFactory<FormatResultBuffer>() {
+                @Override
+                public FormatResultBuffer create() {
+                    return new FormatResultBuffer();
+                }
+            },
+            new IPoolRecycleHandler<FormatResultBuffer>() {
+                @Override
+                public void onRecycle(FormatResultBuffer buffer) {
+                    buffer.hardReset();
+                }
+            });
 
     /**
      * Constructor.
@@ -173,8 +188,10 @@ public class TextFormatter {
         PreCon.notNull(template);
 
         if (isHomeThread()) {
-            _buffer.hardReset();
-            return format(new ParseContext(settings, _buffer, template, params), false);
+            FormatResultBuffer buffer = _bufferPool.retrieve();
+            ITextFormatterResult result =  format(new ParseContext(settings, buffer, template, params), false);
+            _bufferPool.recycle(buffer);
+            return result;
         }
         else {
             return format(new ParseContext(settings, new FormatResultBuffer(), template, params), false);
@@ -429,7 +446,7 @@ public class TextFormatter {
                     if (buffer.isModified()) {
                         buffer.reset();
                     }
-                    buffer.results.add((IChatComponent)param);
+                    buffer.results.add((IChatComponent) param);
                     buffer.reset(modifier);
                     return;
                 }
