@@ -137,6 +137,7 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
         PreCon.notNull(player);
         PreCon.greaterThanZero(minDuration);
         PreCon.notNull(timeScale);
+        PreCon.notNull(priority);
 
         BarSender.addBar(player, this, minDuration, timeScale, priority);
     }
@@ -152,6 +153,7 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
         PreCon.notNull(players);
         PreCon.greaterThanZero(minDuration);
         PreCon.notNull(timeScale);
+        PreCon.notNull(priority);
 
         for (Player player : players) {
             showTo(player, minDuration, timeScale, priority);

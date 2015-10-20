@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.internal.actionbar;
 
 import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.utils.TimeScale;
-
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;

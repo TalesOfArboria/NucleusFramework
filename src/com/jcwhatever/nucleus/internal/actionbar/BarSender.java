@@ -66,16 +66,15 @@ class BarSender implements Runnable {
     static final int MAX_REFRESH_RATE = 10 * 50;
     static final int MIN_REFRESH_RATE = 50;
 
-    private static final Map<UUID, BarDistributor> _playerMap = new PlayerMap<>(Nucleus.getPlugin());
-    private static final SetMap<ActionBar, PlayerBar> _barMap = new WeakHashSetMap<>(35, 3);
-    private static final INmsActionBarHandler _nmsHandler;
-    private static final Object _sync = new Object();
-    static volatile BarSender _instance;
+    private static final Map<UUID, BarDistributor> PLAYER_MAP = new PlayerMap<>(Nucleus.getPlugin());
+    private static final SetMap<ActionBar, PlayerBar> BAR_MAP = new WeakHashSetMap<>(35, 3);
+    private static final INmsActionBarHandler NMS_HANDLER;
+    static volatile BarSender INSTANCE;
 
     static {
-        _nmsHandler = NmsUtils.getActionBarHandler();
+        NMS_HANDLER = NmsUtils.getActionBarHandler();
 
-        if (_nmsHandler == null) {
+        if (NMS_HANDLER == null) {
             NucMsg.debug("Failed to get Action Bar NMS handler.");
         }
     }
@@ -86,8 +85,8 @@ class BarSender implements Runnable {
      * @param player  The player to check.
      */
     static boolean isViewing(Player player) {
-        synchronized (_sync) {
-            return _playerMap.containsKey(player.getUniqueId());
+        synchronized (PLAYER_MAP) {
+            return PLAYER_MAP.containsKey(player.getUniqueId());
         }
     }
 
@@ -98,12 +97,17 @@ class BarSender implements Runnable {
      * @param actionBar  The action bar to check.
      */
     static boolean isViewing(Player player, PersistentActionBar actionBar) {
-        synchronized (_sync) {
+        BarDistributor distributor;
+        synchronized (PLAYER_MAP) {
+            distributor = PLAYER_MAP.get(player.getUniqueId());
+        }
 
-            BarDistributor distributor = _playerMap.get(player.getUniqueId());
-            return distributor != null &&
-                    distributor.contains(
-                            new PlayerBar(player, actionBar, 0, null, ActionBarPriority.DEFAULT));
+        if (distributor == null)
+            return false;
+
+        synchronized (distributor.sync) {
+            return distributor.contains(
+                    new PlayerBar(player, actionBar, 0, null, ActionBarPriority.DEFAULT));
         }
     }
 
@@ -112,16 +116,16 @@ class BarSender implements Runnable {
      */
     static void start() {
 
-        if (_instance != null || _nmsHandler == null)
+        if (INSTANCE != null || NMS_HANDLER == null)
             return;
 
-        synchronized (_sync) {
+        synchronized (PLAYER_MAP) {
 
-            if (_instance != null)
+            if (INSTANCE != null)
                 return;
 
-            _instance = new BarSender();
-            Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, MIN_REFRESH_RATE / 50, _instance);
+            INSTANCE = new BarSender();
+            Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(), 1, MIN_REFRESH_RATE / 50, INSTANCE);
         }
     }
 
@@ -140,7 +144,7 @@ class BarSender implements Runnable {
     static void addBar(Player player, PersistentActionBar actionBar,
                        int duration, TimeScale timeScale, ActionBarPriority priority) {
 
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return;
 
         PlayerBar playerBar = new PlayerBar(player, actionBar, duration, timeScale, priority);
@@ -157,12 +161,12 @@ class BarSender implements Runnable {
             distributor.add(playerBar, duration, timeScale);
         }
 
-        synchronized (_sync) {
-            // add to _barMap
-            _barMap.put(actionBar, playerBar);
+        synchronized (PLAYER_MAP) {
+            // add to BAR_MAP
+            BAR_MAP.put(actionBar, playerBar);
         }
 
-        if(_instance == null && Bukkit.isPrimaryThread()) {
+        if(INSTANCE == null && Bukkit.isPrimaryThread()) {
             start();
         }
     }
@@ -174,10 +178,12 @@ class BarSender implements Runnable {
      * @param actionBar  The action bar to remove.
      */
     static void removeBar(Player player, PersistentActionBar actionBar) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return;
 
-        PlayerBar playerBar = new PlayerBar(player, actionBar, 0, null, null);
+        PlayerBar playerBar = new PlayerBar(player, actionBar, 0,
+                TimeScale.TICKS, ActionBarPriority.DEFAULT);
+
         BarDistributor distributor = BarSender.getDistributor(player);
 
         boolean isEmpty;
@@ -187,13 +193,13 @@ class BarSender implements Runnable {
             isEmpty = distributor.isEmpty();
         }
 
-        synchronized (_sync) {
+        synchronized (PLAYER_MAP) {
 
             if (isEmpty) {
-                _playerMap.remove(player.getUniqueId());
+                PLAYER_MAP.remove(player.getUniqueId());
             }
 
-            _barMap.removeValue(actionBar, playerBar);
+            BAR_MAP.removeValue(actionBar, playerBar);
         }
     }
 
@@ -203,13 +209,13 @@ class BarSender implements Runnable {
      * @param actionBar  The action bar to remove.
      */
     static void removeBar(PersistentActionBar actionBar) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return;
 
         Set<PlayerBar> playerBars;
 
-        synchronized (_sync) {
-            playerBars = _barMap.removeAll(actionBar);
+        synchronized (PLAYER_MAP) {
+            playerBars = BAR_MAP.removeAll(actionBar);
         }
 
         for (PlayerBar bar : playerBars) {
@@ -218,13 +224,13 @@ class BarSender implements Runnable {
     }
 
     static <T extends Collection<Player>> T getViewers(PersistentActionBar actionBar, T output) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return output;
 
         Set<PlayerBar> playerBars;
 
-        synchronized (_sync) {
-            playerBars = _barMap.getAll(actionBar);
+        synchronized (PLAYER_MAP) {
+            playerBars = BAR_MAP.getAll(actionBar);
         }
 
         if (output instanceof ArrayList)
@@ -243,7 +249,7 @@ class BarSender implements Runnable {
      * @param bar  The player bar view instance to remove.
      */
     static void removeBar(PlayerBar bar) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return;
 
         BarDistributor distributor = BarSender.getDistributor(bar.player());
@@ -255,8 +261,8 @@ class BarSender implements Runnable {
         }
 
         if (isEmpty) {
-            synchronized (_sync) {
-                _playerMap.remove(bar.player().getUniqueId());
+            synchronized (PLAYER_MAP) {
+                PLAYER_MAP.remove(bar.player().getUniqueId());
             }
         }
     }
@@ -267,10 +273,10 @@ class BarSender implements Runnable {
      * @param player  The player to remove the action bars from.
      */
     static void removePlayer(Player player) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return;
 
-        BarDistributor distributor = _playerMap.get(player.getUniqueId());
+        BarDistributor distributor = PLAYER_MAP.get(player.getUniqueId());
         if (distributor == null)
             return;
 
@@ -290,15 +296,15 @@ class BarSender implements Runnable {
 
         BarDistributor distributor;
 
-        synchronized (_sync) {
-            distributor = _playerMap.get(player.getUniqueId());
+        synchronized (PLAYER_MAP) {
+            distributor = PLAYER_MAP.get(player.getUniqueId());
         }
 
         if (distributor == null) {
 
-            synchronized (_sync) {
+            synchronized (PLAYER_MAP) {
                 distributor = new BarDistributor();
-                _playerMap.put(player.getUniqueId(), distributor);
+                PLAYER_MAP.put(player.getUniqueId(), distributor);
             }
         }
 
@@ -330,15 +336,16 @@ class BarSender implements Runnable {
 
         List<BarDistributor> distributors = new ArrayList<>(10);
 
-        synchronized (_sync){
-            if (_playerMap.isEmpty())
+        synchronized (PLAYER_MAP){
+            if (PLAYER_MAP.isEmpty())
                 return;
 
             // copy distributors to prevent concurrent modification errors.
-            distributors.addAll(_playerMap.values());
+            distributors.addAll(PLAYER_MAP.values());
         }
 
         long now = System.currentTimeMillis();
+        final List<PlayerBar> toSend = new ArrayList<>(distributors.size() * 2);
 
         for (BarDistributor distributor : distributors) {
 
@@ -368,11 +375,21 @@ class BarSender implements Runnable {
             if (playerBar.nextUpdate() == 0 ||
                     playerBar.nextUpdate() <= System.currentTimeMillis()) {
 
-                playerBar.send();
+                toSend.add(playerBar);
             }
         }
 
-        distributors.clear();
+        if (toSend.isEmpty())
+            return;
+
+        Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                for (PlayerBar bar : toSend) {
+                    bar.send();
+                }
+            }
+        });
     }
 
     /**
@@ -384,26 +401,13 @@ class BarSender implements Runnable {
      * @return  The next update time in milliseconds.
      */
     static long send(final Player player, ActionBar actionBar) {
-        if (_nmsHandler == null)
+        if (NMS_HANDLER == null)
             return 0;
 
         IDynamicText dynText = actionBar.getText();
         final CharSequence text = dynText.nextText();
         if (text != null) {
-
-            if (Bukkit.isPrimaryThread()) {
-                _nmsHandler.send(ArrayUtils.asList(player), text);
-            }
-            else {
-
-                Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        _nmsHandler.send(ArrayUtils.asList(player), text);
-                    }
-                });
-
-            }
+            NMS_HANDLER.send(ArrayUtils.asList(player), text);
         }
 
         int interval = dynText.getRefreshRate();
