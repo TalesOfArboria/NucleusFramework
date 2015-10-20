@@ -74,6 +74,15 @@ public interface IVector3D extends IVector2D, ICoords3D {
     /**
      * Copy coordinate values from specified coordinates.
      *
+     * @param coords  The values to copy.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D copyFrom3D(ICoords2Di coords);
+
+    /**
+     * Copy coordinate values from specified coordinates.
+     *
      * @param vector  The Bukkit vector.
      *
      * @return  Self for chaining.
@@ -125,6 +134,16 @@ public interface IVector3D extends IVector2D, ICoords3D {
      * @return  Self for chaining.
      */
     IVector3D add3D(ICoords2D vector);
+
+    /**
+     * Add vector.
+     *
+     * @param vector  The vector to add.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D add3D(ICoords2Di vector);
 
     /**
      * Add location as vector.
@@ -190,6 +209,16 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D subtract3D(ICoords2D vector);
 
     /**
+     * Subtract vector.
+     *
+     * @param vector  The vector to subtract.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D subtract3D(ICoords2Di vector);
+
+    /**
      * Subtract location as vector.
      *
      * @param vector  The location vector to subtract.
@@ -251,6 +280,16 @@ public interface IVector3D extends IVector2D, ICoords3D {
      * @return  Self for chaining.
      */
     IVector3D multiply3D(ICoords2D vector);
+
+    /**
+     * Multiply the vector by another vector.
+     *
+     * @param vector  The other vector.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D multiply3D(ICoords2Di vector);
 
     /**
      * Multiply the vector by a location as a vector.
@@ -316,6 +355,16 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D average3D(ICoords2D vector);
 
     /**
+     * Average the vector with another vector.
+     *
+     * @param vector  The other vector.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D average3D(ICoords2Di vector);
+
+    /**
      * Reverse the vector.
      *
      * @return  Self for chaining.
@@ -332,6 +381,15 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D cross(ICoords3D vector);
 
     /**
+     * Cross product of this vector and another vector.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  Self for chaining.
+     */
+    IVector3D cross(ICoords3Di vector);
+
+    /**
      * Get Dot Product of this vector and another vector.
      *
      * @param vector  The other vector.
@@ -341,12 +399,29 @@ public interface IVector3D extends IVector2D, ICoords3D {
     double getDot3D(ICoords3D vector);
 
     /**
+     * Get Dot Product of this vector and another vector.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  The Dot product.
+     */
+    double getDot3D(ICoords3Di vector);
+
+    /**
      * Get distance to another vector.
      *
      * @param vector  The other vector.
      *                If the vector is 2D, 0 is substituted for the Y coord.
      */
     double getDistance3D(ICoords2D vector);
+
+    /**
+     * Get distance to another vector.
+     *
+     * @param vector  The other vector.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     */
+    double getDistance3D(ICoords2Di vector);
 
     /**
      * Get distance to a location used as a vector.
@@ -362,6 +437,14 @@ public interface IVector3D extends IVector2D, ICoords3D {
      *                If the vector is 2D, 0 is substituted for the Y coord.
      */
     double getDistanceSquared3D(ICoords2D vector);
+
+    /**
+     * Get distance squared to another vector.
+     *
+     * @param vector  The other vector.
+     *                If the vector is 2D, 0 is substituted for the Y coord.
+     */
+    double getDistanceSquared3D(ICoords2Di vector);
 
     /**
      * Get distance squared to a location used as a vector.
@@ -398,6 +481,9 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D copyFrom2D(ICoords2D coords);
 
     @Override
+    IVector3D copyFrom2D(ICoords2Di coords);
+
+    @Override
     IVector3D copyFrom2D(Vector vector);
 
     @Override
@@ -411,6 +497,9 @@ public interface IVector3D extends IVector2D, ICoords3D {
 
     @Override
     IVector3D add2D(ICoords2D vector);
+
+    @Override
+    IVector3D add2D(ICoords2Di vector);
 
     @Override
     IVector3D add2D(double value);
@@ -431,6 +520,9 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D subtract2D(ICoords2D vector);
 
     @Override
+    IVector3D subtract2D(ICoords2Di vector);
+
+    @Override
     IVector3D subtract2D(double scalar);
 
     @Override
@@ -449,6 +541,9 @@ public interface IVector3D extends IVector2D, ICoords3D {
     IVector3D multiply2D(ICoords2D vector);
 
     @Override
+    IVector3D multiply2D(ICoords2Di vector);
+
+    @Override
     IVector3D multiply2D(double scalar);
 
     @Override
@@ -465,6 +560,9 @@ public interface IVector3D extends IVector2D, ICoords3D {
 
     @Override
     IVector3D average2D(ICoords2D vector);
+
+    @Override
+    IVector3D average2D(ICoords2Di vector);
 
     @Override
     IVector3D normalize();

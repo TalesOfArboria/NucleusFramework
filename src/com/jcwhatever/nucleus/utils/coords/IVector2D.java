@@ -72,6 +72,15 @@ public interface IVector2D extends ICoords2D {
     /**
      * Copy coordinate values from specified coordinates.
      *
+     * @param coords  The values to copy.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D copyFrom2D(ICoords2Di coords);
+
+    /**
+     * Copy coordinate values from specified coordinates.
+     *
      * @param vector  The Bukkit vector.
      *
      * @return  Self for chaining.
@@ -113,6 +122,15 @@ public interface IVector2D extends ICoords2D {
      * @return  Self for chaining.
      */
     IVector2D add2D(ICoords2D vector);
+
+    /**
+     * Add vector.
+     *
+     * @param vector  The vector to add.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D add2D(ICoords2Di vector);
 
     /**
      * Add scalar to vector.
@@ -177,6 +195,15 @@ public interface IVector2D extends ICoords2D {
     IVector2D subtract2D(ICoords2D vector);
 
     /**
+     * Subtract vector.
+     *
+     * @param vector  The vector to subtract.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D subtract2D(ICoords2Di vector);
+
+    /**
      * Subtract scalar from vector.
      *
      * @param scalar  The scalar value.
@@ -237,6 +264,15 @@ public interface IVector2D extends ICoords2D {
      * @return  Self for chaining.
      */
     IVector2D multiply2D(ICoords2D vector);
+
+    /**
+     * Multiply the vector by another vector.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D multiply2D(ICoords2Di vector);
 
     /**
      * Multiply the vector by a scalar value.
@@ -301,6 +337,15 @@ public interface IVector2D extends ICoords2D {
     IVector2D average2D(ICoords2D vector);
 
     /**
+     * Average the vector with another vector.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  Self for chaining.
+     */
+    IVector2D average2D(ICoords2Di vector);
+
+    /**
      * Reverse the vector.
      *
      * @return  Self for chaining.
@@ -338,11 +383,27 @@ public interface IVector2D extends ICoords2D {
     float getAngle(ICoords2D vector);
 
     /**
+     * Get the angle from this vector to another.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  The angle.
+     */
+    float getAngle(ICoords2Di vector);
+
+    /**
      * Get the vector yaw angle difference.
      *
      * @param vector  The other vector.
      */
     float getYawDelta(ICoords2D vector);
+
+    /**
+     * Get the vector yaw angle difference.
+     *
+     * @param vector  The other vector.
+     */
+    float getYawDelta(ICoords2Di vector);
 
     /**
      * Get the vector angle as a Minecraft yaw angle.
@@ -357,6 +418,15 @@ public interface IVector2D extends ICoords2D {
      * @return  The Dot product.
      */
     double getDot2D(ICoords2D vector);
+
+    /**
+     * Get Dot Product of this vector and another vector.
+     *
+     * @param vector  The other vector.
+     *
+     * @return  The Dot product.
+     */
+    double getDot2D(ICoords2Di vector);
 
     /**
      * Get vector magnitude from X and Z axis.
@@ -381,11 +451,25 @@ public interface IVector2D extends ICoords2D {
     double getDistance2D(ICoords2D vector);
 
     /**
+     * Get distance to another vector.
+     *
+     * @param vector  The other vector.
+     */
+    double getDistance2D(ICoords2Di vector);
+
+    /**
      * Get distance squared to another vector.
      *
      * @param vector  The other vector.
      */
     double getDistanceSquared2D(ICoords2D vector);
+
+    /**
+     * Get distance squared to another vector.
+     *
+     * @param vector  The other vector.
+     */
+    double getDistanceSquared2D(ICoords2Di vector);
 
     /**
      * Get coordinates as a new instance of a Bukkit vector.

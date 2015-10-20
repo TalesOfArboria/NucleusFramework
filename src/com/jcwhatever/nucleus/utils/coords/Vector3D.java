@@ -84,6 +84,16 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
      *
      * @param coords  Instance to copy coordinate values from.
      */
+    public Vector3D(ICoords3Di coords) {
+        super(coords);
+        _y = coords.getY();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param coords  Instance to copy coordinate values from.
+     */
     public Vector3D(ICoords2D coords) {
         super(coords);
     }
@@ -170,6 +180,18 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D copyFrom3D(ICoords2Di coords) {
+        PreCon.notNull(coords);
+
+        _y = coords instanceof ICoords3Di
+                ? ((ICoords3Di) coords).getY()
+                : 0;
+        super.copyFrom2D(coords);
+        onChange();
+        return this;
+    }
+
+    @Override
     public Vector3D copyFrom3D(Vector vector) {
         PreCon.notNull(vector);
 
@@ -226,6 +248,13 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D copyFrom2D(ICoords2Di coords) {
+        super.copyFrom2D(coords);
+        onChange();
+        return this;
+    }
+
+    @Override
     public Vector3D copyFrom2D(Vector vector) {
         super.copyFrom2D(vector);
         onChange();
@@ -259,6 +288,17 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
 
         if (vector instanceof ICoords3D) {
             _y += ((ICoords3D) vector).getY();
+        }
+        add2D(vector);
+        return this;
+    }
+
+    @Override
+    public IVector3D add3D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        if (vector instanceof ICoords3Di) {
+            _y += ((ICoords3Di) vector).getY();
         }
         add2D(vector);
         return this;
@@ -321,6 +361,18 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D subtract3D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        if (vector instanceof ICoords3Di) {
+            _y -= ((ICoords3Di) vector).getY();
+        }
+        super.subtract2D(vector);
+        onChange();
+        return this;
+    }
+
+    @Override
     public Vector3D subtract3D(Location vector) {
         PreCon.notNull(vector);
 
@@ -370,6 +422,22 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
 
         if (vector instanceof ICoords3D) {
             _y *= ((ICoords3D) vector).getY();
+        }
+        else {
+            _y = 0;
+        }
+        _x *= vector.getX();
+        _z *= vector.getZ();
+        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector3D multiply3D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        if (vector instanceof ICoords3Di) {
+            _y *= ((ICoords3Di) vector).getY();
         }
         else {
             _y = 0;
@@ -440,6 +508,21 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D average3D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        double otherY = vector instanceof ICoords3Di
+                ? ((ICoords3Di) vector).getY()
+                : 0;
+
+        _x = (_x + vector.getX()) * 0.5D;
+        _y = (_y + otherY) * 0.5D;
+        _z = (_z + vector.getZ()) * 0.5D;
+        onChange();
+        return null;
+    }
+
+    @Override
     public Vector3D reverse3D() {
         _x *= -1;
         _y *= -1;
@@ -450,6 +533,17 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
 
     @Override
     public Vector3D cross(ICoords3D vector) {
+        PreCon.notNull(vector);
+
+        _x = _y * vector.getZ() - vector.getY() * _z;
+        _y =  _z * vector.getX() - vector.getZ() * _x;
+        _z = _x * vector.getY() - vector.getX() * _y;
+        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector3D cross(ICoords3Di vector) {
         PreCon.notNull(vector);
 
         _x = _y * vector.getZ() - vector.getY() * _z;
@@ -482,6 +576,13 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
 
     @Override
     public Vector3D add2D(ICoords2D vector) {
+        super.add2D(vector);
+        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector3D add2D(ICoords2Di vector) {
         super.add2D(vector);
         onChange();
         return this;
@@ -530,6 +631,13 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D subtract2D(ICoords2Di vector) {
+        super.subtract2D(vector);
+        onChange();
+        return this;
+    }
+
+    @Override
     public Vector3D subtract2D(double scalar) {
         super.subtract2D(scalar);
         onChange();
@@ -572,6 +680,13 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public Vector3D multiply2D(ICoords2Di vector) {
+        super.multiply2D(vector);
+        onChange();
+        return this;
+    }
+
+    @Override
     public Vector3D multiply2D(double scalar) {
         super.multiply2D(scalar);
         onChange();
@@ -608,6 +723,13 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
 
     @Override
     public Vector3D average2D(ICoords2D vector) {
+        super.average2D(vector);
+        onChange();
+        return this;
+    }
+
+    @Override
+    public Vector3D average2D(ICoords2Di vector) {
         super.average2D(vector);
         onChange();
         return this;
@@ -665,7 +787,21 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     }
 
     @Override
+    public double getDot3D(ICoords3Di vector) {
+        PreCon.notNull(vector);
+
+        return _x * vector.getX() + _y * vector.getY() + _z + vector.getZ();
+    }
+
+    @Override
     public double getDistance3D(ICoords2D vector) {
+        PreCon.notNull(vector);
+
+        return FastMath.sqrt(getDistanceSquared3D(vector));
+    }
+
+    @Override
+    public double getDistance3D(ICoords2Di vector) {
         PreCon.notNull(vector);
 
         return FastMath.sqrt(getDistanceSquared3D(vector));
@@ -682,7 +818,17 @@ public class Vector3D extends Vector2D implements IVector3D, IDataNodeSerializab
     public double getDistanceSquared3D(ICoords2D vector) {
         PreCon.notNull(vector);
 
-        double deltaY = _y - (vector instanceof ICoords3D ? ((ICoords3D) vector).getY() : 0);
+        double deltaY = _y - (vector instanceof ICoords3D ? ((ICoords3D) vector).getY() : _y);
+        double deltaX = _x - vector.getX();
+        double deltaZ = _z - vector.getZ();
+        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    }
+
+    @Override
+    public double getDistanceSquared3D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        double deltaY = _y - (vector instanceof ICoords3Di ? ((ICoords3Di) vector).getY() : _y);
         double deltaX = _x - vector.getX();
         double deltaZ = _z - vector.getZ();
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;

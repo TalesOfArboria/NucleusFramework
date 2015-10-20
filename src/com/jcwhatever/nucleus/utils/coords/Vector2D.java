@@ -75,6 +75,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     /**
      * Constructor.
      *
+     * @param coords2D  The coordinates to copy from.
+     */
+    public Vector2D(ICoords2Di coords2D) {
+        this(coords2D.getX(), coords2D.getZ());
+    }
+
+    /**
+     * Constructor.
+     *
      * @param vector  The Bukkit vector to copy from.
      */
     public Vector2D(Vector vector) {
@@ -130,6 +139,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public Vector2D copyFrom2D(ICoords2Di coords) {
+        PreCon.notNull(coords);
+
+        _x = coords.getX();
+        _z = coords.getZ();
+        return this;
+    }
+
+    @Override
     public Vector2D copyFrom2D(Vector vector) {
         PreCon.notNull(vector);
 
@@ -167,6 +185,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
 
     @Override
     public Vector2D add2D(ICoords2D vector) {
+        PreCon.notNull(vector);
+
+        _x += vector.getX();
+        _z += vector.getZ();
+        return this;
+    }
+
+    @Override
+    public Vector2D add2D(ICoords2Di vector) {
         PreCon.notNull(vector);
 
         _x += vector.getX();
@@ -217,6 +244,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public Vector2D subtract2D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        _x -= vector.getX();
+        _z -= vector.getZ();
+        return this;
+    }
+
+    @Override
     public Vector2D subtract2D(double scalar) {
         _x -= scalar;
         _z -= scalar;
@@ -259,6 +295,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public Vector2D multiply2D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        _x *= vector.getX();
+        _z *= vector.getZ();
+        return this;
+    }
+
+    @Override
     public Vector2D multiply2D(double scalar) {
         _x *= scalar;
         _z *= scalar;
@@ -293,6 +338,15 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
 
     @Override
     public Vector2D average2D(ICoords2D vector) {
+        PreCon.notNull(vector);
+
+        _x = (_x + vector.getX()) * 0.5D;
+        _z = (_z + vector.getZ()) * 0.5D;
+        return this;
+    }
+
+    @Override
+    public Vector2D average2D(ICoords2Di vector) {
         PreCon.notNull(vector);
 
         _x = (_x + vector.getX()) * 0.5D;
@@ -347,6 +401,17 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public float getAngle(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        // If vector, use vectors magnitude. Otherwise calculate
+        double oMag = calculateMagnitude(vector);
+        double dot = getDot2D(vector);
+
+        return FastMath.acos(dot / (getMagnitude2D() * oMag));
+    }
+
+    @Override
     public float getYawDelta(ICoords2D vector) {
         PreCon.notNull(vector);
 
@@ -359,12 +424,29 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public float getYawDelta(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        float localAngle = getYaw();
+        float otherAngle = calculateYaw(vector);
+
+        return otherAngle - localAngle;
+    }
+
+    @Override
     public float getYaw() {
         return calculateYaw(this);
     }
 
     @Override
     public double getDot2D(ICoords2D vector) {
+        PreCon.notNull(vector);
+
+        return _x * vector.getX() + _z * vector.getZ();
+    }
+
+    @Override
+    public double getDot2D(ICoords2Di vector) {
         PreCon.notNull(vector);
 
         return _x * vector.getX() + _z * vector.getZ();
@@ -397,7 +479,25 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
     }
 
     @Override
+    public double getDistance2D(ICoords2Di vector) {
+        PreCon.notNull(vector);
+
+        double deltaX = _x - vector.getX();
+        double deltaZ = _z - vector.getZ();
+        return FastMath.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    }
+
+    @Override
     public double getDistanceSquared2D(ICoords2D vector) {
+        PreCon.notNull(vector);
+
+        double deltaX = _x - vector.getX();
+        double deltaZ = _z - vector.getZ();
+        return deltaX * deltaX + deltaZ * deltaZ;
+    }
+
+    @Override
+    public double getDistanceSquared2D(ICoords2Di vector) {
         PreCon.notNull(vector);
 
         double deltaX = _x - vector.getX();
@@ -481,7 +581,24 @@ public class Vector2D implements IVector2D, IDataNodeSerializable, IByteSerializ
         }
     }
 
+    private static double calculateMagnitude(ICoords2Di coords) {
+        if (coords instanceof ICoords3Di) {
+            ICoords3Di coords3D = (ICoords3Di)coords;
+            return FastMath.sqrt(coords.getX() * coords.getX()
+                    + coords3D.getY() * coords3D.getY()
+                    + coords.getZ() * coords.getZ());
+        }
+        else {
+            return FastMath.sqrt(coords.getX() * coords.getX() + coords.getZ() * coords.getZ());
+        }
+    }
+
     private static float calculateYaw(ICoords2D vector) {
+        float yaw = (float)Math.toDegrees(FastMath.atan2(vector.getX(), vector.getZ()));
+        return Float.compare(yaw, 0.0f) == 0 ? yaw : -yaw;
+    }
+
+    private static float calculateYaw(ICoords2Di vector) {
         float yaw = (float)Math.toDegrees(FastMath.atan2(vector.getX(), vector.getZ()));
         return Float.compare(yaw, 0.0f) == 0 ? yaw : -yaw;
     }
