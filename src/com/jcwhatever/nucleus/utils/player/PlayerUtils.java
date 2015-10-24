@@ -60,6 +60,16 @@ public final class PlayerUtils {
     private static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
 
     /**
+     * A validator that always specifies a player entity as valid.
+     */
+    public static final IValidator<Player> ALL_VALID = new IValidator<Player>() {
+        @Override
+        public boolean isValid(Player element) {
+            return true;
+        }
+    };
+
+    /**
      * Get the time the {@link Player} logged in for the current session.
      *
      * @param player  The {@link Player} to check.
@@ -329,7 +339,7 @@ public final class PlayerUtils {
     /**
      * Get a collection of {@link Player}'s that are near the specified {@link Location}.
      *
-     * <p>Does not include NPC players in result.</p>
+     * <p>Does not include NPC players in result if a validator is not specified.</p>
      *
      * @param loc          The {@link Location} to check.
      * @param maxDistance  The radius that players must be within to be included in results.
@@ -341,7 +351,7 @@ public final class PlayerUtils {
     /**
      * Get a collection of {@link Player}'s that are near the specified {@link Location}.
      *
-     * <p>Does not include NPC players in result.</p>
+     * <p>Does not include NPC players in result if a validator is not specified.</p>
      *
      * @param loc          The {@link Location} to check.
      * @param maxDistance  The radius that players must be within to be included in results.
@@ -356,7 +366,7 @@ public final class PlayerUtils {
      * Get {@link Player}'s that are near the specified {@link Location} and add them
      * to the specified output collection.
      *
-     * <p>Does not include NPC players in result.</p>
+     * <p>Does not include NPC players in result if a validator is not specified.</p>
      *
      * @param loc          The {@link Location} to check.
      * @param maxDistance  The radius that players must be within to be included in results.
@@ -382,7 +392,7 @@ public final class PlayerUtils {
             ((ArrayList) output).ensureCapacity((int)(players.size() * 0.5D) + output.size());
 
         for (Player player : players) {
-            if (Npcs.isNpc(player))
+            if (validator == null && Npcs.isNpc(player))
                 continue;
 
             Location playerLoc = player.getLocation(PLAYER_LOCATION);
@@ -413,7 +423,7 @@ public final class PlayerUtils {
     /**
      * Determine if there is at least 1 {@link Player}'s near the specified {@link Location}.
      *
-     * <p>Does not include NPC players in result.</p>
+     * <p>Does not include NPC players in result if a validator is not specified..</p>
      *
      * @param loc          The {@link Location} to check.
      * @param maxDistance  The radius that players must be within from the location.
@@ -432,7 +442,7 @@ public final class PlayerUtils {
         maxDistance *= maxDistance;
 
         for (Player player : players) {
-            if (Npcs.isNpc(player))
+            if (validator == null && Npcs.isNpc(player))
                 continue;
 
             Location playerLoc = player.getLocation(PLAYER_LOCATION);
@@ -452,7 +462,7 @@ public final class PlayerUtils {
      * Get the closest {@link Player} to the specified {@link Location} within the
      * specified radius.
      *
-     * <p>Does not include NPC players in result.</p>
+     * <p>Does not include NPC players in result if a validator is not specified.</p>
      *
      * @param loc        The {@link Location} to check.
      * @param radius     The radius that players must be within to be considered.
@@ -477,7 +487,7 @@ public final class PlayerUtils {
         double closestDistSq = 0;
 
         for (Player player : players) {
-            if (Npcs.isNpc(player))
+            if (validator == null && Npcs.isNpc(player))
                 continue;
 
             Location playerLoc = player.getLocation(PLAYER_LOCATION);

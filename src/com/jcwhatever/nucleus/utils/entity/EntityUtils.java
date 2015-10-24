@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.entity;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
@@ -54,9 +55,38 @@ public final class EntityUtils {
 
     private EntityUtils() {}
 
+    /**
+     * A validator that always specifies an entity as valid.
+     */
+    public static final IValidator<Entity> ALL_VALID_ENTITY = new IValidator<Entity>() {
+        @Override
+        public boolean isValid(Entity element) {
+            return true;
+        }
+    };
+
+    /**
+     * A validator that always specifies a living entity as valid.
+     */
+    public static final IValidator<LivingEntity> ALL_VALID_LIVING = new IValidator<LivingEntity>() {
+        @Override
+        public boolean isValid(LivingEntity element) {
+            return true;
+        }
+    };
+
     private static final Location SOURCE_ENTITY_LOCATION = new Location(null, 0, 0, 0);
     private static final Location TARGET_ENTITY_LOCATION = new Location(null, 0, 0, 0);
     private static final Location NEARBY_ENTITY_LOCATION = new Location(null, 0, 0, 0);
+
+    private static final ClosestLivingValidator CLOSEST_LIVING_VALIDATOR =
+            new ClosestLivingValidator();
+
+    private static final SourcedClosestEntityValidator SOURCED_CLOSEST_ENTITY_VALIDATOR =
+            new SourcedClosestEntityValidator();
+
+    private static final SourcedClosestLivingValidator SOURCED_CLOSEST_LIVING_VALIDATOR =
+            new SourcedClosestLivingValidator();
 
     /**
      * Find an {@link org.bukkit.entity.Entity} in a {@link org.bukkit.World}
@@ -215,6 +245,8 @@ public final class EntityUtils {
      *
      * <p>The radius is spherical.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The entity source to search from.
      * @param radius        The radius entities must be within to be returned.
      */
@@ -228,6 +260,8 @@ public final class EntityUtils {
      * {@link org.bukkit.entity.Entity}.
      *
      * <p>The radius is spherical.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The entity source to search from.
      * @param radius        The radius entities must be within to be returned.
@@ -245,6 +279,8 @@ public final class EntityUtils {
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The entity source to search from.
      * @param radiusX       The x-axis radius entities must be within to be returned.
      * @param radiusY       The y-axis radius entities must be within to be returned.
@@ -261,6 +297,8 @@ public final class EntityUtils {
      * {@link org.bukkit.entity.Entity}.
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The entity source to search from.
      * @param radiusX       The x-axis radius entities must be within to be returned.
@@ -280,18 +318,15 @@ public final class EntityUtils {
         Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
         List<Entity> entities = sourceEntity.getNearbyEntities(radiusX, radiusY, radiusZ);
 
-        return getClosestEntity(sourceLocation, entities, new IValidator<Entity>() {
-            @Override
-            public boolean isValid(Entity entity) {
-                return !entity.equals(sourceEntity) &&
-                        (validator == null || validator.isValid(entity));
-            }
-        });
+        return getClosestEntity(sourceLocation, entities,
+                SOURCED_CLOSEST_ENTITY_VALIDATOR.validator(validator).source(sourceEntity));
     }
 
     /**
      * Get the closest {@link org.bukkit.entity.Entity} to the specified source
      * {@link org.bukkit.entity.Entity}.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to check.
      * @param radius          The max radius to search in.
@@ -306,7 +341,7 @@ public final class EntityUtils {
         if (sourceLocation.getWorld() == null)
             return null;
 
-        int xRadius = (int)Math.ceil(radius / 16);
+        int xRadius = ((int)radius) >> 4;
         int zRadius = xRadius;
 
         int xSource = sourceLocation.getBlockX();
@@ -317,18 +352,21 @@ public final class EntityUtils {
         if (zSource < radius || zSource > 16 - radius)
             zRadius++;
 
+        int chunkX = sourceLocation.getBlockX() >> 4;
+        int chunkZ = sourceLocation.getBlockZ() >> 4;
+
         Entity closest = null;
         double closestDistanceSq = 0;
 
-        for (int x = 0; x <= xRadius; x++) {
-            for (int z = 0; z <= zRadius; z++) {
+        for (int x = -xRadius; x <= xRadius; x++) {
+            for (int z = -zRadius; z <= zRadius; z++) {
 
-                Chunk chunk = sourceLocation.getWorld().getChunkAt(x, z);
+                Chunk chunk = sourceLocation.getWorld().getChunkAt(chunkX + x, chunkZ + z);
                 Entity[] entities = chunk.getEntities();
 
                 for (Entity entity : entities) {
 
-                    if (validator != null && !validator.isValid(entity))
+                    if (validator == null && Npcs.isNpc(entity))
                         continue;
 
                     double distance = entity.getLocation(NEARBY_ENTITY_LOCATION)
@@ -338,6 +376,10 @@ public final class EntityUtils {
 
                     if (closest == null ||
                             distance < closestDistanceSq) {
+
+                        if (validator != null && !validator.isValid(entity))
+                            continue;
+
                         closestDistanceSq = distance;
                         closest = entity;
                     }
@@ -350,6 +392,8 @@ public final class EntityUtils {
 
     /**
      * Get the closest {@link org.bukkit.entity.Entity} to a {@link org.bukkit.Location}.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to check.
      * @param entities        The list of entities to check.
@@ -373,6 +417,9 @@ public final class EntityUtils {
             if (!entity.getWorld().equals(sourceLocation.getWorld()))
                 continue;
 
+            if (validator == null && Npcs.isNpc(entity))
+                continue;
+
             Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
 
             double dist = sourceLocation.distanceSquared(targetLocation);
@@ -393,6 +440,8 @@ public final class EntityUtils {
      *
      * <p>The radius is spherical.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The entity source to search from.
      * @param radius        The radius entities must be within to be returned.
      */
@@ -406,6 +455,8 @@ public final class EntityUtils {
      * {@link org.bukkit.entity.Entity}.
      *
      * <p>The radius is spherical.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The entity source to search from.
      * @param radius        The radius entities must be within to be returned.
@@ -422,6 +473,8 @@ public final class EntityUtils {
      * {@link org.bukkit.entity.Entity}.
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The entity source to search from.
      * @param radiusX       The x-axis radius entities must be within to be returned.
@@ -440,6 +493,8 @@ public final class EntityUtils {
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The entity source to search from.
      * @param radiusX       The x-axis radius entities must be within to be returned.
      * @param radiusY       The y-axis radius entities must be within to be returned.
@@ -454,13 +509,7 @@ public final class EntityUtils {
 
         Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
         return getClosestLivingEntity(sourceLocation, radiusX, radiusY, radiusZ,
-                new IValidator<LivingEntity>() {
-                    @Override
-                    public boolean isValid(LivingEntity entity) {
-                        return !entity.equals(sourceEntity) &&
-                                (validator == null || validator.isValid(entity));
-                    }
-                });
+                SOURCED_CLOSEST_LIVING_VALIDATOR.validator(validator).source(sourceEntity));
     }
 
     /**
@@ -468,6 +517,8 @@ public final class EntityUtils {
      * {@link org.bukkit.Location}.
      *
      * <p>The radius is spherical.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to search from.
      * @param radius          The radius entities must be within to be returned.
@@ -482,6 +533,8 @@ public final class EntityUtils {
      * {@link org.bukkit.Location}.
      *
      * <p>The radius is spherical.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to search from.
      * @param radius          The radius entities must be within to be returned.
@@ -498,6 +551,8 @@ public final class EntityUtils {
      * {@link org.bukkit.Location}.
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to search from.
      * @param radiusX         The x-axis radius entities must be within to be returned.
@@ -516,6 +571,8 @@ public final class EntityUtils {
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceLocation  The location to search from.
      * @param radiusX         The x-axis radius entities must be within to be returned.
      * @param radiusY         The y-axis radius entities must be within to be returned.
@@ -529,20 +586,14 @@ public final class EntityUtils {
         PreCon.notNull(sourceLocation);
 
         List<Entity> nearbyEntities = getNearbyEntities(sourceLocation, radiusX, radiusY, radiusZ,
-                new IValidator<Entity>() {
-
-                    @Override
-                    public boolean isValid(Entity entity) {
-                        return entity instanceof LivingEntity &&
-                                (validator == null || validator.isValid((LivingEntity)entity));
-                    }
-                });
-
+                CLOSEST_LIVING_VALIDATOR.validator(validator));
         return (LivingEntity)getClosestEntity(sourceLocation, nearbyEntities, null);
     }
 
     /**
      * Get the closest {@link org.bukkit.entity.LivingEntity} to a {@link org.bukkit.Location}.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceLocation  The location to check.
      * @param entities        The list of entities to check.
@@ -565,6 +616,9 @@ public final class EntityUtils {
             if (!entity.getWorld().equals(sourceLocation.getWorld()))
                 continue;
 
+            if (validator == null && Npcs.isNpc(entity))
+                continue;
+
             Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
 
             double dist = sourceLocation.distanceSquared(targetLocation);
@@ -584,6 +638,8 @@ public final class EntityUtils {
      *
      * <p>The radius is spherical.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param location  The location to check from.
      * @param radius    The radius entities must be within to be returned.
      */
@@ -595,6 +651,8 @@ public final class EntityUtils {
      * Get entities within a specified radius of a {@link org.bukkit.Location}.
      *
      * <p>The radius is spherical.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param location   The location to check from.
      * @param radius     The radius entities must be within to be returned.
@@ -610,6 +668,8 @@ public final class EntityUtils {
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param location  The location to check from.
      * @param radiusX   The x-axis radius entities must be within to be returned.
      * @param radiusY   The y-axis radius entities must be within to be returned.
@@ -624,6 +684,8 @@ public final class EntityUtils {
      * Get entities within a specified radius of a {@link org.bukkit.Location}.
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param location   The location to check from.
      * @param radiusX    The x-axis radius entities must be within to be returned.
@@ -667,6 +729,9 @@ public final class EntityUtils {
                     if (!entity.getWorld().equals(world))
                         continue;
 
+                    if (validator == null && Npcs.isNpc(entity))
+                        continue;
+
                     Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
 
                     if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
@@ -690,6 +755,8 @@ public final class EntityUtils {
      *
      * <p>The source entity is not included in the result.</p>
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The source entity to check from.
      * @param radius        The radius entities must be within to be returned.
      * @param validator     Optional validator used to validate each entity within the radius.
@@ -705,6 +772,8 @@ public final class EntityUtils {
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
      * <p>The source entity is not included in the result.</p>
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The source entity to check from.
      * @param radiusX       The x-axis radius entities must be within to be returned.
@@ -753,6 +822,9 @@ public final class EntityUtils {
                     if (!entity.getWorld().equals(world))
                         continue;
 
+                    if (validator == null && Npcs.isNpc(entity))
+                        continue;
+
                     Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
 
                     if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
@@ -773,6 +845,8 @@ public final class EntityUtils {
      * Determine if there is an entity of a specified type within the specified radius
      * of a source entity.
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param sourceEntity  The source entity to check from.
      * @param type          The {@link EntityType} to search for.
      * @param radius        The radius entities must be within to be returned.
@@ -784,6 +858,8 @@ public final class EntityUtils {
     /**
      * Determine if there is an entity of a specified type within the specified radius
      * of a source entity.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity   The source entity to check from.
      * @param type           The {@link EntityType} to search for.
@@ -799,6 +875,8 @@ public final class EntityUtils {
     /**
      * Determine if there is an entity of a specified type within the specified radius
      * of a source entity.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param sourceEntity  The source entity to check from.
      * @param type          The {@link EntityType} to search for.
@@ -827,6 +905,9 @@ public final class EntityUtils {
             if (entity.getType() != type)
                 continue;
 
+            if (validator == null && Npcs.isNpc(entity))
+                continue;
+
             if (validator != null && !validator.isValid(entity))
                 continue;
 
@@ -840,6 +921,8 @@ public final class EntityUtils {
      * Determine if there is an entity of a specified type within the specified radius
      * of a location.
      *
+     * <p>Does not include Npc's if validator is not specified.</p>
+     *
      * @param location   The location to check from.
      * @param type       The {@link EntityType} to search for.
      * @param radius     The radius entities must be within to be returned.
@@ -851,6 +934,8 @@ public final class EntityUtils {
     /**
      * Determine if there is an entity of a specified type within the specified radius
      * of a location.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param location   The location to check from.
      * @param type       The {@link EntityType} to search for.
@@ -866,6 +951,8 @@ public final class EntityUtils {
     /**
      * Determine if there is an entity of a specified type within the specified radius
      * of a location.
+     *
+     * <p>Does not include Npc's if validator is not specified.</p>
      *
      * @param location   The location to check from.
      * @param type       The {@link EntityType} to search for.
@@ -911,6 +998,9 @@ public final class EntityUtils {
                         continue;
 
                     if (!entity.getWorld().equals(world))
+                        continue;
+
+                    if (validator == null && Npcs.isNpc(entity))
                         continue;
 
                     Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
@@ -1044,5 +1134,66 @@ public final class EntityUtils {
         double end = center + radius + 2.0D;
         double chunkEnd = Math.floor(end / 16.0D);
         return (int)chunkEnd;
+    }
+
+    private static class ClosestLivingValidator implements IValidator<Entity> {
+
+        IValidator<LivingEntity> validator;
+
+        @Override
+        public boolean isValid(Entity entity) {
+            return entity instanceof LivingEntity &&
+                    ((validator == null && !Npcs.isNpc(entity)) ||
+                            validator == null || validator.isValid((LivingEntity)entity));
+        }
+
+        public IValidator<Entity> validator(@Nullable IValidator<LivingEntity> validator) {
+            this.validator = validator;
+            return this;
+        }
+    }
+
+    private static class SourcedClosestLivingValidator implements IValidator<LivingEntity> {
+
+        IValidator<LivingEntity> validator;
+        Entity source;
+
+        @Override
+        public boolean isValid(LivingEntity entity) {
+            return !entity.equals(source) && (validator == null && !Npcs.isNpc(entity)) ||
+                            validator == null || validator.isValid(entity);
+        }
+
+        public SourcedClosestLivingValidator validator(@Nullable IValidator<LivingEntity> validator) {
+            this.validator = validator;
+            return this;
+        }
+
+        public SourcedClosestLivingValidator source(Entity source) {
+            this.source = source;
+            return this;
+        }
+    }
+
+    private static class SourcedClosestEntityValidator implements IValidator<Entity> {
+
+        IValidator<Entity> validator;
+        Entity source;
+
+        @Override
+        public boolean isValid(Entity entity) {
+            return !entity.equals(source) && (validator == null && !Npcs.isNpc(entity)) ||
+                    validator == null || validator.isValid(entity);
+        }
+
+        public SourcedClosestEntityValidator validator(@Nullable IValidator<Entity> validator) {
+            this.validator = validator;
+            return this;
+        }
+
+        public SourcedClosestEntityValidator source(Entity source) {
+            this.source = source;
+            return this;
+        }
     }
 }
