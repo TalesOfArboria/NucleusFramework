@@ -74,6 +74,7 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
     @Localizable static final String _RESOURCE_PACK_REQUIRED =
             "{RED}Server resource pack required to enter {0: world name}.";
 
+    private static final String RESOURCE_PACK_KEY = "resource-pack=";
     private static final Pattern PATTERN_UNESCAPE = Pattern.compile("\\:", Pattern.LITERAL);
     private static final IEntityMetaContext META = EntityMeta.getContext(Nucleus.getPlugin());
     private static final String HANDLING_REQUIRED_META_NAME =
@@ -368,15 +369,15 @@ public class InternalResourcePackManager extends NamedInsensitiveDataManager<IRe
         String resourcePack = FileUtils.scanTextFile(file, StandardCharsets.UTF_8, new IValidator<String>() {
             @Override
             public boolean isValid(String element) {
-                return element.startsWith("resource-pack=");
+                return element.startsWith(RESOURCE_PACK_KEY);
             }
         });
 
-        if (resourcePack == null || resourcePack.isEmpty())
+        if (resourcePack == null || resourcePack.isEmpty() || resourcePack.equals(RESOURCE_PACK_KEY))
             return;
 
         resourcePack = PATTERN_UNESCAPE.matcher(
-                resourcePack.substring("resourcePack=".length() + 1)).replaceAll(":").trim();
+                resourcePack.substring(RESOURCE_PACK_KEY.length() + 1)).replaceAll(":").trim();
 
         _defaultPack = new ResourcePack("_default", resourcePack, this);
         _map.put("_default", _defaultPack);
