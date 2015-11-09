@@ -84,7 +84,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     private static final int JANITOR_INITIAL_DELAY_TICKS = Rand.getInt(1, 9);
 
     private final static Map<TimedHashSet, Void> _instances = new WeakHashMap<>(10);
-    private static IScheduledTask _janitor;
+    private static volatile IScheduledTask _janitor;
 
     private final Plugin _plugin;
     private final Map<E, ExpireInfo> _expireMap;
@@ -551,9 +551,15 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
                 JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
 
                     List<TimedHashSet> sets = new ArrayList<>(15);
+                    volatile boolean isRunning;
 
                     @Override
                     public void run() {
+
+                        if (isRunning)
+                            return;
+
+                        isRunning = true;
 
                         synchronized (_instances) {
                             sets.addAll(_instances.keySet());
@@ -577,6 +583,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
                         }
 
                         sets.clear();
+                        isRunning = false;
                     }
                 });
     }
