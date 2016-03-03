@@ -22,40 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.managed.astar.nodes;
 
 /**
- * Contains scores for an {@link AStarNode} used to determine
- * the best path.
+ * Mixin interface for use on {@link IAStarNode} to indicate the node should not
+ * be treated as a point on a coordinate system.
  *
- * @see AStar
- * @see AStarNode
- * @see IAStarExaminer#getScore
+ * <p>In this case, the AStar search should use the collection of nodes returned from
+ * {@link IAStarNode#getAdjacent} to make a path and make no optimizations that assume
+ * other nodes exist based on the nodes position within a 3D coordinate system.</p>
  */
-public interface IAStarScore extends Comparable<IAStarScore> {
-
-    /**
-     * Get the parent node that applies to the score.
-     */
-    AStarNode getParent();
-
-    /**
-     * Get the node the score is for.
-     */
-    AStarNode getNode();
-
-    /**
-     * Get the A-Star G score.
-     */
-    float getG();
-
-    /**
-     * Get the A-Star H score.
-     */
-    float getH();
-
-    /**
-     * Get the A-Star F score.
-     */
-    float getF();
+public interface IAStarGraphNode {
 }

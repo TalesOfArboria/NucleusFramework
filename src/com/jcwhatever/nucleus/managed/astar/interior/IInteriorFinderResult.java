@@ -22,56 +22,27 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.pooled;
+package com.jcwhatever.nucleus.managed.astar.interior;
 
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
+import org.bukkit.World;
 
 import java.util.Set;
 
 /**
- * An {@link AStarNodeContainer} for use with {@link AStarPooledNodeFactory}.
- *
- * <p>See documentation in {@link AStarPooledNodeFactory} for more information about
- * the problems of using pooling.</p>
- *
- * @see AStarPooledNodeFactory
+ * Result of an interior finder search.
  */
-public class AStarPooledNodeContainer extends AStarNodeContainer {
+public interface IInteriorFinderResult {
 
-    private final AStarPooledNodeFactory _nodeFactory;
+    World getWorld();
 
-    public AStarPooledNodeContainer(AStarPooledNodeFactory nodeFactory) {
-        PreCon.notNull(nodeFactory);
+    /**
+     * Get the coordinates of interior space.
+     */
+    Set<ICoords3Di> getInterior();
 
-        _nodeFactory = nodeFactory;
-    }
-
-    @Override
-    public void reset() {
-        repool(getOpenKeySet());
-        repool(getClosed());
-
-        super.reset();
-    }
-
-    @Override
-    public AStarPooledNodeFactory getNodeFactory() {
-        return _nodeFactory;
-    }
-
-    private void repool(Set<AStarNode> nodes) {
-
-        for (AStarNode node : nodes) {
-
-            if (!(node instanceof AStarPooledNode))
-                continue;
-
-            AStarPooledNode pooled = (AStarPooledNode)node;
-
-            _nodeFactory.pool(pooled);
-        }
-    }
+    /**
+     * Get the volume of the result.
+     */
+    int getVolume();
 }
-

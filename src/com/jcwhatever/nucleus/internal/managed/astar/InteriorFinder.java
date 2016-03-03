@@ -23,15 +23,20 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.internal.managed.astar;
 
+import com.jcwhatever.nucleus.managed.astar.interior.IInteriorFinder;
+import com.jcwhatever.nucleus.managed.astar.interior.IInteriorFinderResult;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
 import com.jcwhatever.nucleus.utils.materials.Materials;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,20 +44,16 @@ import java.util.Set;
 /**
  * Gets air block locations inside an enclosed space.
  */
-public class InteriorFinder {
+class InteriorFinder implements IInteriorFinder {
 
-    /**
-     * Search for air blocks within a region without moving
-     * outside of structural boundaries.
-     *
-     * <p>The structure must be completely enclosed with no block open to the exterior.</p>
-     *
-     * <p>Does not search through doors even if they are open.</p>
-     *
-     * @param start       The location to start the search from.
-     * @param boundaries  The region boundaries to prevent searching endlessly into the world.
-     */
-    public InteriorResults searchInterior(Location start, IRegionSelection boundaries) {
+    private static final InteriorFinder INSTANCE = new InteriorFinder();
+
+    static InteriorFinder get() {
+        return INSTANCE;
+    }
+
+    @Override
+    public IInteriorFinderResult search(Location start, IRegionSelection boundaries) {
         PreCon.notNull(start);
         PreCon.notNull(boundaries);
 
@@ -60,11 +61,13 @@ public class InteriorFinder {
 
         FinderContext context = new FinderContext(start, boundaries);
 
+        Coords3Di startCoords = Coords3Di.fromLocation(start);
+
         // Add start node to valid nodes
-        context.validNodes.add(start);
+        context.validNodes.add(startCoords);
 
         // Add valid adjacent nodes to valid nodes list
-        searchAdjacent(context, start);
+        searchAdjacent(context, startCoords);
 
         return new InteriorResults(context);
     }
@@ -73,7 +76,7 @@ public class InteriorFinder {
      * Search adjacent locations around the specified location
      * and add valid and invalid locations to their respective map.
      */
-    protected void searchAdjacent(FinderContext context, Location node) {
+    private void searchAdjacent(FinderContext context, Coords3Di node) {
 
         // column validations, work from top down, skip columns that are false
         boolean[][] columns = new boolean[][] {
@@ -82,7 +85,7 @@ public class InteriorFinder {
                 { true, true,  true }
         };
 
-        boolean isBelowStart = node.getBlockY() <= context.start.getBlockY();
+        boolean isBelowStart = node.getY() <= context.start.getBlockY();
 
         byte yStart =  (byte)(isBelowStart ? 1 : -1);
 
@@ -94,7 +97,7 @@ public class InteriorFinder {
                         continue;
 
                     // get instance of candidate node
-                    Location candidate = node.clone().add(x, y, z);
+                    Coords3Di candidate = new Coords3Di(node, x, y, z);
 
                     // check if candidate is already considered
                     if (context.invalidNodes.contains(candidate)) {
@@ -111,12 +114,12 @@ public class InteriorFinder {
                     }
 
                     // make sure candidate is within boundaries
-                    if (!context.boundaries.contains(candidate)) {
+                    if (!context.boundaries.contains(candidate.getX(), candidate.getY(), candidate.getZ())) {
                         continue;
                     }
 
                     // make sure candidate is air
-                    if (candidate.getBlock().getType() != Material.AIR) {
+                    if (candidate.getBlock(context.world).getType() != Material.AIR) {
                         context.invalidNodes.add(candidate);
                         columns[x + 1][z + 1] = false;
                         continue;
@@ -124,11 +127,11 @@ public class InteriorFinder {
 
                     // Check for diagonal obstruction
                     if (x != 0 && z != 0) {
-                        Location diagX = node.clone().add(x, y, 0),
-                                diagZ = node.clone().add(0, y, z);
+                        Coords3Di diagX = tempNode(node, x, y, 0, context.diagX),
+                                  diagZ = tempNode(node, 0, y, z, context.diagZ);
 
-                        if(!Materials.isTransparent(diagX.getBlock().getType()) &&
-                                !Materials.isTransparent(diagZ.getBlock().getType())) {
+                        if(!Materials.isTransparent(diagX.getBlock(context.world).getType()) &&
+                                !Materials.isTransparent(diagZ.getBlock(context.world).getType())) {
 
                             context.invalidNodes.add(candidate);
                             columns[x + 1][z + 1] = false;
@@ -138,24 +141,24 @@ public class InteriorFinder {
 
                     // check for adjacent obstruction
                     if (y != 0) {
-                        Location middle = node.clone().add(0, y, 0),
-                                below = node.clone().add(x, 0, z);
+                        Coords3Di middle = tempNode(node, 0, y, 0, context.middle),
+                                  below = tempNode(node, x, 0, z, context.below);
 
-                        if (!Materials.isTransparent(middle.getBlock().getType()) &&
-                                !Materials.isTransparent(below.getBlock().getType())) {
+                        if (!Materials.isTransparent(middle.getBlock(context.world).getType()) &&
+                                !Materials.isTransparent(below.getBlock(context.world).getType())) {
                             continue;
                         }
                     }
 
                     // check for corner obstruction
                     if (x != 0 && y != 0 && z != 0) {
-                        Location adjac1 = node.clone().add(x, 0, 0),
-                                adjac2 = node.clone().add(0, 0, z),
-                                middle = node.clone().add(0, y, 0);
+                        Coords3Di adjac1 = tempNode(node, x, 0, 0, context.adjac1),
+                                  adjac2 = tempNode(node, 0, 0, z, context.adjac2),
+                                  middle = tempNode(node, 0, y, 0, context.middle);
 
-                        if (!Materials.isTransparent(adjac1.getBlock().getType()) &&
-                                !Materials.isTransparent(adjac2.getBlock().getType()) &&
-                                !Materials.isTransparent(middle.getBlock().getType())) {
+                        if (!Materials.isTransparent(adjac1.getBlock(context.world).getType()) &&
+                                !Materials.isTransparent(adjac2.getBlock(context.world).getType()) &&
+                                !Materials.isTransparent(middle.getBlock(context.world).getType())) {
                             continue;
                         }
                     }
@@ -163,54 +166,72 @@ public class InteriorFinder {
                     context.validNodes.add(candidate);
 
                     searchAdjacent(context, candidate);
-
                 }
             }
         }
+    }
+
+    private Coords3Di tempNode(ICoords3Di parent, int deltaX, int deltaY, int deltaZ, MutableCoords3Di output) {
+        output.setX(parent.getX() + deltaX);
+        output.setY(parent.getY() + deltaY);
+        output.setZ(parent.getZ() + deltaZ);
+        return output;
     }
 
     /**
      * Stores a set of locations that represent the
      * interior volume of a searched location.
      */
-    public static class InteriorResults {
+    public static class InteriorResults implements IInteriorFinderResult {
 
-        private final Set<Location> _air;
+        private final World world;
+        private final Set<ICoords3Di> air;
 
         /**
          * Constructor.
          */
         InteriorResults (FinderContext context) {
-            _air = context.validNodes;
+            air = context.validNodes;
+            this.world = context.world;
         }
 
-        /**
-         * Get the location results.
-         */
-        public Set<Location> getInterior() {
-            return _air;
+        @Override
+        public World getWorld() {
+            return this.world;
         }
 
-        /**
-         * Get the volume of the result.
-         */
+        @Override
+        public Set<ICoords3Di> getInterior() {
+            return air;
+        }
+
+        @Override
         public int getVolume() {
-            return _air.size();
+            return air.size();
         }
     }
 
     private static class FinderContext {
 
+        final World world;
         final Location start;
         final IRegionSelection boundaries;
-        final Set<Location> invalidNodes;
-        final Set<Location> validNodes;
+        final Set<ICoords3Di> invalidNodes;
+        final Set<ICoords3Di> validNodes;
+
+        final MutableCoords3Di diagX = new MutableCoords3Di();
+        final MutableCoords3Di diagZ = new MutableCoords3Di();
+        final MutableCoords3Di middle = new MutableCoords3Di();
+        final MutableCoords3Di below = new MutableCoords3Di();
+        final MutableCoords3Di adjac1 = new MutableCoords3Di();
+        final MutableCoords3Di adjac2 = new MutableCoords3Di();
 
         FinderContext(Location start, IRegionSelection boundaries) {
             this.start = start;
+            this.world = start.getWorld();
             this.boundaries = boundaries;
-            this.validNodes = new HashSet<Location>((int)boundaries.getVolume());
-            this.invalidNodes = new HashSet<Location>((int)boundaries.getVolume());
+            this.validNodes = new HashSet<>((int)boundaries.getVolume());
+            this.invalidNodes = new HashSet<>((int)boundaries.getVolume());
         }
     }
 }

@@ -22,47 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.pooled;
+package com.jcwhatever.nucleus.managed.astar.interior;
 
-import com.jcwhatever.nucleus.utils.astar.AStarContext;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
-import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
+import org.bukkit.Location;
 
 /**
- * An {@link AStarNode} for use with {@link AStarPooledNodeFactory}.
- *
- * <p>See documentation in {@link AStarPooledNodeFactory} for more information about
- * the problems of using pooling.</p>
+ * Interface for a finder that gets air block locations inside an enclosed space.
  */
-public class AStarPooledNode extends AStarNode {
-
-    private MutableCoords3Di _coords;
+public interface IInteriorFinder {
 
     /**
-     * Constructor.
+     * Search for air blocks within a region without moving
+     * outside of structural boundaries.
+     *
+     * <p>The structure must be completely enclosed with no block open to the exterior.</p>
+     *
+     * <p>Does not search through doors even if they are open.</p>
+     *
+     * @param start       The location to start the search from.
+     * @param boundaries  The region boundaries to prevent searching endlessly into the world.
      */
-    protected AStarPooledNode() {}
-
-    @Override
-    public ICoords3Di getAdjustedCoords() {
-
-        if (_coords != null) {
-            _coords.setY(_coords.getY() + 1);
-
-            return _coords;
-        }
-        else {
-            return super.getAdjustedCoords();
-        }
-    }
-
-    @Override
-    protected void init(AStarContext context, ICoords3Di startCoords) {
-        super.init(context, startCoords);
-
-        _coords = startCoords instanceof MutableCoords3Di
-                ? (MutableCoords3Di) startCoords
-                : null;
-    }
+    IInteriorFinderResult search(Location start, IRegionSelection boundaries);
 }

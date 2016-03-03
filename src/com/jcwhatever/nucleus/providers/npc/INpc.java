@@ -27,11 +27,11 @@ package com.jcwhatever.nucleus.providers.npc;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 import com.jcwhatever.nucleus.storage.IDataNode;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * Interface for an NPC.
@@ -42,6 +42,11 @@ public interface INpc extends INpcState, INpcScriptEvents, IDisposable {
      * Get the NPC's owning registry.
      */
     INpcRegistry getRegistry();
+
+    /**
+     * Get the Npc unique ID.
+     */
+    UUID getId();
 
     /**
      * Get the name used to uniquely identify an NPC within its own
