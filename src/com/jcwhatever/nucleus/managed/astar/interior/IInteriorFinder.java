@@ -22,42 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.managed.astar.interior;
 
-import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
+import org.bukkit.Location;
 
 /**
- * A factory to instantiate new {@link AStarNode} instances.
+ * Interface for a finder that gets air block locations inside an enclosed space.
  */
-public interface IAStarNodeFactory {
+public interface IInteriorFinder {
 
     /**
-     * Create a new {@link AStarNode}.
+     * Search for air blocks within a region without moving
+     * outside of structural boundaries.
      *
-     * @param context  The node context.
-     * @param x        The X coordinates.
-     * @param y        The Y coordinates.
-     * @param z        The Z coordinates.
-     */
-    AStarNode createNode(AStarContext context, int x, int y, int z);
-
-    /**
-     * Create a new {@link AStarNode}.
+     * <p>The structure must be completely enclosed with no block open to the exterior.</p>
      *
-     * @param context  The node context.
-     * @param coords   The node coordinates.
-     */
-    AStarNode createNode(AStarContext context, ICoords3Di coords);
-
-    /**
-     * Create a new {@link AStarNode}.
+     * <p>Does not search through doors even if they are open.</p>
      *
-     * @param context  The node context.
-     * @param parent   The parent node to get base coordinates from.
-     * @param offsetX  The X axis offset from the parent X axis coordinates.
-     * @param offsetY  The Y axis offset from the parent Y axis coordinates.
-     * @param offsetZ  The Z axis offset from the parent Z axis coordinates.
+     * @param start       The location to start the search from.
+     * @param boundaries  The region boundaries to prevent searching endlessly into the world.
      */
-    AStarNode createNode(AStarContext context, AStarNode parent,
-                         int offsetX, int offsetY, int offsetZ);
+    IInteriorFinderResult search(Location start, IRegionSelection boundaries);
 }

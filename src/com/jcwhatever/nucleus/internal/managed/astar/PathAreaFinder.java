@@ -23,14 +23,24 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.internal.managed.astar;
 
+import com.jcwhatever.nucleus.managed.astar.IAStarSettings;
+import com.jcwhatever.nucleus.managed.astar.IAStarResult;
+import com.jcwhatever.nucleus.managed.astar.IAStarResult.ResultStatus;
+import com.jcwhatever.nucleus.managed.astar.area.IPathAreaFinder;
+import com.jcwhatever.nucleus.managed.astar.area.IPathAreaResult;
+import com.jcwhatever.nucleus.managed.astar.examiners.AStarWorldExaminer;
+import com.jcwhatever.nucleus.managed.astar.examiners.IAStarNodeExaminer;
+import com.jcwhatever.nucleus.managed.astar.nodes.AStarNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.util.HashSet;
@@ -46,11 +56,22 @@ import java.util.Set;
  * locations from a fixed path start point to remove the need for using
  * A-Star pathing in real time for validation purposes.</p>
  *
- * <p> Uses a provided AStar implementation for final validation of destinations. </p>
+ * <p>Uses AStar for final validation of destinations. </p>
  *
  * <p>Not intended for real-time use.</p>
  */
-public class PathAreaFinder {
+class PathAreaFinder implements IPathAreaFinder {
+
+    private static final PathAreaFinder INSTANCE = new PathAreaFinder();
+
+    static PathAreaFinder get() {
+        return INSTANCE;
+    }
+
+    @Override
+    public IPathAreaResult search(Location start, IAStarSettings settings) {
+        return search(settings, new AStarWorldExaminer<AStarNode>(start.getWorld()), start);
+    }
 
     /**
      * Search for valid path destinations around the specified
@@ -58,26 +79,29 @@ public class PathAreaFinder {
      *
      * @param start  The path start location.
      */
-    public PathAreaResults search(AStar astar, Location start) {
+    PathAreaResults search(IAStarSettings settings,
+                                  IAStarNodeExaminer<AStarNode> examiner,
+                                  Location start) {
         PreCon.notNull(start);
 
         start = LocationUtils.getBlockLocation(start);
         LocationUtils.findSurfaceBelow(start, start);
 
-        FinderContext context = new FinderContext(astar, start);
+        Coords3Di startCoords = Coords3Di.fromLocation(start);
+        FinderContext context = new FinderContext(settings, examiner, startCoords, start.getWorld());
 
         // Add start node to open nodes
-        context.validNodes.add(start);
+        context.validNodes.add(startCoords);
 
         // Add valid adjacent nodes to open list
-        searchAdjacent(context, start);
+        searchAdjacent(context, startCoords);
 
-        Iterator<Location> iterator = context.validNodes.iterator();
+        Iterator<ICoords3Di> iterator = context.validNodes.iterator();
         while (iterator.hasNext()) {
-            Location location = iterator.next();
-            if (context.search(location).getStatus() != AStarResult.AStarResultStatus.RESOLVED) {
+            ICoords3Di coord = iterator.next();
+            if (context.search(coord).getStatus() != ResultStatus.RESOLVED) {
                 iterator.remove();
-                context.invalidNodes.add(location);
+                context.invalidNodes.add(coord);
             }
         }
 
@@ -87,13 +111,13 @@ public class PathAreaFinder {
     /*
      * Search for valid nodes adjacent to the specified node.
      */
-    private void searchAdjacent(FinderContext context, Location node) {
+    private void searchAdjacent(FinderContext context, ICoords3Di node) {
 
         LinkedList<StackItem> stack = new LinkedList<>();
         stack.push(new StackItem(node));
         StackItem curr = stack.peek();
 
-        byte dropHeight = (byte)(-context.astar.getMaxDropHeight());
+        byte dropHeight = (byte)(-context.settings.getMaxDropHeight());
 
         while (!stack.isEmpty()) {
 
@@ -107,7 +131,7 @@ public class PathAreaFinder {
                                 continue;
 
                             // get instance of candidate node
-                            Location candidate = curr.node.clone().add(curr.x, curr.y, curr.z);
+                            Coords3Di candidate = new Coords3Di(node, curr.x, curr.y, curr.z);
 
                             // check if candidate is already checked
                             if (context.invalidNodes.contains(candidate)) {
@@ -119,39 +143,39 @@ public class PathAreaFinder {
                                 continue;
                             }
 
-                            int xRange = Math.abs(context.start.getBlockX() - candidate.getBlockX());
-                            int yRange = Math.abs(context.start.getBlockY() - candidate.getBlockY());
-                            int zRange = Math.abs(context.start.getBlockZ() - candidate.getBlockZ());
+                            int xRange = Math.abs(context.start.getX() - candidate.getX());
+                            int yRange = Math.abs(context.start.getY() - candidate.getY());
+                            int zRange = Math.abs(context.start.getZ() - candidate.getZ());
 
                             // check x & z range
-                            if ((context.astar.getRange() - xRange < 0) ||
-                                    (context.astar.getRange() - zRange < 0)) {
+                            if ((context.settings.getRange() - xRange < 0) ||
+                                    (context.settings.getRange() - zRange < 0)) {
 
                                 curr.columns[curr.x + 1][curr.z + 1] = false;
                                 continue;
                             }
 
                             // check y range
-                            if ((context.astar.getRange() - yRange < 0)) {
+                            if ((context.settings.getRange() - yRange < 0)) {
                                 continue;
                             }
 
                             // Check for diagonal obstruction
                             if (curr.x != 0 && curr.z != 0 && curr.y >= 0) {
-                                Location diagX = curr.node.clone().add(curr.x, curr.y, (short) 0),
-                                        diagZ = curr.node.clone().add((short) 0, curr.y, curr.z);
+                                Coords3Di diagX = tempNode(node, curr.x, curr.y, (short) 0, context.diagX),
+                                        diagZ = tempNode(node, (short) 0, curr.y, curr.z, context.diagZ);
 
-                                if (!isValid(diagX) && !isValid(diagZ)) {
+                                if (!isValid(diagX, context) && !isValid(diagZ, context)) {
                                     curr.columns[curr.x + 1][curr.z + 1] = false;
                                     continue;
                                 }
                             }
 
                             // check candidate to see if its valid
-                            if (!isValid(candidate)) {
+                            if (!isValid(candidate, context)) {
 
                                 // invalidate column if material is NOT transparent
-                                if (!Materials.isTransparent(candidate.getBlock().getType())) {
+                                if (!Materials.isTransparent(candidate.getBlock(context.world).getType())) {
                                     curr.columns[curr.x + 1][curr.z + 1] = false;
                                 }
 
@@ -190,9 +214,9 @@ public class PathAreaFinder {
     /*
      *  Determine if a node is a valid location.
      */
-    private boolean isValid(Location loc) {
+    private boolean isValid(Coords3Di loc, FinderContext context) {
 
-        Block block = loc.getBlock();
+        Block block = loc.getBlock(context.world);
 
         // check if block is a surface
         if (!Materials.isSurface(block.getType()))
@@ -206,12 +230,21 @@ public class PathAreaFinder {
         return Materials.isTransparent(above1.getType());
     }
 
+    private Coords3Di tempNode(ICoords3Di parent, int deltaX, int deltaY, int deltaZ, MutableCoords3Di output) {
+        output.setX(parent.getX() + deltaX);
+        output.setY(parent.getY() + deltaY);
+        output.setZ(parent.getZ() + deltaZ);
+        return output;
+    }
+
     /**
      * Path area search results.
      */
-    public static class PathAreaResults {
-        private final Set<Location> _valid;
-        private final Set<Location> _invalid;
+    public static class PathAreaResults implements IPathAreaResult {
+
+        final World world;
+        final Set<ICoords3Di> valid;
+        final Set<ICoords3Di> invalid;
 
         /**
          * Constructor.
@@ -219,49 +252,65 @@ public class PathAreaFinder {
          * @param context  The path search context.
          */
         PathAreaResults (FinderContext context) {
-            _valid = context.validNodes;
-            _invalid = context.invalidNodes;
+            world = context.world;
+            valid = context.validNodes;
+            invalid = context.invalidNodes;
         }
 
-        /**
-         * Get the valid path destinations found.
-         */
-        public Set<Location> getValid() {
-            return _valid;
+        @Override
+        public World getWorld() {
+            return world;
         }
 
-        /**
-         * Get invalid path destinations found.
-         */
-        public Set<Location> getInvalid() {
-            return _invalid;
+        @Override
+        public Set<ICoords3Di> getValid() {
+            return valid;
+        }
+
+        @Override
+        public Set<ICoords3Di> getInvalid() {
+            return invalid;
         }
     }
 
     private static class FinderContext {
-        AStar astar;
-        Location start;
-        Set<Location> invalidNodes;
-        Set<Location> validNodes;
+        final World world;
+        final IAStarSettings settings;
+        final IAStarNodeExaminer<AStarNode> examiner;
+        final ICoords3Di start;
+        final Set<ICoords3Di> invalidNodes;
+        final Set<ICoords3Di> validNodes;
 
-        FinderContext(AStar astar, Location start) {
-            this.astar = astar;
+        final MutableCoords3Di diagX = new MutableCoords3Di();
+        final MutableCoords3Di diagZ = new MutableCoords3Di();
+
+        FinderContext(IAStarSettings settings, IAStarNodeExaminer<AStarNode> examiner,
+                      ICoords3Di start, World world) {
+            this.world = world;
+            this.settings = settings;
+            this.examiner = examiner;
             this.start = start;
 
-            double range = astar.getRange();
+            double range = settings.getRange();
 
-            this.invalidNodes = new HashSet<Location>((int)(range * range * range));
-            this.validNodes = new HashSet<Location>((int)(range * range * range));
+            this.invalidNodes = new HashSet<>((int)(range * range * range));
+            this.validNodes = new HashSet<>((int)(range * range * range));
         }
 
-        AStarResult search(Location location) {
-            return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(location),
-                    new AStarNodeContainer());
+        IAStarResult<AStarNode> search(ICoords3Di coords) {
+
+            AStarNode startNode = new AStarNode(start);
+            AStarNode destNode = new AStarNode(coords);
+
+            AStarContext<AStarNode> context = new AStarContext<AStarNode>(
+                    startNode, destNode, examiner, settings);
+
+            return AStarCoordsSearch.<AStarNode>get().search(context);
         }
     }
 
     private static class StackItem {
-        final Location node;
+        final ICoords3Di node;
         byte x = -1;
         byte y = 1;
         byte z = -1;
@@ -272,7 +321,7 @@ public class PathAreaFinder {
                 { true, true,  true }
         };
 
-        StackItem(Location node) {
+        StackItem(ICoords3Di node) {
             this.node = node;
         }
     }

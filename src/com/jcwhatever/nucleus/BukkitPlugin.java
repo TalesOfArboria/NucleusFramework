@@ -49,6 +49,7 @@ import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.listeners.SpawnEggListener;
 import com.jcwhatever.nucleus.internal.listeners.StartupListener;
+import com.jcwhatever.nucleus.internal.managed.astar.InternalAStarManager;
 import com.jcwhatever.nucleus.internal.managed.commands.InternalCommandManager;
 import com.jcwhatever.nucleus.internal.managed.commands.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.managed.entity.InternalEntityTracker;
@@ -123,6 +124,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalParticleEffectFactory _particleFactory;
     InternalResourcePackManager _resourcePacks;
     InternalEntityMetaManager _entityMetaManager;
+    InternalAStarManager _astarManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -190,6 +192,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _teleportManager = new InternalTeleportManager();
         _leashTracker = new InternalLeashTracker();
         _mobSerializer = new InternalMobSerializer();
+        _astarManager = new InternalAStarManager();
 
         _providerManager = new InternalProviderManager(isTesting());
         InternalProviderLoader providerLoader = new InternalProviderLoader(_providerManager);

@@ -22,24 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.basic;
+package com.jcwhatever.nucleus.managed.astar.score;
 
+import com.jcwhatever.nucleus.managed.astar.nodes.IAStarNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.astar.IAStarScore;
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
-import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 import javax.annotation.Nullable;
 
 /**
- * Basic implementation of {@link IAStarScore}.
+ * Simple implementation of {@link IAStarScore}.
  */
-public class AStarScore implements IAStarScore {
+public abstract class AbstractAStarScore<N extends IAStarNode> implements IAStarScore<N> {
 
-    private final AStarNode _node;
-    private final AStarNode _parent;
-    private final AStarNode _destination;
+    private final N _parent;
+    private final N _node;
 
     private boolean _isCalculated;
     private float _g;
@@ -51,22 +47,21 @@ public class AStarScore implements IAStarScore {
      * @param parent  The adjacent parent node to apply to the calculations.
      * @param node    The node to calculate.
      */
-    public AStarScore(@Nullable AStarNode parent, AStarNode node) {
+    public AbstractAStarScore(@Nullable N parent, N node) {
         PreCon.notNull(node);
         PreCon.isValid(parent != node, "parent and node cannot be the same.");
 
         _node = node;
         _parent = parent;
-        _destination = node.getContext().getDestination();
     }
 
     @Override
-    public AStarNode getParent() {
+    public N getParent() {
         return _parent;
     }
 
     @Override
-    public AStarNode getNode() {
+    public N getNode() {
         return _node;
     }
 
@@ -91,6 +86,29 @@ public class AStarScore implements IAStarScore {
         return _g + _h;
     }
 
+    @Override
+    public int hashCode() {
+        return _node.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractAStarScore && ((AbstractAStarScore) obj)._node.equals(_node);
+    }
+
+    @Override
+    public int compareTo(IAStarScore o) {
+        float otherF = o.getF();
+        float f = getF();
+
+        if (f > otherF)
+            return 1;
+        if (f < otherF)
+            return -1;
+
+        return 0;
+    }
+
     /**
      * Invoked before getting a score value to ensure
      * the calculations have been made.
@@ -112,29 +130,15 @@ public class AStarScore implements IAStarScore {
     protected float calculateG() {
 
         float g = 0;
-        AStarNode parentNode;
-        AStarNode currentNode = _node;
+        N parent;
+        N current = _node;
 
-        while ((parentNode = getParentNode(currentNode)) != null) {
+        while ((parent = getParentNode(current)) != null) {
 
-            ICoords3Di parent = parentNode.getCoords();
-            ICoords3Di current = currentNode.getCoords();
-
-            int deltaX = Math.abs(current.getX() - parent.getX());
-            int deltaY = Math.abs(current.getY() - parent.getY());
-            int deltaZ = Math.abs(current.getZ() - parent.getZ());
-
-            if (deltaX == 1 && deltaY == 1 && deltaZ == 1) {
-                g += 0.7;
-            } else if (((deltaX == 1 || deltaZ == 1) && deltaY == 1) ||
-                    ((deltaX == 1 || deltaZ == 1) && deltaY == 0)) {
-                g += 0.4;
-            } else {
-                g += 0.1;
-            }
+            g += 0.1;
 
             // move backwards
-            currentNode = parentNode;
+            current = parent;
         }
         return g;
     }
@@ -143,7 +147,7 @@ public class AStarScore implements IAStarScore {
      * Calculate and return the H score.
      */
     protected float calculateH() {
-        return (float)(Coords3Di.distanceSquared(_node.getCoords(), _destination.getCoords()));
+        return 0;
     }
 
     /**
@@ -164,34 +168,13 @@ public class AStarScore implements IAStarScore {
         _h = h;
     }
 
-    @Override
-    public int hashCode() {
-        return _node.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof AStarScore && ((AStarScore) obj)._node.equals(_node);
-    }
-
-    @Override
-    public int compareTo(IAStarScore other) {
-        float otherF = other.getF();
-        float f = getF();
-
-        if (f > otherF)
-            return 1;
-        if (f < otherF)
-            return -1;
-
-        return 0;
-    }
-
     @Nullable
-    private AStarNode getParentNode(AStarNode node) {
+    private N getParentNode(N node) {
         if (node == _node)
             return _parent;
 
-        return node.getParent();
+        @SuppressWarnings("unchecked")
+        N result = (N)node.getParent();
+        return result;
     }
 }

@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.managed.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBarManager;
+import com.jcwhatever.nucleus.managed.astar.IAStarManager;
 import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.commands.ICommandManager;
 import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
@@ -141,6 +142,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._actionBarManager != null, ERROR_NOT_READY);
 
         return _plugin._actionBarManager;
+    }
+
+    /**
+     * Get the global AStar manager.
+     */
+    public static IAStarManager getAStarManager() {
+        PreCon.isValid(_plugin._astarManager != null, ERROR_NOT_READY);
+
+        return _plugin._astarManager;
     }
 
     /**

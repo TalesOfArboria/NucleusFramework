@@ -22,28 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.managed.astar;
+
+import com.jcwhatever.nucleus.managed.astar.nodes.IAStarNode;
 
 import javax.annotation.Nullable;
 
 /**
- * A-Star node container.
- *
- * @see AStar
- * @see AStar#search
+ * A node container used to store nodes during an AStar search.
  */
-public interface IAStarNodeContainer {
+public interface IAStarNodeContainer<N extends IAStarNode> {
 
     /**
-     * Reset the node container for reuse.
+     * Reset the node container.
      */
     void reset();
-
-    /**
-     * Get the {@link IAStarNodeFactory} implementation to use
-     * for the container.
-     */
-    IAStarNodeFactory getNodeFactory();
 
     /**
      * Get the number of open nodes.
@@ -61,32 +54,33 @@ public interface IAStarNodeContainer {
      * @param parent  The parent node.
      * @param node    The node to open.
      */
-    void open(@Nullable AStarNode parent, AStarNode node);
+    void open(@Nullable N parent, N node);
 
     /**
      * Determine if a node is open.
      *
      * @param node  The node to check.
      */
-    boolean isOpen(AStarNode node);
+    boolean isOpen(N node);
 
     /**
      * Determine if a node is closed.
      *
      * @param node  The node to check.
      */
-    boolean isClosed(AStarNode node);
+    boolean isClosed(N node);
 
     /**
      * Determine if a node is open or closed.
      *
      * @param node  The node to check.
      */
-    boolean contains(AStarNode node);
+    boolean contains(N node);
 
     /**
      * Close the best open node and return.
      */
     @Nullable
-    AStarNode closeBest();
+    N closeBest();
+
 }

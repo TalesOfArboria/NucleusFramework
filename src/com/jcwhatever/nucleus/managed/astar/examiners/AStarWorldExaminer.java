@@ -22,16 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.basic;
+package com.jcwhatever.nucleus.managed.astar.examiners;
 
+import com.jcwhatever.nucleus.managed.astar.nodes.IAStarNode;
+import com.jcwhatever.nucleus.managed.astar.IAStarNodeContainer;
+import com.jcwhatever.nucleus.managed.astar.score.AStarScore;
+import com.jcwhatever.nucleus.managed.astar.score.IAStarScore;
+import com.jcwhatever.nucleus.managed.astar.score.IAStarScoreProvider;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.AStarContext;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.astar.IAStarExaminer;
-import com.jcwhatever.nucleus.utils.astar.IAStarNodeContainer;
-import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.materials.Materials;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -41,13 +40,9 @@ import org.bukkit.material.Openable;
 import javax.annotation.Nullable;
 
 /**
- * Basic implementation of {@link IAStarExaminer}.
+ * Node examiner for world coordinates.
  */
-public class AStarWorldExaminer implements IAStarExaminer {
-
-    private final World _world;
-    private double _entityHeight = 2;
-    private DoorPathMode _doorPathMode = DoorPathMode.OPEN;
+public class AStarWorldExaminer<N extends IAStarNode<N>> implements IAStarNodeExaminer<N> {
 
     /**
      * Specifies how doorways are handled.
@@ -70,17 +65,39 @@ public class AStarWorldExaminer implements IAStarExaminer {
         IGNORE_OPEN,
     }
 
+    private final World _world;
+    private final IAStarScoreProvider<N> _scoreProvider;
+
+    private double _entityHeight = 2;
+    private DoorPathMode _doorPathMode = DoorPathMode.OPEN;
+
     /**
      * Constructor.
      *
-     * @param world  The {@link org.bukkit.World} the examiner will examine.
+     * @param world  The world to examine.
      */
     public AStarWorldExaminer(World world) {
+        PreCon.notNull(world);
+
         _world = world;
+        _scoreProvider = AStarScore.getCoordsProvider();
     }
 
     /**
-     * Get the examiners {@link org.bukkit.World}.
+     * Constructor.
+     *
+     * @param world          The world to examine.
+     * @param scoreProvider  The score instance provider.
+     */
+    public AStarWorldExaminer(World world, IAStarScoreProvider<N> scoreProvider) {
+        PreCon.notNull(world);
+
+        _world = world;
+        _scoreProvider = scoreProvider;
+    }
+
+    /**
+     * Get the world being examined.
      */
     public World getWorld() {
         return _world;
@@ -121,50 +138,31 @@ public class AStarWorldExaminer implements IAStarExaminer {
     }
 
     @Override
-    public boolean isDestination(AStarNode node) {
+    public boolean isDestination(N node) {
         PreCon.notNull(node);
 
         return node.equals(node.getContext().getDestination());
     }
 
     @Override
-    public boolean canSearch(AStarContext context) {
-        PreCon.notNull(context);
-
-        IAStarNodeContainer container = context.getContainer();
-        AStarNode destination = context.getDestination();
-
-        return container.openSize() != 0 && !container.isClosed(destination);
-    }
-
-    @Override
-    public AStarScore getScore(@Nullable AStarNode parent, AStarNode node) {
-        PreCon.notNull(node);
-
-        return new AStarScore(parent, node);
-    }
-
-    @Override
-    public PathableResult isPathable(AStarNode from, AStarNode to) {
+    public PathableResult isPathable(N from, N to) {
         PreCon.notNull(from);
         PreCon.notNull(to);
         PreCon.isValid(from.isAdjacent(to), "'to' node should be adjacent to 'from' node");
 
-        IAStarNodeContainer container = from.getContext().getContainer();
+        IAStarNodeContainer<N> container = from.getContext().getNodeContainer();
 
         // check if candidate is already closed
         if (container.isClosed(to))
             return PathableResult.INVALID_POINT;
 
-        ICoords3Di parent = from.getCoords();
-        ICoords3Di candidate = to.getCoords();
 
-        int x = candidate.getX() - parent.getX();
-        int y = candidate.getY() - parent.getY();
-        int z = candidate.getZ() - parent.getZ();
+        int x = to.getX() - from.getX();
+        int y = to.getY() - from.getY();
+        int z = to.getZ() - from.getZ();
 
         Material material = _world
-                .getBlockAt(candidate.getX(), candidate.getY(), candidate.getZ())
+                .getBlockAt(to.getX(), to.getY(), to.getZ())
                 .getType();
 
         // check candidate to see if its valid for the entity to stand on
@@ -181,8 +179,8 @@ public class AStarWorldExaminer implements IAStarExaminer {
 
         // Check for diagonal obstruction
         if (x != 0 && z != 0 && y >= 0) {
-            AStarNode diagX = from.getRelative(x, y, 0);
-            AStarNode diagZ = from.getRelative(0, y, z);
+            IAStarNode diagX = from.getRelative(x, y, 0);
+            IAStarNode diagZ = from.getRelative(0, y, z);
 
             boolean isXValid = hasRoomForEntity(diagX, getDoorPathMode());
             boolean isZValid = hasRoomForEntity(diagZ, getDoorPathMode());
@@ -201,14 +199,18 @@ public class AStarWorldExaminer implements IAStarExaminer {
         return PathableResult.VALID;
     }
 
+    @Override
+    public IAStarScore<N> getScore(@Nullable N parent, N node) {
+        return _scoreProvider.getScore(parent, node);
+    }
+
     /**
      * Determine if there is enough room for an entity above a specified node.
      */
-    protected boolean hasRoomForEntity(AStarNode node, DoorPathMode doorMode) {
+    protected boolean hasRoomForEntity(IAStarNode node, DoorPathMode doorMode) {
 
-        ICoords3Di coords = node.getCoords();
         Block block = _world
-                .getBlockAt(coords.getX(), coords.getY(), coords.getZ());
+                .getBlockAt(node.getX(), node.getY(), node.getZ());
 
         int height = (int)Math.ceil(getEntityHeight());
 

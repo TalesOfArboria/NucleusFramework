@@ -22,16 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.managed.astar.examiners;
+
+import com.jcwhatever.nucleus.managed.astar.nodes.IAStarNode;
+import com.jcwhatever.nucleus.managed.astar.score.IAStarScore;
 
 import javax.annotation.Nullable;
 
 /**
- * Used to examine the environment and nodes for an A-Star search.
- *
- * @see AStar
+ * Interface for a node examiner.
  */
-public interface IAStarExaminer {
+public interface IAStarNodeExaminer<N extends IAStarNode> {
 
     /**
      * Determine if a node can be considered the destination node in
@@ -39,14 +40,7 @@ public interface IAStarExaminer {
      *
      * @param node  The node to check.
      */
-    boolean isDestination(AStarNode node);
-
-    /**
-     * Determine if conditions allow for a continued search for a path.
-     *
-     * @param context  The search context.
-     */
-    boolean canSearch(AStarContext context);
+    boolean isDestination(N node);
 
     /**
      * Determine if a node can be pathed to from an adjacent node.
@@ -54,7 +48,7 @@ public interface IAStarExaminer {
      * @param from  The node being path from.
      * @param to    The node being path to.
      */
-    PathableResult isPathable(AStarNode from, AStarNode to);
+    PathableResult isPathable(N from, N to);
 
     /**
      * Get score for a node with the specified parent.
@@ -62,7 +56,7 @@ public interface IAStarExaminer {
      * @param parent  The parent node.
      * @param node    The node to get a score for.
      */
-    IAStarScore getScore(@Nullable AStarNode parent, AStarNode node);
+    IAStarScore<N> getScore(@Nullable N parent, N node);
 
     /**
      * Specifies the result of {@link #isPathable}.

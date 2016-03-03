@@ -22,41 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.basic;
+package com.jcwhatever.nucleus.internal.managed.astar;
 
+import com.jcwhatever.nucleus.managed.astar.IAStarNodeContainer;
+import com.jcwhatever.nucleus.managed.astar.nodes.IAStarNode;
+import com.jcwhatever.nucleus.managed.astar.score.IAStarScore;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.astar.IAStarNodeContainer;
-import com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory;
-import com.jcwhatever.nucleus.utils.astar.IAStarScore;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
-import javax.annotation.Nullable;
 
 /**
- * Basic implementation of {@link IAStarNodeContainer}.
+ * Implementation of {@link IAStarNodeContainer}
  */
-public class AStarNodeContainer implements IAStarNodeContainer {
+class AStarNodeContainer<N extends IAStarNode<N>> implements IAStarNodeContainer<N> {
 
-    private final TreeMap<AStarNode, AStarNode> _open = new TreeMap<>();
-    private final Set<AStarNode> _closed = new HashSet<>(35);
-
-    private AStarNodeFactory _nodeFactory;
+    private final TreeMap<N, N> _open = new TreeMap<>();
+    private final Set<N> _closed = new HashSet<>(35);
 
     @Override
     public void reset() {
         _open.clear();
         _closed.clear();
-    }
-
-    @Override
-    public IAStarNodeFactory getNodeFactory() {
-        if (_nodeFactory == null)
-            _nodeFactory = new AStarNodeFactory();
-
-        return _nodeFactory;
     }
 
     @Override
@@ -70,18 +59,21 @@ public class AStarNodeContainer implements IAStarNodeContainer {
     }
 
     @Override
-    public void open(@Nullable AStarNode parent, AStarNode node) {
+    public void open(@Nullable N parent, N node) {
         PreCon.notNull(node);
 
-        if (parent != null && !parent.getContext().equals(node.getContext()))
-            throw new IllegalArgumentException("parent and node arguments are from different contexts.");
+        if (parent != null) {
 
-        IAStarScore score = node.getContext().getAstar().getExaminer().getScore(parent, node);
+            if (!parent.getContext().equals(node.getContext()))
+                throw new IllegalArgumentException("parent and node arguments are from different contexts.");
+        }
 
-        AStarNode open = _open.remove(node);
+        IAStarScore<N> score = node.getContext().getNodeExaminer().getScore(parent, node);
+
+        N open = _open.remove(node);
         if (open != null) {
 
-            IAStarScore openScore = open.getScore();
+            IAStarScore<N> openScore = open.getScore();
             float newG = score.getG();
 
             if (openScore == null || newG < openScore.getG()) {
@@ -99,43 +91,29 @@ public class AStarNodeContainer implements IAStarNodeContainer {
     }
 
     @Override
-    public boolean isOpen(AStarNode node) {
+    public boolean isOpen(N node) {
         return _open.containsKey(node);
     }
 
     @Override
-    public boolean isClosed(AStarNode node) {
+    public boolean isClosed(N node) {
         return _closed.contains(node);
     }
 
     @Override
-    public boolean contains(AStarNode node) {
+    public boolean contains(N node) {
         return _open.containsKey(node) || _closed.contains(node);
     }
 
-    @Override
     @Nullable
-    public AStarNode closeBest() {
+    @Override
+    public N closeBest() {
         if (_open.isEmpty())
             return null;
 
-        AStarNode node = _open.pollFirstEntry().getKey();
+        N node = _open.pollFirstEntry().getKey();
         _closed.add(node);
 
         return node;
-    }
-
-    /**
-     * Get a direct reference to the open maps key set.
-     */
-    protected Set<AStarNode> getOpenKeySet() {
-        return _open.keySet();
-    }
-
-    /**
-     * Get a direct reference to the closed set.
-     */
-    protected Set<AStarNode> getClosed() {
-        return _closed;
     }
 }
