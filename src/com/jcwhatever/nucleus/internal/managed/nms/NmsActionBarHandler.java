@@ -44,7 +44,7 @@ class NmsActionBarHandler extends AbstractNMSHandler implements INmsActionBarHan
         PreCon.notNull(players);
         PreCon.notNull(rawText);
 
-        String jsonText = "{text:\"" + TextUtils.PATTERN_DOUBLE_QUOTE.matcher(
+        String jsonText = "{\"text\":\"" + TextUtils.PATTERN_DOUBLE_QUOTE.matcher(
                 TextUtils.format(rawText).toString()).replaceAll("\\\"") + "\"}";
 
         sendJson(players, jsonText);

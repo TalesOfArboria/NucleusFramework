@@ -98,6 +98,8 @@ public final class InternalNmsManager extends NmsManager {
             switch (NmsUtils.getNmsVersion()) {
                 case "v1_8_R3":
                     return _nms = new v1_8_R3_Nms();
+                case "v1_9_R1":
+                    return _nms = new v1_9_R1_Nms();
             }
         }
 
@@ -117,6 +119,17 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R3", ENTITY, NmsEntityHandler.class);
         registerHandler("v1_8_R3", CHAT, NmsChatHandler.class);
         registerHandler("v1_8_R3", VEHICLE, NmsVehicleHandler.class);
+
+        registerHandler("v1_9_R1", TITLES, NmsTitleHandler.class);
+        registerHandler("v1_9_R1", ACTION_BAR, NmsActionBarHandler.class);
+        registerHandler("v1_9_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler.class);
+        registerHandler("v1_9_R1", SOUND_EFFECT, NmsSoundEffectHandler.class);
+        registerHandler("v1_9_R1", PARTICLE_EFFECT, NmsParticleEffectHandler.class);
+        registerHandler("v1_9_R1", ANVIL_VIEW, NmsAnvilViewHandler.class);
+        registerHandler("v1_9_R1", EFFECT, NmsEffectHandler.class);
+        registerHandler("v1_9_R1", ENTITY, NmsEntityHandler.class);
+        registerHandler("v1_9_R1", CHAT, NmsChatHandler.class);
+        registerHandler("v1_9_R1", VEHICLE, NmsVehicleHandler.class);
 
         registerHandler(NmsUtils.getNmsVersion(), POTIONS, NmsPotionHandler.class);
     }

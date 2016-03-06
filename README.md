@@ -1,13 +1,17 @@
-NucleusFramework for Spigot 1.8
+NucleusFramework for Spigot 1.9
 ==================
 
-A plugin framework and rapid development library for Bukkit/Spigot. Developed concurrently with the Tales of Arboria server allowing the framework to solve real world development and administrative problems.
+A plugin framework and rapid development library for Bukkit/Spigot.
 
-Currently under development, expect breaking changes.
+Currently not in active development. Do not use if you expect timely updates and bug fixes. May be discontinued
+after Minecraft 1.9
 
-Compatible with Spigot 1.8.8
+Compatible with Spigot 1.9
 
-_Coders like versatility. Server operators like stability. Users like usability._
+## Known Issues
+The framework is in the process of being updated for Spigot 1.9. The process is not complete and these are the known issues.
+ * Views do not work properly due to what seems to be double fired events from Spigot/Minecraft. This may be fixed as Spigot is updated with new patches.
+ * Due to changes in Minecraft sounds, the sounds are not fully working yet.
 
 ## Goals
  * Provide a centralized framework for common plugin utilities and services.

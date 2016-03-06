@@ -61,6 +61,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      */
     @Nullable
     public static ViewSession getCurrent(Player player) {
+        PreCon.notNull(player);
+
         ViewSession session = _sessionMap.get(player.getUniqueId());
         if (session == null)
             return null;
@@ -80,6 +82,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * @param sessionBlock  The session block to use if a new session is created.
      */
     public static ViewSession get(Player player, @Nullable Block sessionBlock) {
+        PreCon.notNull(player);
+
         ViewSession session = getCurrent(player);
         if (session == null || session.isDisposed()) {
             session = new ViewSession(player, sessionBlock);

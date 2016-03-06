@@ -353,6 +353,8 @@ public class EntityTypes {
 
     static {
 
+        add(EntityType.AREA_EFFECT_CLOUD);
+
         add(EntityType.ARMOR_STAND);
 
         add(EntityType.ARROW,
@@ -398,6 +400,9 @@ public class EntityTypes {
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.EXPLODE,
                 EntityTypeProperty.WALK);
+
+        add(EntityType.DRAGON_FIREBALL,
+                EntityTypeProperty.PROJECTILE);
 
         add(EntityType.DROPPED_ITEM);
 
@@ -533,6 +538,15 @@ public class EntityTypes {
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
+        add(EntityType.SHULKER,
+                EntityTypeProperty.ALIVE,
+                EntityTypeProperty.MONSTER,
+                EntityTypeProperty.SHOOT,
+                EntityTypeProperty.HOSTILE);
+
+        add(EntityType.SHULKER_BULLET,
+                EntityTypeProperty.PROJECTILE);
+
         add(EntityType.SILVERFISH,
                 EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
@@ -562,6 +576,9 @@ public class EntityTypes {
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
+        add(EntityType.SPECTRAL_ARROW,
+                EntityTypeProperty.PROJECTILE);
+
         add(EntityType.SPIDER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
@@ -578,6 +595,9 @@ public class EntityTypes {
                 EntityTypeProperty.SWIM);
 
         add(EntityType.THROWN_EXP_BOTTLE,
+                EntityTypeProperty.PROJECTILE);
+
+        add(EntityType.TIPPED_ARROW,
                 EntityTypeProperty.PROJECTILE);
 
         add(EntityType.UNKNOWN);

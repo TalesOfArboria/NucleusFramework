@@ -147,7 +147,7 @@ class EvaluatedScript implements IEvaluatedScript {
 
         _scriptApis.put(scriptApi.getName(), scriptApi);
 
-        //_engine.put(variableName, apiObject);
+        _engine.put(variableName, apiObject);
         getContext().setAttribute(variableName, apiObject, ScriptContext.ENGINE_SCOPE);
 
         _apiObjects.add(apiObject);

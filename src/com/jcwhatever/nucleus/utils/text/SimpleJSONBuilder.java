@@ -119,8 +119,9 @@ public class SimpleJSONBuilder {
             String propertyName = boolEntry.getKey();
             Boolean value = boolEntry.getValue();
 
+            buffer.append('"');
             buffer.append(propertyName);
-            buffer.append(':');
+            buffer.append("\":");
             buffer.append(value ? "true" : "false");
         }
 
@@ -137,8 +138,9 @@ public class SimpleJSONBuilder {
 
             TextComponents components = new TextComponents(text);
 
+            buffer.append('"');
             buffer.append(propertyName);
-            buffer.append(":\"");
+            buffer.append("\":\"");
             try {
                 getJsonText(buffer, components, true);
             } catch (IOException e) {
@@ -158,10 +160,9 @@ public class SimpleJSONBuilder {
             String propertyName = textEntry.getKey();
             List<String> textList = textEntry.getValue();
 
+            buffer.append('"');
             buffer.append(propertyName);
-            buffer.append(":[");
-
-
+            buffer.append("\":[");
 
             for (int i=0; i < textList.size(); i++) {
                 String rawText = textList.get(i);
@@ -260,7 +261,7 @@ public class SimpleJSONBuilder {
         getJsonTextSegment(buffer, segments.get(0), escape);
 
         if (segments.size() > 1) {
-            buffer.append(",extra:[");
+            buffer.append(",\"extra\":[");
 
             for (int i=1; i < segments.size(); i++) {
                 buffer.append('{');
@@ -281,7 +282,7 @@ public class SimpleJSONBuilder {
     // generate a text property segment.
     private static void getJsonTextSegment(Appendable buffer, TextComponent segment, boolean escape)
             throws IOException {
-        buffer.append("text:");
+        buffer.append("\"text\":");
 
         if (escape)
             buffer.append("\\\"");
@@ -298,25 +299,25 @@ public class SimpleJSONBuilder {
 
             if (segment.getColor() != null) {
 
-                buffer.append(",color:");
+                buffer.append(",\"color\":");
 
                 buffer.append(segment.getColor().getMinecraftName());
             }
 
             if (segment.isBold())
-                buffer.append(",bold:true");
+                buffer.append(",\"bold\":true");
 
             if (segment.isItalic())
-                buffer.append(",italic:true");
+                buffer.append(",\"italic\":true");
 
             if (segment.isMagic())
-                buffer.append(",obfuscated:true");
+                buffer.append(",\"obfuscated\":true");
 
             if (segment.isStrikethrough())
-                buffer.append(",strikethrough:true");
+                buffer.append(",\"strikethrough\":true");
 
             if (segment.isUnderline())
-                buffer.append(",underlined:true");
+                buffer.append(",\"underlined\":true");
         }
     }
 

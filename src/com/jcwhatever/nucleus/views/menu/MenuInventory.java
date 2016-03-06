@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.views.menu;
 import com.jcwhatever.nucleus.mixins.IWrapper;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -331,5 +332,10 @@ public class MenuInventory implements Inventory, IWrapper<Inventory> {
     @Deprecated
     public ListIterator<ItemStack> iterator(int materialId) {
         return _inventory.iterator();
+    }
+
+    @Override
+    public Location getLocation() {
+        return _inventory.getLocation();
     }
 }

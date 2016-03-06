@@ -22,31 +22,40 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.managed.scripting;
-
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-
-import org.bukkit.plugin.Plugin;
+package com.jcwhatever.nucleus.utils.astar;
 
 /**
- * Represents a script API object factory.
+ * Contains scores for an {@link AStarNode} used to determine
+ * the best path.
  *
- * <p>Used to retrieve an API object which is inserted into a script using
- * a specified variable name.</p>
- *
- * @see SimpleScriptApi
- * @see IScriptApiRepo
+ * @see AStar
+ * @see AStarNode
+ * @see IAStarExaminer#getScore
  */
-public interface IScriptApi extends IPluginOwned, INamed {
+public interface IAStarScore extends Comparable<IAStarScore> {
 
     /**
-     * Create a new instance of the API object for a specific script and plugin.
-     *
-     * @param plugin  The plugin the API is being instantiated for.
-     * @param script  The script the API is being instantiated for.
+     * Get the parent node that applies to the score.
      */
-    IDisposable createApi(Plugin plugin, IEvaluatedScript script);
+    AStarNode getParent();
+
+    /**
+     * Get the node the score is for.
+     */
+    AStarNode getNode();
+
+    /**
+     * Get the A-Star G score.
+     */
+    float getG();
+
+    /**
+     * Get the A-Star H score.
+     */
+    float getH();
+
+    /**
+     * Get the A-Star F score.
+     */
+    float getF();
 }

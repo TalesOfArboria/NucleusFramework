@@ -68,6 +68,9 @@ class ChestEventListener implements Listener {
     static void unregister(ChestView view) {
         PreCon.notNull(view);
 
+        if (_instance == null)
+            return;
+
         _instance._chestSessionMap.remove(view.getPlayer());
     }
 
@@ -92,7 +95,7 @@ class ChestEventListener implements Listener {
 
         ChestEventAction allow;
         InventoryItemAction action;
-        InventoryItemAction secondaryAction =  InventoryItemAction.NONE;
+        InventoryItemAction secondaryAction = InventoryItemAction.NONE;
 
         boolean isUpperInventory = event.getRawSlot() <
                 event.getView().getTopInventory().getContents().length;

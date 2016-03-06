@@ -40,25 +40,12 @@ import javax.script.ScriptEngineManager;
  */
 public final class InternalScriptEngineManager extends ScriptEngineManager {
 
-    private final Map<String, ScriptEngine> _namedEngines = new HashMap<>(5);
-    private final Map<String, ScriptEngine> _extEngines = new HashMap<>(15);
-    private final Map<String, ScriptEngine> _mimeEngines = new HashMap<>(15);
-
     @Override
     @Nullable
     public ScriptEngine getEngineByName(String shortName) {
         PreCon.notNullOrEmpty(shortName);
 
-        ScriptEngine engine = _namedEngines.get(shortName);
-        if (engine != null)
-            return engine;
-
-        engine = super.getEngineByName(shortName);
-        if (engine != null) {
-            storeEngine(engine);
-        }
-
-        return engine;
+        return super.getEngineByName(shortName);
     }
 
     @Override
@@ -66,17 +53,7 @@ public final class InternalScriptEngineManager extends ScriptEngineManager {
     public ScriptEngine getEngineByExtension(String extension) {
         PreCon.notNullOrEmpty(extension);
 
-        ScriptEngine engine = _extEngines.get(extension.toLowerCase());
-        if (engine != null) {
-            return engine;
-        }
-
-        engine = super.getEngineByExtension(extension);
-        if (engine != null) {
-            storeEngine(engine);
-        }
-
-        return engine;
+        return super.getEngineByExtension(extension);
     }
 
     @Override
@@ -84,29 +61,13 @@ public final class InternalScriptEngineManager extends ScriptEngineManager {
     public ScriptEngine getEngineByMimeType(String mimeType) {
         PreCon.notNullOrEmpty(mimeType);
 
-        ScriptEngine engine = _extEngines.get(mimeType);
-        if (engine != null) {
-            return engine;
-        }
-
-        engine = super.getEngineByMimeType(mimeType);
-        if (engine != null) {
-            storeEngine(engine);
-        }
-
-        return engine;
-
+        return super.getEngineByMimeType(mimeType);
     }
 
     @Override
     public void registerEngineName(String name, ScriptEngineFactory factory) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(factory);
-
-        if (_namedEngines.containsKey(name)) {
-            throw new IllegalArgumentException("An engine named '" + name + "' is already in " +
-                    "use and cannot be replaced.");
-        }
 
         super.registerEngineName(name, factory);
     }
@@ -116,11 +77,6 @@ public final class InternalScriptEngineManager extends ScriptEngineManager {
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(factory);
 
-        if (_mimeEngines.containsKey(type)) {
-            throw new IllegalArgumentException("An engine with mime type '" + type + "' is already in " +
-                    "use and cannot be replaced.");
-        }
-
         super.registerEngineMimeType(type, factory);
     }
 
@@ -129,50 +85,10 @@ public final class InternalScriptEngineManager extends ScriptEngineManager {
         PreCon.notNullOrEmpty(extension);
         PreCon.notNull(factory);
 
-        if (_extEngines.containsKey(extension)) {
-            throw new IllegalArgumentException("An engine using extension '" + extension + "' is already in " +
-                    "use and cannot be replaced.");
-        }
-
         super.registerEngineExtension(extension, factory);
     }
 
     void reload() {
-
-        Map<String, ScriptEngine> named = new HashMap<>(_namedEngines);
-        Map<String, ScriptEngine> ext = new HashMap<>(_extEngines);
-        Map<String, ScriptEngine> mime = new HashMap<>(_mimeEngines);
-
-        _namedEngines.clear();
-        _extEngines.clear();
-        _mimeEngines.clear();
-
-        for (Map.Entry<String, ScriptEngine> entry : named.entrySet()) {
-            registerEngineName(entry.getKey(), entry.getValue().getFactory());
-        }
-
-        for (Map.Entry<String, ScriptEngine> entry : ext.entrySet()) {
-            registerEngineExtension(entry.getKey(), entry.getValue().getFactory());
-        }
-
-        for (Map.Entry<String, ScriptEngine> entry : mime.entrySet()) {
-            registerEngineMimeType(entry.getKey(), entry.getValue().getFactory());
-        }
-    }
-
-    private void storeEngine(ScriptEngine engine) {
-        String engineName = engine.getFactory().getEngineName();
-        List<String> extensions = engine.getFactory().getExtensions();
-        List<String> mimeTypes = engine.getFactory().getMimeTypes();
-
-        _namedEngines.put(engineName, engine);
-
-        for (String ext : extensions) {
-            _extEngines.put(ext.toLowerCase(), engine);
-        }
-
-        for (String type : mimeTypes) {
-            _mimeEngines.put(type, engine);
-        }
+        // do nothing
     }
 }

@@ -848,7 +848,8 @@ public class Materials {
 
         add(Material.ARROW,
                 MaterialProperty.THROWABLE,
-                MaterialProperty.CRAFTABLE);
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WEAPON);
 
         add(Material.BAKED_POTATO,
                 MaterialProperty.CRAFTABLE);
@@ -857,6 +858,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK_ENTITY); // item
+
+        add(Material.BARRIER,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
 
         add(Material.BEACON,
                 MaterialProperty.BLOCK,
@@ -870,14 +875,29 @@ public class Materials {
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
-        add(Material.BED_BLOCK,
-                MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
-
         add(Material.BEDROCK,
                 MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.SURFACE);
+
+        add(Material.BED_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
+
+        add(Material.BEETROOT,
+                MaterialProperty.FOOD,
+                MaterialProperty.CROP);
+
+        add(Material.BEETROOT_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.CROP);
+
+        add(Material.BEETROOT_SEEDS,
+                MaterialProperty.PLACEABLE);
+
+        add(Material.BEETROOT_SOUP,
+                MaterialProperty.FOOD);
 
         add(Material.BIRCH_DOOR,
                 MaterialProperty.BLOCK,
@@ -927,14 +947,32 @@ public class Materials {
                 MaterialProperty.POTION_INGREDIENT);
 
         add(Material.BOAT,
-                MaterialProperty.CRAFTABLE);
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
+        add(Material.BOAT_ACACIA,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
+        add(Material.BOAT_BIRCH,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
+        add(Material.BOAT_DARK_OAK,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
+        add(Material.BOAT_JUNGLE,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
+        add(Material.BOAT_SPRUCE,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
 
         add(Material.BONE);
 
         add(Material.BOOK,
-                MaterialProperty.CRAFTABLE);
-
-        add(Material.BOOK_AND_QUILL,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BOOKSHELF,
@@ -942,6 +980,9 @@ public class Materials {
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.SURFACE);
+
+        add(Material.BOOK_AND_QUILL,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.BOW,
                 MaterialProperty.REPAIRABLE,
@@ -1065,6 +1106,18 @@ public class Materials {
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.BLOCK_ENTITY);
 
+        add(Material.CHORUS_FLOWER);
+
+        add(Material.CHORUS_FRUIT,
+                MaterialProperty.FOOD);
+
+        add(Material.CHORUS_FRUIT_POPPED);
+
+        add(Material.CHORUS_PLANT,
+                MaterialProperty.BLOCK,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.SURFACE);
+
         add(Material.CLAY,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
@@ -1123,7 +1176,11 @@ public class Materials {
                 MaterialProperty.GUI,
                 MaterialProperty.BLOCK_ENTITY);
 
+        add(Material.COMMAND_CHAIN);
+
         add(Material.COMMAND_MINECART);
+
+        add(Material.COMMAND_REPEATING);
 
         add(Material.COMPASS,
                 MaterialProperty.CRAFTABLE);
@@ -1366,6 +1423,12 @@ public class Materials {
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.SURFACE);
 
+        add(Material.DOUBLE_STONE_SLAB2,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
+
+        add(Material.DRAGONS_BREATH);
+
         add(Material.DRAGON_EGG);
 
         add(Material.DROPPER,
@@ -1381,6 +1444,10 @@ public class Materials {
 
         add(Material.EGG,
                 MaterialProperty.THROWABLE);
+
+        add(Material.ELYTRA,
+                MaterialProperty.WEARABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.EMERALD);
 
@@ -1433,6 +1500,19 @@ public class Materials {
         add(Material.ENDER_STONE,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE);
+
+        add(Material.END_BRICKS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
+
+        add(Material.END_CRYSTAL);
+
+        add(Material.END_GATEWAY);
+
+        add(Material.END_ROD,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.EXP_BOTTLE,
                 MaterialProperty.THROWABLE);
@@ -1488,6 +1568,10 @@ public class Materials {
 
         add(Material.FLOWER_POT_ITEM,
                 MaterialProperty.PLACEABLE);
+
+        add(Material.FROSTED_ICE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
 
         add(Material.FURNACE,
                 MaterialProperty.DIRECTIONAL_DATA,
@@ -1984,6 +2068,8 @@ public class Materials {
                 MaterialProperty.REDSTONE_OUTPUT,
                 MaterialProperty.CRAFTABLE);
 
+        add(Material.LINGERING_POTION);
+
         add(Material.LOG,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
@@ -2181,6 +2267,36 @@ public class Materials {
         add(Material.PUMPKIN_SEEDS);
 
         add(Material.PUMPKIN_STEM);
+
+        add(Material.PURPUR_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.SURFACE);
+
+        add(Material.PURPUR_DOUBLE_SLAB,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
+
+        add(Material.PURPUR_PILLAR,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.DIRECTIONAL_DATA);
+
+        add(Material.PURPUR_SLAB,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
+
+        add(Material.PURPUR_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.STAIRS,
+                MaterialProperty.DIRECTIONAL_DATA);
 
         add(Material.QUARTZ,
                 MaterialProperty.QUARTZ_BASED);
@@ -2404,6 +2520,10 @@ public class Materials {
                 MaterialProperty.TOOL,
                 MaterialProperty.CRAFTABLE);
 
+        add(Material.SHIELD,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.WOOD_BASED);
+
         add(Material.SIGN,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
@@ -2472,6 +2592,11 @@ public class Materials {
 
         add(Material.SPECKLED_MELON,
                 MaterialProperty.POTION_INGREDIENT); // Glistering Melon
+
+        add(Material.SPECTRAL_ARROW,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.THROWABLE,
+                MaterialProperty.WEAPON);
 
         add(Material.SPIDER_EYE,
                 MaterialProperty.POTION_INGREDIENT);
@@ -2646,6 +2771,8 @@ public class Materials {
 
         add(Material.STRING);
 
+        add(Material.STRUCTURE_BLOCK);
+
         add(Material.SUGAR,
                 MaterialProperty.POTION_INGREDIENT);
 
@@ -2667,6 +2794,11 @@ public class Materials {
                 MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
+
+        add(Material.TIPPED_ARROW,
+                MaterialProperty.WEAPON,
+                MaterialProperty.CRAFTABLE,
+                MaterialProperty.THROWABLE);
 
         add(Material.TNT,
                 MaterialProperty.BLOCK,
